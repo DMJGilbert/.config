@@ -11,12 +11,12 @@ echo "Command Line Tools have been installed."
 
 # Install nix
 if ! command -v nix >/dev/null 2>&1; then
-  echo "Nix not found. Installing Nix..."
-  if [ "$(uname -s)" == "Darwin" ]; then
-    sh <(curl -L https://nixos.org/nix/install)
-  else
-    sh <(curl -L https://nixos.org/nix/install) --daemon
-  fi
+    echo "Nix not found. Installing Nix..."
+    if [ "$(uname -s)" = "Darwin" ]; then
+        sh <(curl -L https://nixos.org/nix/install)
+    else
+        sh <(curl -L https://nixos.org/nix/install) --daemon
+    fi
 fi
 echo "Nix has been installed."
 nixconfig=~/.config/nix/nix.conf
