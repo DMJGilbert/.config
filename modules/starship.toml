@@ -1,4 +1,5 @@
 format = """
+[](#232634)\
 $directory\
 [](fg:#232634 bg:#303446)\
 $git_branch\
@@ -29,7 +30,7 @@ add_newline = false
 [directory]
 style = "bg:#232634"
 format = "[ $path ]($style)"
-truncation_length = 3
+truncation_length = 2
 truncation_symbol = "…/"
 
 # Here is how you can shorten some long paths by text replacement
@@ -39,6 +40,7 @@ truncation_symbol = "…/"
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "
+"Developer" = ""
 # Keep in mind that the order matters. For example:
 # "Important Documents" = "  "
 # will not be replaced, because "Documents" was already substituted before.

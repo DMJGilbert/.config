@@ -26,12 +26,16 @@
 
   security.pam.enableSudoTouchIdAuth = true;
 
+  nixpkgs.config.permittedInsecurePackages =
+    [ "nodejs-16.20.0" "python-2.7.18.6" ];
   environment.systemPackages = with pkgs; [
     skhd
     lazygit
     ripgrep
     fzf
+    fd
     wezterm
+    qmk
     zellij
 
     # neovim
@@ -51,12 +55,14 @@
     zoom-us
     slack
     obsidian
+    openconnect
 
     pkgconf
     cmake
     openssl
     # nodejs
-    nodejs
+    nodejs-16_x
+    python2
     # rust
     cargo
     rustc
