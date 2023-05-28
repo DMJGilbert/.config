@@ -74,7 +74,7 @@
 
   system.activationScripts.postUserActivation.text = ''
     # Install homebrew if it isn't there
-    if [[ ! -d "/opt/homebrew/bin" ]]; then
+    if [[ ! -d "/usr/local/bin/brew" ]]; then
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
   '';
