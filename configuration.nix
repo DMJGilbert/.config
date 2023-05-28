@@ -30,6 +30,7 @@
     skhd
     lazygit
     ripgrep
+    fzf
     wezterm
     zellij
 
@@ -65,7 +66,6 @@
   ];
   environment.variables.EDITOR = "nvim";
 
-  # TODO: remove this when possible
   system.activationScripts.postUserActivation.text = ''
     # Install homebrew if it isn't there
     if [[ ! -d "/opt/homebrew/bin" ]]; then
