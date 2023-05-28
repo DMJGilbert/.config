@@ -29,9 +29,9 @@ add_newline = false
 
 [directory]
 style = "bg:#232634"
-format = "[ $path ]($style)"
-truncation_length = 2
-truncation_symbol = "…/"
+format = "[$path ]($style)"
+truncation_length = 0
+truncation_symbol = ""
 
 # Here is how you can shorten some long paths by text replacement
 # similar to mapped_locations in Oh My Posh:
