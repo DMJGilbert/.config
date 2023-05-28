@@ -17,6 +17,7 @@ if ! command -v nix >/dev/null 2>&1; then
     else
         sh <(curl -L https://nixos.org/nix/install) --daemon
     fi
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 echo "Nix has been installed."
 nixconfig=~/.config/nix/nix.conf
@@ -32,3 +33,12 @@ if [[ ! -e $configrepo ]]; then
     git clone https://github.com/dmjgilbert/.config $configrepo
 fi
 cd $configrepo || exit
+
+nix --extra-experimental-features "nix-command flakes" flake update
+nix --extra-experimental-features "nix-command flakes" build .#darwinConfigurations.macbook.system
+
+sudo echo -e "run\tprivate/var/run" >> /etc/synthetic.conf
+/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -B
+/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+./result/sw/bin/darwin-rebuild switch --flake .#macbook
+. /etc/static/bashrc
