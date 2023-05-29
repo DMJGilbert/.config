@@ -51,6 +51,7 @@
     nodePackages.eslint_d
 
     # tools
+    discord
     teams
     zoom-us
     slack
@@ -72,16 +73,20 @@
   ];
   environment.variables.EDITOR = "nvim";
 
-  system.activationScripts.postUserActivation.text = ''
-    # Install homebrew if it isn't there
-    if [[ ! -d "/usr/local/bin/brew" ]]; then
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-  '';
+  # system.activationScripts.postUserActivation.text = ''
+  #  # Install homebrew if it isn't there
+  #  if [[ ! -d "/usr/local/bin/brew" ]]; then
+  #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  #  fi
+  #'';
   homebrew = {
     enable = true;
+    onActivation.autoUpdate = true;
+    onActivation.cleanup = "zap";
+    global.brewfile = true;
     brews = [ "openssl@1.1" "zeromq" ];
-    casks = [ "alfred" "docker" "displaylink" "figma" ];
+    # TODO: Look into raycast
+    casks = [ "alfred" "docker" "displaylink" "figma" "qmk-toolbox" ];
   };
 
   system.keyboard = {
