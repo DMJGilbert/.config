@@ -118,6 +118,10 @@
       # don't automatically rearrange spaces based on the most recent one
       mru-spaces = false;
       launchanim = false;
+      wvous-bl-corner = 1;
+      wvous-br-corner = 1;
+      wvous-tl-corner = 1;
+      wvous-tr-corner = 1;
     };
     spaces.spans-displays = false;
     NSGlobalDomain = {

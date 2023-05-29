@@ -11,6 +11,9 @@ in {
     zsh = {
       enable = true;
       history = rec {
+        expireDuplicatesFirst = true;
+        ignoreDups = true;
+        ignoreSpace = true;
         size = 1000000;
         save = size;
         path = "$HOME/.local/share/zsh/history";
@@ -26,9 +29,19 @@ in {
         bindkey "^[[B" down-line-or-beginning-search # Down
       '';
       shellAliases = {
-        ls = "ls --color=auto";
-        ll = "ls -l";
+        # TODO: Look into exa
+        ls = "ls -F --color=always";
+        ll = "ls -la";
+        l = "ls";
+
+        ".." = "cd ..";
+        dev = "cd ~/Developer/";
       };
+      plugins = [{
+        name = "fast-syntax-highlighting";
+        file = "fast-syntax-highlighting.plugin.zsh";
+        src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
+      }];
     };
     starship = { enable = true; };
     neovim = {
@@ -42,8 +55,13 @@ in {
       enable = true;
       userName = "DMJGilbert";
       userEmail = "dmjgilbert@me.com";
-      extraConfig = { github = { user = "DMJGilbert"; }; };
-      # TODO: Add signing key
+      extraConfig = {
+        init.defaultBranch = "main";
+        gpg.format = "ssh";
+        user.signingkey = "~/.ssh/id_ed25519";
+        commit.gpgsign = true;
+        github = { user = "DMJGilbert"; };
+      };
       lfs.enable = true;
     };
   };
