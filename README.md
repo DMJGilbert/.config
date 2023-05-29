@@ -1,5 +1,6 @@
 # .config
 
+Install
 ```sh
 curl https://raw.githubusercontent.com/DMJGilbert/.config/feature/nix/bootstrap.sh -sSf | bash
 ```
@@ -7,4 +8,9 @@ curl https://raw.githubusercontent.com/DMJGilbert/.config/feature/nix/bootstrap.
 Rebuild
 ```sh
 darwin-rebuild switch  --flake .
+```
+
+Update
+```sh
+nix flake update .
 ```
