@@ -37,6 +37,8 @@
     wezterm
     qmk
     zellij
+    bat
+    exa
 
     # neovim
     tree-sitter

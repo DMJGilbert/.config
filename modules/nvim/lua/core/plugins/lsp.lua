@@ -56,7 +56,7 @@ return {
 		})
 
 		nvim_lsp.rust_analyzer.setup({
-			cmd = { "/Users/darren/.rustup/toolchains/nightly-x86_64-apple-darwin/bin/rust-analyzer" },
+			-- cmd = { "/Users/darren/.rustup/toolchains/nightly-x86_64-apple-darwin/bin/rust-analyzer" },
 			capabilities = capabilities,
 			on_attach = function(client)
 				client.server_capabilities.document_formatting = true

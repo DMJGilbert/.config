@@ -29,13 +29,14 @@ in {
         bindkey "^[[B" down-line-or-beginning-search # Down
       '';
       shellAliases = {
-        # TODO: Look into exa
-        ls = "ls -F --color=always";
-        ll = "ls -la";
-        l = "ls";
-
+        ls = "exa --color=auto";
+        ll = "exa -lah";
+        la = "exa -a";
+        l = "exa";
         ".." = "cd ..";
         dev = "cd ~/Developer/";
+        config = "cd ~/Developer/config";
+        techex = "cd ~/Developer/techexltd/";
       };
       plugins = [{
         name = "fast-syntax-highlighting";
