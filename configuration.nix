@@ -88,7 +88,8 @@
     global.brewfile = true;
     brews = [ "openssl@1.1" "zeromq" ];
     # TODO: Look into raycast
-    casks = [ "alfred" "docker" "displaylink" "figma" "qmk-toolbox" ];
+    casks =
+      [ "alfred" "docker" "displaylink" "figma" "teamviewer" "qmk-toolbox" ];
   };
 
   system.keyboard = {
