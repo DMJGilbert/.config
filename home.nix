@@ -34,9 +34,6 @@ in {
         la = "exa -a";
         l = "exa";
         ".." = "cd ..";
-        dev = "cd ~/Developer/";
-        config = "cd ~/Developer/config";
-        techex = "cd ~/Developer/techexltd/";
       };
       plugins = [
         {

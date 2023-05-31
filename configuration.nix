@@ -47,9 +47,11 @@
     shfmt
     luajitPackages.lua-lsp
     sumneko-lua-language-server
+    nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
     nodePackages.prettier
     nodePackages.eslint_d
+    nodePackages."@tailwindcss/language-server"
 
     # tools
     discord
