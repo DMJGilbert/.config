@@ -30,7 +30,7 @@ in {
       '';
       shellAliases = {
         ls = "exa --color=auto";
-        ll = "exa -lah";
+        ll = "exa -la";
         la = "exa -a";
         l = "exa";
         ".." = "cd ..";
@@ -38,13 +38,33 @@ in {
         config = "cd ~/Developer/config";
         techex = "cd ~/Developer/techexltd/";
       };
-      plugins = [{
-        name = "fast-syntax-highlighting";
-        file = "fast-syntax-highlighting.plugin.zsh";
-        src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
-      }];
+      plugins = [
+        {
+          name = "fast-syntax-highlighting";
+          file = "fast-syntax-highlighting.plugin.zsh";
+          src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
+        }
+        {
+          name = "zsh-nix-shell";
+          file = "nix-shell.plugin.zsh";
+          src = pkgs.fetchFromGitHub {
+            owner = "chisui";
+            repo = "zsh-nix-shell";
+            rev = "v0.5.0";
+            sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
+          };
+        }
+      ];
     };
     starship = { enable = true; };
+    zellij = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     neovim = {
       enable = true;
       defaultEditor = true;

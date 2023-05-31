@@ -36,7 +36,6 @@
     fd
     wezterm
     qmk
-    zellij
     bat
     exa
 
@@ -59,6 +58,7 @@
     slack
     obsidian
     openconnect
+    keepassxc
 
     pkgconf
     cmake
