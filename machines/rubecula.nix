@@ -80,6 +80,34 @@
       AppleShowAllExtensions = true;
       AppleShowScrollBars = "Automatic";
     };
+
+    CustomUserPreferences = {
+      "com.apple.screensaver" = {
+        "askForPassword" = true;
+        "askForPasswordDelay" = 0;
+      };
+      "com.apple.trackpad" = { "scaling" = 2; };
+      "com.apple.mouse" = { "scaling" = 2.5; };
+      "com.apple.desktopservices" = { "DSDontWriteNetworkStores" = false; };
+      "com.apple.finder" = {
+        "ShowExternalHardDrivesOnDesktop" = false;
+        "ShowRemovableMediaOnDesktop" = false;
+        "WarnOnEmptyTrash" = false;
+      };
+      "NSGlobalDomain" = {
+        "NSTableViewDefaultSizeMode" = 1;
+        "WebKitDeveloperExtras" = true;
+      };
+      "com.apple.ImageCapture" = { "disableHotPlug" = true; };
+      "com.apple.Safari" = {
+        "IncludeInternalDebugMenu" = true;
+        "IncludeDevelopMenu" = true;
+        "WebKitDeveloperExtrasEnabledPreferenceKey" = true;
+        "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" =
+          true;
+      };
+    };
+
     screencapture.location = "/Users/darren/Downloads";
     LaunchServices = {
       # Disable the "Are you sure you want to open this application?" dialog
