@@ -2,8 +2,19 @@
   nix.useDaemon = true;
   nix.configureBuildUsers = true;
   nix = {
-    settings.experimental-features = [ "nix-command" "flakes" ];
-    settings.trusted-users = [ "root" "@admin" ];
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+      trusted-users = [ "root" "darren" "@admin" ];
+    };
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+    extraOptions = ''
+      keep-outputs = true
+      keep-derivations = true
+    '';
   };
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages =
@@ -11,6 +22,8 @@
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [ bashInteractive zsh ];
+  environment.systemPackages = with pkgs; [ lazygit ripgrep fzf fd bat exa ];
+
   fonts.fontDir.enable = true;
   fonts.fonts = with pkgs;
     [ (nerdfonts.override { fonts = [ "SourceCodePro" ]; }) ];
