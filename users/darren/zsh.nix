@@ -18,13 +18,7 @@
     bindkey "^[[A" up-line-or-beginning-search # Up
     bindkey "^[[B" down-line-or-beginning-search # Down
   '';
-  shellAliases = {
-    ls = "exa --color=auto";
-    ll = "exa -la";
-    la = "exa -a";
-    l = "exa";
-    ".." = "cd ..";
-  };
+  shellAliases = { ".." = "cd .."; };
   plugins = [
     {
       name = "fast-syntax-highlighting";

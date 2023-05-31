@@ -2,16 +2,6 @@
   home.stateVersion = "22.05";
 
   home.packages = with pkgs; [
-    skhd
-    lazygit
-    ripgrep
-    fzf
-    fd
-    wezterm
-    qmk
-    bat
-    exa
-
     # neovim
     tree-sitter
     nil
@@ -27,6 +17,7 @@
     nodePackages."@tailwindcss/language-server"
 
     # tools
+    wezterm
     discord
     teams
     zoom-us
@@ -34,6 +25,7 @@
     obsidian
     openconnect
     keepassxc
+    qmk
 
     # development
     pkgconf
@@ -51,6 +43,11 @@
   ];
   programs.zsh = import ./zsh.nix (pkgs);
   programs.git = import ./git.nix (pkgs);
+  programs.bat.enable = true;
+  programs.exa = {
+    enable = true;
+    enableAliases = true;
+  };
 
   programs.neovim = {
     enable = true;
