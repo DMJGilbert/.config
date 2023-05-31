@@ -1,4 +1,6 @@
 {
+  description = "DMJGilbert Home Manager & NixOS configurations";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     home-manager = {
@@ -10,28 +12,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
-  outputs = { self, darwin, nixpkgs, home-manager, ... }@inputs:
+  outputs = { darwin, nixpkgs, home-manager, ... }:
     let
-      inherit (darwin.lib) darwinSystem;
-      inherit (inputs.nixpkgs.lib)
-        attrValues makeOverridable optionalAttrs singleton;
-      # Configuration for `nixpkgs`
-      nixpkgsConfig = { config = { allowUnfree = true; }; };
+      mkDarwin = import ./lib/mkdarwin.nix;
+      # Overlays is the list of overlays we want to apply from flake inputs.
+      overlays = [ ];
     in {
-      darwinConfigurations."macbook" = darwin.lib.darwinSystem {
+      darwinConfigurations.rubecula = mkDarwin "rubecula" {
+        inherit darwin nixpkgs home-manager overlays;
         system = "x86_64-darwin";
-        inputs = { inherit inputs; };
-        modules = [
-          ./configuration.nix
-          home-manager.darwinModules.home-manager
-          {
-            nixpkgs = nixpkgsConfig;
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.darren = import ./home.nix;
-          }
-        ];
+        user = "darren";
       };
     };
 }

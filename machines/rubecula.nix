@@ -1,105 +1,13 @@
-{ pkgs, inputs, ... }:
-
-{
-  services.nix-daemon.enable = true;
-  services.yabai.enable = true;
-  services.skhd.enable = true;
-
-  nix.configureBuildUsers = true;
-
-  users.users.darren = {
-    name = "darren";
-    home = "/Users/darren";
-  };
-  programs.zsh.enable = true;
-
-  nix = {
-    registry.nixpkgs.flake = inputs.nixpkgs;
-    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-    settings.experimental-features = [ "nix-command" "flakes" ];
-    settings.trusted-users = [ "root" "@admin" ];
-  };
-
-  fonts.fontDir.enable = true;
-  fonts.fonts = with pkgs;
-    [ (nerdfonts.override { fonts = [ "SourceCodePro" ]; }) ];
+{ pkgs, ... }: {
+  imports = [ ./shared.nix ];
 
   security.pam.enableSudoTouchIdAuth = true;
-
-  nixpkgs.config.permittedInsecurePackages =
-    [ "nodejs-16.20.0" "python-2.7.18.6" ];
-  environment.systemPackages = with pkgs; [
-    skhd
-    lazygit
-    ripgrep
-    fzf
-    fd
-    wezterm
-    qmk
-    bat
-    exa
-
-    # neovim
-    tree-sitter
-    nil
-    nixfmt
-    shellcheck
-    shfmt
-    luajitPackages.lua-lsp
-    sumneko-lua-language-server
-    nodePackages.vscode-langservers-extracted
-    nodePackages.typescript-language-server
-    nodePackages.prettier
-    nodePackages.eslint_d
-    nodePackages."@tailwindcss/language-server"
-
-    # tools
-    discord
-    teams
-    zoom-us
-    slack
-    obsidian
-    openconnect
-    keepassxc
-
-    pkgconf
-    cmake
-    openssl
-    # nodejs
-    nodejs-16_x
-    python2
-    # rust
-    cargo
-    rustc
-    rust-analyzer
-    rustfmt
-    clippy
-  ];
-  environment.variables.EDITOR = "nvim";
-
-  # system.activationScripts.postUserActivation.text = ''
-  #  # Install homebrew if it isn't there
-  #  if [[ ! -d "/usr/local/bin/brew" ]]; then
-  #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  #  fi
-  #'';
-  homebrew = {
-    enable = true;
-    onActivation.autoUpdate = true;
-    onActivation.cleanup = "zap";
-    global.brewfile = true;
-    brews = [ "openssl@1.1" "zeromq" ];
-    # TODO: Look into raycast
-    casks =
-      [ "alfred" "docker" "displaylink" "figma" "teamviewer" "qmk-toolbox" ];
-  };
 
   system.keyboard = {
     enableKeyMapping = true;
     # use caps lock as ctrl instead of YELLING
     remapCapsLockToControl = true;
   };
-
   system.defaults = {
     loginwindow = {
       GuestEnabled = false;
@@ -178,4 +86,8 @@
       LSQuarantine = false;
     };
   };
+
+  services.nix-daemon.enable = true;
+  services.yabai.enable = true;
+  services.skhd.enable = true;
 }
