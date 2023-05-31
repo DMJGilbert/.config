@@ -15,6 +15,9 @@ local get_process_icon = function(tab)
 		["nvim"] = {
 			{ Text = wezterm.nerdfonts.custom_vim },
 		},
+		["zellij"] = {
+			{ Text = wezterm.nerdfonts.cod_terminal_tmux },
+		},
 		["zsh"] = {
 			{ Text = wezterm.nerdfonts.dev_terminal },
 		},
