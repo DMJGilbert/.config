@@ -1,6 +1,4 @@
 { pkgs, ... }: {
-  nix.useDaemon = true;
-  nix.configureBuildUsers = true;
   nix = {
     settings = {
       keep-outputs = true;

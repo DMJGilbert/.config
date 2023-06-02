@@ -115,6 +115,8 @@
     };
   };
 
+  nix.configureBuildUsers = true;
+  nix.useDaemon = true;
   services.nix-daemon.enable = true;
   services.yabai.enable = true;
   services.skhd.enable = true;

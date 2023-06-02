@@ -1,0 +1,10 @@
+{ pkgs, ...}:
+{
+	programs.zsh.enable = true;
+	users.users.darren = {
+		isNormalUser = true;
+		home = "/home/darren";
+		extraGroups = ["wheel"];
+		shell = pkgs.zsh;
+	};
+}
