@@ -18,7 +18,7 @@
 
     # tools
     # wezterm
-    discord
+    # discord
     teams
     zoom-us
     slack
@@ -110,6 +110,12 @@
     executable = true;
     target = ".config/yabai/yabairc";
     source = ./config/yabai/yabairc;
+    recursive = true;
+  };
+
+  home.file.i3 = {
+    target = ".config/i3";
+    source = ./config/i3;
     recursive = true;
   };
 }

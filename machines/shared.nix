@@ -24,6 +24,8 @@
   programs.zsh.enable = true;
   environment.shells = with pkgs; [ bashInteractive zsh ];
   environment.systemPackages = with pkgs; [ lazygit ripgrep fzf fd bat exa ];
+  environment.variables.EDITOR = "nvim";
+  environment.variables.TERMINAL = "wezterm";
 
   fonts.fontDir.enable = true;
   fonts.fonts = with pkgs;

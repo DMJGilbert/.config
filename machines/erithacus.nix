@@ -39,17 +39,13 @@
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
   services.xserver = {
+    enable = true;
     layout = "gb";
     xkbVariant = "mac";
+    desktopManager = { xterm.enable = true; };
+    displayManager = { defaultSession = "none+i3"; };
+    windowManager.i3 = { enable = true; };
   };
 
   # Configure console keymap
@@ -78,17 +74,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.darren = {
-    isNormalUser = true;
-    description = "Darren";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      firefox
-    #  thunderbird
-    ];
-  };
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -96,8 +81,10 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  wget
+    wmctrl
     wezterm
+    rofi
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
