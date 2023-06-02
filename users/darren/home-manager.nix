@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  home.stateVersion = "22.05";
+  home.stateVersion = "23.11";
 
   home.packages = with pkgs; [
     # neovim
@@ -17,7 +17,7 @@
     nodePackages."@tailwindcss/language-server"
 
     # tools
-    wezterm
+    # wezterm
     discord
     teams
     zoom-us
@@ -25,12 +25,18 @@
     obsidian
     openconnect
     keepassxc
-    qmk
+    # qmk
 
     # development
     pkgconf
     cmake
     openssl
+    direnv
+    nix-direnv
+
+    # libs
+    fdk_aac
+
     # nodejs
     nodejs-16_x
     python2
@@ -44,6 +50,10 @@
   programs.zsh = import ./zsh.nix (pkgs);
   programs.git = import ./git.nix (pkgs);
   programs.bat.enable = true;
+
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
+
   programs.exa = {
     enable = true;
     enableAliases = true;

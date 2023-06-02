@@ -2,12 +2,12 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	keys = {
-		{ "gs", "<cmd>lua vim.lsp.buf.declaration()<cr>" },
+		-- { "gs", "<cmd>lua vim.lsp.buf.declaration()<cr>" },
 		{ "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>" },
-		{ "gf", "<cmd>lua vim.diagnostic.open_float()<cr>" },
+		-- { "gf", "<cmd>lua vim.diagnostic.open_float()<cr>" },
 		{ "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>" },
 		{ "<leader>z", "<cmd>lua vim.lsp.buf.code_action()<cr>" },
-		{ "<leader>a", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
+		-- { "<leader>a", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
 	},
 	config = function()
 		local nvim_lsp = require("lspconfig")

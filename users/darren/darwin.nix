@@ -12,8 +12,16 @@
     onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
     global.brewfile = true;
-    brews = [ "openssl@1.1" "zeromq" ];
-    casks =
-      [ "alfred" "docker" "displaylink" "figma" "teamviewer" "qmk-toolbox" ];
+    brews = [ "fdk-aac" "opus" "openssl@1.1" "zeromq" ];
+    casks = [
+      "alfred"
+      "balenaetcher"
+      "docker"
+      "displaylink"
+      "figma"
+      "teamviewer"
+      "qmk-toolbox"
+      "wezterm"
+    ];
   };
 }
