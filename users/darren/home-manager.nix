@@ -113,6 +113,11 @@
     recursive = true;
   };
 
+  home.file.hypr = {
+    target = ".config/hypr";
+    source = ./config/hyprland;
+    recursive = true;
+  };
   home.file.i3 = {
     target = ".config/i3";
     source = ./config/i3;

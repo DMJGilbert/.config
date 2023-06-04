@@ -41,12 +41,14 @@
 
   services.xserver = {
     enable = true;
-    layout = "gb";
-    xkbVariant = "mac";
-    desktopManager = { xterm.enable = true; };
-    displayManager = { defaultSession = "none+i3"; };
-    windowManager.i3 = { enable = true; };
+    displayManager = {
+      lightdm = { enable = true; };
+      defaultSession = "hyprland";
+    };
+    windowManager.awesome.enable = true;
   };
+  programs.hyprland = { enable = true; };
+  xdg.portal.enable = true;
 
   # Configure console keymap
   console.keyMap = "uk";
@@ -81,10 +83,11 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-    wmctrl
     wezterm
+    firefox
     rofi
+    rofi-wayland
+    waybar
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
