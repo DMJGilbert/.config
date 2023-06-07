@@ -35,7 +35,7 @@ return {
 				cpp = { require("formatter.filetypes.cpp").clangformat },
 				rust = { require("formatter.filetypes.rust").rustfmt },
 				sh = { require("formatter.filetypes.sh").shfmt },
-				nix = { require("formatter.filetypes.nix").nixfmt },
+				nix = { require("formatter.filetypes.nix").alejandra },
 				["*"] = {
 					function()
 						return { exe = "sed", args = { "-i", "''", "'s/[	 ]*$//'" } }

@@ -5,9 +5,10 @@
     # neovim
     tree-sitter
     nil
-    nixfmt
+    alejandra
     shellcheck
     shfmt
+    statix
     luajitPackages.lua-lsp
     sumneko-lua-language-server
     nodePackages.vscode-langservers-extracted

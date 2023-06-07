@@ -15,8 +15,8 @@ darwin.lib.darwinSystem rec {
     # the overlays are available globally.
     {nixpkgs.overlays = overlays;}
 
-    ../machines/${name}.nix
-    ../users/${user}/darwin.nix
+    (../machines + "/${name}.nix")
+    (../users + "/${user}/darwin.nix")
     home-manager.darwinModules.home-manager
     {
       home-manager.useGlobalPkgs = true;
