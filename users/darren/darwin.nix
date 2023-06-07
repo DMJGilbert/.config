@@ -19,6 +19,7 @@
       "docker"
       "displaylink"
       "figma"
+      "librewolf"
       "teamviewer"
       "qmk-toolbox"
       "wezterm"
