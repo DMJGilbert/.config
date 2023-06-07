@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   enable = true;
   history = rec {
     expireDuplicatesFirst = true;
@@ -18,7 +18,7 @@
     bindkey "^[[A" up-line-or-beginning-search # Up
     bindkey "^[[B" down-line-or-beginning-search # Down
   '';
-  shellAliases = { ".." = "cd .."; };
+  shellAliases = {".." = "cd ..";};
   plugins = [
     {
       name = "fast-syntax-highlighting";

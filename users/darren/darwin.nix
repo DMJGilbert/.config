@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   users.users.darren = {
     name = "darren";
     home = "/Users/darren";
@@ -12,7 +10,7 @@
     onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
     global.brewfile = true;
-    brews = [ "fdk-aac" "opus" "openssl@1.1" "zeromq" ];
+    brews = ["fdk-aac" "opus" "openssl@1.1" "zeromq"];
     casks = [
       "alfred"
       "balenaetcher"

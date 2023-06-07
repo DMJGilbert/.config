@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   home.stateVersion = "23.11";
 
   home.packages = with pkgs; [
@@ -47,8 +47,8 @@
     rustfmt
     clippy
   ];
-  programs.zsh = import ./zsh.nix (pkgs);
-  programs.git = import ./git.nix (pkgs);
+  programs.zsh = import ./zsh.nix pkgs;
+  programs.git = import ./git.nix pkgs;
   programs.bat.enable = true;
 
   programs.direnv.enable = true;
@@ -72,7 +72,7 @@
     recursive = true;
   };
 
-  programs.starship = { enable = true; };
+  programs.starship = {enable = true;};
   home.file.starship = {
     target = ".config/starship.toml";
     source = ./config/starship/starship.toml;

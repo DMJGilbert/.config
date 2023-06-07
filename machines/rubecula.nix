@@ -1,5 +1,5 @@
-{ pkgs, ... }: {
-  imports = [ ./shared.nix ];
+{pkgs, ...}: {
+  imports = [./shared.nix];
 
   security.pam.enableSudoTouchIdAuth = true;
 
@@ -86,9 +86,9 @@
         "askForPassword" = true;
         "askForPasswordDelay" = 0;
       };
-      "com.apple.trackpad" = { "scaling" = 2; };
-      "com.apple.mouse" = { "scaling" = 2.5; };
-      "com.apple.desktopservices" = { "DSDontWriteNetworkStores" = false; };
+      "com.apple.trackpad" = {"scaling" = 2;};
+      "com.apple.mouse" = {"scaling" = 2.5;};
+      "com.apple.desktopservices" = {"DSDontWriteNetworkStores" = false;};
       "com.apple.finder" = {
         "ShowExternalHardDrivesOnDesktop" = false;
         "ShowRemovableMediaOnDesktop" = false;
@@ -98,7 +98,7 @@
         "NSTableViewDefaultSizeMode" = 1;
         "WebKitDeveloperExtras" = true;
       };
-      "com.apple.ImageCapture" = { "disableHotPlug" = true; };
+      "com.apple.ImageCapture" = {"disableHotPlug" = true;};
       "com.apple.Safari" = {
         "IncludeInternalDebugMenu" = true;
         "IncludeDevelopMenu" = true;

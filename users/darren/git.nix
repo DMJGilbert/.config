@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   enable = true;
   userName = "DMJGilbert";
   userEmail = "dmjgilbert@me.com";
@@ -7,7 +7,7 @@
     gpg.format = "ssh";
     user.signingkey = "~/.ssh/id_ed25519";
     commit.gpgsign = true;
-    github = { user = "DMJGilbert"; };
+    github = {user = "DMJGilbert";};
   };
   lfs.enable = true;
 }
