@@ -26,6 +26,7 @@
   environment.systemPackages = with pkgs; [ lazygit ripgrep fzf fd bat exa ];
   environment.variables.EDITOR = "nvim";
   environment.variables.TERMINAL = "wezterm";
+  environment.variables.BROWSER = "librewolf";
 
   fonts.fontDir.enable = true;
   fonts.fonts = with pkgs;
