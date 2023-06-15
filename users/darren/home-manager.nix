@@ -119,4 +119,9 @@
     source = ./config/i3;
     recursive = true;
   };
+  home.file.i3status = {
+    target = ".config/i3status";
+    source = ./config/i3status;
+    recursive = true;
+  };
 }

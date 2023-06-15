@@ -21,7 +21,15 @@
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [bashInteractive zsh];
-  environment.systemPackages = with pkgs; [lazygit ripgrep fzf fd bat exa];
+  environment.systemPackages = with pkgs; [
+    lazygit
+    ripgrep
+    fzf
+    fd
+    bat
+    exa
+    gcc
+  ];
   environment.variables.EDITOR = "nvim";
   environment.variables.TERMINAL = "wezterm";
   environment.variables.BROWSER = "librewolf";
