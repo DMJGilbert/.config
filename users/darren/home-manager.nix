@@ -34,6 +34,7 @@
     openssl
     direnv
     nix-direnv
+    stylua
 
     # libs
     fdk_aac

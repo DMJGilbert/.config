@@ -144,16 +144,16 @@ return {
 			},
 		})
 
-        nvim_lsp.nil_ls.setup({
-            capabilities = capabilities,
+		nvim_lsp.nil_ls.setup({
+			capabilities = capabilities,
 			on_attach = function(client)
 				client.server_capabilities.document_formatting = true
 			end,
-        })
+		})
 
-        -- nvim_lsp.statix.setup({
-        --     capabilities = capabilities,
-        -- })
+		-- nvim_lsp.statix.setup({
+		--     capabilities = capabilities,
+		-- })
 
 		vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
 			virtual_text = true,
