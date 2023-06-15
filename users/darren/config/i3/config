@@ -50,6 +50,8 @@ tiling_drag modifier titlebar
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+b exec librewolf
+bindsym $mod+40 exec "rofi -show drun"
 
 # kill focused window
 bindsym $mod+Shift+q kill

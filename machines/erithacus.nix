@@ -45,7 +45,10 @@
     xkbVariant = "mac";
     desktopManager = { xterm.enable = true; };
     displayManager = { defaultSession = "none+i3"; };
-    windowManager.i3 = { enable = true; };
+    windowManager.i3 = {
+      enable = true;
+      extraPackages = with pkgs; [ i3status i3lock ];
+    };
   };
 
   # Configure console keymap
@@ -78,14 +81,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-    wmctrl
-    wezterm
-    rofi
-  ];
+  environment.systemPackages = with pkgs; [ vim librewolf wezterm rofi ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
