@@ -22,7 +22,7 @@ Update
 nix flake update .
 ```
 
-Darwin Nix update:
+MacOS Nix update:
 ```
 sudo -i sh -c 'nix-channel --update && nix-env --install --attr nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'
 ```
