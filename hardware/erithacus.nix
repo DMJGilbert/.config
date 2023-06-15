@@ -5,7 +5,6 @@
   config,
   lib,
   pkgs,
-  modulesPath,
   ...
 }: {
   imports = [./network/broadcom-43xx.nix];
@@ -14,7 +13,6 @@
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
-
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1f3dd676-4fcf-465f-91e1-d25a5091084f";
     fsType = "ext4";
@@ -34,6 +32,20 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 
+  powerManagement = {
+    cpuFreqGovernor = lib.mkDefault "conservative";
+
+    powerUpCommands = lib.mkBefore "${pkgs.kmod}/bin/modprobe brcmfmac";
+    powerDownCommands = lib.mkBefore "${pkgs.kmod}/bin/rpmod brcmfmac";
+  };
+
+  services.udev.extraRules = lib.mkDefault ''
+    SUBSYSTEM=="pci", KERNAL=="0000:00:14.0", ATTR{power/wakeup}="disable"
+  '';
+
+  services.fstrim.enable = lib.mkDefault true;
+
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.intel.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
