@@ -4,7 +4,7 @@
 
 MacOS Install
 ```sh
-curl https://raw.githubusercontent.com/DMJGilbert/.config/feature/nix/bootstrap.sh -sSf | bash
+curl https://raw.githubusercontent.com/DMJGilbert/.config/main/bootstrap.sh -sSf | bash
 ```
 
 MacOS Rebuild
