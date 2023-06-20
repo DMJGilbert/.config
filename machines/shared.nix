@@ -17,7 +17,7 @@
     };
   };
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.0" "python-2.7.18.6"];
+  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.0" "python-2.7.18.6" "openssl-1.1.1u"];
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [bashInteractive zsh];
@@ -29,6 +29,7 @@
     bat
     exa
     gcc
+    fasm
   ];
   environment.variables.EDITOR = "nvim";
   environment.variables.TERMINAL = "wezterm";
