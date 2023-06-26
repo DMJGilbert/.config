@@ -49,6 +49,7 @@
     rustfmt
     clippy
   ];
+  manual.manpages.enable = false;
   programs.zsh = import ./zsh.nix pkgs;
   programs.git = import ./git.nix pkgs;
   programs.bat.enable = true;
