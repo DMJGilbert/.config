@@ -28,8 +28,6 @@
     fd
     bat
     exa
-    gcc
-    fasm
   ];
   environment.variables.EDITOR = "nvim";
   environment.variables.TERMINAL = "wezterm";
