@@ -21,6 +21,7 @@
       "teamviewer"
       "qmk-toolbox"
       "wezterm"
+      "vlc"
     ];
   };
 }
