@@ -78,7 +78,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
-  environment.systemPackages = with pkgs; [vim librewolf wezterm rofi openssl_1_1 fasm];
+  environment.systemPackages = with pkgs; [vim librewolf wezterm rofi openssl_1_1];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
