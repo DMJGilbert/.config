@@ -38,13 +38,16 @@
 
   services.xserver = {
     enable = true;
-    layout = "gb";
-    xkbVariant = "mac";
-    desktopManager.xterm.enable = true;
-    displayManager.defaultSession = "none+i3";
-    windowManager.i3 = {
+    displayManager = {
+      sddm.enable = true;
+      defaultSession = "none+awesome";
+    };
+    windowManager.awesome = {
       enable = true;
-      extraPackages = with pkgs; [i3status i3lock scrot];
+      luaModules = with pkgs.luaPackages; [
+        luarocks # is the package manager for Lua modules
+        luadbi-mysql # Database abstraction layer
+      ];
     };
   };
 
@@ -78,7 +81,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
-  environment.systemPackages = with pkgs; [vim librewolf wezterm rofi openssl_1_1];
+  environment.systemPackages = with pkgs; [vim unzip librewolf wezterm rofi openssl_1_1];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

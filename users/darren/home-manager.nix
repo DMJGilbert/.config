@@ -116,6 +116,11 @@
     recursive = true;
   };
 
+  home.file.awesome = {
+    target = ".config/awesome";
+    source = ./config/awesome;
+    recursive = true;
+  };
   home.file.i3 = {
     target = ".config/i3";
     source = ./config/i3;
