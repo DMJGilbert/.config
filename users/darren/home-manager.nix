@@ -25,7 +25,7 @@
     slack
     obsidian
     openconnect
-    keepassxc
+    # keepassxc
     # qmk
 
     # development
