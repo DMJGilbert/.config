@@ -74,7 +74,7 @@
 
       # Enable subpixel font rendering on non-Apple LCDs
       # Reference: https://github.com/kevinSuttle/macOS-Defaults/issues/17#issuecomment-266633501
-      AppleFontSmoothing = 1;
+      AppleFontSmoothing = 2;
 
       # Finder: show all filename extensions
       AppleShowAllExtensions = true;
@@ -94,15 +94,27 @@
         "ShowRemovableMediaOnDesktop" = false;
         "WarnOnEmptyTrash" = false;
       };
+      "com.apple.LaunchServices" = {
+        "LSQuarantine" = false;
+      };
       "NSGlobalDomain" = {
         "NSTableViewDefaultSizeMode" = 1;
         "WebKitDeveloperExtras" = true;
+        "NSAutomaticWindowAnimationsEnabled" = false;
+        "NSDisableAutomaticTermination" = true;
+        "NSWindowResizeTime" = 0.001;
+        "NSUseAnimatedFocusRing" = false;
       };
       "com.apple.ImageCapture" = {"disableHotPlug" = true;};
       "com.apple.Safari" = {
         "IncludeInternalDebugMenu" = true;
         "IncludeDevelopMenu" = true;
         "WebKitDeveloperExtrasEnabledPreferenceKey" = true;
+        "AutoOpenSafeDownloads" = false;
+        "ShowFullURLInSmartSearchField" = true;
+        "UniversalSearchEnabled" = false;
+        "SuppressSearchSuggestions" = true;
+        "FindOnPageMatchesWordStartsOnly" = false;
         "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" =
           true;
       };
