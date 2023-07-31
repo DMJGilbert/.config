@@ -16,6 +16,9 @@ return {
 				enable_in_insert = false,
 				sign = false,
 			},
+			breadcrumb = {
+				enable = false,
+			},
 		})
 	end,
 }
