@@ -15,12 +15,6 @@ return {
 			"tzachar/cmp-tabnine",
 			build = "./install.sh",
 		},
-		-- {
-		-- 	"jcdickinson/codeium.nvim",
-		-- 	config = function()
-		-- 		require("codeium").setup({})
-		-- 	end,
-		-- },
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -52,7 +46,6 @@ return {
 			},
 			sources = {
 				{ name = "nvim_lsp" },
-				-- { name = "codeium" },
 				{ name = "cmp_tabnine" },
 				{ name = "vsnip" },
 				{
