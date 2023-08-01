@@ -18,7 +18,7 @@
     nodePackages."@tailwindcss/language-server"
 
     # tools
-    # wezterm
+    wezterm
     # discord
     teams
     zoom-us
