@@ -26,7 +26,7 @@
     obsidian
     openconnect
     # keepassxc
-    # qmk
+    qmk
 
     # development
     pkgconf
@@ -111,8 +111,8 @@
   };
   home.file.yabai = {
     executable = true;
-    target = ".config/yabai/yabairc";
-    source = ./config/yabai/yabairc;
+    target = ".config/yabai";
+    source = ./config/yabai;
     recursive = true;
   };
 

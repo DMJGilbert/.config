@@ -17,7 +17,7 @@
     };
   };
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.1" "python-2.7.18.6" "openssl-1.1.1u"];
+  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.2" "python-2.7.18.6" "openssl-1.1.1u"];
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [bashInteractive zsh];
