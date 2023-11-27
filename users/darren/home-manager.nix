@@ -2,6 +2,8 @@
   home.stateVersion = "23.11";
 
   home.packages = with pkgs; [
+    borders
+
     # neovim
     tree-sitter
     nil
@@ -18,7 +20,7 @@
     nodePackages."@tailwindcss/language-server"
 
     # tools
-    wezterm
+    # wezterm
     # discord
     teams
     zoom-us
@@ -26,22 +28,16 @@
     obsidian
     openconnect
     # keepassxc
-    qmk
 
     # development
     pkgconf
     cmake
-    openssl
     direnv
     nix-direnv
     stylua
 
-    # libs
-    fdk_aac
-
     # nodejs
-    nodejs-16_x
-    python2
+    nodejs_20
     # rust
     cargo
     rustc
@@ -57,7 +53,7 @@
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
 
-  programs.exa = {
+  programs.eza = {
     enable = true;
     enableAliases = true;
   };

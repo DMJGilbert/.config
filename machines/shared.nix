@@ -17,7 +17,7 @@
     };
   };
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.2" "python-2.7.18.6" "openssl-1.1.1v"];
+  nixpkgs.config.permittedInsecurePackages = [];
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [bashInteractive zsh];
@@ -27,12 +27,12 @@
     fzf
     fd
     bat
-    exa
+    eza
   ];
   environment.variables.EDITOR = "nvim";
   environment.variables.TERMINAL = "wezterm";
   environment.variables.BROWSER = "librewolf";
 
   fonts.fontDir.enable = true;
-  fonts.packages = with pkgs; [(nerdfonts.override {fonts = ["SourceCodePro"];})];
+  fonts.fonts = with pkgs; [(nerdfonts.override {fonts = ["SourceCodePro"];})];
 }

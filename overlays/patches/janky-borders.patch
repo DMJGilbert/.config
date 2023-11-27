@@ -1,0 +1,37 @@
+From 38b7ed8a9e31d39b12f29324ddd2f4d68f2f382a Mon Sep 17 00:00:00 2001
+From: Archaengel <god11341258@gmail.com>
+Date: Thu, 23 Nov 2023 01:15:19 -0800
+Subject: [PATCH] Remove incompatible SLS function
+
+---
+ src/extern.h | 1 -
+ src/main.c   | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/src/extern.h b/src/extern.h
+index dc00326..00b832a 100644
+--- a/src/extern.h
++++ b/src/extern.h
+@@ -1,7 +1,6 @@
+ #include <CoreGraphics/CoreGraphics.h>
+ 
+ extern int SLSMainConnectionID();
+-extern CGError SLSWindowManagementBridgeSetDelegate(void* delegate);
+ extern CGError SLSGetEventPort(int cid, mach_port_t* port_out);
+ extern CGEventRef SLEventCreateNextEvent(int cid);
+ extern void _CFMachPortSetOptions(CFMachPortRef mach_port, int options);
+diff --git a/src/main.c b/src/main.c
+index dfb6a14..049bef2 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -115,7 +115,6 @@ int main(int argc, char** argv) {
+ 
+   int cid = SLSMainConnectionID();
+   events_register(cid);
+-  SLSWindowManagementBridgeSetDelegate(NULL);
+ 
+   mach_port_t port;
+   CGError error = SLSGetEventPort(cid, &port);
+-- 
+2.41.0
+

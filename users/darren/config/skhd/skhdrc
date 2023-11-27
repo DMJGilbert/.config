@@ -1,7 +1,7 @@
-:: default : yabai -m config active_window_border_color 0xff81c8be
-:: resize_win @ : yabai -m config active_window_border_color 0xffe5c890
-:: move_win @ : yabai -m config active_window_border_color 0xffef9f76
-:: switch_win @ : yabai -m config active_window_border_color 0xffe78284
+:: default : borders active_color=0xff81c8be
+:: resize_win @ : borders active_color=0xffe5c890
+:: move_win @ : borders active_color=0xffef9f76
+:: switch_win @ : borders active_color=0xffe78284
 
 default     < hyper - m     ; move_win
 default     < hyper - r     ; resize_win

@@ -20,7 +20,10 @@
     mkDarwin = import ./lib/mkdarwin.nix;
     mkNixos = import ./lib/mknixos.nix;
     # Overlays is the list of overlays we want to apply from flake inputs.
-    overlays = [];
+    overlays = [
+      (import ./overlays/yabai.nix)
+      (import ./overlays/pkgs.nix)
+    ];
   in {
     darwinConfigurations.rubecula = mkDarwin "rubecula" {
       inherit darwin nixpkgs home-manager overlays;
