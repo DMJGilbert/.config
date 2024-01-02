@@ -1,50 +1,57 @@
 {pkgs, ...}: {
   home.stateVersion = "23.11";
 
-  home.packages = with pkgs; [
-    borders
+  home.packages = with pkgs;
+    [
+      borders
 
-    # neovim
-    tree-sitter
-    nil
-    alejandra
-    shellcheck
-    shfmt
-    statix
-    luajitPackages.lua-lsp
-    sumneko-lua-language-server
-    nodePackages.vscode-langservers-extracted
-    nodePackages.typescript-language-server
-    nodePackages.prettier
-    nodePackages.eslint_d
-    nodePackages."@tailwindcss/language-server"
+      # neovim
+      tree-sitter
+      nil
+      alejandra
+      shellcheck
+      shfmt
+      statix
+      luajitPackages.lua-lsp
+      sumneko-lua-language-server
+      nodePackages.vscode-langservers-extracted
+      nodePackages.typescript-language-server
+      nodePackages.prettier
+      nodePackages.eslint_d
+      nodePackages."@tailwindcss/language-server"
 
-    # tools
-    # wezterm
-    # discord
-    teams
-    zoom-us
-    slack
-    obsidian
-    openconnect
-    # keepassxc
+      # tools
+      # wezterm
+      # discord
+      zoom-us
+      slack
+      obsidian
+      openconnect
+      # keepassxc
 
-    # development
-    pkgconf
-    cmake
-    direnv
-    nix-direnv
-    stylua
+      # development
+      pkgconf
+      cmake
+      direnv
+      nix-direnv
+      stylua
 
-    # nodejs
-    nodejs_20
-    # rust
-    cargo
-    rustc
-    rust-analyzer
-    rustfmt
-    clippy
-  ];
+      # nodejs
+      nodejs_20
+      # rust
+      cargo
+      rustc
+      rust-analyzer
+      rustfmt
+      clippy
+    ]
+    ++ pkgs.lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+      teams-for-linux
+    ])
+    ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+      teams
+    ]);
+
   manual.manpages.enable = false;
   programs.zsh = import ./zsh.nix pkgs;
   programs.git = import ./git.nix pkgs;
