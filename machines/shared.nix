@@ -17,7 +17,9 @@
     };
   };
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [];
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-25.9.0"
+  ];
 
   programs.zsh.enable = true;
   environment.shells = with pkgs; [bashInteractive zsh];
