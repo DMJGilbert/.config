@@ -1,5 +1,9 @@
 return {
-	"neovim/nvim-lspconfig",
+	"williamboman/mason-lspconfig.nvim",
+	dependencies = {
+		"williamboman/mason.nvim",
+		"neovim/nvim-lspconfig",
+	},
 	event = { "BufReadPre", "BufNewFile" },
 	keys = {
 		-- { "gs", "<cmd>lua vim.lsp.buf.declaration()<cr>" },
@@ -10,6 +14,8 @@ return {
 		-- { "<leader>a", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
 	},
 	config = function()
+		require("mason").setup()
+		require("mason-lspconfig").setup()
 		local nvim_lsp = require("lspconfig")
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -56,7 +62,6 @@ return {
 		})
 
 		nvim_lsp.rust_analyzer.setup({
-			-- cmd = { "/Users/darren/.rustup/toolchains/nightly-x86_64-apple-darwin/bin/rust-analyzer" },
 			capabilities = capabilities,
 			on_attach = function(client)
 				client.server_capabilities.document_formatting = true
