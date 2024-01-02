@@ -3,8 +3,6 @@
 
   home.packages = with pkgs;
     [
-      borders
-
       # neovim
       tree-sitter
       nil
@@ -50,6 +48,7 @@
     ])
     ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
       teams
+      borders
     ]);
 
   manual.manpages.enable = false;
