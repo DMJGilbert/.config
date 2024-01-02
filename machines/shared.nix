@@ -16,25 +16,33 @@
       options = "--delete-older-than 30d";
     };
   };
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "electron-25.9.0"
-  ];
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "electron-25.9.0"
+    ];
+  };
 
   programs.zsh.enable = true;
-  environment.shells = with pkgs; [bashInteractive zsh];
-  environment.systemPackages = with pkgs; [
-    lazygit
-    ripgrep
-    fzf
-    fd
-    bat
-    eza
-  ];
-  environment.variables.EDITOR = "nvim";
-  environment.variables.TERMINAL = "wezterm";
-  environment.variables.BROWSER = "librewolf";
+  environment = {
+    shells = with pkgs; [bashInteractive zsh];
+    systemPackages = with pkgs; [
+      lazygit
+      ripgrep
+      fzf
+      fd
+      bat
+      eza
+    ];
+    variables = {
+      EDITOR = "nvim";
+      TERMINAL = "wezterm";
+      BROWSER = "librewolf";
+    };
+  };
 
-  fonts.fontDir.enable = true;
-  fonts.fonts = with pkgs; [(nerdfonts.override {fonts = ["SourceCodePro"];})];
+  fonts = {
+    fontDir.enable = true;
+    fonts = with pkgs; [(nerdfonts.override {fonts = ["SourceCodePro"];})];
+  };
 }

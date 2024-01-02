@@ -9,18 +9,24 @@
 }: {
   imports = [./network/broadcom-43xx.nix];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-intel"];
-  boot.extraModulePackages = [];
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/1f3dd676-4fcf-465f-91e1-d25a5091084f";
-    fsType = "ext4";
+  boot = {
+    initrd = {
+      availableKernelModules = ["xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
+      kernelModules = [];
+    };
+    kernelModules = ["kvm-intel"];
+    extraModulePackages = [];
   };
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/1f3dd676-4fcf-465f-91e1-d25a5091084f";
+      fsType = "ext4";
+    };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/14A4-70F5";
-    fsType = "vfat";
+    "/boot" = {
+      device = "/dev/disk/by-uuid/14A4-70F5";
+      fsType = "vfat";
+    };
   };
 
   swapDevices = [];
@@ -39,11 +45,13 @@
     powerDownCommands = lib.mkBefore "${pkgs.kmod}/bin/rpmod brcmfmac";
   };
 
-  services.udev.extraRules = lib.mkDefault ''
-    SUBSYSTEM=="pci", KERNAL=="0000:00:14.0", ATTR{power/wakeup}="disable"
-  '';
+  services = {
+    udev.extraRules = lib.mkDefault ''
+      SUBSYSTEM=="pci", KERNAL=="0000:00:14.0", ATTR{power/wakeup}="disable"
+    '';
 
-  services.fstrim.enable = lib.mkDefault true;
+    fstrim.enable = lib.mkDefault true;
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode =
