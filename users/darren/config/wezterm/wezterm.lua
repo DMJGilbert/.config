@@ -78,7 +78,7 @@ return {
 	font_size = 11,
 	max_fps = 60,
 	window_close_confirmation = "NeverPrompt",
-	window_background_opacity = 0.85,
+	window_background_opacity = 1.0,
 	switch_to_last_active_tab_when_closing_tab = true,
 	tab_bar_at_bottom = true,
 	scrollback_lines = 6000,
