@@ -93,6 +93,13 @@ return {
 			},
 		})
 
+		nvim_lsp.biome.setup({
+			filetypes = { "json", "javascript", "javascriptreact", "typescript", "typescriptreact", "typescript.tsx" },
+			capabilities = capabilities,
+			on_attach = function(client)
+				client.server_capabilities.document_formatting = true
+			end,
+		})
 		nvim_lsp.tsserver.setup({
 			filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 			capabilities = capabilities,
@@ -100,14 +107,13 @@ return {
 				client.server_capabilities.document_formatting = true
 			end,
 		})
-
-		nvim_lsp.eslint.setup({
-			filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		-- nvim_lsp.eslint.setup({
+		-- 	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+		-- 	capabilities = capabilities,
+		-- 	on_attach = function(client)
+		-- 		client.server_capabilities.document_formatting = true
+		-- 	end,
+		-- })
 
 		nvim_lsp.gopls.setup({
 			capabilities = capabilities,

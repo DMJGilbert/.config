@@ -10,6 +10,7 @@
         shellcheck
         shfmt
         statix
+        biome
         luajitPackages.lua-lsp
         sumneko-lua-language-server
         nodePackages.vscode-langservers-extracted
