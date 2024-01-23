@@ -23,8 +23,8 @@ resize_win  < ctrl - c      ; default
 move_win    < ctrl - c      ; default
 switch_win  < ctrl - c      ; default
 
-hyper - q : yabai -m display --focus prev
-hyper - w : yabai -m display --focus next
+hyper - q : yabai -m display --focus west
+hyper - w : yabai -m display --focus east
 
 hyper - a : yabai -m space --focus prev
 hyper - s : yabai -m space --focus next
