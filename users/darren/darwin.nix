@@ -19,6 +19,7 @@
       "teamviewer"
       "qmk-toolbox"
       "vlc"
+      "flutter"
     ];
   };
 }

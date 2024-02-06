@@ -50,6 +50,7 @@
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
         teams
         borders
+        cocoapods
       ]);
     file = {
       nvim = {

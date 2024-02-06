@@ -81,6 +81,7 @@ return {
 						command = "clippy",
 					},
 					cargo = {
+						loadOutDirsFromCheck = true,
 						allFeatures = true,
 						buildScripts = {
 							enable = true,
@@ -114,6 +115,13 @@ return {
 		-- 		client.server_capabilities.document_formatting = true
 		-- 	end,
 		-- })
+		--
+		nvim_lsp.dartls.setup({
+			capabilities = capabilities,
+			on_attach = function(client)
+				client.server_capabilities.document_formatting = true
+			end,
+		})
 
 		nvim_lsp.gopls.setup({
 			capabilities = capabilities,

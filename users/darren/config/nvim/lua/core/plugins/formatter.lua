@@ -31,6 +31,7 @@ return {
 				typescript = { require("formatter.filetypes.typescript").prettier },
 				typescriptreact = { require("formatter.filetypes.typescriptreact").prettier },
 				go = { require("formatter.filetypes.go").gofmt },
+				dart = { require("formatter.filetypes.dart").dartformat },
 				c = { require("formatter.filetypes.c").clangformat },
 				cpp = { require("formatter.filetypes.cpp").clangformat },
 				rust = { require("formatter.filetypes.rust").rustfmt },
