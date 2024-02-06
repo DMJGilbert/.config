@@ -10,6 +10,9 @@
       automatic = true;
       options = "--delete-older-than 30d";
     };
+    extraOptions = ''
+      !include /etc/nix/access-tokens
+    '';
   };
   nixpkgs.config = {
     allowUnfree = true;
