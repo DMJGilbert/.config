@@ -15,11 +15,11 @@
       "docker"
       "displaylink"
       "figma"
+      "flutter"
       "librewolf"
       "teamviewer"
       "qmk-toolbox"
       "vlc"
-      "flutter"
     ];
   };
 }

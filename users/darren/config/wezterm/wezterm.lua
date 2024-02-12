@@ -40,14 +40,13 @@ local get_process_icon = function(tab)
 end
 
 local function get_current_working_dir(tab)
-	local cwd = string.gsub(tab.active_pane.current_working_dir, ".*/([%w.]+)", "%1")
-	---@diagnostic disable-next-line: param-type-mismatch
-	local HOME_DIR = string.gsub(os.getenv("HOME"), "/%w+/(%w+)", "%1")
+	local current_dir = tab.active_pane.current_working_dir.file_path
+	local HOME_DIR = string.format("file://%s", os.getenv("HOME"))
 	local process = string.gsub(tab.active_pane.foreground_process_name, "(.*[/\\])(.*)", "%2")
 	if process == "ssh" then
 		return "ssh"
 	end
-	return cwd == HOME_DIR and "~" or string.format("%s", cwd)
+	return current_dir == HOME_DIR and "~" or string.format("%s", string.gsub(current_dir, "(.*[/\\])(.*)", "%2"))
 end
 
 wezterm.on("format-tab-title", function(tab)

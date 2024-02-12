@@ -11,6 +11,7 @@
         shfmt
         statix
         biome
+        prettierd
         luajitPackages.lua-lsp
         sumneko-lua-language-server
         nodePackages.vscode-langservers-extracted
@@ -21,6 +22,7 @@
 
         # tools
         # wezterm
+        kitty
         # discord
         zoom-us
         slack
@@ -65,6 +67,11 @@
       wezterm = {
         target = ".config/wezterm";
         source = ./config/wezterm;
+        recursive = true;
+      };
+      kitty = {
+        target = ".config/kitty";
+        source = ./config/kitty;
         recursive = true;
       };
       zellij = {
