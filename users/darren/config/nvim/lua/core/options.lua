@@ -63,7 +63,7 @@ vim.o.spellcapcheck = ""
 vim.o.fileformats = "unix,mac,dos"
 
 -- Mouse support
-vim.o.mouse = "a"
+-- vim.o.mouse = "a"
 
 -- backspace behaviour
 vim.o.backspace = "indent,eol,start"
