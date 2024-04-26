@@ -19,6 +19,11 @@
         FXEnableExtensionChangeWarning = false;
         _FXShowPosixPathInTitle = true;
       };
+      menuExtraClock = {
+        ShowSeconds = true;
+        Show24Hour = true;
+        ShowAMPM = false;
+      };
       dock = {
         # auto show and hide dock
         autohide = true;

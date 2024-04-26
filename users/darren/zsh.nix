@@ -8,7 +8,7 @@
     save = size;
     path = "$HOME/.local/share/zsh/history";
   };
-  enableAutosuggestions = true;
+  autosuggestion = {enable = true;};
   enableCompletion = true;
   initExtra = ''
     autoload -U up-line-or-beginning-search

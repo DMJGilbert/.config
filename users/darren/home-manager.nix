@@ -20,16 +20,6 @@
         nodePackages.eslint_d
         nodePackages."@tailwindcss/language-server"
 
-        # tools
-        # wezterm
-        kitty
-        # discord
-        zoom-us
-        slack
-        obsidian
-        openconnect
-        # keepassxc
-
         # development
         pkgconf
         cmake
@@ -46,12 +36,16 @@
         rustfmt
         clippy
       ]
-      ++ pkgs.lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-        teams-for-linux
-      ])
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+        # tools
+        zoom-us
+        slack
+        obsidian
+        openconnect
+        # keepassxc
+
         teams
-        borders
+        jankyborders
         cocoapods
       ]);
     file = {
@@ -63,16 +57,6 @@
       starship = {
         target = ".config/starship.toml";
         source = ./config/starship/starship.toml;
-      };
-      wezterm = {
-        target = ".config/wezterm";
-        source = ./config/wezterm;
-        recursive = true;
-      };
-      kitty = {
-        target = ".config/kitty";
-        source = ./config/kitty;
-        recursive = true;
       };
       zellij = {
         target = ".config/zellij";
@@ -89,21 +73,6 @@
         executable = true;
         target = ".config/yabai";
         source = ./config/yabai;
-        recursive = true;
-      };
-      awesome = {
-        target = ".config/awesome";
-        source = ./config/awesome;
-        recursive = true;
-      };
-      i3 = {
-        target = ".config/i3";
-        source = ./config/i3;
-        recursive = true;
-      };
-      i3status = {
-        target = ".config/i3status";
-        source = ./config/i3status;
         recursive = true;
       };
     };
@@ -125,11 +94,21 @@
       vimAlias = true;
       vimdiffAlias = true;
     };
-    eza = {
+    eza.enable = true;
+    wezterm = {
       enable = true;
-      enableAliases = true;
+      # install wezterm via homebrew on macOS to avoid compilation, dummy package here.
+      package =
+        if pkgs.stdenv.isLinux
+        then pkgs.wezterm
+        else pkgs.hello;
+      enableBashIntegration = pkgs.stdenv.isLinux;
+      enableZshIntegration = pkgs.stdenv.isLinux;
+      extraConfig = ''
+        ${builtins.readFile ./config/wezterm/wezterm.lua}
+      '';
     };
-    starship = {enable = true;};
+    starship.enable = true;
     zellij = {
       enable = true;
       enableZshIntegration = true;

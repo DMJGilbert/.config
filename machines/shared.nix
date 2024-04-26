@@ -3,12 +3,13 @@
     settings = {
       keep-outputs = true;
       keep-derivations = true;
+      auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
       trusted-users = ["root" "@wheel" "@admin"];
     };
     gc = {
       automatic = true;
-      options = "--delete-older-than 30d";
+      options = "--delete-older-than 1w";
     };
     extraOptions = ''
       !include /etc/nix/access-tokens

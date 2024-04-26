@@ -37,9 +37,11 @@ map("i", "<C-BS>", "<C-W>", { noremap = true })
 -- vim.api.nvim_set_keymap("n", "{", "{zz", { noremap = true })
 -- vim.api.nvim_set_keymap("n", "}", "}zz", { noremap = true })
 
+map("n", "<", "<C-O>", {})
+map("n", ">", "<C-I>", {})
+
 -- Stay in indent mode when tabbing in virtual mode
 map("v", "<", "<gv", {})
-map("v", ">", ">gv", {})
 map("v", ">", ">gv", {})
 
 -- Map leader q, to close current buffer

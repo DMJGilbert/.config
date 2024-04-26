@@ -1,9 +1,5 @@
 return {
-	"williamboman/mason-lspconfig.nvim",
-	dependencies = {
-		"williamboman/mason.nvim",
-		"neovim/nvim-lspconfig",
-	},
+	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	keys = {
 		-- { "gs", "<cmd>lua vim.lsp.buf.declaration()<cr>" },
@@ -14,8 +10,6 @@ return {
 		-- { "<leader>a", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
 	},
 	config = function()
-		require("mason").setup()
-		require("mason-lspconfig").setup()
 		local nvim_lsp = require("lspconfig")
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()

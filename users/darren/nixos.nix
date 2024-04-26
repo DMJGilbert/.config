@@ -5,5 +5,6 @@
     home = "/home/darren";
     extraGroups = ["networkmanager" "wheel"];
     shell = pkgs.zsh;
+    initialPassword = "darren";
   };
 }

@@ -12,14 +12,14 @@
     global.brewfile = true;
     casks = [
       "alfred"
-      "docker"
       "displaylink"
       "figma"
-      "flutter"
       "librewolf"
       "teamviewer"
+      "wezterm"
       "qmk-toolbox"
       "vlc"
+      "vmware-fusion"
     ];
   };
 }

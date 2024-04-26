@@ -7,7 +7,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin";
+      url = "github:wegank/nix-darwin/mddoc-remove";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -31,6 +31,11 @@
       user = "darren";
     };
     nixosConfigurations.erithacus = mkNixos "erithacus" {
+      inherit nixpkgs home-manager overlays;
+      system = "x86_64-linux";
+      user = "darren";
+    };
+    nixosConfigurations.passerine = mkNixos "passerine" {
       inherit nixpkgs home-manager overlays;
       system = "x86_64-linux";
       user = "darren";
