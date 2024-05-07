@@ -7,7 +7,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:wegank/nix-darwin/mddoc-remove";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -21,10 +21,14 @@
     mkNixos = import ./lib/mknixos.nix;
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
-      (import ./overlays/yabai.nix)
       (import ./overlays/pkgs.nix)
     ];
   in {
+    darwinConfigurations.ryukyu = mkDarwin "ryukyu" {
+      inherit darwin nixpkgs home-manager overlays;
+      system = "aarch64-darwin";
+      user = "darren";
+    };
     darwinConfigurations.rubecula = mkDarwin "rubecula" {
       inherit darwin nixpkgs home-manager overlays;
       system = "x86_64-darwin";
@@ -37,7 +41,7 @@
     };
     nixosConfigurations.passerine = mkNixos "passerine" {
       inherit nixpkgs home-manager overlays;
-      system = "x86_64-linux";
+      system = "aarch64-linux";
       user = "darren";
     };
   };

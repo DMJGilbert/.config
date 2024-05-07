@@ -42,7 +42,7 @@
         slack
         obsidian
         openconnect
-        # keepassxc
+        keepassxc
 
         teams
         jankyborders
