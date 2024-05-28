@@ -43,3 +43,11 @@ autocmd("ModeChanged", {
 	group = general,
 	desc = "Highlighting matched words when searching",
 })
+
+-- Hot reload potential flutter applications
+autocmd("BufWritePost", {
+	pattern = "*.dart",
+	callback = function()
+		vim.cmd("!kill -SIGUSR1 $(pgrep -f '[f]lutter_tool.*run')")
+	end,
+})

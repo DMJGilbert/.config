@@ -13,13 +13,15 @@
     casks = [
       "alfred"
       "displaylink"
+      "docker"
       "figma"
+      "flutter"
       "librewolf"
       "teamviewer"
-      "wezterm"
       "qmk-toolbox"
       "vlc"
       "vmware-fusion"
+      "wezterm"
     ];
   };
 }
