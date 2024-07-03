@@ -5,6 +5,7 @@
       [
         # neovim
         tree-sitter
+        luarocks
         nil
         alejandra
         shellcheck

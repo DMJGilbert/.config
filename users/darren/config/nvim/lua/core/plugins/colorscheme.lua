@@ -1,12 +1,7 @@
 return {
 	{
-		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "catppuccin",
-		},
-	},
-	{
 		"catppuccin/nvim",
+		lazy = false,
 		priority = 1000,
 		name = "catppuccin",
 		config = function()
@@ -75,6 +70,7 @@ return {
 			})
 			vim.api.nvim_set_hl(0, "FloatBorder", { bg = colors.mantle, fg = colors.surface })
 			vim.api.nvim_set_hl(0, "NormalFloat", { bg = colors.base })
+			vim.cmd([[colorscheme catppuccin]])
 		end,
 	},
 }

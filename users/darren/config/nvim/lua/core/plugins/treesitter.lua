@@ -1,12 +1,11 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		event = { "BufReadPost", "BufNewFile" },
 		config = true,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
-		event = { "BufReadPost", "BufNewFile" },
+        lazy = false,
 		version = false,
 		opts = {
 			ensure_installed = {
@@ -26,8 +25,12 @@ return {
 				"bash",
 				"toml",
 				"nix",
+				"dart",
 			},
-			highlight = { enable = true },
+			highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false,
+            },
 			rainbow = {
 				enable = false,
 			},

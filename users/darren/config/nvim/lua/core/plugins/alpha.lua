@@ -42,11 +42,11 @@ return {
 
 		dashboard.section.buttons.val = {
 			button("<Leader>o", "  Find file"),
-			button("<Leader>n", ": File explorer"),
-			button("<Leader>e", "  Live grep"),
-			button("<Leader>t", "✓  List tasks"),
-			button("<Leader>gg", "  Open git"),
-			button("q", "  Quit", "<Cmd>qa<CR>"),
+			button("<Leader>n", "󰝰  File explorer"),
+			button("<Leader>e", "󱊒  Live grep"),
+			button("<Leader>t", "  List tasks"),
+			button("<Leader>gg", "󰊢  Open git"),
+			button("q", "  Quit", "<Cmd>qa<CR>"),
 		}
 
 		dashboard.section.footer.val = footer()
