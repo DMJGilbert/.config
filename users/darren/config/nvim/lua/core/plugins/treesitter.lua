@@ -1,11 +1,12 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter-context",
+		event = { "BufReadPost", "BufNewFile" },
 		config = true,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
-        lazy = false,
+		event = { "BufReadPost", "BufNewFile" },
 		version = false,
 		opts = {
 			ensure_installed = {
@@ -28,9 +29,9 @@ return {
 				"dart",
 			},
 			highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-            },
+				enable = true,
+				additional_vim_regex_highlighting = false,
+			},
 			rainbow = {
 				enable = false,
 			},
