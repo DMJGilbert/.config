@@ -23,6 +23,7 @@ vim.o.updatetime = 100
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.wrapscan = true
+vim.opt.inccommand = "split"
 
 -- Indent options
 vim.o.tabstop = 4
@@ -84,15 +85,15 @@ vim.o.cmdheight = 0
 vim.cmd("set whichwrap+=<,>,[,],h,l")
 
 -- Setup treesitter for code folding
--- vim.o.foldcolumn = "1"
--- vim.o.foldenable = true
--- vim.o.foldmethod = "expr"
--- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
--- vim.o.foldlevel = 10
+vim.o.foldcolumn = "1"
+vim.o.foldenable = true
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldlevel = 10
 --
--- vim.cmd("set foldtext=getline(v:foldstart).'...'.trim(getline(v:foldend))")
--- -- vim.opt.fillchars = { fold = " " }
--- vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+vim.cmd("set foldtext=getline(v:foldstart).'...'.trim(getline(v:foldend))")
+vim.opt.fillchars = { fold = " " }
+vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
 -- Split options
 vim.opt.splitright = true
