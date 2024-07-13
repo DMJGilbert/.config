@@ -30,6 +30,8 @@ return {
 				javascriptreact = { require("formatter.filetypes.javascriptreact").prettier },
 				typescript = { require("formatter.filetypes.typescript").prettier },
 				typescriptreact = { require("formatter.filetypes.typescriptreact").prettier },
+				css = { require("formatter.filetypes.css").prettier },
+				html = { require("formatter.filetypes.html").prettier },
 				go = { require("formatter.filetypes.go").gofmt },
 				dart = { require("formatter.filetypes.dart").dartformat },
 				c = { require("formatter.filetypes.c").clangformat },

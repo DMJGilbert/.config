@@ -102,6 +102,18 @@ return {
 				client.server_capabilities.document_formatting = true
 			end,
 		})
+		nvim_lsp.cssls.setup({
+			capabilities = capabilities,
+			on_attach = function(client)
+				client.server_capabilities.document_formatting = true
+			end,
+		})
+		nvim_lsp.html.setup({
+			capabilities = capabilities,
+			on_attach = function(client)
+				client.server_capabilities.document_formatting = true
+			end,
+		})
 		-- nvim_lsp.eslint.setup({
 		-- 	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 		-- 	capabilities = capabilities,
