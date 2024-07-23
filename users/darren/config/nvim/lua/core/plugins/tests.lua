@@ -10,18 +10,20 @@ return {
 		},
 	},
 	config = function()
-		-- local colors = require("catppuccin.palettes").get_palette()
+		local colors = require("catppuccin.palettes").get_palette()
 		require("coverage").setup({
 			commands = true, -- create commands
 			highlights = {
 				-- customize highlight groups created by the plugin
-				covered = { fg = "#75e36b" }, -- supports style, fg, bg, sp (see :h highlight-gui)
-				uncovered = { fg = "#F07178" },
+				covered = { fg = colors.green }, -- supports style, fg, bg, sp (see :h highlight-gui)
+				uncovered = { fg = colors.red },
+				partial = { fg = colors.pink },
 			},
 			signs = {
 				-- use your own highlight groups or text markers
-				covered = { hl = "CoverageCovered", text = "▎" },
-				uncovered = { hl = "CoverageUncovered", text = "▎" },
+				covered = { hl = "CoverageCovered", text = "▏" },
+				partial = { hl = "CoveragePartial", text = "▌" },
+				uncovered = { hl = "CoverageUncovered", text = "█" },
 			},
 			summary = {
 				-- customize the summary pop-up
