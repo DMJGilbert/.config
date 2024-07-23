@@ -5,7 +5,7 @@ vim.g.mapleader = " "
 -- = Theming and Looks =
 -- =============================================================================
 vim.o.termguicolors = true
-vim.o.statuscolumn = "%=%{&nu? (v:relnum?v:relnum:v:lnum):''}%C "
+vim.o.statuscolumn = "%s%=%{&nu?(v:relnum?v:relnum:v:lnum):''} "
 vim.wo.number = true
 vim.wo.relativenumber = true
 vim.opt.guicursor = "i:block"

@@ -34,8 +34,8 @@ map("i", "<C-BS>", "<C-W>", { noremap = true })
 
 -- vim.api.nvim_set_keymap("n", "<C-d>", "<C-d>zz", { noremap = true })
 -- vim.api.nvim_set_keymap("n", "<C-u>", "<C-u>zz", { noremap = true })
--- vim.api.nvim_set_keymap("n", "{", "{zz", { noremap = true })
--- vim.api.nvim_set_keymap("n", "}", "}zz", { noremap = true })
+vim.api.nvim_set_keymap("n", "{", "{zz", { noremap = true })
+vim.api.nvim_set_keymap("n", "}", "}zz", { noremap = true })
 
 map("n", "<", "<C-O>", {})
 map("n", ">", "<C-I>", {})
@@ -55,8 +55,8 @@ map("t", "<esc>", [[<C-\><C-n>]])
 -- Manual completion
 map("i", "<C-Space>", "<C-x><C-o>")
 
--- Disable highlights
-map("n", "<leader><CR>", ":noh<CR>")
+-- Reset session and clear noice messages
+map("n", "<leader><CR>", ":noh<cr><cmd>SessionDelete<cr><cmd>NoiceDismiss<cr>")
 
 -- Reload file
 map("n", "<leader>r", ":e!<CR>")

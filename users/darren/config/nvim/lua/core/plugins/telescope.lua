@@ -85,13 +85,6 @@ return {
 			desc = "Find issues",
 		},
 		{
-			"<leader>n",
-			function()
-				require("telescope").extensions.file_browser.file_browser()
-			end,
-			desc = "Open file browser",
-		},
-		{
 			"<leader>b",
 			function()
 				require("telescope.builtin").buffers()
@@ -175,7 +168,6 @@ return {
 		scope.load_extension("file_browser")
 		scope.load_extension("ui-select")
 		scope.load_extension("lazygit")
-
 		local colors = require("catppuccin.palettes").get_palette()
 		vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = colors.base })
 		vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = colors.base })
