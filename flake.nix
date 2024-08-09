@@ -29,19 +29,9 @@
       system = "aarch64-darwin";
       user = "darren";
     };
-    darwinConfigurations.rubecula = mkDarwin "rubecula" {
+    nixosConfigurations.rubecula = mkNixos "rubecula" {
       inherit darwin nixpkgs home-manager overlays;
-      system = "x86_64-darwin";
-      user = "darren";
-    };
-    nixosConfigurations.erithacus = mkNixos "erithacus" {
-      inherit nixpkgs home-manager overlays;
       system = "x86_64-linux";
-      user = "darren";
-    };
-    nixosConfigurations.passerine = mkNixos "passerine" {
-      inherit nixpkgs home-manager overlays;
-      system = "aarch64-linux";
       user = "darren";
     };
   };
