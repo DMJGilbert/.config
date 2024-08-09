@@ -2,11 +2,6 @@
 
 ![Screenshot](screenshot.png)
 
-MacOS Install
-```sh
-curl https://raw.githubusercontent.com/DMJGilbert/.config/main/bootstrap.sh -sSf | bash
-```
-
 MacOS Rebuild
 ```sh
 darwin-rebuild switch  --flake .
