@@ -53,5 +53,5 @@ switch_win < right : yabai -m window --focus east
 switch_win < up : yabai -m window --focus north
 switch_win < down : yabai -m window --focus south
 
-ctrl - return : wezterm start --always-new-process
+ctrl - return : /opt/homebrew/bin/wezterm start --always-new-process
 cmd - q : echo ""
