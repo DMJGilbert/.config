@@ -2,6 +2,7 @@
   description = "DMJGilbert Home Manager & NixOS configurations";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    hardware.url = "github:NixOS/nixos-hardware";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,6 +14,7 @@
   };
   outputs = {
     darwin,
+    hardware,
     nixpkgs,
     home-manager,
     ...
@@ -30,9 +32,12 @@
       user = "darren";
     };
     nixosConfigurations.rubecula = mkNixos "rubecula" {
-      inherit darwin nixpkgs home-manager overlays;
+      inherit hardware nixpkgs home-manager overlays;
       system = "x86_64-linux";
       user = "darren";
+      extraModules = [
+        hardware.nixosModules.apple-t2
+      ];
     };
   };
 }

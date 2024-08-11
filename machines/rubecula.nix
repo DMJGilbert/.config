@@ -1,15 +1,14 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
-{ config, lib, pkgs, ... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      "${builtins.fetchGit { url = "https://github.com/kekrby/nixos-hardware.git"; }}/apple/t2"
-    ];
+  pkgs,
+  modulesPath,
+  ...
+}: let
+  theme = pkgs.hass-catppuccin;
+in {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+    ./shared.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -19,8 +18,8 @@
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  # networking.hostname = "rubecula";
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
+  networking.hostName = "rubecula";
 
   # Set your time zone.
   time.timeZone = "Europe/London";
@@ -37,77 +36,171 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  
-
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
-  # hardware.pulseaudio.enable = true;
-  # OR
-  # services.pipewire = {
-  #   enable = true;
-  #   pulse.enable = true;
-  # };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.darren = {
-     isNormalUser = true;
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-      firefox
-      tree
-     ];
-  };
-
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    git
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-  ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  programs.git.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
   # system.copySystemConfiguration = true;
 
+  environment.systemPackages = with pkgs; [vim unzip gcc hass-catppuccin];
+
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    virtualHosts."home.gilberts.one" = {
+      extraConfig = ''
+        proxy_buffering off;
+      '';
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:8123";
+        proxyWebsockets = true;
+      };
+    };
+  };
+
+  services.home-assistant = {
+    enable = true;
+    extraComponents = [
+      "esphome"
+      "met"
+      "radio_browser"
+      "light"
+      "blueprint"
+      "bluetooth"
+      "automation"
+      "tplink"
+      "hue"
+      "apple_tv"
+      "itunes"
+      "weatherkit"
+      "webostv"
+      "homekit"
+      "homekit_controller"
+      "zeroconf"
+      "zha"
+    ];
+    customComponents = [
+      (pkgs.buildHomeAssistantComponent rec {
+        owner = "amosyuen";
+        domain = "tplink_deco";
+        version = "3.6.2";
+        src = pkgs.fetchFromGitHub {
+          owner = "amosyuen";
+          repo = "ha-tplink-deco";
+          rev = "v${version}";
+          sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
+        };
+        propagatedBuildInputs = [
+          pkgs.python312Packages.pycryptodome
+        ];
+      })
+      (pkgs.buildHomeAssistantComponent rec {
+        owner = "twrecked";
+        domain = "aarlo";
+        version = "0.8.1.4";
+        src = pkgs.fetchFromGitHub {
+          owner = "twrecked";
+          repo = "hass-aarlo";
+          rev = "v${version}";
+          sha256 = "sha256-IkHtTnDpAJhuRA+IHzqCgRcferKAmQJLKWHq6+r3SrE=";
+        };
+        propagatedBuildInputs = [
+          pkgs.python312Packages.unidecode
+          (
+            pkgs.python3.pkgs.buildPythonPackage rec {
+              pname = "pyaarlo";
+              version = "0.8.0.7";
+              pyproject = true;
+              src = pkgs.fetchPypi {
+                inherit pname version;
+                hash = "sha256-mhlSdFNznDj9WqDr6o71f0EBUThZUSXsJH259mSBzrM=";
+              };
+              propagatedBuildInputs = with pkgs.python3Packages; [
+                setuptools
+                requests
+                click
+                pycryptodome
+                unidecode
+                cloudscraper
+                paho-mqtt
+                cryptography
+              ];
+            }
+          )
+        ];
+      })
+    ];
+
+    config = {
+      default_config = {};
+      logger = {
+        logs = {
+          "custom_components.tplink_deco" = "debug";
+        };
+      };
+      homeassistant = {
+        name = "Home";
+        country = "GB";
+        unit_system = "metric";
+        time_zone = "Europe/London";
+        internal_url = "http://home.gilberts.one";
+        external_url = "http://192.168.68.101";
+      };
+      http = {
+        server_host = "0.0.0.0";
+        server_port = 8123;
+        use_x_forwarded_for = true;
+        trusted_proxies = ["127.0.0.1"];
+      };
+      mobile_app = {};
+      frontend.themes = "!include ${theme}/${theme.pname}.yaml";
+      history = {};
+      config = {};
+      system_health = {};
+      automation = [
+        {
+          alias = "Bathroom lights";
+          description = "";
+          use_blueprint = {
+            path = "homeassistant/motion_light.yaml";
+            input = {
+              motion_entity = "binary_sensor.motion_sensor_motion";
+              light_target = {
+                device_id = [
+                  "32ef84d09639b9658e63b093154c3417"
+                  "c45cc91ddf472466af9ab2293ef3963d"
+                ];
+              };
+              no_motion_wait = 30;
+            };
+          };
+        }
+      ];
+      scene = [
+        {
+          name = "Bathtime";
+          entities = {
+            "light.bath_light" = {
+              state = "on";
+              attributes = {
+                brightness = 100;
+              };
+            };
+          };
+        }
+      ];
+    };
+  };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
@@ -126,6 +219,4 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "24.11"; # Did you read the comment?
-
 }
-
