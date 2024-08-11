@@ -54,10 +54,15 @@ in {
 
   environment.systemPackages = with pkgs; [vim unzip gcc hass-catppuccin];
 
+  security.acme.acceptTerms = true;
+  security.acme.defaults.email = "dmjgilbert@gmail.com";
+
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
     virtualHosts."home.gilberts.one" = {
+      forceSSL = true;
+      enableACME = true;
       extraConfig = ''
         proxy_buffering off;
       '';
@@ -105,6 +110,28 @@ in {
         ];
       })
       (pkgs.buildHomeAssistantComponent rec {
+        owner = "BottlecapDave";
+        domain = "octopus_energy";
+        version = "12.1.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "BottlecapDave";
+          repo = "HomeAssistant-OctopusEnergy";
+          rev = "v${version}";
+          sha256 = "sha256-LCYj3ik+qop/A6KtqWg5PL5/lxu/wRgsO5dcl5yZpXg=";
+        };
+      })
+      (pkgs.buildHomeAssistantComponent rec {
+        owner = "itchannel";
+        domain = "fordpass";
+        version = "1.70";
+        src = pkgs.fetchFromGitHub {
+          owner = "itchannel";
+          repo = "fordpass-ha";
+          rev = "${version}";
+          sha256 = "sha256-Xs6Mlw2k1irZlRLG6dj1S963ufU28amVT3PaJ+lPJN8=";
+        };
+      })
+      (pkgs.buildHomeAssistantComponent rec {
         owner = "libdyson-wg";
         domain = "dyson_local";
         version = "1.3.11";
@@ -114,9 +141,6 @@ in {
           rev = "v${version}";
           sha256 = "sha256-NWHMc70TA2QYmMHf8skY6aIkRs4iP+1NDURQDhi2yGc=";
         };
-        propagatedBuildInputs = [
-          pkgs.python312Packages.pycryptodome
-        ];
       })
       (pkgs.buildHomeAssistantComponent rec {
         owner = "twrecked";
