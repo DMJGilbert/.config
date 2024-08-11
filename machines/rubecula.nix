@@ -105,6 +105,20 @@ in {
         ];
       })
       (pkgs.buildHomeAssistantComponent rec {
+        owner = "libdyson-wg";
+        domain = "dyson_local";
+        version = "1.3.11";
+        src = pkgs.fetchFromGitHub {
+          owner = "libdyson-wg";
+          repo = "ha-dyson";
+          rev = "v${version}";
+          sha256 = "sha256-NWHMc70TA2QYmMHf8skY6aIkRs4iP+1NDURQDhi2yGc=";
+        };
+        propagatedBuildInputs = [
+          pkgs.python312Packages.pycryptodome
+        ];
+      })
+      (pkgs.buildHomeAssistantComponent rec {
         owner = "twrecked";
         domain = "aarlo";
         version = "0.8.1.4";
