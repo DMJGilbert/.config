@@ -50,11 +50,6 @@
         cocoapods
       ]);
     file = {
-      hass-themes = {
-        target = "config/themes";
-        source = ./config/hass-themes;
-        recursive = true;
-      };
       nvim = {
         target = ".config/nvim";
         source = ./config/nvim;
