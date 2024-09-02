@@ -2,6 +2,8 @@
   services.home-assistant.extraComponents = [
     "esphome"
     "met"
+    "google_translate"
+    "tradfri"
     "radio_browser"
     "light"
     "blueprint"
@@ -22,18 +24,50 @@
   ];
   services.home-assistant.customComponents = [
     pkgs.home-assistant-custom-components.spook
+    pkgs.home-assistant-custom-components.localtuya
+    # (pkgs.buildHomeAssistantComponent rec {
+    #   owner = "amosyuen";
+    #   domain = "tplink_deco";
+    #   version = "3.6.2";
+    #   src = pkgs.fetchFromGitHub {
+    #     owner = "amosyuen";
+    #     repo = "ha-tplink-deco";
+    #     rev = "v${version}";
+    #     sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
+    #   };
+    #   propagatedBuildInputs = [
+    #     pkgs.python312Packages.pycryptodome
+    #   ];
+    # })
     (pkgs.buildHomeAssistantComponent rec {
-      owner = "amosyuen";
-      domain = "tplink_deco";
-      version = "3.6.2";
+      owner = "AlexandrErohin";
+      domain = "tplink_router";
+      version = "1.15.1";
       src = pkgs.fetchFromGitHub {
-        owner = "amosyuen";
-        repo = "ha-tplink-deco";
+        owner = "AlexandrErohin";
+        repo = "home-assistant-tplink-router";
         rev = "v${version}";
-        sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
+        sha256 = "sha256-kvNNWOILoByaQNeU0tcPCJPXJxS+Eo6cbmTJ9D2Y+AY=";
       };
       propagatedBuildInputs = [
         pkgs.python312Packages.pycryptodome
+        (
+          pkgs.python3.pkgs.buildPythonPackage rec {
+            pname = "tplinkrouterc6u";
+            version = "4.1.1";
+            pyproject = true;
+            src = pkgs.fetchPypi {
+              inherit pname version;
+              hash = "sha256-KEtHCVHlvau49xJ2l6gpAOD/CQv/r9eKSoWWTaabW2g=";
+            };
+            propagatedBuildInputs = with pkgs.python3Packages; [
+              setuptools
+              pycryptodome
+              requests
+              macaddress
+            ];
+          }
+        )
       ];
     })
     (pkgs.buildHomeAssistantComponent rec {

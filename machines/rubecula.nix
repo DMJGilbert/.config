@@ -17,6 +17,13 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
+  services.logind = {
+    lidSwitch = "ignore";
+    extraConfig = ''
+      HandlePowerKey=ignore
+    '';
+  };
+
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -56,6 +63,7 @@ in {
 
   environment.systemPackages = with pkgs; [vim unzip gcc hass-catppuccin];
 
+  virtualisation.docker.enable = true;
   services.tailscale.enable = true;
 
   security.acme.acceptTerms = true;
@@ -80,6 +88,7 @@ in {
   services.home-assistant = {
     enable = true;
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
+      pkgs.hass-bubble-card
       mini-graph-card
       multiple-entity-row
       decluttering-card
@@ -88,6 +97,11 @@ in {
       light-entity-card
       mushroom
     ];
+    extraPackages = python3Packages:
+      with python3Packages; [
+        isal
+        zlib-ng
+      ];
 
     config = {
       default_config = {};
@@ -110,6 +124,14 @@ in {
         use_x_forwarded_for = true;
         trusted_proxies = ["127.0.0.1"];
       };
+      # camera = [
+      #   {
+      #     platform = "ffmpeg";
+      #     name = "local_usb_cam";
+      #     input = "/dev/video0";
+      #     extra_arguments = "-f video4linux2";
+      #   }
+      # ];
       mobile_app = {};
       frontend.themes = "!include ${theme}/${theme.pname}.yaml";
       history = {};
@@ -118,6 +140,10 @@ in {
       lovelace = {
         mode = "yaml";
         resources = [
+          {
+            url = "/local/nixos-lovelace-modules/bubble-card.js";
+            type = "module";
+          }
           {
             url = "/local/nixos-lovelace-modules/mushroom.js";
             type = "module";
@@ -150,12 +176,56 @@ in {
       };
       ffmpeg = {};
       group = {
+        motion = {
+          name = "Home motion";
+          entities = [
+            "binary_sensor.aarlo_motion_nursery"
+            "binary_sensor.motion_sensor_motion"
+            # "binary_sensor.robynne_motion_sensor_occupancy"
+            "binary_sensor.bedroom_motion_sensor_occupancy"
+            "binary_sensor.hallway_motion_sensor_occupancy"
+            "binary_sensor.living_room_motion_sensor_occupancy"
+          ];
+        };
+        living_room_lights = {
+          name = "Living Room Lights";
+          entities = [
+            "light.living_room_light"
+            "light.dining_room_light_3"
+            "light.sofa_light_switch"
+          ];
+        };
+        kitchen_lights = {
+          name = "Kitchen Lights";
+          entities = [
+            "light.kitchen_microwave"
+            "light.kitchen_sink"
+            "light.kitchen_random"
+          ];
+        };
+        bathroom_lights = {
+          name = "Bathroom Lights";
+          entities = [
+            "light.bath_light"
+            "light.sink_light"
+            "light.toilet_light"
+          ];
+        };
+        bedroom_lights = {
+          name = "Bedroom Lights";
+          entities = [
+            "light.above_bed_light"
+            "light.bedroom_light_2"
+            "light.darren_switch"
+            "light.lorraine_switch"
+          ];
+        };
         robynne_lights = {
           name = "Robynne Lights";
           entities = [
             "light.robynne_light"
             "light.aarlo_nursery"
-            "switch.fairy_lights_switch"
+            "light.fairy_lights_switch"
           ];
         };
       };

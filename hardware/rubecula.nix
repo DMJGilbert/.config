@@ -7,7 +7,7 @@
 }: {
   boot.initrd.availableKernelModules = ["xhci_pci" "nvme" "usbhid" "usb_storage" "sd_mod"];
   boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-intel"];
+  boot.kernelModules = ["kvm-intel" "uvcvideo"];
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
@@ -32,5 +32,8 @@
   # networking.interfaces.enp2s0f1u1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.enableAllFirmware = true;
+  hardware.bluetooth.enable = true;
+  hardware.facetimehd.enable = true;
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
