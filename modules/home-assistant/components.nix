@@ -3,6 +3,8 @@
     "esphome"
     "met"
     "google_translate"
+    "calendar"
+    "caldav"
     "tradfri"
     "radio_browser"
     "light"

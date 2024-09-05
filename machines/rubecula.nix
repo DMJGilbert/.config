@@ -112,6 +112,7 @@ in {
       homeassistant = {
         name = "Home";
         country = "GB";
+        radius = 50;
         unit_system = "metric";
         time_zone = "Europe/London";
         internal_url = "https://home.gilberts.one";
@@ -185,6 +186,13 @@ in {
             "binary_sensor.bedroom_motion_sensor_occupancy"
             "binary_sensor.hallway_motion_sensor_occupancy"
             "binary_sensor.living_room_motion_sensor_occupancy"
+          ];
+        };
+        hallway_lights = {
+          name = "Hallway Lights";
+          entities = [
+            "light.doorway"
+            "light.hallway"
           ];
         };
         living_room_lights = {

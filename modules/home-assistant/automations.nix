@@ -12,6 +12,50 @@
       };
     }
     {
+      alias = "Hallway lights";
+      description = "";
+      mode = "restart";
+      max_exceeded = "silent";
+      trigger = {
+        platform = "state";
+        entity_id = "binary_sensor.hallway_motion_sensor_occupancy";
+        from = "off";
+        to = "on";
+      };
+      action = [
+        {
+          alias = "Turn on the light";
+          service = "light.turn_on";
+          target = {
+            area_id = ["hallway"];
+          };
+          data = {
+            brightness_pct = 30;
+          };
+        }
+        {
+          alias = "Wait until there is no motion from sensor";
+          wait_for_trigger = {
+            platform = "state";
+            entity_id = "binary_sensor.hallway_motion_sensor_occupancy";
+            from = "on";
+            to = "off";
+          };
+        }
+        {
+          alias = "Wait for 5 minutes";
+          delay = 300;
+        }
+        {
+          alias = "Turn off the light";
+          service = "light.turn_off";
+          target = {
+            area_id = ["hallway"];
+          };
+        }
+      ];
+    }
+    {
       alias = "Bathroom lights (day)";
       description = "";
       mode = "restart";
