@@ -11,6 +11,7 @@
     "blueprint"
     "lovelace"
     "tailscale"
+    "adguard"
     "bluetooth"
     "automation"
     "tplink"
@@ -27,20 +28,34 @@
   services.home-assistant.customComponents = [
     pkgs.home-assistant-custom-components.spook
     pkgs.home-assistant-custom-components.localtuya
-    # (pkgs.buildHomeAssistantComponent rec {
-    #   owner = "amosyuen";
-    #   domain = "tplink_deco";
-    #   version = "3.6.2";
-    #   src = pkgs.fetchFromGitHub {
-    #     owner = "amosyuen";
-    #     repo = "ha-tplink-deco";
-    #     rev = "v${version}";
-    #     sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
-    #   };
-    #   propagatedBuildInputs = [
-    #     pkgs.python312Packages.pycryptodome
-    #   ];
-    # })
+    (pkgs.buildHomeAssistantComponent rec {
+      owner = "amosyuen";
+      domain = "tplink_deco";
+      version = "3.6.2";
+      src = pkgs.fetchFromGitHub {
+        owner = "amosyuen";
+        repo = "ha-tplink-deco";
+        rev = "v${version}";
+        sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
+      };
+      propagatedBuildInputs = [
+        pkgs.python312Packages.pycryptodome
+      ];
+    })
+    (pkgs.buildHomeAssistantComponent {
+      owner = "maximoei";
+      domain = "robovac";
+      version = "1.0.0";
+      src = pkgs.fetchFromGitHub {
+        owner = "maximoei";
+        repo = "robovac";
+        rev = "ca5ce8b5f65664899f0dc184d131b68021c2737b";
+        sha256 = "sha256-xUha26YiSKY+5aRmZviHFqyPLUqOdN6/L/Ikcpe/YH0=";
+      };
+      propagatedBuildInputs = [
+        pkgs.python312Packages.pycryptodome
+      ];
+    })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexandrErohin";
       domain = "tplink_router";

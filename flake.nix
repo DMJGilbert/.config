@@ -15,12 +15,17 @@
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    arion = {
+      url = "github:hercules-ci/arion";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     darwin,
     hardware,
     nixpkgs,
     home-manager,
+    arion,
     ...
   }: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -44,6 +49,7 @@
         hardware.nixosModules.common-cpu-intel
         hardware.nixosModules.common-pc-laptop-ssd
         hardware.nixosModules.common-gpu-amd
+        arion.nixosModules.arion
       ];
     };
   };

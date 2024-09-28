@@ -10,6 +10,8 @@ in {
     ./../modules/home-assistant/automations.nix
     ./../modules/home-assistant/components.nix
     ./shared.nix
+
+    ./../modules/penpot.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -61,10 +63,14 @@ in {
   # accidentally delete configuration.nix.
   # system.copySystemConfiguration = true;
 
-  environment.systemPackages = with pkgs; [vim unzip gcc hass-catppuccin];
+  environment.systemPackages = with pkgs; [vim unzip gcc arion];
 
   virtualisation.docker.enable = true;
   services.tailscale.enable = true;
+  services.adguardhome = {
+    enable = true;
+    mutableSettings = true;
+  };
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "dmjgilbert@gmail.com";
@@ -83,12 +89,26 @@ in {
         proxyWebsockets = true;
       };
     };
+    virtualHosts."penpot.gilberts.one" = {
+      forceSSL = true;
+      enableACME = true;
+      extraConfig = ''
+        proxy_buffering off;
+      '';
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:9000";
+        proxyWebsockets = true;
+      };
+    };
   };
 
   services.home-assistant = {
     enable = true;
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
+      pkgs.hass-catppuccin
       pkgs.hass-bubble-card
+      pkgs.lovelace-auto-entities
+      pkgs.lovelace-tabbed-card
       mini-graph-card
       multiple-entity-row
       decluttering-card
@@ -96,6 +116,7 @@ in {
       lg-webos-remote-control
       light-entity-card
       mushroom
+      card-mod
     ];
     extraPackages = python3Packages:
       with python3Packages; [
@@ -125,14 +146,14 @@ in {
         use_x_forwarded_for = true;
         trusted_proxies = ["127.0.0.1"];
       };
-      # camera = [
-      #   {
-      #     platform = "ffmpeg";
-      #     name = "local_usb_cam";
-      #     input = "/dev/video0";
-      #     extra_arguments = "-f video4linux2";
-      #   }
-      # ];
+      camera = [
+        {
+          platform = "ffmpeg";
+          name = "local_usb_cam";
+          input = "/dev/video0";
+          extra_arguments = "-f video4linux2";
+        }
+      ];
       mobile_app = {};
       frontend.themes = "!include ${theme}/${theme.pname}.yaml";
       history = {};
@@ -143,6 +164,14 @@ in {
         resources = [
           {
             url = "/local/nixos-lovelace-modules/bubble-card.js";
+            type = "module";
+          }
+          {
+            url = "/local/nixos-lovelace-modules/tabbed-card.js";
+            type = "module";
+          }
+          {
+            url = "/local/nixos-lovelace-modules/auto-entities.js";
             type = "module";
           }
           {
@@ -173,14 +202,41 @@ in {
             url = "/local/nixos-lovelace-modules/lg-remote-control.js";
             type = "module";
           }
+          {
+            url = "/local/nixos-lovelace-modules/card-mod.js";
+            type = "module";
+          }
         ];
       };
       ffmpeg = {};
+      template = [
+        {
+          sensor = {
+            name = "Total Turned On Lights Count Template";
+            state = "{{ states.light | rejectattr('attributes.entity_id', 'defined') | selectattr('state', 'eq', 'on') | list | count }}";
+          };
+        }
+        {
+          sensor = {
+            name = "Total Active Motion Sensors Count Template";
+            state = "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'motion') |
+            selectattr('state', 'eq', 'on') | list | count + states.binary_sensor |
+            selectattr('attributes.device_class', 'eq', 'occupancy') | selectattr('state', 'eq', 'on') | list | count
+            }}";
+          };
+        }
+        {
+          sensor = {
+            name = "Total Media Players Playing Template";
+            state = "{{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}";
+          };
+        }
+      ];
       group = {
         motion = {
           name = "Home motion";
           entities = [
-            "binary_sensor.aarlo_motion_nursery"
+            # "binary_sensor.aarlo_motion_nursery"
             "binary_sensor.motion_sensor_motion"
             # "binary_sensor.robynne_motion_sensor_occupancy"
             "binary_sensor.bedroom_motion_sensor_occupancy"
