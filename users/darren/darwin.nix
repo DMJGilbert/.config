@@ -17,6 +17,7 @@
       "figma"
       "flutter"
       "librewolf"
+      "microsoft-teams"
       "teamviewer"
       "qmk-toolbox"
       "vlc"

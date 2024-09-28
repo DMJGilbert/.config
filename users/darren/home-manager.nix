@@ -45,7 +45,6 @@
         openconnect
         keepassxc
 
-        teams
         jankyborders
         cocoapods
       ]);
