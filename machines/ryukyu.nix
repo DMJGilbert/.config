@@ -4,6 +4,7 @@
   security.pam.enableSudoTouchIdAuth = true;
 
   system = {
+    stateVersion = 5;
     keyboard = {
       enableKeyMapping = true;
       # use caps lock as ctrl instead of YELLING
