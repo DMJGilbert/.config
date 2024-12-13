@@ -3,7 +3,6 @@
     settings = {
       keep-outputs = true;
       keep-derivations = true;
-      auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
       trusted-users = ["root" "@wheel" "@admin"];
     };
@@ -41,6 +40,6 @@
   };
 
   fonts = {
-    packages = with pkgs; [(nerdfonts.override {fonts = ["SourceCodePro"];})];
+    packages = with pkgs; [nerd-fonts.sauce-code-pro];
   };
 }
