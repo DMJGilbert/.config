@@ -1,5 +1,6 @@
 {...}: {
   services.home-assistant.config = {
+    "script ui" = "!include scripts.yaml";
     "automation ui" = "!include automations.yaml";
     "automation manual" = [
       {

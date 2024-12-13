@@ -1,4 +1,7 @@
 {pkgs, ...}: {
+  systemd.tmpfiles.rules = [
+    "f /var/lib/hass/custom_components/fordpass/dmjgilbert@me.com_fordpass_token.txt 0777 hass hass"
+  ];
   services.home-assistant.extraComponents = [
     "esphome"
     "met"
@@ -15,6 +18,7 @@
     "bluetooth"
     "automation"
     "tplink"
+    "onvif"
     "hue"
     "apple_tv"
     "itunes"
@@ -23,11 +27,27 @@
     "homekit"
     "homekit_controller"
     "zeroconf"
+    "tuya"
+    "twinkly"
     "zha"
   ];
   services.home-assistant.customComponents = [
     pkgs.home-assistant-custom-components.spook
     pkgs.home-assistant-custom-components.localtuya
+    (pkgs.buildHomeAssistantComponent rec {
+      owner = "AlexxIT";
+      domain = "sonoff";
+      version = "3.8.1";
+      src = pkgs.fetchFromGitHub {
+        owner = "AlexxIT";
+        repo = "SonoffLAN";
+        rev = "v${version}";
+        sha256 = "sha256-dxwrJeAo5DsLC14GGI4MJ+cY5pXVD9M1gi0TW2eQtb0=";
+      };
+      propagatedBuildInputs = [
+        pkgs.python312Packages.pycryptodome
+      ];
+    })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "amosyuen";
       domain = "tplink_deco";
@@ -59,23 +79,23 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexandrErohin";
       domain = "tplink_router";
-      version = "1.15.1";
+      version = "1.19.0";
       src = pkgs.fetchFromGitHub {
         owner = "AlexandrErohin";
         repo = "home-assistant-tplink-router";
         rev = "v${version}";
-        sha256 = "sha256-kvNNWOILoByaQNeU0tcPCJPXJxS+Eo6cbmTJ9D2Y+AY=";
+        sha256 = "sha256-UEsgDELff5xH4kefnM1hV1g9uheXRWRGcMaj+wjuzl0=";
       };
       propagatedBuildInputs = [
         pkgs.python312Packages.pycryptodome
         (
           pkgs.python3.pkgs.buildPythonPackage rec {
             pname = "tplinkrouterc6u";
-            version = "4.1.1";
+            version = "4.2.3";
             pyproject = true;
             src = pkgs.fetchPypi {
               inherit pname version;
-              hash = "sha256-KEtHCVHlvau49xJ2l6gpAOD/CQv/r9eKSoWWTaabW2g=";
+              hash = "sha256-+M7OHSR+bqti9uWAIsclYHmbZr4A7KA8+daCk//WXtE=";
             };
             propagatedBuildInputs = with pkgs.python3Packages; [
               setuptools
@@ -90,34 +110,37 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "BottlecapDave";
       domain = "octopus_energy";
-      version = "12.1.0";
+      version = "13.0.3";
       src = pkgs.fetchFromGitHub {
         owner = "BottlecapDave";
         repo = "HomeAssistant-OctopusEnergy";
         rev = "v${version}";
-        sha256 = "sha256-LCYj3ik+qop/A6KtqWg5PL5/lxu/wRgsO5dcl5yZpXg=";
+        sha256 = "sha256-uKApToM80IZM+nQqN1qn1sFNLznY92Bf0aoR3oE0siA=";
       };
     })
-    (pkgs.buildHomeAssistantComponent rec {
+    (pkgs.buildHomeAssistantComponent {
       owner = "itchannel";
       domain = "fordpass";
       version = "1.70";
       src = pkgs.fetchFromGitHub {
-        owner = "itchannel";
+        owner = "TheLizard";
         repo = "fordpass-ha";
-        rev = "${version}";
-        sha256 = "sha256-Xs6Mlw2k1irZlRLG6dj1S963ufU28amVT3PaJ+lPJN8=";
+        rev = "82471007394e6961627929ab004216807726ad1f";
+        sha256 = "sha256-MB9d0Wl7cSamZbe7Te6/4C9Xebo3vsp3PDQUnK0aqks=";
       };
+      postInstall = ''
+        ln -s /tmp/dmjgilbert@me.com_fordpass_token.txt $out/custom_components/fordpass/dmjgilbert@me.com_fordpass_token.txt
+      '';
     })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "libdyson-wg";
       domain = "dyson_local";
-      version = "1.3.11";
+      version = "1.4.2";
       src = pkgs.fetchFromGitHub {
         owner = "libdyson-wg";
         repo = "ha-dyson";
         rev = "v${version}";
-        sha256 = "sha256-NWHMc70TA2QYmMHf8skY6aIkRs4iP+1NDURQDhi2yGc=";
+        sha256 = "sha256-JMtT4ZZleb3kMifXxrOVzBJpftp1B/eghhBujyRT3EM=";
       };
     })
     (pkgs.buildHomeAssistantComponent rec {

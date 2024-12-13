@@ -146,14 +146,14 @@ in {
         use_x_forwarded_for = true;
         trusted_proxies = ["127.0.0.1"];
       };
-      camera = [
-        {
-          platform = "ffmpeg";
-          name = "local_usb_cam";
-          input = "/dev/video0";
-          extra_arguments = "-f video4linux2";
-        }
-      ];
+      # camera = [
+      #   {
+      #     platform = "ffmpeg";
+      #     name = "local_usb_cam";
+      #     input = "/dev/video0";
+      #     extra_arguments = "-f video4linux2";
+      #   }
+      # ];
       mobile_app = {};
       frontend.themes = "!include ${theme}/${theme.pname}.yaml";
       history = {};
