@@ -14,6 +14,7 @@
         biome
         prettierd
         luajitPackages.lua-lsp
+        sourcekit-lsp
         sumneko-lua-language-server
         nodePackages.vscode-langservers-extracted
         nodePackages.typescript-language-server
@@ -27,23 +28,30 @@
         direnv
         nix-direnv
         stylua
+        swiftformat
 
         # nodejs
-        nodejs_20
+        nodejs_22
         # rust
         cargo
         rustc
         rust-analyzer
         rustfmt
         clippy
+
+        ollama
+        # open-webui
       ]
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
         # tools
         zoom-us
         slack
-        obsidian
+        # obsidian
         openconnect
         keepassxc
+
+        tuist
+        fastlane
 
         jankyborders
         cocoapods

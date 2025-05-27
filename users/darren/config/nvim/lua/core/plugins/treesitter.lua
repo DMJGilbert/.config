@@ -27,6 +27,7 @@ return {
 				"toml",
 				"nix",
 				"dart",
+				"swift",
 			},
 			highlight = {
 				enable = true,

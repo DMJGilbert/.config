@@ -10,12 +10,16 @@
     onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
     global.brewfile = true;
+    brews = [
+      "xcode-build-server" # sourcekit-lsp outside of xcode
+    ];
     casks = [
       "alfred"
       "displaylink"
       "docker"
       "figma"
       "flutter"
+      "swiftformat-for-xcode"
       "librewolf"
       "microsoft-teams"
       "teamviewer"
