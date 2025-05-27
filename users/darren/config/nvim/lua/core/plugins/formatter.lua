@@ -39,6 +39,15 @@ return {
 				rust = { require("formatter.filetypes.rust").rustfmt },
 				sh = { require("formatter.filetypes.sh").shfmt },
 				nix = { require("formatter.filetypes.nix").alejandra },
+				swift = {
+					function()
+						return {
+							exe = "swiftformat",
+							args = { "stdin", "--stdinpath", get_current_file_name() },
+							stdin = true,
+						}
+					end,
+				},
 				["*"] = {
 					function()
 						return { exe = "sed", args = { "-i", "''", "'s/[	 ]*$//'" } }

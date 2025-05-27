@@ -1,7 +1,7 @@
 {...}: {
   imports = [./shared.nix];
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   system = {
     stateVersion = 5;
@@ -135,12 +135,7 @@
     };
   };
 
-  nix = {
-    configureBuildUsers = true;
-    useDaemon = true;
-  };
   services = {
-    nix-daemon.enable = true;
     yabai.enable = true;
     skhd.enable = true;
   };
