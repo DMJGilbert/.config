@@ -48,7 +48,6 @@
         slack
         # obsidian
         openconnect
-        keepassxc
 
         tuist
         fastlane

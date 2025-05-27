@@ -4,6 +4,7 @@
   security.pam.services.sudo_local.touchIdAuth = true;
 
   system = {
+    primaryUser = "darren";
     stateVersion = 5;
     keyboard = {
       enableKeyMapping = true;
