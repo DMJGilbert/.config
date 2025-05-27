@@ -84,7 +84,7 @@
               area_id = ["bathroom"];
             };
             data = {
-              brightness_pct = 100;
+              brightness_pct = 85;
             };
           }
           {

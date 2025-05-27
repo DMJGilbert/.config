@@ -32,9 +32,9 @@
       bat
       eza
 
-      python312Packages.getmac
-      python312Packages.aiohomekit
-      python312Packages.aiowebostv
+      # python312Packages.getmac
+      # python312Packages.aiohomekit
+      # python312Packages.aiowebostv
     ];
     variables = {
       EDITOR = "nvim";

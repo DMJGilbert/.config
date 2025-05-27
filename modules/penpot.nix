@@ -14,6 +14,7 @@
           environment = {
             "PENPOT_FLAGS" = "disable-registration enable-login-with-password enable-insecure-register enable-prepl-server";
             "PENPOT_DATABASE_URI" = "postgresql://penpot-postgres/penpot";
+            "PENPOT_PUBLIC_URI" = "https://penpot.gilberts.one";
             "PENPOT_DATABASE_USERNAME" = "penpot";
             "PENPOT_DATABASE_PASSWORD" = "penpot";
             "PENPOT_REDIS_URI" = "redis://penpot-redis/0";

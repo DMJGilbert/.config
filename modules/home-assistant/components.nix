@@ -8,7 +8,7 @@
     "google_translate"
     "calendar"
     "caldav"
-    "tradfri"
+    # "tradfri"
     "radio_browser"
     "light"
     "blueprint"
@@ -34,18 +34,19 @@
   services.home-assistant.customComponents = [
     pkgs.home-assistant-custom-components.spook
     pkgs.home-assistant-custom-components.localtuya
+    pkgs.home-assistant-custom-components.yoto_ha
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexxIT";
       domain = "sonoff";
-      version = "3.8.1";
+      version = "3.8.2";
       src = pkgs.fetchFromGitHub {
         owner = "AlexxIT";
         repo = "SonoffLAN";
         rev = "v${version}";
-        sha256 = "sha256-dxwrJeAo5DsLC14GGI4MJ+cY5pXVD9M1gi0TW2eQtb0=";
+        sha256 = "sha256-U5fFuG4KZNenfKoDBe7GV1IbV8XRtUtuTWEQks+Lo+Q=";
       };
       propagatedBuildInputs = [
-        pkgs.python312Packages.pycryptodome
+        pkgs.python313Packages.pycryptodome
       ];
     })
     (pkgs.buildHomeAssistantComponent rec {
@@ -59,7 +60,7 @@
         sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
       };
       propagatedBuildInputs = [
-        pkgs.python312Packages.pycryptodome
+        pkgs.python313Packages.pycryptodome
       ];
     })
     (pkgs.buildHomeAssistantComponent {
@@ -73,31 +74,31 @@
         sha256 = "sha256-xUha26YiSKY+5aRmZviHFqyPLUqOdN6/L/Ikcpe/YH0=";
       };
       propagatedBuildInputs = [
-        pkgs.python312Packages.pycryptodome
+        pkgs.python313Packages.pycryptodome
       ];
     })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexandrErohin";
       domain = "tplink_router";
-      version = "1.19.0";
+      version = "2.2.0";
       src = pkgs.fetchFromGitHub {
         owner = "AlexandrErohin";
         repo = "home-assistant-tplink-router";
         rev = "v${version}";
-        sha256 = "sha256-UEsgDELff5xH4kefnM1hV1g9uheXRWRGcMaj+wjuzl0=";
+        sha256 = "sha256-wn5bZG4zHi9VbB6vXMOr+rRLMliOMbY4XgAB/NPjhb8=";
       };
       propagatedBuildInputs = [
-        pkgs.python312Packages.pycryptodome
+        pkgs.python313Packages.pycryptodome
         (
-          pkgs.python3.pkgs.buildPythonPackage rec {
+          pkgs.python313.pkgs.buildPythonPackage rec {
             pname = "tplinkrouterc6u";
-            version = "4.2.3";
+            version = "5.3.0";
             pyproject = true;
             src = pkgs.fetchPypi {
               inherit pname version;
-              hash = "sha256-+M7OHSR+bqti9uWAIsclYHmbZr4A7KA8+daCk//WXtE=";
+              hash = "sha256-hB0ItV9pgwfWj+XyJ+FZKay8Qrja4EMTQJdJmi4bsto=";
             };
-            propagatedBuildInputs = with pkgs.python3Packages; [
+            propagatedBuildInputs = with pkgs.python313Packages; [
               setuptools
               pycryptodome
               requests
@@ -110,13 +111,16 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "BottlecapDave";
       domain = "octopus_energy";
-      version = "13.0.3";
+      version = "13.5.3";
       src = pkgs.fetchFromGitHub {
         owner = "BottlecapDave";
         repo = "HomeAssistant-OctopusEnergy";
         rev = "v${version}";
-        sha256 = "sha256-uKApToM80IZM+nQqN1qn1sFNLznY92Bf0aoR3oE0siA=";
+        sha256 = "sha256-qkPHb4o6rwXvifT+1L/pmpmJy3Qv4+ZYlhMn/cDnYDA=";
       };
+      propagatedBuildInputs = with pkgs.python313Packages; [
+        pydantic
+      ];
     })
     (pkgs.buildHomeAssistantComponent {
       owner = "itchannel";
@@ -154,9 +158,9 @@
         sha256 = "sha256-IkHtTnDpAJhuRA+IHzqCgRcferKAmQJLKWHq6+r3SrE=";
       };
       propagatedBuildInputs = [
-        pkgs.python312Packages.unidecode
+        pkgs.python313Packages.unidecode
         (
-          pkgs.python3.pkgs.buildPythonPackage rec {
+          pkgs.python313.pkgs.buildPythonPackage rec {
             pname = "pyaarlo";
             version = "0.8.0.7";
             pyproject = true;
@@ -164,7 +168,7 @@
               inherit pname version;
               hash = "sha256-mhlSdFNznDj9WqDr6o71f0EBUThZUSXsJH259mSBzrM=";
             };
-            propagatedBuildInputs = with pkgs.python3Packages; [
+            propagatedBuildInputs = with pkgs.python313Packages; [
               setuptools
               requests
               click

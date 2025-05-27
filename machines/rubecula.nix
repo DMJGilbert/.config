@@ -102,6 +102,31 @@ in {
     };
   };
 
+  services = {
+    ollama = {
+      enable = true;
+      openFirewall = true;
+      host = "0.0.0.0";
+      port = 6667;
+      acceleration = "cuda";
+      loadModels = ["codellama:7b"];
+    };
+
+    open-webui = {
+      enable = true;
+      host = "0.0.0.0";
+      port = 6666;
+      openFirewall = true;
+      environment = {
+        ANONYMIZED_TELEMETRY = "False";
+        DO_NOT_TRACK = "True";
+        SCARF_NO_ANALYTICS = "True";
+        OLLAMA_API_BASE_URL = "http://127.0.0.1:6667";
+        WEBUI_AUTH = "False";
+      };
+    };
+  };
+
   services.home-assistant = {
     enable = true;
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [

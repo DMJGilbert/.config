@@ -34,6 +34,6 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.enableAllFirmware = true;
   hardware.bluetooth.enable = true;
-  hardware.facetimehd.enable = true;
+  # hardware.facetimehd.enable = true;
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
