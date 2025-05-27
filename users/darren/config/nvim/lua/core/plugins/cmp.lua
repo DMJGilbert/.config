@@ -11,10 +11,6 @@ return {
 		{ "f3fora/cmp-spell" },
 		{ "ray-x/cmp-treesitter" },
 		{ "saecki/crates.nvim", dependencies = "nvim-lua/plenary.nvim", opts = {} },
-		{
-			"tzachar/cmp-tabnine",
-			build = "./install.sh",
-		},
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -46,7 +42,6 @@ return {
 			},
 			sources = {
 				{ name = "nvim_lsp" },
-				{ name = "cmp_tabnine" },
 				{ name = "vsnip" },
 				{
 					name = "buffer",

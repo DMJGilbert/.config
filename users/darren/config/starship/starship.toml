@@ -1,5 +1,6 @@
 format = """
 [](#232634)\
+$os\
 $directory\
 [](fg:#232634 bg:#303446)\
 $git_status\
@@ -58,3 +59,7 @@ time_format = "%R" # Hour:Minute Format
 style = "bg:#33658A"
 format = '[ $time ]($style)'
 
+[os]
+format = "[($name | )]($style)"
+style = "bg:#232634"
+disabled = false
