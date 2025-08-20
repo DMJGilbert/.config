@@ -109,7 +109,7 @@ in {
       host = "0.0.0.0";
       port = 6667;
       acceleration = "cuda";
-      loadModels = ["codellama:7b"];
+      loadModels = ["devstral"];
     };
 
     open-webui = {

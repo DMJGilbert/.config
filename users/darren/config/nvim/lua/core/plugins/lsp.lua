@@ -11,6 +11,7 @@ return {
 	},
 	config = function()
 		local nvim_lsp = require("lspconfig")
+		vim.lsp.inlay_hint.enable(true)
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -65,12 +66,6 @@ return {
 					diagnostics = {
 						disabled = { "inactive-code" },
 					},
-					imports = {
-						granularity = {
-							group = "module",
-						},
-						prefix = "self",
-					},
 					check = {
 						command = "clippy",
 					},
@@ -83,6 +78,32 @@ return {
 					},
 					procMacro = {
 						enable = true,
+					},
+					inlayHints = {
+						bindingModeHints = {
+							enable = false,
+						},
+						chainingHints = {
+							enable = true,
+						},
+						closingBraceHints = {
+							enable = true,
+							minLines = 25,
+						},
+						lifetimeElisionHints = {
+							enable = "never",
+							useParameterNames = false,
+						},
+						maxLength = 25,
+						parameterHints = {
+							enable = true,
+						},
+						renderColons = true,
+						typeHints = {
+							enable = true,
+							hideClosureInitialization = false,
+							hideNamedConstructor = false,
+						},
 					},
 				},
 			},
