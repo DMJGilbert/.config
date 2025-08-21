@@ -10,8 +10,6 @@ in {
     ./../modules/home-assistant/automations.nix
     ./../modules/home-assistant/components.nix
     ./shared.nix
-
-    ./../modules/penpot.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -89,42 +87,31 @@ in {
         proxyWebsockets = true;
       };
     };
-    virtualHosts."penpot.gilberts.one" = {
-      forceSSL = true;
-      enableACME = true;
-      extraConfig = ''
-        proxy_buffering off;
-      '';
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:9000";
-        proxyWebsockets = true;
-      };
-    };
   };
 
   services = {
-    ollama = {
-      enable = true;
-      openFirewall = true;
-      host = "0.0.0.0";
-      port = 6667;
-      acceleration = "cuda";
-      loadModels = ["devstral"];
-    };
+    # ollama = {
+    #   enable = true;
+    #   openFirewall = true;
+    #   host = "0.0.0.0";
+    #   port = 6667;
+    #   acceleration = "cuda";
+    #   loadModels = ["devstral"];
+    # };
 
-    open-webui = {
-      enable = true;
-      host = "0.0.0.0";
-      port = 6666;
-      openFirewall = true;
-      environment = {
-        ANONYMIZED_TELEMETRY = "False";
-        DO_NOT_TRACK = "True";
-        SCARF_NO_ANALYTICS = "True";
-        OLLAMA_API_BASE_URL = "http://127.0.0.1:6667";
-        WEBUI_AUTH = "False";
-      };
-    };
+    # open-webui = {
+    #   enable = true;
+    #   host = "0.0.0.0";
+    #   port = 6666;
+    #   openFirewall = true;
+    #   environment = {
+    #     ANONYMIZED_TELEMETRY = "False";
+    #     DO_NOT_TRACK = "True";
+    #     SCARF_NO_ANALYTICS = "True";
+    #     OLLAMA_API_BASE_URL = "http://127.0.0.1:6667";
+    #     WEBUI_AUTH = "False";
+    #   };
+    # };
   };
 
   services.home-assistant = {
