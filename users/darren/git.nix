@@ -1,11 +1,13 @@
 _: {
   enable = true;
-  userName = "DMJGilbert";
-  userEmail = "dmjgilbert@me.com";
-  extraConfig = {
+  settings = {
+    user = {
+      name = "DMJGilbert";
+      email = "dmjgilbert@me.com";
+      signingkey = "~/.ssh/id_ed25519";
+    };
     init.defaultBranch = "main";
     gpg.format = "ssh";
-    user.signingkey = "~/.ssh/id_ed25519";
     commit.gpgsign = true;
     github = {user = "DMJGilbert";};
   };

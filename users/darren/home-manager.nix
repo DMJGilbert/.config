@@ -15,7 +15,7 @@
         prettierd
         luajitPackages.lua-lsp
         sourcekit-lsp
-        sumneko-lua-language-server
+        lua-language-server
         nodePackages.vscode-langservers-extracted
         nodePackages.typescript-language-server
         nodePackages.prettier
