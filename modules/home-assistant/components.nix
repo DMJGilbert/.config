@@ -1,7 +1,8 @@
 {pkgs, ...}: {
-  systemd.tmpfiles.rules = [
-    "f /var/lib/hass/custom_components/fordpass/dmjgilbert@me.com_fordpass_token.txt 0777 hass hass"
-  ];
+  # Token file no longer needed with marq24's ha-fordpass integration
+  # systemd.tmpfiles.rules = [
+  #   "f /var/lib/hass/custom_components/fordpass/dmjgilbert@me.com_fordpass_token.txt 0777 hass hass"
+  # ];
   services.home-assistant.extraComponents = [
     "esphome"
     "met"
@@ -30,11 +31,15 @@
     "tuya"
     "twinkly"
     "zha"
+    "icloud"
+    "systemmonitor"
+    "energy"
   ];
   services.home-assistant.customComponents = [
     pkgs.home-assistant-custom-components.spook
     pkgs.home-assistant-custom-components.localtuya
     pkgs.home-assistant-custom-components.yoto_ha
+    pkgs.home-assistant-custom-components.adaptive_lighting
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexxIT";
       domain = "sonoff";
@@ -122,19 +127,31 @@
         pydantic
       ];
     })
-    (pkgs.buildHomeAssistantComponent {
-      owner = "itchannel";
+    (pkgs.buildHomeAssistantComponent rec {
+      owner = "marq24";
       domain = "fordpass";
-      version = "1.70";
+      version = "2025.11.2";
       src = pkgs.fetchFromGitHub {
-        owner = "TheLizard";
-        repo = "fordpass-ha";
-        rev = "82471007394e6961627929ab004216807726ad1f";
-        sha256 = "sha256-MB9d0Wl7cSamZbe7Te6/4C9Xebo3vsp3PDQUnK0aqks=";
+        owner = "marq24";
+        repo = "ha-fordpass";
+        rev = version;
+        sha256 = "sha256-sjDy1okRD4ESwHAYiaQZQx7WVldm/7lsk/7zIIKVXpo=";
       };
-      postInstall = ''
-        ln -s /tmp/dmjgilbert@me.com_fordpass_token.txt $out/custom_components/fordpass/dmjgilbert@me.com_fordpass_token.txt
-      '';
+    })
+    (pkgs.buildHomeAssistantComponent rec {
+      owner = "vasqued2";
+      domain = "teamtracker";
+      version = "0.14.9";
+      src = pkgs.fetchFromGitHub {
+        owner = "vasqued2";
+        repo = "ha-teamtracker";
+        rev = "v${version}";
+        sha256 = "sha256-UCWsprFkoEtBnoiemegmqPMawJ1/j0bpWaz4qNVTt9k=";
+      };
+      propagatedBuildInputs = with pkgs.python313Packages; [
+        arrow
+        aiofiles
+      ];
     })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "libdyson-wg";

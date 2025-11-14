@@ -33,7 +33,7 @@
               area_id = ["hallway"];
             };
             data = {
-              brightness_pct = 20;
+              brightness_pct = 10;
             };
           }
           {
@@ -302,7 +302,7 @@
             alias = "Wait until there is no motion from sensor";
             wait_for_trigger = {
               platform = "state";
-              entity_id = "binary_sensor.bedroom_motion_sensor_occupancy";
+              entity_id = "binary_sensor.living_room_motion_sensor_occupancy";
               from = "on";
               to = "off";
             };
@@ -359,6 +359,36 @@
         ];
         mode = "queued";
         max = 5;
+      }
+      {
+        alias = "Low battery notifications";
+        description = "Alert when device batteries are low";
+        trigger = [
+          {
+            platform = "numeric_state";
+            entity_id = [
+              "sensor.hallway_motion_sensor_battery"
+              "sensor.motion_sensor_battery"
+              "sensor.bedroom_motion_sensor_battery"
+              "sensor.living_room_motion_sensor_battery"
+            ];
+            below = 20;
+          }
+        ];
+        action = [
+          {
+            service = "notify.mobile_app_hatchling";
+            data = {
+              title = "Low Battery Alert";
+              message = "{{ trigger.to_state.attributes.friendly_name }} battery is at {{ trigger.to_state.state }}%";
+              data = {
+                priority = "high";
+              };
+            };
+          }
+        ];
+        mode = "queued";
+        max = 10;
       }
     ];
   };

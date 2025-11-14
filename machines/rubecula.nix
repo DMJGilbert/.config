@@ -19,10 +19,20 @@ in {
 
   services.logind = {
     lidSwitch = "ignore";
-    extraConfig = ''
-      HandlePowerKey=ignore
-    '';
   };
+
+  # Zigbee USB dongle configuration
+  services.udev.extraRules = ''
+    # Sonoff Zigbee 3.0 USB Dongle Plus - disable autosuspend and set permissions
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0660", GROUP="dialout", SYMLINK+="zigbee"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTR{power/autosuspend}="-1"
+  '';
+
+  # Disable services that interfere with USB serial devices
+  services.brltty.enable = false;
+
+  # Ensure hass user can access serial devices
+  users.users.hass.extraGroups = ["dialout"];
 
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -129,6 +139,7 @@ in {
       light-entity-card
       mushroom
       card-mod
+      apexcharts-card
     ];
     extraPackages = python3Packages:
       with python3Packages; [
@@ -218,9 +229,28 @@ in {
             url = "/local/nixos-lovelace-modules/card-mod.js";
             type = "module";
           }
+          {
+            url = "/local/nixos-lovelace-modules/apexcharts-card.js";
+            type = "module";
+          }
         ];
       };
       ffmpeg = {};
+      energy = {};
+      sensor = [
+        {
+          platform = "systemmonitor";
+          resources = [
+            {type = "disk_use_percent"; arg = "/";}
+            {type = "memory_use_percent";}
+            {type = "processor_use";}
+            {type = "processor_temperature";}
+            {type = "load_1m";}
+            {type = "load_5m";}
+            {type = "load_15m";}
+          ];
+        }
+      ];
       template = [
         {
           sensor = {
