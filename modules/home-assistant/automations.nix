@@ -15,7 +15,7 @@
         };
       }
       {
-        alias = "Hallway lights";
+        alias = "Hallway lights (motion)";
         description = "";
         mode = "restart";
         max_exceeded = "silent";
@@ -54,6 +54,37 @@
             service = "light.turn_off";
             target = {
               area_id = ["hallway"];
+            };
+          }
+        ];
+      }
+      {
+        alias = "Hallway lights (manual off)";
+        description = "Turn off hallway light after 10 minutes if turned on manually";
+        mode = "restart";
+        max_exceeded = "silent";
+        trigger = {
+          platform = "state";
+          entity_id = "light.hallway_light";
+          from = "off";
+          to = "on";
+        };
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ trigger.to_state.context.parent_id == none }}";
+          }
+        ];
+        action = [
+          {
+            alias = "Wait for 10 minutes";
+            delay = 600;
+          }
+          {
+            alias = "Turn off the light";
+            service = "light.turn_off";
+            target = {
+              entity_id = ["light.hallway_light"];
             };
           }
         ];
