@@ -6,14 +6,6 @@ local augroup = vim.api.nvim_create_augroup
 -- General Settings
 local general = augroup("General Settings", { clear = true })
 
-autocmd("BufWritePost", {
-	callback = function()
-		vim.cmd('silent! FormatWrite"')
-	end,
-	group = general,
-	desc = "Format file when written",
-})
-
 autocmd("BufReadPost", {
 	callback = function()
 		if fn.line("'\"") > 1 and fn.line("'\"") <= fn.line("$") then
@@ -24,12 +16,18 @@ autocmd("BufReadPost", {
 	desc = "Go To The Last Cursor Position",
 })
 
-autocmd("FocusGained", {
-	callback = function()
-		vim.cmd("checktime")
-	end,
+vim.api.nvim_create_autocmd("FocusGained", {
+	desc = "Reload files from disk when we focus vim",
+	pattern = "*",
+	command = "if getcmdwintype() == '' | checktime | endif",
 	group = general,
-	desc = "Update file when there are changes",
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	desc = "Every time we enter an unmodified buffer, check if it changed on disk",
+	pattern = "*",
+	command = "if &buftype == '' && !&modified && expand('%') != '' | exec 'checktime ' . expand('<abuf>') | endif",
+	group = general,
 })
 
 autocmd("ModeChanged", {

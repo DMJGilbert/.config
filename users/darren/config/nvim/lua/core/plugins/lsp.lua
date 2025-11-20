@@ -1,6 +1,6 @@
 return {
 	"neovim/nvim-lspconfig",
-	event = { "BufReadPre", "BufNewFile" },
+	event = { "BufReadPre", "BufNewFile", "BufReadPost" },
 	keys = {
 		-- { "gs", "<cmd>lua vim.lsp.buf.declaration()<cr>" },
 		{ "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>" },
@@ -10,7 +10,7 @@ return {
 		-- { "<leader>a", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
 	},
 	config = function()
-		local nvim_lsp = require("lspconfig")
+		-- Migrated to vim.lsp.config (Neovim 0.11+)
 		vim.lsp.inlay_hint.enable(true)
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -27,15 +27,30 @@ return {
 			lineFolding = true,
 		}
 
-		nvim_lsp.lua_ls.setup({
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
+		-- Global on_attach callback using LspAttach autocmd (recommended pattern)
+		vim.api.nvim_create_autocmd("LspAttach", {
+			callback = function(args)
+				local client = vim.lsp.get_client_by_id(args.data.client_id)
+				if client then
+					client.server_capabilities.document_formatting = true
+				end
 			end,
+		})
+
+		-- Set default root marker for all clients
+		vim.lsp.config("*", {
+			root_markers = { ".git" },
+		})
+
+		-- Lua Language Server
+		vim.lsp.config.lua_ls = {
+			cmd = { "lua-language-server" },
+			filetypes = { "lua" },
+			root_markers = { ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", ".git" },
+			capabilities = capabilities,
 			settings = {
 				Lua = {
 					runtime = {
-						-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
 						version = "LuaJIT",
 						path = vim.split(package.path, ";"),
 					},
@@ -43,7 +58,6 @@ return {
 						globals = { "vim" },
 					},
 					workspace = {
-						-- Make the server aware of Neovim runtime files
 						library = {
 							[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 							[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
@@ -54,13 +68,14 @@ return {
 					},
 				},
 			},
-		})
+		}
 
-		nvim_lsp.rust_analyzer.setup({
+		-- Rust Analyzer
+		vim.lsp.config.rust_analyzer = {
+			cmd = { "rust-analyzer" },
+			filetypes = { "rust" },
+			root_markers = { "Cargo.toml", "rust-project.json" },
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
 			settings = {
 				["rust-analyzer"] = {
 					diagnostics = {
@@ -107,73 +122,94 @@ return {
 					},
 				},
 			},
-		})
+		}
 
-		nvim_lsp.biome.setup({
+		-- Biome
+		vim.lsp.config.biome = {
+			cmd = { "biome", "lsp-proxy" },
 			filetypes = { "json", "javascript", "javascriptreact", "typescript", "typescriptreact", "typescript.tsx" },
+			root_markers = { "biome.json", "biome.jsonc" },
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
-		nvim_lsp.tsserver.setup({
-			filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
-		nvim_lsp.cssls.setup({
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
-		nvim_lsp.html.setup({
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
-		-- nvim_lsp.eslint.setup({
-		-- 	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-		-- 	capabilities = capabilities,
-		-- 	on_attach = function(client)
-		-- 		client.server_capabilities.document_formatting = true
-		-- 	end,
-		-- })
-		--
-		nvim_lsp.dartls.setup({
-			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		}
 
-		nvim_lsp.gopls.setup({
+		-- TypeScript Language Server
+		vim.lsp.config.ts_ls = {
+			cmd = { "typescript-language-server", "--stdio" },
+			filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact" },
+			root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		}
 
-		nvim_lsp.bashls.setup({
+		-- CSS Language Server
+		vim.lsp.config.cssls = {
+			cmd = { "vscode-css-language-server", "--stdio" },
+			filetypes = { "css", "scss", "less" },
+			root_markers = { "package.json", ".git" },
+			capabilities = capabilities,
+		}
+
+		-- HTML Language Server
+		vim.lsp.config.html = {
+			cmd = { "vscode-html-language-server", "--stdio" },
+			filetypes = { "html" },
+			root_markers = { "package.json", ".git" },
+			capabilities = capabilities,
+		}
+
+		-- Dart Language Server
+		vim.lsp.config.dartls = {
+			cmd = { "dart", "language-server", "--protocol=lsp" },
+			filetypes = { "dart" },
+			root_markers = { "pubspec.yaml", ".git" },
+			capabilities = capabilities,
+		}
+
+		-- Go Language Server
+		vim.lsp.config.gopls = {
+			cmd = { "gopls" },
+			filetypes = { "go", "gomod", "gowork", "gotmpl" },
+			root_markers = { "go.work", "go.mod", ".git" },
+			capabilities = capabilities,
+		}
+
+		-- Bash Language Server
+		vim.lsp.config.bashls = {
+			cmd = { "bash-language-server", "start" },
 			filetypes = { "sh", "bash" },
+			root_markers = { ".git" },
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		}
 
-		nvim_lsp.clangd.setup({
-			filetypes = { "c", "cpp", "h", "hpp" },
+		-- Clangd (C/C++)
+		vim.lsp.config.clangd = {
+			cmd = { "clangd" },
+			filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "h", "hpp" },
+			root_markers = {
+				".clangd",
+				".clang-tidy",
+				".clang-format",
+				"compile_commands.json",
+				"compile_flags.txt",
+				"configure.ac",
+				".git",
+			},
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		}
 
-		nvim_lsp.tailwindcss.setup({
+		-- Tailwind CSS
+		vim.lsp.config.tailwindcss = {
+			cmd = { "tailwindcss-language-server", "--stdio" },
+			filetypes = { "html", "css", "scss", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+			root_markers = {
+				"tailwind.config.js",
+				"tailwind.config.cjs",
+				"tailwind.config.mjs",
+				"tailwind.config.ts",
+				"postcss.config.js",
+				"postcss.config.cjs",
+				"postcss.config.mjs",
+				"postcss.config.ts",
+			},
 			capabilities = capabilities,
 			settings = {
 				tailwindCSS = {
@@ -188,39 +224,50 @@ return {
 					},
 				},
 			},
-		})
+		}
 
-		nvim_lsp.nil_ls.setup({
+		-- Nix Language Server
+		vim.lsp.config.nil_ls = {
+			cmd = { "nil" },
+			filetypes = { "nix" },
+			root_markers = { "flake.nix", "default.nix", "shell.nix", ".git" },
 			capabilities = capabilities,
-			on_attach = function(client)
-				client.server_capabilities.document_formatting = true
-			end,
-		})
+		}
 
-		nvim_lsp.sourcekit.setup({
-			capabilities = capabilities,
+		-- SourceKit (Swift)
+		vim.lsp.config.sourcekit = {
 			cmd = {
 				"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
 			},
-			root_dir = function(filename, _)
-				local util = require("lspconfig.util")
-				return util.root_pattern("buildServer.json")(filename)
-					or util.root_pattern("*.xcodeproj", "*.xcworkspace")(filename)
-					or util.find_git_ancestor(filename)
-					or util.root_pattern("Package.swift")(filename)
-					or util.root_pattern("Project.swift")(filename)
-			end,
+			filetypes = { "swift", "objective-c", "objective-cpp" },
+			root_markers = { "buildServer.json", "Package.swift", "Project.swift", ".git" },
+			capabilities = capabilities,
+		}
+
+		-- Enable all configured LSP servers
+		vim.lsp.enable({
+			"lua_ls",
+			"rust_analyzer",
+			"biome",
+			"ts_ls",
+			"cssls",
+			"html",
+			"dartls",
+			"gopls",
+			"bashls",
+			"clangd",
+			"tailwindcss",
+			"nil_ls",
+			"sourcekit",
 		})
 
-		-- nvim_lsp.statix.setup({
-		--     capabilities = capabilities,
-		-- })
-
-		vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-			virtual_text = true,
-			signs = false,
-			underline = true,
-			update_on_insert = true,
-		})
+		-- Configure diagnostic display
+		vim.lsp.handlers["textDocument/publishDiagnostics"] =
+			vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+				virtual_text = true,
+				signs = false,
+				underline = true,
+				update_on_insert = true,
+			})
 	end,
 }

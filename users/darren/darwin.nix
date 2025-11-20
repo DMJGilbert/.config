@@ -15,6 +15,7 @@
     ];
     casks = [
       "alfred"
+      "claude-code"
       "displaylink"
       "docker"
       "figma"
