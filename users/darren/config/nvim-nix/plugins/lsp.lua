@@ -1,5 +1,3 @@
--- Migrated to vim.lsp.config (Neovim 0.11+)
--- Enable inlay hints globally
 vim.lsp.inlay_hint.enable(true)
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
