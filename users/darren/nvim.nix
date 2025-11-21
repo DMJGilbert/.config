@@ -83,11 +83,6 @@
 
       # UI plugins
       {
-        plugin = alpha-nvim;
-        type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/alpha.lua;
-      }
-      {
         plugin = noice-nvim;
         type = "lua";
         config = builtins.readFile ./config/nvim-nix/plugins/noice.lua;

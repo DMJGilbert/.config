@@ -2,6 +2,26 @@ local scope = require("telescope")
 local actions = require("telescope.actions")
 scope.setup({
 	extensions_list = { "themes", "terms" },
+	pickers = {
+		find_files = {
+			disable_devicons = true,
+		},
+		buffers = {
+			disable_devicons = true,
+		},
+		live_grep = {
+			disable_devicons = true,
+		},
+		lsp_references = {
+			disable_devicons = true,
+		},
+		lsp_document_symbols = {
+			disable_devicons = true,
+		},
+		diagnostics = {
+			disable_devicons = true,
+		},
+	},
 	defaults = {
 		extensions = {
 			["ui-select"] = {
@@ -12,6 +32,7 @@ scope.setup({
 			},
 			file_browser = {
 				theme = "ivy",
+				disable_devicons = true,
 			},
 		},
 		mappings = {
@@ -47,7 +68,7 @@ scope.setup({
 		winblend = 0,
 		border = {},
 		borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
-		color_devicons = true,
+		color_devicons = false,
 		set_env = { ["COLORTERM"] = "truecolor" },
 		file_previewer = require("telescope.previewers").vim_buffer_cat.new,
 		grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
@@ -75,7 +96,7 @@ vim.keymap.set("n", "<leader>o", function()
 		find_command = { "rg", "--files", "--hidden" },
 		file_ignore_patterns = {
 			".git/",
-			"aurora%-toolkit",
+			"aurora%-*",
 			"amppstreamingsdk",
 			"target/",
 			"node%_modules/.*",
