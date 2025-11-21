@@ -59,29 +59,7 @@
         jankyborders
         cocoapods
       ]);
-    file = {
-      starship = {
-        target = ".config/starship.toml";
-        source = ./config/starship/starship.toml;
-      };
-      zellij = {
-        target = ".config/zellij";
-        source = ./config/zellij;
-        recursive = true;
-      };
-      skhd = {
-        executable = true;
-        target = ".config/skhd/skhdrc";
-        source = ./config/skhd/skhdrc;
-        recursive = true;
-      };
-      yabai = {
-        executable = true;
-        target = ".config/yabai";
-        source = ./config/yabai;
-        recursive = true;
-      };
-    };
+    file = {};
   };
 
   manual.manpages.enable = false;
@@ -107,10 +85,86 @@
         ${builtins.readFile ./config/wezterm/wezterm.lua}
       '';
     };
-    starship.enable = true;
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        add_newline = false;
+        command_timeout = 1000;
+        format = "[](#232634)$os$directory[](fg:#232634 bg:#303446)$git_status[](fg:#303446 bg:#86BBD8)[](fg:#86BBD8 bg:#06969A)[](fg:#06969A bg:#33658A)$time[ ](fg:#33658A)";
+        directory = {
+          style = "bg:#232634";
+          format = "[$path ]($style)";
+          truncation_length = 0;
+          truncation_symbol = "";
+          substitutions = {
+            "Documents" = " ";
+            "Downloads" = " ";
+            "Music" = " ";
+            "Pictures" = " ";
+            "~/Developer" = " ";
+          };
+        };
+
+        docker_context.disabled = true;
+        git_branch.disabled = true;
+
+        git_status = {
+          disabled = true;
+          style = "bg:#303446";
+          format = "[  $all_status$ahead_behind ]($style)";
+          conflicted = "🏳";
+          up_to_date = "";
+          untracked = "";
+          ahead = "⇡\${count}";
+          diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
+          behind = "⇣\${count}";
+          stashed = " ";
+          modified = "";
+          staged = "";
+          renamed = "";
+          deleted = "";
+        };
+
+        package.disabled = true;
+
+        time = {
+          disabled = false;
+          time_format = "%R";
+          style = "bg:#33658A";
+          format = "[ $time ]($style)";
+        };
+
+        os = {
+          format = "[($name | )]($style)";
+          style = "bg:#232634";
+          disabled = false;
+        };
+      };
+    };
     zellij = {
       enable = true;
       enableZshIntegration = true;
+      settings = {
+        simplified_ui = true;
+        pane_frames = false;
+        theme = "catppucin-latte";
+        default_layout = "compact";
+        themes.catppucin-latte = {
+          fg = [198 208 245];
+          bg = [98 104 128];
+          black = [41 44 60];
+          red = [231 130 132];
+          green = [166 209 137];
+          yellow = [229 200 144];
+          blue = [140 170 238];
+          magenta = [244 184 228];
+          cyan = [153 209 219];
+          white = [198 208 245];
+          orange = [239 159 118];
+        };
+        ui.pane_frames.hide_session_name = true;
+      };
     };
     zoxide = {
       enable = true;
