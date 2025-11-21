@@ -16,25 +16,32 @@
 
   # SketchyBar configuration
   home.file.".config/sketchybar/sketchybarrc" = {
-    source = ./sketchybarrc;
+    source = ./config/sketchybar/sketchybarrc;
     executable = true;
   };
 
   home.file.".config/sketchybar/plugins/aerospace.sh" = {
-    source = ./sketchybar-plugin-aerospace.sh;
+    source = ./config/sketchybar/plugins/aerospace.sh;
     executable = true;
   };
 
-  # Create border color switcher script
-  home.file.".local/bin/aerospace-set-border-color" = {
-    text = ''
-      #!/usr/bin/env bash
-      # Script to change JankyBorders color
-      # Usage: aerospace-set-border-color <color_hex>
+  home.file.".config/sketchybar/plugins/clock.sh" = {
+    source = ./config/sketchybar/plugins/clock.sh;
+    executable = true;
+  };
 
-      killall borders 2>/dev/null
-      exec borders active_color="$1" inactive_color=0x00000000 width=10.0 &
-    '';
+  home.file.".config/sketchybar/plugins/ram.sh" = {
+    source = ./config/sketchybar/plugins/ram.sh;
+    executable = true;
+  };
+
+  home.file.".config/sketchybar/plugins/cpu.sh" = {
+    source = ./config/sketchybar/plugins/cpu.sh;
+    executable = true;
+  };
+
+  home.file.".config/sketchybar/plugins/network.sh" = {
+    source = ./config/sketchybar/plugins/network.sh;
     executable = true;
   };
 
@@ -78,7 +85,7 @@
     config = {
       ProgramArguments = [
         "${pkgs.jankyborders}/bin/borders"
-        "active_color=0xff81c8be"
+        "active_color=0xff00c1ad"
         "inactive_color=0x00000000"
         "width=10.0"
       ];
@@ -90,36 +97,19 @@
     };
   };
 
-  # Note: SketchyBar is started by AeroSpace via after-startup-command
-  # See .aerospace.toml for the configuration
-
-  # Optional: Create a helper script for manual border control
-  # Useful for debugging or custom automations
-  home.file.".local/bin/aerospace-border-mode" = {
-    text = ''
-      #!/usr/bin/env bash
-      # Helper script to manually change border colors
-      # Usage: aerospace-border-mode [default|move|resize|switch]
-
-      case "$1" in
-        default|main)
-          borders active_color=0xff81c8be inactive_color=0x00000000 width=10.0
-          ;;
-        move)
-          borders active_color=0xffef9f76 inactive_color=0x00000000 width=10.0
-          ;;
-        resize)
-          borders active_color=0xffe5c890 inactive_color=0x00000000 width=10.0
-          ;;
-        switch)
-          borders active_color=0xffe78284 inactive_color=0x00000000 width=10.0
-          ;;
-        *)
-          echo "Usage: aerospace-border-mode [default|move|resize|switch]"
-          exit 1
-          ;;
-      esac
-    '';
-    executable = true;
+  # Launch SketchyBar at login
+  launchd.agents.sketchybar = {
+    enable = true;
+    config = {
+      ProgramArguments = ["${pkgs.sketchybar}/bin/sketchybar"];
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Interactive";
+      StandardOutPath = "/tmp/sketchybar.log";
+      StandardErrorPath = "/tmp/sketchybar.error.log";
+      EnvironmentVariables = {
+        PATH = "/etc/profiles/per-user/darren/bin:/run/current-system/sw/bin:${pkgs.sketchybar}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      };
+    };
   };
 }

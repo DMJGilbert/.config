@@ -14,12 +14,11 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 # Notify sketchybar on workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
-  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+    '/etc/profiles/per-user/darren/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
 
-# Start sketchybar alongside aerospace
+# Note: SketchyBar is now started via launchd agent (see aerospace.nix)
 after-startup-command = [
-    'exec-and-forget sketchybar',
     'workspace W', 'layout h_tiles', 'move-workspace-to-monitor 1',
     'workspace C', 'layout accordion', 'move-workspace-to-monitor 2',
     'workspace P', 'layout accordion', 'move-workspace-to-monitor 2',
@@ -113,9 +112,9 @@ cmd-shift-alt-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borde
 cmd-shift-alt-ctrl-f = ['layout tiles accordion']
 
 # Exit to default mode (cyan border)
-esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
 
 # ========================================
 # Resize mode (gold border: 0xffe5c890)
@@ -135,9 +134,9 @@ cmd-shift-alt-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borde
 cmd-shift-alt-ctrl-f = ['balance-sizes']
 
 # Exit to default mode (cyan border)
-esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
 
 # ========================================
 # Switch mode (red border: 0xffe78284)
@@ -156,9 +155,9 @@ cmd-shift-alt-ctrl-m = ['exec-and-forget /etc/profiles/per-user/darren/bin/borde
 cmd-shift-alt-ctrl-r = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe5c890', 'mode resize']
 
 # Exit to default mode (cyan border)
-esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff00c1ad', 'mode main']
 
 # Work
 [[on-window-detected]]
