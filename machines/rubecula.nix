@@ -13,39 +13,35 @@ in {
   ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-
-  services.logind = {
-    lidSwitch = "ignore";
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+    efi.efiSysMountPoint = "/boot/efi";
   };
-
-  # Zigbee USB dongle configuration
-  services.udev.extraRules = ''
-    # Sonoff Zigbee 3.0 USB Dongle Plus - disable autosuspend and set permissions
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0660", GROUP="dialout", SYMLINK+="zigbee"
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTR{power/autosuspend}="-1"
-  '';
-
-  # Disable services that interfere with USB serial devices
-  services.brltty.enable = false;
 
   # Ensure hass user can access serial devices
   users.users.hass.extraGroups = ["dialout"];
 
-  # networking.hostName = "nixos"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
-  networking.hostName = "rubecula";
+  networking = {
+    # networking.hostName = "nixos"; # Define your hostname.
+    # Pick only one of the below networking options.
+    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    networkmanager.enable = true; # Easiest to use and most distros use this by default.
+    hostName = "rubecula";
+
+    # Configure network proxy if necessary
+    # proxy.default = "http://user:password@proxy:port/";
+    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+    # Open ports in the firewall.
+    # firewall.allowedTCPPorts = [ ... ];
+    # firewall.allowedUDPPorts = [ ... ];
+    # Or disable the firewall altogether.
+    firewall.enable = false;
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/London";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   # i18n.defaultLocale = "en_US.UTF-8";
@@ -55,16 +51,7 @@ in {
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
   programs.git.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = false;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -74,32 +61,49 @@ in {
   environment.systemPackages = with pkgs; [vim unzip gcc arion];
 
   virtualisation.docker.enable = true;
-  services.tailscale.enable = true;
-  services.adguardhome = {
-    enable = true;
-    mutableSettings = true;
-  };
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "dmjgilbert@gmail.com";
 
-  services.nginx = {
-    enable = true;
-    recommendedProxySettings = true;
-    virtualHosts."home.gilberts.one" = {
-      forceSSL = true;
-      enableACME = true;
-      extraConfig = ''
-        proxy_buffering off;
-      '';
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8123";
-        proxyWebsockets = true;
+  services = {
+    # Zigbee USB dongle configuration
+    udev.extraRules = ''
+      # Sonoff Zigbee 3.0 USB Dongle Plus - disable autosuspend and set permissions
+      SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0660", GROUP="dialout", SYMLINK+="zigbee"
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTR{power/autosuspend}="-1"
+    '';
+
+    # Disable services that interfere with USB serial devices
+    brltty.enable = false;
+
+    logind.settings.Login.HandleLidSwitch = "ignore";
+
+    # Enable the OpenSSH daemon.
+    openssh.enable = true;
+
+    tailscale.enable = true;
+
+    adguardhome = {
+      enable = true;
+      mutableSettings = true;
+    };
+
+    nginx = {
+      enable = true;
+      recommendedProxySettings = true;
+      virtualHosts."home.gilberts.one" = {
+        forceSSL = true;
+        enableACME = true;
+        extraConfig = ''
+          proxy_buffering off;
+        '';
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8123";
+          proxyWebsockets = true;
+        };
       };
     };
-  };
 
-  services = {
     # ollama = {
     #   enable = true;
     #   openFirewall = true;
@@ -122,220 +126,223 @@ in {
     #     WEBUI_AUTH = "False";
     #   };
     # };
-  };
 
-  services.home-assistant = {
-    enable = true;
-    customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-      pkgs.hass-catppuccin
-      pkgs.hass-bubble-card
-      pkgs.lovelace-auto-entities
-      pkgs.lovelace-tabbed-card
-      mini-graph-card
-      multiple-entity-row
-      decluttering-card
-      button-card
-      lg-webos-remote-control
-      light-entity-card
-      mushroom
-      card-mod
-      apexcharts-card
-    ];
-    extraPackages = python3Packages:
-      with python3Packages; [
-        isal
-        zlib-ng
+    home-assistant = {
+      enable = true;
+      customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
+        pkgs.hass-catppuccin
+        pkgs.hass-bubble-card
+        pkgs.lovelace-auto-entities
+        pkgs.lovelace-tabbed-card
+        mini-graph-card
+        multiple-entity-row
+        decluttering-card
+        button-card
+        lg-webos-remote-control
+        light-entity-card
+        mushroom
+        card-mod
+        apexcharts-card
       ];
+      extraPackages = python3Packages:
+        with python3Packages; [
+          isal
+          zlib-ng
+        ];
 
-    config = {
-      default_config = {};
-      logger = {
-        logs = {
+      config = {
+        default_config = {};
+        logger = {
+          logs = {
+          };
         };
-      };
-      homeassistant = {
-        name = "Home";
-        country = "GB";
-        radius = 50;
-        unit_system = "metric";
-        time_zone = "Europe/London";
-        internal_url = "https://home.gilberts.one";
-        external_url = "https://home.gilberts.one";
-        allowlist_external_dirs = ["/etc"];
-      };
-      http = {
-        server_host = "0.0.0.0";
-        server_port = 8123;
-        use_x_forwarded_for = true;
-        trusted_proxies = ["127.0.0.1"];
-      };
-      # camera = [
-      #   {
-      #     platform = "ffmpeg";
-      #     name = "local_usb_cam";
-      #     input = "/dev/video0";
-      #     extra_arguments = "-f video4linux2";
-      #   }
-      # ];
-      mobile_app = {};
-      frontend.themes = "!include ${theme}/${theme.pname}.yaml";
-      history = {};
-      config = {};
-      system_health = {};
-      lovelace = {
-        mode = "yaml";
-        resources = [
+        homeassistant = {
+          name = "Home";
+          country = "GB";
+          radius = 50;
+          unit_system = "metric";
+          time_zone = "Europe/London";
+          internal_url = "https://home.gilberts.one";
+          external_url = "https://home.gilberts.one";
+          allowlist_external_dirs = ["/etc"];
+        };
+        http = {
+          server_host = "0.0.0.0";
+          server_port = 8123;
+          use_x_forwarded_for = true;
+          trusted_proxies = ["127.0.0.1"];
+        };
+        # camera = [
+        #   {
+        #     platform = "ffmpeg";
+        #     name = "local_usb_cam";
+        #     input = "/dev/video0";
+        #     extra_arguments = "-f video4linux2";
+        #   }
+        # ];
+        mobile_app = {};
+        frontend.themes = "!include ${theme}/${theme.pname}.yaml";
+        history = {};
+        config = {};
+        system_health = {};
+        lovelace = {
+          mode = "yaml";
+          resources = [
+            {
+              url = "/local/nixos-lovelace-modules/bubble-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/tabbed-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/auto-entities.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/mushroom.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/multiple-entity-row.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/decluttering-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/button-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/light-entity-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/mini-graph-card-bundle.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/lg-remote-control.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/card-mod.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/apexcharts-card.js";
+              type = "module";
+            }
+          ];
+        };
+        ffmpeg = {};
+        energy = {};
+        sensor = [
           {
-            url = "/local/nixos-lovelace-modules/bubble-card.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/tabbed-card.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/auto-entities.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/mushroom.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/multiple-entity-row.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/decluttering-card.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/button-card.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/light-entity-card.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/mini-graph-card-bundle.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/lg-remote-control.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/card-mod.js";
-            type = "module";
-          }
-          {
-            url = "/local/nixos-lovelace-modules/apexcharts-card.js";
-            type = "module";
+            platform = "systemmonitor";
+            resources = [
+              {
+                type = "disk_use_percent";
+                arg = "/";
+              }
+              {type = "memory_use_percent";}
+              {type = "processor_use";}
+              {type = "processor_temperature";}
+              {type = "load_1m";}
+              {type = "load_5m";}
+              {type = "load_15m";}
+            ];
           }
         ];
-      };
-      ffmpeg = {};
-      energy = {};
-      sensor = [
-        {
-          platform = "systemmonitor";
-          resources = [
-            {type = "disk_use_percent"; arg = "/";}
-            {type = "memory_use_percent";}
-            {type = "processor_use";}
-            {type = "processor_temperature";}
-            {type = "load_1m";}
-            {type = "load_5m";}
-            {type = "load_15m";}
-          ];
-        }
-      ];
-      template = [
-        {
-          sensor = {
-            name = "Total Turned On Lights Count Template";
-            state = "{{ states.light | rejectattr('attributes.entity_id', 'defined') | selectattr('state', 'eq', 'on') | list | count }}";
-          };
-        }
-        {
-          sensor = {
-            name = "Total Active Motion Sensors Count Template";
-            state = "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'motion') |
+        template = [
+          {
+            sensor = {
+              name = "Total Turned On Lights Count Template";
+              state = "{{ states.light | rejectattr('attributes.entity_id', 'defined') | selectattr('state', 'eq', 'on') | list | count }}";
+            };
+          }
+          {
+            sensor = {
+              name = "Total Active Motion Sensors Count Template";
+              state = "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'motion') |
             selectattr('state', 'eq', 'on') | list | count + states.binary_sensor |
             selectattr('attributes.device_class', 'eq', 'occupancy') | selectattr('state', 'eq', 'on') | list | count
             }}";
+            };
+          }
+          {
+            sensor = {
+              name = "Total Media Players Playing Template";
+              state = "{{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}";
+            };
+          }
+        ];
+        group = {
+          motion = {
+            name = "Home motion";
+            entities = [
+              # "binary_sensor.aarlo_motion_nursery"
+              "binary_sensor.motion_sensor_motion"
+              # "binary_sensor.robynne_motion_sensor_occupancy"
+              "binary_sensor.bedroom_motion_sensor_occupancy"
+              "binary_sensor.hallway_motion_sensor_occupancy"
+              "binary_sensor.living_room_motion_sensor_occupancy"
+            ];
           };
-        }
-        {
-          sensor = {
-            name = "Total Media Players Playing Template";
-            state = "{{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}";
+          hallway_lights = {
+            name = "Hallway Lights";
+            entities = [
+              "light.doorway"
+              "light.hallway"
+            ];
           };
-        }
-      ];
-      group = {
-        motion = {
-          name = "Home motion";
-          entities = [
-            # "binary_sensor.aarlo_motion_nursery"
-            "binary_sensor.motion_sensor_motion"
-            # "binary_sensor.robynne_motion_sensor_occupancy"
-            "binary_sensor.bedroom_motion_sensor_occupancy"
-            "binary_sensor.hallway_motion_sensor_occupancy"
-            "binary_sensor.living_room_motion_sensor_occupancy"
-          ];
+          living_room_lights = {
+            name = "Living Room Lights";
+            entities = [
+              "light.living_room_light"
+              "light.dining_room_light_3"
+              "light.sofa_light_switch"
+            ];
+          };
+          kitchen_lights = {
+            name = "Kitchen Lights";
+            entities = [
+              "light.kitchen_microwave"
+              "light.kitchen_sink"
+              "light.kitchen_random"
+            ];
+          };
+          bathroom_lights = {
+            name = "Bathroom Lights";
+            entities = [
+              "light.bath_light"
+              "light.sink_light"
+              "light.toilet_light"
+            ];
+          };
+          bedroom_lights = {
+            name = "Bedroom Lights";
+            entities = [
+              "light.above_bed_light"
+              "light.bedroom_light_2"
+              "light.darren_switch"
+              "light.lorraine_switch"
+            ];
+          };
+          robynne_lights = {
+            name = "Robynne Lights";
+            entities = [
+              "light.robynne_light"
+              "light.aarlo_nursery"
+              "light.fairy_lights_switch"
+            ];
+          };
         };
-        hallway_lights = {
-          name = "Hallway Lights";
-          entities = [
-            "light.doorway"
-            "light.hallway"
-          ];
-        };
-        living_room_lights = {
-          name = "Living Room Lights";
-          entities = [
-            "light.living_room_light"
-            "light.dining_room_light_3"
-            "light.sofa_light_switch"
-          ];
-        };
-        kitchen_lights = {
-          name = "Kitchen Lights";
-          entities = [
-            "light.kitchen_microwave"
-            "light.kitchen_sink"
-            "light.kitchen_random"
-          ];
-        };
-        bathroom_lights = {
-          name = "Bathroom Lights";
-          entities = [
-            "light.bath_light"
-            "light.sink_light"
-            "light.toilet_light"
-          ];
-        };
-        bedroom_lights = {
-          name = "Bedroom Lights";
-          entities = [
-            "light.above_bed_light"
-            "light.bedroom_light_2"
-            "light.darren_switch"
-            "light.lorraine_switch"
-          ];
-        };
-        robynne_lights = {
-          name = "Robynne Lights";
-          entities = [
-            "light.robynne_light"
-            "light.aarlo_nursery"
-            "light.fairy_lights_switch"
-          ];
-        };
+        scene = [];
       };
-      scene = [];
     };
   };
   # This option defines the first version of NixOS you have installed on this particular machine,
