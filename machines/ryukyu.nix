@@ -49,7 +49,7 @@
         wvous-tl-corner = 1;
         wvous-tr-corner = 1;
       };
-      spaces.spans-displays = false;
+      spaces.spans-displays = true;
       NSGlobalDomain = {
         _HIHideMenuBar = true;
 
@@ -136,114 +136,5 @@
     };
   };
 
-  services = {
-    yabai = {
-      enable = true;
-      enableScriptingAddition = true;
-      config = {
-        mouse_follows_focus = "off";
-        focus_follows_mouse = "off";
-        window_shadow = "off";
-        window_opacity = "on";
-        window_opacity_duration = "0.0";
-        active_window_opacity = "1.0";
-        normal_window_opacity = "1.0";
-        split_ratio = "0.60";
-        auto_balance = "off";
-        mouse_modifier = "fn";
-        mouse_action1 = "move";
-        mouse_action2 = "resize";
-        mouse_drop_action = "swap";
-        layout = "bsp";
-        top_padding = 5;
-        bottom_padding = 5;
-        left_padding = 5;
-        right_padding = 5;
-        window_gap = 5;
-      };
-      extraConfig = ''
-        borders active_color=0xff00c1ad inactive_color=0x00000000 width=10.0 &
-
-        yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
-        sudo yabai --load-sa
-
-        # ===== Rules ==================================
-
-        yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
-        yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
-        yabai -m rule --add label="System Preferences" app="^System Preferences$" title=".*" manage=off
-        yabai -m rule --add label="App Store" app="^App Store$" manage=off
-        yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
-        yabai -m rule --add label="KeePassXC" app="^KeePassXC$" manage=off
-        yabai -m rule --add label="Calculator" app="^Calculator$" manage=off
-        yabai -m rule --add label="Dictionary" app="^Dictionary$" manage=off
-        yabai -m rule --add label="Software Update" title="Software Update" manage=off
-        yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
-
-        yabai -m signal --add event=window_destroyed active=yes action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse &> /dev/null || yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id) &> /dev/null"
-      '';
-    };
-    skhd = {
-      enable = true;
-      skhdConfig = ''
-        :: default : borders active_color=0xff81c8be
-        :: resize_win @ : borders active_color=0xffe5c890
-        :: move_win @ : borders active_color=0xffef9f76
-        :: switch_win @ : borders active_color=0xffe78284
-
-        default     < hyper - m     ; move_win
-        default     < hyper - r     ; resize_win
-        default     < hyper - c     ; switch_win
-        resize_win  < hyper - m     ; move_win
-        resize_win  < hyper - c     ; switch_win
-        switch_win  < hyper - m     ; move_win
-        switch_win  < hyper - r     ; resize_win
-        move_win    < hyper - r     ; resize_win
-        move_win    < hyper - c     ; switch_win
-
-        resize_win  < escape        ; default
-        move_win    < escape        ; default
-        switch_win  < escape        ; default
-        resize_win  < return        ; default
-        move_win    < return        ; default
-        switch_win  < return        ; default
-        resize_win  < ctrl - c      ; default
-        move_win    < ctrl - c      ; default
-        switch_win  < ctrl - c      ; default
-
-        hyper - q : yabai -m display --focus west
-        hyper - w : yabai -m display --focus east
-
-        hyper - a : yabai -m space --focus prev
-        hyper - s : yabai -m space --focus next
-
-        hyper - f : yabai -m window --toggle zoom-fullscreen
-        hyper - x : yabai -m space --destroy
-        hyper - t : yabai -m space --create;\
-                    id="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')";\
-                    yabai -m window --space "$id";\
-                    yabai -m space --focus "$id"
-
-        hyper - space : yabai -m space --balance
-
-        move_win < left : yabai -m window --warp west
-        move_win < right : yabai -m window --warp east
-        move_win < up : yabai -m window --warp north
-        move_win < down : yabai -m window --warp south
-
-        resize_win < left : yabai -m window --resize left:-50:0 || yabai -m window --resize right:-50:0
-        resize_win < right : yabai -m window --resize right:50:0 || yabai -m window --resize left:50:0
-        resize_win < down : yabai -m window --resize bottom:0:50 || yabai -m window --resize top:0:50
-        resize_win < up : yabai -m window --resize top:0:-50 || yabai -m window --resize bottom:0:-50
-
-        switch_win < left : yabai -m window --focus west
-        switch_win < right : yabai -m window --focus east
-        switch_win < up : yabai -m window --focus north
-        switch_win < down : yabai -m window --focus south
-
-        ctrl - return : /opt/homebrew/bin/wezterm start --always-new-process
-        cmd - q : echo ""
-      '';
-    };
-  };
+  services = {};
 }

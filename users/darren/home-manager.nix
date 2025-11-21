@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   imports = [
     ./nvim.nix
+    ./aerospace.nix
   ];
 
   home = {

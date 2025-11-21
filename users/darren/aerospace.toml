@@ -1,0 +1,195 @@
+# Reference: https://github.com/nikitabobko/AeroSpace
+
+# Start at login
+start-at-login = true
+
+# Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Default layout
+default-root-container-layout = 'tiles'
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# Notify sketchybar on workspace changes
+exec-on-workspace-change = ['/bin/bash', '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
+
+# Start sketchybar alongside aerospace
+after-startup-command = [
+    'exec-and-forget sketchybar',
+    'workspace W', 'layout h_tiles', 'move-workspace-to-monitor 1',
+    'workspace C', 'layout accordion', 'move-workspace-to-monitor 2',
+    'workspace P', 'layout accordion', 'move-workspace-to-monitor 2',
+    'workspace F', 'layout accordion', 'move-workspace-to-monitor 2'
+]
+
+[gaps]
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 5
+outer.right = 5
+# Per-monitor top gap: 5px for MacBook built-in screen, 40px for external monitors
+outer.top = [{ monitor.main = 5 }, 40]
+outer.bottom = 5
+
+# Ignored apps
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+if.window-title-regex-substring = '^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'org.keepassxc.keepassxc'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Dictionary'
+run = ['layout floating']
+
+# Main/Default mode keybindings
+[mode.main.binding]
+
+# Mode switches (hyper = cmd+shift+alt+ctrl)
+cmd-shift-alt-ctrl-m = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffef9f76', 'mode move']
+cmd-shift-alt-ctrl-r = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe5c890', 'mode resize']
+cmd-shift-alt-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe78284', 'mode switch']
+
+# Workspace cycling (hyper-a/s)
+cmd-shift-alt-ctrl-a = 'exec-and-forget ~/.local/bin/aerospace-workspace-prev'
+cmd-shift-alt-ctrl-s = 'exec-and-forget ~/.local/bin/aerospace-workspace-next'
+
+# Window navigation (hyper-q/w)
+cmd-shift-alt-ctrl-q = 'focus left'
+cmd-shift-alt-ctrl-w = 'focus right'
+
+# Window management (hyper-f/x/t/space)
+cmd-shift-alt-ctrl-f = 'fullscreen'
+
+# Open new terminal (ctrl-return)
+ctrl-enter = 'exec-and-forget open -na WezTerm'
+
+# Disable cmd-q 
+cmd-q = []
+
+# ========================================
+# Move mode (orange border: 0xffef9f76)
+# ========================================
+
+[mode.move.binding]
+
+# Move windows with arrow keys
+left = 'move left'
+right = 'move right'
+up = 'move up'
+down = 'move down'
+
+# Display navigation (hyper-a/s)
+cmd-shift-alt-ctrl-a = ['move-node-to-monitor next --wrap-around --focus-follows-window']
+cmd-shift-alt-ctrl-s = ['move-node-to-monitor prev --wrap-around --focus-follows-window']
+
+# Switch to other modes
+cmd-shift-alt-ctrl-r = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe5c890', 'mode resize']
+cmd-shift-alt-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe78284', 'mode switch']
+cmd-shift-alt-ctrl-f = ['layout tiles accordion']
+
+# Exit to default mode (cyan border)
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+
+# ========================================
+# Resize mode (gold border: 0xffe5c890)
+# ========================================
+
+[mode.resize.binding]
+
+# Resize windows with arrow keys (smart resize like your yabai config)
+left = 'resize width -50'
+right = 'resize width +50'
+up = 'resize height +50'
+down = 'resize height -50'
+
+# Switch to other modes
+cmd-shift-alt-ctrl-m = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffef9f76', 'mode move']
+cmd-shift-alt-ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe78284', 'mode switch']
+cmd-shift-alt-ctrl-f = ['balance-sizes']
+
+# Exit to default mode (cyan border)
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+
+# ========================================
+# Switch mode (red border: 0xffe78284)
+# ========================================
+
+[mode.switch.binding]
+
+# Focus windows with arrow keys
+left = 'focus left'
+right = 'focus right'
+up = 'focus up'
+down = 'focus down'
+
+# Switch to other modes
+cmd-shift-alt-ctrl-m = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffef9f76', 'mode move']
+cmd-shift-alt-ctrl-r = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xffe5c890', 'mode resize']
+
+# Exit to default mode (cyan border)
+esc = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+enter = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+ctrl-c = ['exec-and-forget /etc/profiles/per-user/darren/bin/borders active_color=0xff81c8be', 'mode main']
+
+# Work
+[[on-window-detected]]
+if.app-id = 'com.github.wez.wezterm'
+run = 'move-node-to-workspace W'
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+if.window-title-regex-substring = 'Work'
+run = 'move-node-to-workspace W'
+
+# Communication 
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace C'
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace C'
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace C'
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'move-node-to-workspace C'
+
+# Fun
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = 'move-node-to-workspace F'
+
+# Personal
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+if.window-title-regex-substring = 'Personal'
+run = 'move-node-to-workspace P'
