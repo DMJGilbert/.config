@@ -1,4 +1,8 @@
 {pkgs, ...}: {
+  imports = [
+    ./nvim.nix
+  ];
+
   home = {
     stateVersion = "23.11";
     packages = with pkgs;
@@ -56,11 +60,6 @@
         cocoapods
       ]);
     file = {
-      nvim = {
-        target = ".config/nvim";
-        source = ./config/nvim;
-        recursive = true;
-      };
       starship = {
         target = ".config/starship.toml";
         source = ./config/starship/starship.toml;
@@ -93,13 +92,6 @@
     direnv = {
       enable = true;
       nix-direnv.enable = true;
-    };
-    neovim = {
-      enable = true;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
-      vimdiffAlias = true;
     };
     eza.enable = true;
     wezterm = {
