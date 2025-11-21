@@ -15,10 +15,9 @@
       "ifstat"
     ];
     casks = [
-      "alfred"
       "claude-code"
       "displaylink"
-      "docker"
+      "docker-desktop"
       "figma"
       "flutter"
       "swiftformat-for-xcode"

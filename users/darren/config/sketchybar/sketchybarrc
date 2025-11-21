@@ -6,7 +6,6 @@ export ACTIVE_COLOR=0xcc00c1ad
 
 sketchybar --add event aerospace_workspace_change
 
-############## BAR ##############
 sketchybar -m --bar height=35 \
     blur_radius=0 \
     position=top \
@@ -18,7 +17,6 @@ sketchybar -m --bar height=35 \
     border_width=0 \
     border_color=0x00000000
 
-############## GLOBAL DEFAULTS ##############
 sketchybar -m --default updates=when_shown \
     drawing=on \
     background.height=35 \
@@ -39,7 +37,6 @@ sketchybar -m --add item logo left \
     background.padding_right=0 \
     click_script="sketchybar -m --update"
 
-# Create workspace items with icons
 sketchybar -m --add space space.W left \
     --subscribe space.W aerospace_workspace_change \
     --set space.W \
@@ -82,6 +79,7 @@ sketchybar -m --add space space.F left \
 
 sketchybar -m --add item clock_logo right --set clock_logo icon=󱑆 \
     background.color=0xff8caaee
+
 sketchybar -m --add item clock right \
     --set clock update_freq=1 \
     script="$HOME/.config/sketchybar/plugins/clock.sh" \
@@ -117,11 +115,15 @@ sketchybar -m --add item cpu_label right \
     label=CPU \
     y_offset=7 \
     width=0 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
     \
     --add item cpu_percent right \
     --set cpu_percent label.font="SauceCodePro Nerd Font:Regular:11.0" \
     y_offset=-6 \
     update_freq=1 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
     script="$HOME/.config/sketchybar/plugins/cpu.sh"
 
 sketchybar -m --add item network_up right \
