@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+lib.mkIf pkgs.stdenv.isDarwin {
   # Install AeroSpace, JankyBorders, and SketchyBar
   home = {
     packages = with pkgs; [

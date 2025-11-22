@@ -1,13 +1,10 @@
 {pkgs, ...}: {
-  imports =
-    [
-      ./nvim.nix
-      ./zsh.nix
-      ./git.nix
-    ]
-    ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-      ./aerospace.nix
-    ];
+  imports = [
+    ./nvim.nix
+    ./aerospace.nix
+    ./zsh.nix
+    ./git.nix
+  ];
 
   home = {
     stateVersion = "23.11";
