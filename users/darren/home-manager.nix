@@ -1,6 +1,9 @@
 {pkgs, ...}: {
   imports = [
     ./nvim.nix
+    ./aerospace.nix
+    ./zsh.nix
+    ./git.nix
   ];
 
   home = {
@@ -64,8 +67,6 @@
 
   manual.manpages.enable = false;
   programs = {
-    zsh = import ./zsh.nix pkgs;
-    git = import ./git.nix pkgs;
     bat.enable = true;
     direnv = {
       enable = true;

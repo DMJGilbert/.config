@@ -12,12 +12,12 @@
     global.brewfile = true;
     brews = [
       "xcode-build-server" # sourcekit-lsp outside of xcode
+      "ifstat"
     ];
     casks = [
-      "alfred"
       "claude-code"
       "displaylink"
-      "docker"
+      "docker-desktop"
       "figma"
       "flutter"
       "swiftformat-for-xcode"
