@@ -75,7 +75,7 @@ sketchybar -m --add item clock right \
     icon.padding_left=0
 
 sketchybar -m --add item stats_logo right \
-    --set stats_logo icon= \
+    --set stats_logo icon= \
     icon.font="SauceCodePro Nerd Font:Regular:13.0" \
     background.color=0xffef9f76
 
