@@ -1,10 +1,13 @@
-{...}: {
+{config, ...}: let
+  username = "darren";
+  userHome = "/Users/${username}";
+in {
   imports = [./shared.nix];
 
   security.pam.services.sudo_local.touchIdAuth = true;
 
   system = {
-    primaryUser = "darren";
+    primaryUser = username;
     stateVersion = 5;
     keyboard = {
       enableKeyMapping = true;
@@ -128,7 +131,8 @@
         };
       };
 
-      screencapture.location = "/Users/darren/Downloads";
+      # Save screenshots to Downloads folder
+      screencapture.location = "${userHome}/Downloads";
       LaunchServices = {
         # Disable the "Are you sure you want to open this application?" dialog
         LSQuarantine = false;

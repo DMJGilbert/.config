@@ -1,15 +1,19 @@
 _: {
-  enable = true;
-  settings = {
-    user = {
-      name = "DMJGilbert";
-      email = "dmjgilbert@me.com";
-      signingkey = "~/.ssh/id_ed25519";
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+    signing = {
+      key = "~/.ssh/id_ed25519";
+      signByDefault = true;
     };
-    init.defaultBranch = "main";
-    gpg.format = "ssh";
-    commit.gpgsign = true;
-    github = {user = "DMJGilbert";};
+    settings = {
+      user = {
+        name = "DMJGilbert";
+        email = "dmjgilbert@me.com";
+      };
+      init.defaultBranch = "main";
+      gpg.format = "ssh";
+      github.user = "DMJGilbert";
+    };
   };
-  lfs.enable = true;
 }

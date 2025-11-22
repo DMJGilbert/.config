@@ -1,11 +1,16 @@
-#!/bin/bash
+#!/opt/local/bin/bash
 
+# Colors (Catppuccin Frappe inspired)
 export BG_COLOR=0xff414559
 export FG_COLOR=0xffffffff
 export ACTIVE_COLOR=0xcc00c1ad
 
+# Plugin directory
+export PLUGINS_DIR="$HOME/.config/sketchybar/plugins"
+
 sketchybar --add event aerospace_workspace_change
 
+############## BAR ##############
 sketchybar -m --bar height=35 \
     blur_radius=0 \
     position=top \
@@ -17,6 +22,7 @@ sketchybar -m --bar height=35 \
     border_width=0 \
     border_color=0x00000000
 
+############## GLOBAL DEFAULTS ##############
 sketchybar -m --default updates=when_shown \
     drawing=on \
     background.height=35 \
@@ -34,61 +40,42 @@ sketchybar -m --default label.padding_left=0 \
 sketchybar -m --add item logo left \
     --set logo icon= \
     background.color=0xffe78284 \
-    background.padding_right=0 \
-    click_script="sketchybar -m --update"
+    background.padding_right=0
 
-sketchybar -m --add space space.W left \
-    --subscribe space.W aerospace_workspace_change \
-    --set space.W \
-    associated_display=1 \
-    background.drawing=off \
-    background.color=$ACTIVE_COLOR \
-    icon= \
-    click_script="aerospace workspace W" \
-    script="$HOME/.config/sketchybar/plugins/aerospace.sh W"
+# Workspace definitions: key -> icon
+# W = Work, C = Communication, P = Personal, F = Fun
+declare -A workspace_icons=(
+    ["W"]=""
+    ["C"]="󰍡"
+    ["P"]=""
+    ["F"]="󰝚"
+)
 
-sketchybar -m --add space space.C left \
-    --subscribe space.C aerospace_workspace_change \
-    --set space.C \
-    associated_display=1 \
-    background.drawing=off \
-    background.color=$ACTIVE_COLOR \
-    icon=󰍡 \
-    click_script="aerospace workspace C" \
-    script="$HOME/.config/sketchybar/plugins/aerospace.sh C"
-
-sketchybar -m --add space space.P left \
-    --subscribe space.P aerospace_workspace_change \
-    --set space.P \
-    associated_display=1 \
-    background.drawing=off \
-    background.color=$ACTIVE_COLOR \
-    icon= \
-    click_script="aerospace workspace P" \
-    script="$HOME/.config/sketchybar/plugins/aerospace.sh P"
-
-sketchybar -m --add space space.F left \
-    --subscribe space.F aerospace_workspace_change \
-    --set space.F \
-    associated_display=1 \
-    background.drawing=off \
-    background.color=$ACTIVE_COLOR \
-    icon=󰝚 \
-    click_script="aerospace workspace F" \
-    script="$HOME/.config/sketchybar/plugins/aerospace.sh F"
+# Create workspace items using a loop to reduce duplication
+for ws in W C P F; do
+    sketchybar -m --add space space.$ws left \
+        --subscribe space.$ws aerospace_workspace_change \
+        --set space.$ws \
+        associated_display=1 \
+        background.drawing=off \
+        background.color=$ACTIVE_COLOR \
+        icon="${workspace_icons[$ws]}" \
+        click_script="aerospace workspace $ws" \
+        script="$PLUGINS_DIR/aerospace.sh $ws"
+done
 
 sketchybar -m --add item clock_logo right --set clock_logo icon=󱑆 \
     background.color=0xff8caaee
 
 sketchybar -m --add item clock right \
     --set clock update_freq=1 \
-    script="$HOME/.config/sketchybar/plugins/clock.sh" \
+    script="$PLUGINS_DIR/clock.sh" \
     label.padding_right=10 \
     label.padding_left=0 \
     icon.padding_left=0
 
 sketchybar -m --add item stats_logo right \
-    --set stats_logo icon= \
+    --set stats_logo icon= \
     icon.font="SauceCodePro Nerd Font:Regular:13.0" \
     background.color=0xffef9f76
 
@@ -108,7 +95,7 @@ sketchybar -m --add item ram_label right \
     label.padding_right=10 \
     label.padding_left=0 \
     icon.padding_left=0 \
-    script="$HOME/.config/sketchybar/plugins/ram.sh"
+    script="$PLUGINS_DIR/ram.sh"
 
 sketchybar -m --add item cpu_label right \
     --set cpu_label label.font="SauceCodePro Nerd Font:Regular:11.0" \
@@ -124,7 +111,7 @@ sketchybar -m --add item cpu_label right \
     update_freq=1 \
     label.padding_left=0 \
     icon.padding_left=0 \
-    script="$HOME/.config/sketchybar/plugins/cpu.sh"
+    script="$PLUGINS_DIR/cpu.sh"
 
 sketchybar -m --add item network_up right \
     --set network_up label.font="SauceCodePro Nerd Font:Regular:11.0" \
@@ -134,7 +121,7 @@ sketchybar -m --add item network_up right \
     y_offset=7 \
     width=0 \
     update_freq=1 \
-    script="$HOME/.config/sketchybar/plugins/network.sh" \
+    script="$PLUGINS_DIR/network.sh" \
     \
     --add item network_down right \
     --set network_down label.font="SauceCodePro Nerd Font:Regular:11.0" \
