@@ -21,7 +21,6 @@
         biome
         prettierd
         luajitPackages.lua-lsp
-        sourcekit-lsp
         lua-language-server
         nodePackages.vscode-langservers-extracted
         nodePackages.typescript-language-server
@@ -35,7 +34,6 @@
         direnv
         nix-direnv
         stylua
-        swiftformat
 
         # nodejs
         nodejs_22
@@ -46,7 +44,7 @@
         rustfmt
         clippy
 
-        ollama
+        # ollama
         # open-webui
       ]
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
@@ -58,6 +56,8 @@
 
         tuist
         fastlane
+        swiftformat
+        sourcekit-lsp
 
         jankyborders
         cocoapods

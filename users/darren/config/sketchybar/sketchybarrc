@@ -10,6 +10,13 @@ export PLUGINS_DIR="$HOME/.config/sketchybar/plugins"
 
 sketchybar --add event aerospace_workspace_change
 
+# Add a hidden item that handles workspace highlighting updates
+sketchybar --add item aerospace_handler left \
+    --set aerospace_handler \
+    drawing=off \
+    script="$PLUGINS_DIR/aerospace_update_all.sh" \
+    --subscribe aerospace_handler aerospace_workspace_change
+
 ############## BAR ##############
 sketchybar -m --bar height=35 \
     blur_radius=0 \
@@ -39,33 +46,13 @@ sketchybar -m --default label.padding_left=0 \
 
 sketchybar -m --add item logo left \
     --set logo icon= \
-    background.color=0xffe78284 \
+    background.color=0xff292c3c \
     background.padding_right=0
 
-# Workspace definitions: key -> icon
-# W = Work, C = Communication, P = Personal, F = Fun
-declare -A workspace_icons=(
-    ["W"]=""
-    ["C"]="󰍡"
-    ["P"]=""
-    ["F"]="󰝚"
-)
-
-# Create workspace items using a loop to reduce duplication
-for ws in W C P F; do
-    sketchybar -m --add space space.$ws left \
-        --subscribe space.$ws aerospace_workspace_change \
-        --set space.$ws \
-        associated_display=1 \
-        background.drawing=off \
-        background.color=$ACTIVE_COLOR \
-        icon="${workspace_icons[$ws]}" \
-        click_script="aerospace workspace $ws" \
-        script="$PLUGINS_DIR/aerospace.sh $ws"
-done
+"$PLUGINS_DIR/aerospace_refresh.sh"
 
 sketchybar -m --add item clock_logo right --set clock_logo icon=󱑆 \
-    background.color=0xff8caaee
+    background.color=0xff292c3c
 
 sketchybar -m --add item clock right \
     --set clock update_freq=1 \
@@ -74,10 +61,20 @@ sketchybar -m --add item clock right \
     label.padding_left=0 \
     icon.padding_left=0
 
+sketchybar -m --add item battery_logo right --set battery_logo icon=󰁹 \
+    background.color=0xff303446
+
+sketchybar -m --add item battery right \
+    --set battery update_freq=120 \
+    script="$PLUGINS_DIR/battery.sh" \
+    label.padding_right=10 \
+    label.padding_left=0 \
+    icon.padding_left=0
+
 sketchybar -m --add item stats_logo right \
     --set stats_logo icon= \
     icon.font="SauceCodePro Nerd Font:Regular:13.0" \
-    background.color=0xffef9f76
+    background.color=0xff414559
 
 sketchybar -m --add item ram_label right \
     --set ram_label label.font="SauceCodePro Nerd Font:Regular:11.0" \

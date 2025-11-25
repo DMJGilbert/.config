@@ -28,8 +28,23 @@ lib.mkIf pkgs.stdenv.isDarwin {
         executable = true;
       };
 
+      ".config/sketchybar/plugins/aerospace_refresh.sh" = {
+        source = ./config/sketchybar/plugins/aerospace_refresh.sh;
+        executable = true;
+      };
+
+      ".config/sketchybar/plugins/aerospace_update_all.sh" = {
+        source = ./config/sketchybar/plugins/aerospace_update_all.sh;
+        executable = true;
+      };
+
       ".config/sketchybar/plugins/clock.sh" = {
         source = ./config/sketchybar/plugins/clock.sh;
+        executable = true;
+      };
+
+      ".config/sketchybar/plugins/battery.sh" = {
+        source = ./config/sketchybar/plugins/battery.sh;
         executable = true;
       };
 
@@ -52,14 +67,15 @@ lib.mkIf pkgs.stdenv.isDarwin {
       ".local/bin/aerospace-workspace-next" = {
         text = ''
           #!/usr/bin/env bash
-          # Cycle to next workspace in order: W -> C -> P -> F -> W
-          CURRENT=$(aerospace list-workspaces --focused)
+          # Cycle to next workspace in order: W -> R -> C -> P -> F -> W
+          CURRENT=$(/etc/profiles/per-user/darren/bin/aerospace list-workspaces --focused)
           case "$CURRENT" in
-            W) aerospace workspace C ;;
-            C) aerospace workspace P ;;
-            P) aerospace workspace F ;;
-            F) aerospace workspace W ;;
-            *) aerospace workspace W ;;
+            W) /etc/profiles/per-user/darren/bin/aerospace workspace R ;;
+            R) /etc/profiles/per-user/darren/bin/aerospace workspace C ;;
+            C) /etc/profiles/per-user/darren/bin/aerospace workspace P ;;
+            P) /etc/profiles/per-user/darren/bin/aerospace workspace F ;;
+            F) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
+            *) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
           esac
         '';
         executable = true;
@@ -69,14 +85,15 @@ lib.mkIf pkgs.stdenv.isDarwin {
       ".local/bin/aerospace-workspace-prev" = {
         text = ''
           #!/usr/bin/env bash
-          # Cycle to previous workspace in order: W <- C <- P <- F <- W
-          CURRENT=$(aerospace list-workspaces --focused)
+          # Cycle to previous workspace in order: W <- R <- C <- P <- F <- W
+          CURRENT=$(/etc/profiles/per-user/darren/bin/aerospace list-workspaces --focused)
           case "$CURRENT" in
-            W) aerospace workspace F ;;
-            C) aerospace workspace W ;;
-            P) aerospace workspace C ;;
-            F) aerospace workspace P ;;
-            *) aerospace workspace W ;;
+            W) /etc/profiles/per-user/darren/bin/aerospace workspace F ;;
+            R) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
+            C) /etc/profiles/per-user/darren/bin/aerospace workspace R ;;
+            P) /etc/profiles/per-user/darren/bin/aerospace workspace C ;;
+            F) /etc/profiles/per-user/darren/bin/aerospace workspace P ;;
+            *) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
           esac
         '';
         executable = true;

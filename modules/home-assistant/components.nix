@@ -43,12 +43,12 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexxIT";
       domain = "sonoff";
-      version = "3.8.2";
+      version = "3.9.3";
       src = pkgs.fetchFromGitHub {
         owner = "AlexxIT";
         repo = "SonoffLAN";
         rev = "v${version}";
-        sha256 = "sha256-U5fFuG4KZNenfKoDBe7GV1IbV8XRtUtuTWEQks+Lo+Q=";
+        sha256 = "sha256-QqJIPyITFYGD8OkbRTh//F0PWY9BFyhBbJaNtSIQ9tA=";
       };
       propagatedBuildInputs = [
         pkgs.python313Packages.pycryptodome
@@ -57,12 +57,12 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "amosyuen";
       domain = "tplink_deco";
-      version = "3.6.2";
+      version = "3.7.0";
       src = pkgs.fetchFromGitHub {
         owner = "amosyuen";
         repo = "ha-tplink-deco";
         rev = "v${version}";
-        sha256 = "sha256-RYj06jkkauzZsVQtDZ9VBWheRU25qwC7NaSzgOlwppA=";
+        sha256 = "sha256-D0IuB0tbHW/KlYpwug01g0vq+Kpigm8urbpbxpFCUN0=";
       };
       propagatedBuildInputs = [
         pkgs.python313Packages.pycryptodome
@@ -85,12 +85,12 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "AlexandrErohin";
       domain = "tplink_router";
-      version = "2.2.0";
+      version = "2.14.1";
       src = pkgs.fetchFromGitHub {
         owner = "AlexandrErohin";
         repo = "home-assistant-tplink-router";
         rev = "v${version}";
-        sha256 = "sha256-wn5bZG4zHi9VbB6vXMOr+rRLMliOMbY4XgAB/NPjhb8=";
+        sha256 = "sha256-5lcyg/WjgXZ/abL50CT0FFpcvozSYIa79Vj/cYQe+aU=";
       };
       propagatedBuildInputs = [
         pkgs.python313Packages.pycryptodome
@@ -116,12 +116,12 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "BottlecapDave";
       domain = "octopus_energy";
-      version = "13.5.3";
+      version = "17.1.1";
       src = pkgs.fetchFromGitHub {
         owner = "BottlecapDave";
         repo = "HomeAssistant-OctopusEnergy";
         rev = "v${version}";
-        sha256 = "sha256-qkPHb4o6rwXvifT+1L/pmpmJy3Qv4+ZYlhMn/cDnYDA=";
+        sha256 = "sha256-L1LqH9QMasVCZdsnHpKdxYGpsc/2vaIPAbiYc6vVshM=";
       };
       propagatedBuildInputs = with pkgs.python313Packages; [
         pydantic
@@ -130,12 +130,12 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "marq24";
       domain = "fordpass";
-      version = "2025.11.2";
+      version = "2025.11.4";
       src = pkgs.fetchFromGitHub {
         owner = "marq24";
         repo = "ha-fordpass";
         rev = version;
-        sha256 = "sha256-sjDy1okRD4ESwHAYiaQZQx7WVldm/7lsk/7zIIKVXpo=";
+        sha256 = "sha256-FdGPNfdA/x3bv3a1yaOlRdI8+EdXI1LoJFYWW4l/Dvg=";
       };
     })
     (pkgs.buildHomeAssistantComponent rec {
@@ -156,23 +156,23 @@
     (pkgs.buildHomeAssistantComponent rec {
       owner = "libdyson-wg";
       domain = "dyson_local";
-      version = "1.4.2";
+      version = "1.5.7";
       src = pkgs.fetchFromGitHub {
         owner = "libdyson-wg";
         repo = "ha-dyson";
         rev = "v${version}";
-        sha256 = "sha256-JMtT4ZZleb3kMifXxrOVzBJpftp1B/eghhBujyRT3EM=";
+        sha256 = "sha256-V5RCepikTDrjZwi6MfRislpV2F9jR1MqwWxTq0GPBp4=";
       };
     })
     (pkgs.buildHomeAssistantComponent rec {
       owner = "twrecked";
       domain = "aarlo";
-      version = "0.8.1.4";
+      version = "0.8.1.19";
       src = pkgs.fetchFromGitHub {
         owner = "twrecked";
         repo = "hass-aarlo";
         rev = "v${version}";
-        sha256 = "sha256-IkHtTnDpAJhuRA+IHzqCgRcferKAmQJLKWHq6+r3SrE=";
+        sha256 = "sha256-M5M/kNUzplv+PuVQAWy0wdw4XXgho67zcvmW9QAXxTk=";
       };
       propagatedBuildInputs = [
         pkgs.python313Packages.unidecode
