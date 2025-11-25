@@ -1,10 +1,31 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   nix = {
     settings = {
       keep-outputs = true;
       keep-derivations = true;
       experimental-features = ["nix-command" "flakes"];
       trusted-users = ["root" "@wheel" "@admin"];
+      # Parallel build optimization
+      cores = 0; # Use all available cores
+      max-jobs = "auto"; # Auto-detect number of parallel jobs
+      # Enable ccache in sandbox builds
+      extra-sandbox-paths = [config.programs.ccache.cacheDir];
+      substituters = [
+        "https://cache.nixos.org"
+        "https://cache.soopy.moe"
+        "https://nix-community.cachix.org"
+        "https://nixpkgs-python.cachix.org"
+      ];
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "cache.soopy.moe-1:0RZVsQeR+GOh0VQI9rvnHz55nVXkFardDqfm4+afjPo="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
+      ];
     };
     gc = {
       automatic = true;
@@ -20,6 +41,9 @@
       "electron-25.9.0"
     ];
   };
+
+  # Enable ccache for faster rebuilds
+  programs.ccache.enable = true;
 
   programs.zsh.enable = true;
   environment = {
