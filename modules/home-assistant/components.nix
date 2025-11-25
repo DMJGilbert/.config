@@ -97,11 +97,11 @@
         (
           pkgs.python313.pkgs.buildPythonPackage rec {
             pname = "tplinkrouterc6u";
-            version = "5.3.0";
+            version = "5.12.1";
             pyproject = true;
             src = pkgs.fetchPypi {
               inherit pname version;
-              hash = "sha256-hB0ItV9pgwfWj+XyJ+FZKay8Qrja4EMTQJdJmi4bsto=";
+              hash = "sha256-xcr7W1X2nSZQT1/dz4aMxEr+27d5JFdsBGsCCdxki6U=";
             };
             propagatedBuildInputs = with pkgs.python313Packages; [
               setuptools
@@ -176,14 +176,15 @@
       };
       propagatedBuildInputs = [
         pkgs.python313Packages.unidecode
+        pkgs.python313Packages.aiofiles
         (
           pkgs.python313.pkgs.buildPythonPackage rec {
             pname = "pyaarlo";
-            version = "0.8.0.7";
+            version = "0.8.0.17";
             pyproject = true;
             src = pkgs.fetchPypi {
               inherit pname version;
-              hash = "sha256-mhlSdFNznDj9WqDr6o71f0EBUThZUSXsJH259mSBzrM=";
+              hash = "sha256-a7/MnUfzatdNY4RolJd2EsEucDwVoFIXnsYOGtJSGZU=";
             };
             propagatedBuildInputs = with pkgs.python313Packages; [
               setuptools
@@ -194,6 +195,8 @@
               cloudscraper
               paho-mqtt
               cryptography
+              aiofiles
+              python-slugify
             ];
           }
         )
