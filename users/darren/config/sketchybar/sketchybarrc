@@ -1,0 +1,132 @@
+#!/opt/local/bin/bash
+
+# Colors (Catppuccin Frappe inspired)
+export BG_COLOR=0xff414559
+export FG_COLOR=0xffffffff
+export ACTIVE_COLOR=0xcc00c1ad
+
+# Plugin directory
+export PLUGINS_DIR="$HOME/.config/sketchybar/plugins"
+
+sketchybar --add event aerospace_workspace_change
+
+# Add a hidden item that handles workspace highlighting updates
+sketchybar --add item aerospace_handler left \
+    --set aerospace_handler \
+    drawing=off \
+    script="$PLUGINS_DIR/aerospace_update_all.sh" \
+    --subscribe aerospace_handler aerospace_workspace_change
+
+############## BAR ##############
+sketchybar -m --bar height=35 \
+    blur_radius=0 \
+    position=top \
+    padding_left=10 \
+    padding_right=10 \
+    margin=0 \
+    corner_radius=0 \
+    color=0x002E3440 \
+    border_width=0 \
+    border_color=0x00000000
+
+############## GLOBAL DEFAULTS ##############
+sketchybar -m --default updates=when_shown \
+    drawing=on \
+    background.height=35 \
+    icon.font="SauceCodePro Nerd Font:Regular:12.0" \
+    icon.color=$FG_COLOR \
+    icon.highlight_color=0xffA3BE8C \
+    label.font="SauceCodePro Nerd Font:Regular:12.0" \
+    label.color=$FG_COLOR
+
+sketchybar -m --default label.padding_left=0 \
+    label.padding_right=0 \
+    icon.padding_left=10 \
+    icon.padding_right=10
+
+sketchybar -m --add item logo left \
+    --set logo icon= \
+    background.color=0xff292c3c \
+    background.padding_right=0
+
+"$PLUGINS_DIR/aerospace_refresh.sh"
+
+sketchybar -m --add item clock_logo right --set clock_logo icon=󱑆 \
+    background.color=0xff292c3c
+
+sketchybar -m --add item clock right \
+    --set clock update_freq=1 \
+    script="$PLUGINS_DIR/clock.sh" \
+    label.padding_right=10 \
+    label.padding_left=0 \
+    icon.padding_left=0
+
+sketchybar -m --add item battery_logo right --set battery_logo icon=󰁹 \
+    background.color=0xff303446
+
+sketchybar -m --add item battery right \
+    --set battery update_freq=120 \
+    script="$PLUGINS_DIR/battery.sh" \
+    label.padding_right=10 \
+    label.padding_left=0 \
+    icon.padding_left=0
+
+sketchybar -m --add item stats_logo right \
+    --set stats_logo icon= \
+    icon.font="SauceCodePro Nerd Font:Regular:13.0" \
+    background.color=0xff414559
+
+sketchybar -m --add item ram_label right \
+    --set ram_label label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    label=RAM \
+    y_offset=7 \
+    width=0 \
+    label.padding_right=10 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
+    \
+    --add item ram_percentage right \
+    --set ram_percentage label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    y_offset=-6 \
+    update_freq=1 \
+    label.padding_right=10 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
+    script="$PLUGINS_DIR/ram.sh"
+
+sketchybar -m --add item cpu_label right \
+    --set cpu_label label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    label=CPU \
+    y_offset=7 \
+    width=0 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
+    \
+    --add item cpu_percent right \
+    --set cpu_percent label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    y_offset=-6 \
+    update_freq=1 \
+    label.padding_left=0 \
+    icon.padding_left=0 \
+    script="$PLUGINS_DIR/cpu.sh"
+
+sketchybar -m --add item network_up right \
+    --set network_up label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    icon.font="SauceCodePro Nerd Font:Regular:11.0" \
+    icon= \
+    icon.highlight_color=0xff8b0a0d \
+    y_offset=7 \
+    width=0 \
+    update_freq=1 \
+    script="$PLUGINS_DIR/network.sh" \
+    \
+    --add item network_down right \
+    --set network_down label.font="SauceCodePro Nerd Font:Regular:11.0" \
+    icon.font="SauceCodePro Nerd Font:Regular:11.0" \
+    icon= \
+    icon.highlight_color=0xff10528c \
+    y_offset=-6 \
+    update_freq=1
+
+# Finalize setup
+sketchybar --update
