@@ -1,552 +1,6 @@
 {pkgs, ...}: let
-  # Minimal-HA style CSS variables (defined in theme)
-  # Using inline colors since we don't have the theme installed
-  colors = {
-    contrast0 = "#1a1a1a";   # Card background
-    contrast5 = "#2a2a2a";   # Slightly lighter
-    contrast10 = "#666666";  # Muted text
-    contrast15 = "#999999";  # Secondary text/icons
-    contrast18 = "#cccccc";  # Primary text
-    contrast20 = "#ffffff";  # Bright text
-
-    # Accent colors
-    yellow = "#FFDA78";
-    orange = "#FFB581";
-    red = "#FF918A";
-    green = "#CEF595";
-    blue = "#90BFFF";
-    purple = "#EFB1FF";
-    pink = "#D683AA";
-  };
-
-  buttonCardTemplatesContent = ''
-    button_card_templates:
-
-      # ==================== SECTION HEADER ====================
-      minimal_section:
-        show_name: true
-        show_label: true
-        show_icon: false
-        styles:
-          card:
-            - background: none
-            - padding: 0px 12px
-            - margin-bottom: "-5px"
-            - margin-top: 15px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-          name:
-            - justify-self: start
-            - font-size: 20px
-            - font-weight: 500
-            - color: ${colors.contrast20}
-          label:
-            - justify-self: start
-            - font-size: 14px
-            - color: ${colors.contrast10}
-
-      # ==================== ROOM CARD ====================
-      minimal_room:
-        show_name: true
-        show_icon: true
-        show_label: false
-        tap_action:
-          haptic: light
-        styles:
-          grid:
-            - grid-template-areas: '"i badge" "n n"'
-            - grid-template-columns: 1fr auto
-            - grid-template-rows: 1fr min-content
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 96px
-          img_cell:
-            - justify-self: start
-            - width: 24px
-          icon:
-            - width: 24px
-            - height: 24px
-            - color: ${colors.contrast15}
-          name:
-            - justify-self: start
-            - font-size: 14px
-            - font-weight: 500
-            - color: ${colors.contrast15}
-            - padding-top: 8px
-          custom_fields:
-            badge:
-              - align-self: start
-              - justify-self: end
-            label:
-              - justify-self: start
-              - font-size: 12px
-              - color: ${colors.contrast10}
-              - padding-top: 2px
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== STATUS BADGE ====================
-      minimal_badge:
-        show_name: false
-        show_icon: true
-        show_state: false
-        styles:
-          card:
-            - background: ${colors.contrast5}
-            - border-radius: 100px
-            - padding: 6px
-            - box-shadow: none
-            - "--mdc-ripple-press-opacity": 0
-          icon:
-            - width: 18px
-            - height: 18px
-            - color: ${colors.contrast10}
-
-      # ==================== CHIP CARD ====================
-      minimal_chip:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        styles:
-          grid:
-            - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: auto 1fr
-            - grid-template-rows: min-content min-content
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px 16px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 70px
-          icon:
-            - width: 28px
-            - height: 28px
-            - color: ${colors.contrast15}
-            - padding-right: 12px
-          name:
-            - justify-self: start
-            - font-size: 22px
-            - font-weight: 600
-            - color: ${colors.contrast20}
-            - align-self: end
-          label:
-            - justify-self: start
-            - font-size: 11px
-            - font-weight: 500
-            - color: ${colors.contrast10}
-            - text-transform: uppercase
-            - letter-spacing: 0.5px
-            - align-self: start
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== PERSON CHIP ====================
-      minimal_person:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        icon: mdi:account
-        tap_action:
-          action: more-info
-          haptic: light
-        label: "[[[ return states[entity.entity_id]?.state || 'Unknown' ]]]"
-        styles:
-          grid:
-            - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: auto 1fr
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px 16px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 60px
-          icon:
-            - width: 32px
-            - height: 32px
-            - color: ${colors.contrast15}
-            - padding-right: 12px
-          name:
-            - justify-self: start
-            - font-size: 14px
-            - font-weight: 500
-            - color: ${colors.contrast18}
-            - align-self: end
-          label:
-            - justify-self: start
-            - font-size: 12px
-            - color: ${colors.contrast10}
-            - text-transform: capitalize
-            - align-self: start
-        state:
-          - value: "home"
-            styles:
-              icon:
-                - color: ${colors.green}
-              label:
-                - color: ${colors.green}
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== WEATHER COMPACT ====================
-      minimal_weather:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        entity: weather.forecast_home
-        styles:
-          card:
-            - background: ${colors.contrast0}
-            - border-radius: 18px
-            - box-shadow: none
-            - padding: 12px 16px
-            - height: 50px
-          custom_fields:
-            weather:
-              - width: 100%
-        custom_fields:
-          weather: |
-            [[[
-              const weather = states['weather.forecast_home'];
-              if (!weather) return "";
-              const condition = weather.state || 'unknown';
-              const temp = weather.attributes.temperature ?? '--';
-
-              const icons = {
-                'sunny': 'mdi:weather-sunny',
-                'clear-night': 'mdi:weather-night',
-                'partlycloudy': 'mdi:weather-partly-cloudy',
-                'cloudy': 'mdi:weather-cloudy',
-                'rainy': 'mdi:weather-rainy',
-                'pouring': 'mdi:weather-pouring',
-                'snowy': 'mdi:weather-snowy',
-                'fog': 'mdi:weather-fog',
-                'windy': 'mdi:weather-windy',
-                'lightning': 'mdi:weather-lightning'
-              };
-              const icon = icons[condition] || 'mdi:weather-cloudy';
-              const conditionText = condition.charAt(0).toUpperCase() + condition.slice(1).replace(/-/g, ' ');
-
-              return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;">' +
-                '<ha-icon icon="' + icon + '" style="--mdc-icon-size:24px;color:${colors.contrast15};"></ha-icon>' +
-                '<span style="font-size:22px;font-weight:600;color:${colors.contrast20};">' + temp + '°</span>' +
-                '<span style="font-size:13px;color:${colors.contrast10};">' + conditionText + '</span>' +
-              '</div>';
-            ]]]
-
-      # ==================== SCENE BUTTON ====================
-      minimal_scene:
-        show_name: true
-        show_icon: true
-        show_label: false
-        tap_action:
-          haptic: light
-        variables:
-          color: ${colors.contrast15}
-        styles:
-          grid:
-            - grid-template-areas: '"i" "n"'
-            - grid-template-rows: 1fr min-content
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px 8px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 80px
-          icon:
-            - width: 28px
-            - height: 28px
-            - color: "[[[ return variables.color ]]]"
-          name:
-            - justify-self: center
-            - font-size: 11px
-            - font-weight: 500
-            - color: ${colors.contrast10}
-            - padding-top: 6px
-        state:
-          - value: "on"
-            styles:
-              icon:
-                - color: ${colors.contrast20}
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== LIGHT CARD ====================
-      minimal_light:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        icon: mdi:lightbulb-outline
-        tap_action:
-          action: toggle
-          haptic: light
-        hold_action:
-          action: more-info
-        label: |
-          [[[
-            if (entity.state === 'on' && entity.attributes.brightness) {
-              return Math.round(entity.attributes.brightness / 2.55) + '%';
-            }
-            return entity.state === 'on' ? 'On' : 'Off';
-          ]]]
-        styles:
-          grid:
-            - grid-template-areas: '"i badge" "n n" "l l"'
-            - grid-template-columns: 1fr auto
-            - grid-template-rows: auto 1fr min-content
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 96px
-          icon:
-            - width: 24px
-            - height: 24px
-            - color: ${colors.contrast15}
-            - justify-self: start
-          name:
-            - justify-self: start
-            - font-size: 13px
-            - font-weight: 500
-            - color: ${colors.contrast15}
-          label:
-            - justify-self: start
-            - font-size: 12px
-            - color: ${colors.contrast10}
-          custom_fields:
-            badge:
-              - align-self: start
-              - justify-self: end
-        state:
-          - value: "on"
-            icon: mdi:lightbulb
-            styles:
-              icon:
-                - color: ${colors.yellow}
-          - value: "unavailable"
-            styles:
-              card:
-                - opacity: 0.4
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== MEDIA CARD ====================
-      minimal_media:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        icon: mdi:television
-        tap_action:
-          action: more-info
-          haptic: light
-        label: |
-          [[[
-            if (!entity) return 'Unknown';
-            if (entity.state === 'playing') {
-              return entity.attributes?.media_title || 'Playing';
-            }
-            return entity.state;
-          ]]]
-        styles:
-          grid:
-            - grid-template-areas: '"i badge" "n n" "l l"'
-            - grid-template-columns: 1fr auto
-            - grid-template-rows: auto 1fr min-content
-          card:
-            - background: ${colors.contrast0}
-            - padding: 12px
-            - "--mdc-ripple-press-opacity": 0
-            - box-shadow: none
-            - border-radius: 18px
-            - height: 96px
-          icon:
-            - width: 24px
-            - height: 24px
-            - color: ${colors.contrast15}
-          name:
-            - justify-self: start
-            - font-size: 13px
-            - font-weight: 500
-            - color: ${colors.contrast15}
-          label:
-            - justify-self: start
-            - font-size: 12px
-            - color: ${colors.contrast10}
-            - text-transform: capitalize
-            - max-width: 120px
-            - overflow: hidden
-            - text-overflow: ellipsis
-            - white-space: nowrap
-        state:
-          - value: "playing"
-            icon: mdi:play-circle
-            styles:
-              icon:
-                - color: ${colors.green}
-          - value: "paused"
-            icon: mdi:pause-circle
-            styles:
-              icon:
-                - color: ${colors.yellow}
-          - value: "on"
-            styles:
-              icon:
-                - color: ${colors.blue}
-        card_mod:
-          style: |
-            ha-card:active {
-              transform: scale(0.96);
-              transition: 200ms !important;
-            }
-
-      # ==================== FOOTBALL CARD ====================
-      minimal_football:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        styles:
-          card:
-            - background: ${colors.contrast0}
-            - border-radius: 18px
-            - box-shadow: none
-            - padding: 16px
-          custom_fields:
-            match:
-              - width: 100%
-        custom_fields:
-          match: |
-            [[[
-              var sensors = ["sensor.liverpool", "sensor.liverpool_cl", "sensor.liverpool_fa", "sensor.liverpool_lc"];
-              var match = null;
-              var nextDate = null;
-
-              for (var i = 0; i < sensors.length; i++) {
-                var s = states[sensors[i]];
-                if (!s || !s.attributes) continue;
-                if (s.state === "IN") { match = s; break; }
-                if (s.state === "PRE" && s.attributes.date) {
-                  var d = new Date(s.attributes.date);
-                  if (!nextDate || d < nextDate) { nextDate = d; match = s; }
-                }
-              }
-
-              if (!match) return '<div style="text-align:center;color:${colors.contrast10};padding:16px;">No upcoming matches</div>';
-
-              var a = match.attributes;
-              var isHome = a.team_homeaway === "home";
-              var homeLogo = isHome ? a.team_logo : a.opponent_logo;
-              var awayLogo = isHome ? a.opponent_logo : a.team_logo;
-              var homeName = isHome ? a.team_abbr : a.opponent_abbr;
-              var awayName = isHome ? a.opponent_abbr : a.team_abbr;
-              var homeScore = isHome ? (a.team_score||0) : (a.opponent_score||0);
-              var awayScore = isHome ? (a.opponent_score||0) : (a.team_score||0);
-
-              var center = "";
-              if (match.state === "IN") {
-                center = '<div style="text-align:center;"><div style="font-size:10px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE</div><div style="font-size:24px;font-weight:700;color:${colors.contrast20};">' + homeScore + ' - ' + awayScore + '</div></div>';
-              } else {
-                var kickoff = a.date ? new Date(a.date) : null;
-                var timeStr = kickoff ? kickoff.toLocaleString('en-GB', {weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '--';
-                center = '<div style="text-align:center;"><div style="font-size:10px;color:${colors.contrast10};text-transform:uppercase;">Next Match</div><div style="font-size:13px;font-weight:600;color:${colors.purple};">' + timeStr + '</div></div>';
-              }
-
-              return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-                '<div style="text-align:center;flex:1;"><img src="' + (homeLogo||"") + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (homeName||'HOME') + '</div></div>' +
-                '<div style="flex:1.2;">' + center + '</div>' +
-                '<div style="text-align:center;flex:1;"><img src="' + (awayLogo||"") + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (awayName||'AWAY') + '</div></div>' +
-              '</div>' +
-              '<div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};font-size:11px;color:${colors.contrast10};">' + (a.league||"") + (a.venue ? ' • ' + a.venue : "") + '</div>';
-            ]]]
-
-      # ==================== VACUUM CARD ====================
-      minimal_vacuum:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        styles:
-          card:
-            - background: ${colors.contrast0}
-            - border-radius: 18px
-            - box-shadow: none
-            - padding: 14px
-        custom_fields:
-          info: |
-            [[[
-              const vac = states['vacuum.robovac'];
-              const bat = states['sensor.robovac_battery'];
-              const vacStatus = vac ? vac.state : 'unavailable';
-              const battery = bat ? bat.state : '0';
-
-              var statusColor = '${colors.contrast10}';
-              if (vacStatus === 'cleaning') statusColor = '${colors.green}';
-              else if (vacStatus === 'docked') statusColor = '${colors.blue}';
-              else if (vacStatus === 'returning') statusColor = '${colors.orange}';
-              else if (vacStatus === 'unavailable') statusColor = '${colors.red}';
-
-              return '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-                '<div style="display:flex;align-items:center;gap:12px;">' +
-                  '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:28px;color:' + statusColor + ';"></ha-icon>' +
-                  '<div><div style="font-size:14px;font-weight:500;color:${colors.contrast18};">RoboVac</div>' +
-                  '<div style="font-size:12px;color:' + statusColor + ';text-transform:capitalize;">' + vacStatus + '</div></div>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:4px;color:${colors.contrast15};">' +
-                  '<ha-icon icon="mdi:battery" style="--mdc-icon-size:16px;"></ha-icon>' +
-                  '<span style="font-size:13px;font-weight:500;">' + battery + '%</span>' +
-                '</div>' +
-              '</div>';
-            ]]]
-          controls: |
-            [[[
-              return '<div style="display:flex;justify-content:space-around;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};">' +
-                '<div style="text-align:center;padding:8px;cursor:pointer;"><ha-icon icon="mdi:play" style="--mdc-icon-size:20px;color:${colors.green};"></ha-icon><div style="font-size:10px;color:${colors.contrast10};margin-top:2px;">Start</div></div>' +
-                '<div style="text-align:center;padding:8px;cursor:pointer;"><ha-icon icon="mdi:pause" style="--mdc-icon-size:20px;color:${colors.yellow};"></ha-icon><div style="font-size:10px;color:${colors.contrast10};margin-top:2px;">Pause</div></div>' +
-                '<div style="text-align:center;padding:8px;cursor:pointer;"><ha-icon icon="mdi:home" style="--mdc-icon-size:20px;color:${colors.blue};"></ha-icon><div style="font-size:10px;color:${colors.contrast10};margin-top:2px;">Dock</div></div>' +
-                '<div style="text-align:center;padding:8px;cursor:pointer;"><ha-icon icon="mdi:map-marker" style="--mdc-icon-size:20px;color:${colors.orange};"></ha-icon><div style="font-size:10px;color:${colors.contrast10};margin-top:2px;">Find</div></div>' +
-              '</div>';
-            ]]]
-        styles:
-          grid:
-            - grid-template-areas: '"info" "controls"'
-  '';
-
   dashboardYaml = pkgs.writeText "hacasa.yaml" ''
     title: Home
-    ${buttonCardTemplatesContent}
     views:
       # ==================== HOME ====================
       - title: Home
@@ -555,337 +9,298 @@
         type: custom:vertical-layout
         cards:
           # Header
-          - type: custom:button-card
-            template: minimal_section
-            name: |
-              [[[
-                var h = new Date().getHours();
-                return h < 12 ? 'Good Morning' : h < 18 ? 'Good Afternoon' : 'Good Evening';
-              ]]]
-            label: |
-              [[[
-                return new Date().toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long'});
-              ]]]
+          - type: custom:mushroom-title-card
+            title: |
+              {% set h = now().hour %}
+              {% if h < 12 %}Good Morning{% elif h < 18 %}Good Afternoon{% else %}Good Evening{% endif %}
+            subtitle: "{{ now().strftime('%A %d %B') }}"
 
           # People
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_person
+              - type: custom:mushroom-person-card
                 entity: person.darren_gilbert
-                name: Darren
-              - type: custom:button-card
-                template: minimal_person
+                icon_type: entity-picture
+                layout: horizontal
+                primary_info: name
+                secondary_info: state
+              - type: custom:mushroom-person-card
                 entity: person.lorraine
-                name: Lorraine
+                icon_type: entity-picture
+                layout: horizontal
+                primary_info: name
+                secondary_info: state
 
-          # Weather
-          - type: custom:button-card
-            template: minimal_weather
-            entity: weather.forecast_home
-
-          # Stats
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: minimal_chip
+          # Stats chips
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: weather
+                entity: weather.forecast_home
+                show_conditions: true
+                show_temperature: true
+              - type: template
                 icon: mdi:lightbulb-group
-                entity: sensor.total_turned_on_lights_count_template
-                name: "[[[ return states['sensor.total_turned_on_lights_count_template']?.state || '0' ]]]"
-                label: Lights
-                styles:
-                  icon:
-                    - color: ${colors.yellow}
-              - type: custom:button-card
-                template: minimal_chip
+                icon_color: amber
+                content: "{{ states('sensor.total_turned_on_lights_count_template') }} lights"
+              - type: template
                 icon: mdi:motion-sensor
-                entity: sensor.total_active_motion_sensors_count_template
-                name: "[[[ return states['sensor.total_active_motion_sensors_count_template']?.state || '0' ]]]"
-                label: Motion
-                styles:
-                  icon:
-                    - color: ${colors.blue}
-              - type: custom:button-card
-                template: minimal_chip
+                icon_color: blue
+                content: "{{ states('sensor.total_active_motion_sensors_count_template') }} motion"
+              - type: template
                 icon: mdi:thermometer
-                name: |
-                  [[[
-                    const sensors = [
-                      states['sensor.hallway_sensor_temperature'],
-                      states['sensor.bathroom_sensor_temperature'],
-                      states['sensor.dyson_temperature'],
-                      states['sensor.aarlo_temperature_nursery']
-                    ].filter(s => s && s.state !== 'unavailable' && s.state !== 'unknown');
-                    if (!sensors.length) return '--';
-                    const avg = sensors.reduce((a,s) => a + parseFloat(s.state), 0) / sensors.length;
-                    return avg.toFixed(1) + '°';
-                  ]]]
-                label: Avg Temp
-                styles:
-                  icon:
-                    - color: ${colors.red}
+                icon_color: red
+                content: >
+                  {% set temps = [
+                    states('sensor.hallway_sensor_temperature'),
+                    states('sensor.bathroom_sensor_temperature'),
+                    states('sensor.dyson_temperature'),
+                    states('sensor.aarlo_temperature_nursery')
+                  ] | reject('in', ['unavailable', 'unknown']) | map('float') | list %}
+                  {% if temps %}{{ (temps | sum / temps | length) | round(1) }}°{% else %}--{% endif %}
+            alignment: center
 
-          # Football
-          - type: custom:button-card
-            template: minimal_football
+          # Football Match
+          - type: custom:mushroom-template-card
             entity: sensor.liverpool
+            primary: >
+              {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
+              {% set ns = namespace(match=none, next_date=none) %}
+              {% for s in sensors %}
+                {% set sensor = states[s] %}
+                {% if sensor and sensor.state == 'IN' %}
+                  {% set ns.match = sensor %}
+                {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
+                  {% set d = sensor.attributes.date | as_datetime %}
+                  {% if not ns.next_date or d < ns.next_date %}
+                    {% set ns.next_date = d %}
+                    {% set ns.match = sensor %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% if ns.match %}
+                {% set a = ns.match.attributes %}
+                {% if ns.match.state == 'IN' %}
+                  {{ a.team_abbr }} {{ a.team_score }} - {{ a.opponent_score }} {{ a.opponent_abbr }}
+                {% else %}
+                  {{ a.team_abbr }} vs {{ a.opponent_abbr }}
+                {% endif %}
+              {% else %}
+                No upcoming matches
+              {% endif %}
+            secondary: >
+              {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
+              {% set ns = namespace(match=none, next_date=none) %}
+              {% for s in sensors %}
+                {% set sensor = states[s] %}
+                {% if sensor and sensor.state == 'IN' %}
+                  {% set ns.match = sensor %}
+                {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
+                  {% set d = sensor.attributes.date | as_datetime %}
+                  {% if not ns.next_date or d < ns.next_date %}
+                    {% set ns.next_date = d %}
+                    {% set ns.match = sensor %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% if ns.match %}
+                {% set a = ns.match.attributes %}
+                {% if ns.match.state == 'IN' %}
+                  LIVE - {{ a.league }}
+                {% else %}
+                  {{ a.date | as_datetime | as_local | as_timestamp | timestamp_custom('%a %d %b, %H:%M') }} - {{ a.league }}
+                {% endif %}
+              {% else %}
+              {% endif %}
+            icon: mdi:soccer
+            icon_color: >
+              {% if is_state('sensor.liverpool', 'IN') %}green{% else %}deep-purple{% endif %}
+            tap_action:
+              action: more-info
 
           # Rooms Section
-          - type: custom:button-card
-            template: minimal_section
-            name: Rooms
-            label: ""
+          - type: custom:mushroom-title-card
+            title: Rooms
 
           - type: grid
             columns: 2
             square: false
             cards:
-              - type: custom:button-card
-                template: minimal_room
-                name: Living Room
-                icon: mdi:sofa
+              - type: custom:mushroom-template-card
                 entity: group.living_room_lights
+                primary: Living Room
+                secondary: >
+                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {{ on }} lights on
+                icon: mdi:sofa
+                icon_color: >
+                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/living-room
-                custom_fields:
-                  badge: |
-                    [[[
-                      const tv = states['media_player.living_room_tv'];
-                      if (tv && (tv.state === 'playing' || tv.state === 'on')) {
-                        return '<div style="background:${colors.contrast5};border-radius:100px;padding:6px;"><ha-icon icon="mdi:television" style="--mdc-icon-size:18px;color:${colors.green};"></ha-icon></div>';
-                      }
-                      var entities = states['group.living_room_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      if (on > 0) {
-                        return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
-                      }
-                      return "";
-                    ]]]
-                  label: |
-                    [[[
-                      var entities = states['group.living_room_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + on + ' lights on</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
+                badge_icon: >
+                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}
+                    mdi:television
+                  {% endif %}
+                badge_color: green
 
-              - type: custom:button-card
-                template: minimal_room
-                name: Bedroom
-                icon: mdi:bed
+              - type: custom:mushroom-template-card
                 entity: group.bedroom_lights
+                primary: Bedroom
+                secondary: >
+                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {{ on }} lights on
+                icon: mdi:bed
+                icon_color: >
+                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}deep-purple{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/bedroom
-                custom_fields:
-                  badge: |
-                    [[[
-                      var entities = states['group.bedroom_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      if (on > 0) {
-                        return '<div style="background:${colors.purple};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
-                      }
-                      return "";
-                    ]]]
-                  label: |
-                    [[[
-                      var entities = states['group.bedroom_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + on + ' lights on</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
 
-              - type: custom:button-card
-                template: minimal_room
-                name: Bathroom
-                icon: mdi:shower
+              - type: custom:mushroom-template-card
                 entity: group.bathroom_lights
+                primary: Bathroom
+                secondary: >
+                  {{ states('sensor.bathroom_sensor_temperature') | round(1) }}°C • {{ states('sensor.bathroom_sensor_humidity') | round(0) }}%
+                icon: mdi:shower
+                icon_color: >
+                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/bathroom
-                custom_fields:
-                  badge: |
-                    [[[
-                      const motion = states['binary_sensor.motion_sensor_motion'];
-                      if (motion && motion.state === 'on') {
-                        return '<div style="background:${colors.blue};border-radius:100px;padding:6px;"><ha-icon icon="mdi:motion-sensor" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
-                      }
-                      return "";
-                    ]]]
-                  label: |
-                    [[[
-                      var temp = states['sensor.bathroom_sensor_temperature']?.state || '--';
-                      var hum = states['sensor.bathroom_sensor_humidity']?.state || '--';
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + parseFloat(temp).toFixed(1) + '°C • ' + Math.round(hum) + '%</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
+                badge_icon: >
+                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}mdi:motion-sensor{% endif %}
+                badge_color: blue
 
-              - type: custom:button-card
-                template: minimal_room
-                name: Kitchen
-                icon: mdi:silverware-fork-knife
+              - type: custom:mushroom-template-card
                 entity: group.kitchen_lights
+                primary: Kitchen
+                secondary: >
+                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {{ on }} lights on
+                icon: mdi:silverware-fork-knife
+                icon_color: >
+                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/kitchen
-                custom_fields:
-                  badge: |
-                    [[[
-                      var entities = states['group.kitchen_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      if (on > 0) {
-                        return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
-                      }
-                      return "";
-                    ]]]
-                  label: |
-                    [[[
-                      var entities = states['group.kitchen_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + on + ' lights on</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
 
-              - type: custom:button-card
-                template: minimal_room
-                name: Hallway
-                icon: mdi:door
+              - type: custom:mushroom-template-card
                 entity: group.hallway_lights
+                primary: Hallway
+                secondary: "{{ states('sensor.hallway_sensor_temperature') | round(1) }}°C"
+                icon: mdi:door
+                icon_color: >
+                  {% set entities = state_attr('group.hallway_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/hallway
-                custom_fields:
-                  label: |
-                    [[[
-                      var temp = states['sensor.hallway_sensor_temperature']?.state || '--';
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + parseFloat(temp).toFixed(1) + '°C</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
 
-              - type: custom:button-card
-                template: minimal_room
-                name: Robynne's Room
-                icon: mdi:teddy-bear
+              - type: custom:mushroom-template-card
                 entity: group.robynne_lights
+                primary: Robynne's Room
+                secondary: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}
+                    Yoto playing
+                  {% else %}
+                    {% set entities = state_attr('group.robynne_lights', 'entity_id') | default([]) %}
+                    {% set on = entities | select('is_state', 'on') | list | count %}
+                    {{ on }} lights on
+                  {% endif %}
+                icon: mdi:teddy-bear
+                icon_color: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}green{% else %}pink{% endif %}
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/robynne
-                custom_fields:
-                  badge: |
-                    [[[
-                      const yoto = states['media_player.yoto_player'];
-                      if (yoto && yoto.state === 'playing') {
-                        return '<div style="background:${colors.green};border-radius:100px;padding:6px;"><ha-icon icon="mdi:music" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
-                      }
-                      return "";
-                    ]]]
-                  label: |
-                    [[[
-                      const yoto = states['media_player.yoto_player'];
-                      if (yoto && (yoto.state === 'playing' || yoto.state === 'idle')) {
-                        return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">Yoto ' + yoto.state + '</div>';
-                      }
-                      var entities = states['group.robynne_lights']?.attributes?.entity_id || [];
-                      var on = entities.filter(e => states[e]?.state === 'on').length;
-                      return '<div style="font-size:12px;color:${colors.contrast10};padding-top:4px;">' + on + ' lights on</div>';
-                    ]]]
-                styles:
-                  custom_fields:
-                    label:
-                      - justify-self: start
+                badge_icon: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}mdi:music{% endif %}
+                badge_color: green
 
           # Scenes Section
-          - type: custom:button-card
-            template: minimal_section
-            name: Scenes
-            label: ""
+          - type: custom:mushroom-title-card
+            title: Scenes
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_scene
-                name: All Off
+              - type: custom:mushroom-template-card
+                primary: All Off
                 icon: mdi:power
-                variables:
-                  color: ${colors.red}
+                icon_color: red
                 tap_action:
                   action: call-service
                   service: light.turn_off
-                  service_data:
+                  target:
                     entity_id: all
-              - type: custom:button-card
-                template: minimal_scene
+              - type: custom:mushroom-template-card
                 entity: input_boolean.party_mode
-                name: Party
+                primary: Party
                 icon: mdi:party-popper
-                variables:
-                  color: ${colors.purple}
-              - type: custom:button-card
-                template: minimal_scene
-                name: Movie
+                icon_color: "{% if is_state('input_boolean.party_mode', 'on') %}deep-purple{% else %}grey{% endif %}"
+                tap_action:
+                  action: toggle
+              - type: custom:mushroom-template-card
+                primary: Movie
                 icon: mdi:movie
-                variables:
-                  color: ${colors.blue}
+                icon_color: blue
                 tap_action:
                   action: call-service
                   service: scene.turn_on
-                  service_data:
+                  target:
                     entity_id: scene.movie
-              - type: custom:button-card
-                template: minimal_scene
-                name: Bright
+              - type: custom:mushroom-template-card
+                primary: Bright
                 icon: mdi:brightness-7
-                variables:
-                  color: ${colors.yellow}
+                icon_color: amber
                 tap_action:
                   action: call-service
                   service: light.turn_on
-                  service_data:
+                  target:
                     entity_id: all
+                  data:
                     brightness: 255
 
           # RoboVac Section
-          - type: custom:button-card
-            template: minimal_section
-            name: RoboVac
-            label: ""
+          - type: custom:mushroom-title-card
+            title: RoboVac
 
-          - type: custom:button-card
-            template: minimal_vacuum
+          - type: custom:mushroom-vacuum-card
             entity: vacuum.robovac
+            icon_animation: true
+            commands:
+              - start_pause
+              - stop
+              - return_home
+              - locate
 
           # Media Section
-          - type: custom:button-card
-            template: minimal_section
-            name: Media
-            label: ""
+          - type: custom:mushroom-title-card
+            title: Media
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_media
+              - type: custom:mushroom-media-player-card
                 entity: media_player.living_room_tv
-                name: Living Room
-              - type: custom:button-card
-                template: minimal_media
+                icon_type: entity-picture
+                use_media_info: true
+                show_volume_level: false
+                collapsible_controls: true
+              - type: custom:mushroom-media-player-card
                 entity: media_player.apple_tv
-                name: Bedroom
+                icon_type: entity-picture
+                use_media_info: true
+                show_volume_level: false
+                collapsible_controls: true
 
       # ==================== LIVING ROOM ====================
       - title: Living Room
@@ -893,59 +308,57 @@
         icon: mdi:sofa
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Living Room
-            label: Lights & Climate
+          - type: custom:mushroom-title-card
+            title: Living Room
+            subtitle: Lights & Climate
 
           - type: grid
             columns: 2
             square: false
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.living_room_light
                 name: Main Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+                show_brightness_control: true
+                collapsible_controls: true
+              - type: custom:mushroom-light-card
                 entity: light.dining_room_light_3
                 name: Dining Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+                show_brightness_control: true
+                collapsible_controls: true
+              - type: custom:mushroom-light-card
                 entity: light.sofa_light_switch
                 name: Sofa Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.tv_light
                 name: TV Light
+                use_light_color: true
 
-          - type: custom:button-card
-            template: minimal_section
-            name: Climate
-            label: ""
+          - type: custom:mushroom-title-card
+            title: Climate
 
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: minimal_chip
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 entity: fan.dyson
                 icon: mdi:fan
-                name: "[[[ return entity.state === 'on' ? (entity.attributes?.percentage || 0) + '%' : 'Off' ]]]"
-                label: Dyson Fan
+                icon_color: "{% if is_state('fan.dyson', 'on') %}blue{% else %}grey{% endif %}"
+                content: >
+                  {% if is_state('fan.dyson', 'on') %}
+                    {{ state_attr('fan.dyson', 'percentage') | default(0) }}%
+                  {% else %}
+                    Off
+                  {% endif %}
                 tap_action:
                   action: toggle
-                styles:
-                  icon:
-                    - color: "[[[ return entity.state === 'on' ? '${colors.blue}' : '${colors.contrast15}' ]]]"
-              - type: custom:button-card
-                template: minimal_chip
+              - type: template
                 entity: sensor.dyson_temperature
                 icon: mdi:thermometer
-                name: "[[[ return entity.state + '°' ]]]"
-                label: Temp
-                styles:
-                  icon:
-                    - color: ${colors.red}
+                icon_color: red
+                content: "{{ states('sensor.dyson_temperature') }}°"
 
       # ==================== BEDROOM ====================
       - title: Bedroom
@@ -953,31 +366,34 @@
         icon: mdi:bed
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Bedroom
-            label: Lights & Media
+          - type: custom:mushroom-title-card
+            title: Bedroom
+            subtitle: Lights & Media
 
           - type: grid
             columns: 2
             square: false
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.above_bed_light
                 name: Above Bed
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+                show_brightness_control: true
+                collapsible_controls: true
+              - type: custom:mushroom-light-card
                 entity: light.bedroom_light_2
                 name: Main Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+                show_brightness_control: true
+                collapsible_controls: true
+              - type: custom:mushroom-light-card
                 entity: light.darren_switch
                 name: Darren's Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.lorraine_switch
                 name: Lorraine's Light
+                use_light_color: true
 
       # ==================== BATHROOM ====================
       - title: Bathroom
@@ -985,46 +401,37 @@
         icon: mdi:shower
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Bathroom
-            label: Lights & Climate
+          - type: custom:mushroom-title-card
+            title: Bathroom
+            subtitle: Lights & Climate
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.bath_light
                 name: Bath
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.sink_light
                 name: Sink
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.toilet_light
                 name: Toilet
+                use_light_color: true
 
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: minimal_chip
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 entity: sensor.bathroom_sensor_temperature
                 icon: mdi:thermometer
-                name: "[[[ return entity.state + '°' ]]]"
-                label: Temp
-                styles:
-                  icon:
-                    - color: ${colors.red}
-              - type: custom:button-card
-                template: minimal_chip
+                icon_color: red
+                content: "{{ states('sensor.bathroom_sensor_temperature') | round(1) }}°"
+              - type: template
                 entity: sensor.bathroom_sensor_humidity
                 icon: mdi:water-percent
-                name: "[[[ return Math.round(entity.state) + '%' ]]]"
-                label: Humidity
-                styles:
-                  icon:
-                    - color: ${colors.blue}
+                icon_color: blue
+                content: "{{ states('sensor.bathroom_sensor_humidity') | round(0) }}%"
 
       # ==================== KITCHEN ====================
       - title: Kitchen
@@ -1032,25 +439,24 @@
         icon: mdi:silverware-fork-knife
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Kitchen
-            label: Lights
+          - type: custom:mushroom-title-card
+            title: Kitchen
+            subtitle: Lights
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.kitchen_microwave
                 name: Main
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.kitchen_sink
                 name: Sink
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.kitchen_random
                 name: Other
+                use_light_color: true
 
       # ==================== HALLWAY ====================
       - title: Hallway
@@ -1058,42 +464,33 @@
         icon: mdi:door
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Hallway
-            label: Lights & Sensors
+          - type: custom:mushroom-title-card
+            title: Hallway
+            subtitle: Lights & Sensors
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.hallway
                 name: Hallway
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.doorway
                 name: Doorway
+                use_light_color: true
 
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: minimal_chip
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 entity: sensor.hallway_sensor_temperature
                 icon: mdi:thermometer
-                name: "[[[ return entity.state + '°' ]]]"
-                label: Temp
-                styles:
-                  icon:
-                    - color: ${colors.red}
-              - type: custom:button-card
-                template: minimal_chip
+                icon_color: red
+                content: "{{ states('sensor.hallway_sensor_temperature') | round(1) }}°"
+              - type: template
                 entity: sensor.hallway_sensor_humidity
                 icon: mdi:water-percent
-                name: "[[[ return Math.round(entity.state) + '%' ]]]"
-                label: Humidity
-                styles:
-                  icon:
-                    - color: ${colors.blue}
+                icon_color: blue
+                content: "{{ states('sensor.hallway_sensor_humidity') | round(0) }}%"
 
       # ==================== ROBYNNE'S ROOM ====================
       - title: Robynne's Room
@@ -1101,27 +498,32 @@
         icon: mdi:teddy-bear
         type: custom:vertical-layout
         cards:
-          - type: custom:button-card
-            template: minimal_section
-            name: Robynne's Room
-            label: Lights & Media
+          - type: custom:mushroom-title-card
+            title: Robynne's Room
+            subtitle: Lights & Media
 
           - type: horizontal-stack
             cards:
-              - type: custom:button-card
-                template: minimal_light
+              - type: custom:mushroom-light-card
                 entity: light.robynne_light
                 name: Main Light
-              - type: custom:button-card
-                template: minimal_light
+                use_light_color: true
+              - type: custom:mushroom-light-card
                 entity: light.fairy_lights_switch
                 name: Fairy Lights
+                use_light_color: true
 
-          - type: custom:button-card
-            template: minimal_media
+          - type: custom:mushroom-media-player-card
             entity: media_player.yoto_player
             name: Yoto Player
-            icon: mdi:speaker
+            icon_type: icon
+            use_media_info: true
+            media_controls:
+              - play_pause_stop
+              - previous
+              - next
+            volume_controls:
+              - volume_buttons
   '';
 in {
   systemd.tmpfiles.rules = [
