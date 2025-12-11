@@ -267,7 +267,7 @@
           [[[
             const state = states[entity.entity_id];
             if (!state) return '--';
-            const unit = state.attributes?.unit_of_measurement || '';
+            const unit = state.attributes?.unit_of_measurement || "";
             return state.state + unit;
           ]]]
         styles:
