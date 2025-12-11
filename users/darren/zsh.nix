@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   programs.zsh = {
     enable = true;
     history = rec {
@@ -11,7 +15,8 @@
     };
     autosuggestion = {enable = true;};
     enableCompletion = true;
-    initContent = ''
+    completionInit = "autoload -Uz compinit && compinit -u";
+    initContent = lib.mkBefore ''
       # Homebrew PATH for macOS (Apple Silicon and Intel)
       if [[ -f /opt/homebrew/bin/brew ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
