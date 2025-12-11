@@ -692,6 +692,31 @@
                 icon: mdi:water-percent
                 icon_color: light-blue
 
+          # History Graphs
+          - type: custom:mushroom-title-card
+            title: History
+            subtitle: Last 24 hours
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.current_temperature
+                name: Temperature
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.ph_value
+                name: pH
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.tds_value
+                name: TDS
+              - entity: sensor.ec_value
+                name: EC
+
       # ==================== SYSTEM ====================
       - title: System
         path: system
@@ -830,6 +855,27 @@
             icon: mdi:update
             icon_color: >
               {% if states('sensor.update') | int > 0 %}orange{% else %}green{% endif %}
+
+          # History Graphs
+          - type: custom:mushroom-title-card
+            title: History
+            subtitle: System load over time
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.system_monitor_load_1m
+                name: Load (1m)
+              - entity: sensor.system_monitor_load_5m
+                name: Load (5m)
+              - entity: sensor.system_monitor_load_15m
+                name: Load (15m)
+
+          - type: history-graph
+            hours_to_show: 168
+            entities:
+              - entity: sensor.system_monitor_disk_free
+                name: Disk Free
 
           # Quick Actions
           - type: custom:mushroom-title-card
