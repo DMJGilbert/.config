@@ -221,6 +221,9 @@
             - box-shadow: none
             - padding: 12px 16px
             - height: 50px
+          custom_fields:
+            weather:
+              - width: 100%
         custom_fields:
           weather: |
             [[[
@@ -441,6 +444,9 @@
             - border-radius: 18px
             - box-shadow: none
             - padding: 16px
+          custom_fields:
+            match:
+              - width: 100%
         custom_fields:
           match: |
             [[[
