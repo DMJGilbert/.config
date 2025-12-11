@@ -139,7 +139,7 @@
                   {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/living-room
+                  navigation_path: /lovelace-home/living-room
                 badge_icon: >
                   {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}
                     mdi:television
@@ -160,7 +160,7 @@
                   {% if on > 0 %}deep-purple{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/bedroom
+                  navigation_path: /lovelace-home/bedroom
 
               - type: custom:mushroom-template-card
                 entity: group.bathroom_lights
@@ -172,7 +172,7 @@
                   {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/bathroom
+                  navigation_path: /lovelace-home/bathroom
                 badge_icon: >
                   {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}mdi:motion-sensor{% endif %}
                 badge_color: blue
@@ -191,7 +191,7 @@
                   {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/kitchen
+                  navigation_path: /lovelace-home/kitchen
 
               - type: custom:mushroom-template-card
                 entity: group.hallway_lights
@@ -204,7 +204,7 @@
                   {% if on > 0 %}amber{% else %}grey{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/hallway
+                  navigation_path: /lovelace-home/hallway
 
               - type: custom:mushroom-template-card
                 entity: group.robynne_lights
@@ -222,7 +222,7 @@
                   {% if is_state('media_player.yoto_player', 'playing') %}green{% else %}pink{% endif %}
                 tap_action:
                   action: navigate
-                  navigation_path: /lovelace-hacasa/robynne
+                  navigation_path: /lovelace-home/robynne
                 badge_icon: >
                   {% if is_state('media_player.yoto_player', 'playing') %}mdi:music{% endif %}
                 badge_color: green
@@ -906,16 +906,16 @@
   '';
 in {
   systemd.tmpfiles.rules = [
-    "L+ /var/lib/hass/hacasa.yaml - - - - ${dashboardYaml}"
+    "L+ /var/lib/hass/home.yaml - - - - ${dashboardYaml}"
   ];
 
   services.home-assistant.config = {
     lovelace = {
       dashboards = {
-        lovelace-hacasa = {
+        lovelace-home = {
           mode = "yaml";
-          filename = "hacasa.yaml";
-          title = "HaCasa";
+          filename = "home.yaml";
+          title = "Home";
           icon = "mdi:home-assistant";
           show_in_sidebar = true;
           require_admin = false;
