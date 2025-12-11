@@ -36,6 +36,7 @@
       cc-explain() { claude "/explain $*"; }
       cc-deps() { claude "/deps $*"; }
       cc-prime() { claude "/prime $*"; }
+      cc-audit() { claude "/audit $*"; }
     '';
     shellAliases = {
       # Navigation

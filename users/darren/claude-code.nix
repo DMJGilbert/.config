@@ -18,5 +18,6 @@ lib.mkIf pkgs.stdenv.isDarwin {
     ".claude/commands/explain.md".source = ./config/claude/commands/explain.md;
     ".claude/commands/deps.md".source = ./config/claude/commands/deps.md;
     ".claude/commands/prime.md".source = ./config/claude/commands/prime.md;
+    ".claude/commands/audit.md".source = ./config/claude/commands/audit.md;
   };
 }
