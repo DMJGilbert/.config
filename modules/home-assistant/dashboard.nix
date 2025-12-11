@@ -524,6 +524,339 @@
               - next
             volume_controls:
               - volume_buttons
+
+      # ==================== CAR ====================
+      - title: Car
+        path: car
+        icon: mdi:car
+        type: custom:vertical-layout
+        cards:
+          - type: custom:mushroom-title-card
+            title: Ford Puma
+            subtitle: Vehicle Status
+
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                entity: sensor.fordpass_wf02xxerk2la80437_fuel
+                icon: mdi:gas-station
+                icon_color: amber
+                content: "{{ states('sensor.fordpass_wf02xxerk2la80437_fuel') }}%"
+              - type: template
+                entity: sensor.fordpass_wf02xxerk2la80437_battery
+                icon: mdi:car-battery
+                icon_color: green
+                content: "{{ states('sensor.fordpass_wf02xxerk2la80437_battery') }}%"
+              - type: template
+                entity: sensor.fordpass_wf02xxerk2la80437_oil
+                icon: mdi:oil
+                icon_color: orange
+                content: "{{ states('sensor.fordpass_wf02xxerk2la80437_oil') }}%"
+            alignment: center
+
+          - type: custom:mushroom-template-card
+            entity: sensor.fordpass_wf02xxerk2la80437_doorstatus
+            primary: Doors
+            secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_doorstatus') }}"
+            icon: mdi:car-door
+            icon_color: >
+              {% if is_state('sensor.fordpass_wf02xxerk2la80437_doorstatus', 'Closed') %}green{% else %}red{% endif %}
+
+          - type: custom:mushroom-template-card
+            entity: sensor.fordpass_wf02xxerk2la80437_windowposition
+            primary: Windows
+            secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_windowposition') }}"
+            icon: mdi:car-door
+            icon_color: >
+              {% if is_state('sensor.fordpass_wf02xxerk2la80437_windowposition', 'Closed') %}green{% else %}red{% endif %}
+
+          - type: custom:mushroom-template-card
+            entity: device_tracker.fordpass_wf02xxerk2la80437_tracker
+            primary: Location
+            secondary: "{{ states('device_tracker.fordpass_wf02xxerk2la80437_tracker') }}"
+            icon: mdi:map-marker
+            icon_color: blue
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-title-card
+            title: Controls
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Lock
+                icon: mdi:car-door-lock
+                icon_color: green
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  target:
+                    entity_id: button.fordpass_wf02xxerk2la80437_doorlock
+              - type: custom:mushroom-template-card
+                primary: Unlock
+                icon: mdi:car-door-lock-open
+                icon_color: red
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  target:
+                    entity_id: button.fordpass_wf02xxerk2la80437_doorunlock
+              - type: custom:mushroom-template-card
+                primary: Refresh
+                icon: mdi:refresh
+                icon_color: blue
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  target:
+                    entity_id: button.fordpass_wf02xxerk2la80437_request_refresh
+
+      # ==================== FISH ====================
+      - title: Fish
+        path: fish
+        icon: mdi:fish
+        type: custom:vertical-layout
+        cards:
+          - type: custom:mushroom-title-card
+            title: Aquarium
+            subtitle: Water Parameters
+
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                entity: sensor.current_temperature
+                icon: mdi:thermometer
+                icon_color: >
+                  {% set temp = states('sensor.current_temperature') | float %}
+                  {% if temp < 22 or temp > 28 %}red{% elif temp < 24 or temp > 26 %}orange{% else %}green{% endif %}
+                content: "{{ states('sensor.current_temperature') }}°C"
+              - type: template
+                entity: sensor.ph_value
+                icon: mdi:ph
+                icon_color: >
+                  {% set ph = states('sensor.ph_value') | float %}
+                  {% if ph < 6.5 or ph > 8.5 %}red{% elif ph < 7 or ph > 8 %}orange{% else %}green{% endif %}
+                content: "pH {{ states('sensor.ph_value') }}"
+            alignment: center
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: custom:mushroom-entity-card
+                entity: sensor.current_temperature
+                name: Temperature
+                icon: mdi:thermometer-water
+                icon_color: blue
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.ph_value
+                name: pH Level
+                icon: mdi:ph
+                icon_color: purple
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.tds_value
+                name: TDS
+                icon: mdi:water-opacity
+                icon_color: teal
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.ec_value
+                name: Conductivity
+                icon: mdi:flash
+                icon_color: amber
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.salinity_value
+                name: Salinity
+                icon: mdi:shaker-outline
+                icon_color: cyan
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.orp_value
+                name: ORP
+                icon: mdi:molecule
+                icon_color: green
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.proportion_value
+                name: Specific Gravity
+                icon: mdi:weight
+                icon_color: indigo
+
+              - type: custom:mushroom-entity-card
+                entity: sensor.cf
+                name: CF
+                icon: mdi:water-percent
+                icon_color: light-blue
+
+      # ==================== SYSTEM ====================
+      - title: System
+        path: system
+        icon: mdi:cog
+        type: custom:vertical-layout
+        cards:
+          - type: custom:mushroom-title-card
+            title: System
+            subtitle: Monitoring & Status
+
+          # System Load
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                entity: sensor.system_monitor_load_1m
+                icon: mdi:chip
+                icon_color: >
+                  {% set load = states('sensor.system_monitor_load_1m') | float %}
+                  {% if load > 2 %}red{% elif load > 1 %}orange{% else %}green{% endif %}
+                content: "Load: {{ states('sensor.system_monitor_load_1m') }}"
+              - type: template
+                entity: sensor.system_monitor_disk_free
+                icon: mdi:harddisk
+                icon_color: >
+                  {% set free = states('sensor.system_monitor_disk_free') | float %}
+                  {% if free < 10 %}red{% elif free < 50 %}orange{% else %}green{% endif %}
+                content: "{{ states('sensor.system_monitor_disk_free') | round(0) }} GB free"
+              - type: template
+                entity: sensor.entities
+                icon: mdi:format-list-bulleted
+                icon_color: blue
+                content: "{{ states('sensor.entities') }} entities"
+            alignment: center
+
+          # Home Assistant Stats
+          - type: custom:mushroom-title-card
+            title: Home Assistant
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-entity-card
+                entity: sensor.integrations
+                name: Integrations
+                icon: mdi:puzzle
+                icon_color: purple
+              - type: custom:mushroom-entity-card
+                entity: sensor.automations
+                name: Automations
+                icon: mdi:robot
+                icon_color: blue
+              - type: custom:mushroom-entity-card
+                entity: sensor.devices
+                name: Devices
+                icon: mdi:devices
+                icon_color: teal
+
+          # Low Battery Section
+          - type: custom:mushroom-title-card
+            title: Low Battery
+            subtitle: Devices below 30%
+
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - entity_id: "sensor.*battery*"
+                  state: "< 30"
+                  not:
+                    state: unavailable
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: >
+                      {% set batt = states(config.entity) | float(0) %}
+                      {% if batt < 10 %}red{% elif batt < 20 %}orange{% else %}amber{% endif %}
+              exclude:
+                - state: unavailable
+                - state: unknown
+            sort:
+              method: state
+              numeric: true
+            show_empty: true
+            unique: true
+
+          # Unavailable Devices
+          - type: custom:mushroom-title-card
+            title: Unavailable
+            subtitle: Offline devices
+
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - state: unavailable
+                  domain: light
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+                - state: unavailable
+                  domain: switch
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+                - state: unavailable
+                  domain: binary_sensor
+                  entity_id: "*door*"
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+                - state: unavailable
+                  domain: binary_sensor
+                  entity_id: "*motion*"
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+            sort:
+              method: friendly_name
+            show_empty: true
+            unique: true
+
+          # Updates Available
+          - type: custom:mushroom-title-card
+            title: Updates
+            subtitle: Available updates
+
+          - type: custom:mushroom-entity-card
+            entity: sensor.update
+            name: Pending Updates
+            icon: mdi:update
+            icon_color: >
+              {% if states('sensor.update') | int > 0 %}orange{% else %}green{% endif %}
+
+          # Quick Actions
+          - type: custom:mushroom-title-card
+            title: Actions
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Restart HA
+                icon: mdi:restart
+                icon_color: red
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  target:
+                    entity_id: button.homeassistant_restart
+                  confirmation:
+                    text: Are you sure you want to restart Home Assistant?
+              - type: custom:mushroom-template-card
+                primary: Reload
+                icon: mdi:reload
+                icon_color: orange
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  target:
+                    entity_id: button.homeassistant_reload
   '';
 in {
   systemd.tmpfiles.rules = [
