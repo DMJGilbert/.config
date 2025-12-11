@@ -47,7 +47,7 @@
     borderRadius = "18px";
     cardGap = "12px";
     shadow = "0px 4px 4px 0px rgba(0,0,0,0.16)";
-    fontFamily = "\"'Product Sans', 'Google Sans', sans-serif\"";
+    fontFamily = "sans-serif";
     tintOpacity = "0.15";
   };
 
@@ -540,7 +540,7 @@
 
               const stateText = state.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-              return '<div style="display:flex;align-items:center;gap:14px;font-family:${design.fontFamily};">' +
+              return '<div style="display:flex;align-items:center;gap:14px;">' +
                 '<ha-icon icon="' + icon + '" style="--mdc-icon-size:32px;color:' + color + ';"></ha-icon>' +
                 '<span style="font-size:28px;font-weight:700;color:${colors.contrast18};">' + temp + '°</span>' +
                 '<span style="font-size:14px;color:${colors.contrast14};margin-left:auto;">' + stateText + '</span>' +
@@ -589,7 +589,7 @@
 
               var match = liveMatch ? liveMatch : nextMatch;
               if (!match) {
-                return '<div style="text-align:center;color:${colors.contrast14};padding:20px;font-family:${design.fontFamily};">No upcoming matches</div>';
+                return '<div style="text-align:center;color:${colors.contrast14};padding:20px;">No upcoming matches</div>';
               }
 
               var attr = match.attributes;
@@ -627,7 +627,7 @@
                 scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.contrast14};text-transform:uppercase;">Final</span><span style="font-size:28px;font-weight:700;color:${colors.contrast18};">' + homeScore + ' - ' + awayScore + '</span></div>';
               }
 
-              return '<div style="display:flex;flex-direction:column;gap:12px;font-family:${design.fontFamily};">' +
+              return '<div style="display:flex;flex-direction:column;gap:12px;">' +
                 '<div style="display:flex;align-items:center;justify-content:space-between;">' +
                   '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">' +
                     '<img src="' + homeLogo + '" style="width:48px;height:48px;object-fit:contain;">' +
@@ -680,7 +680,7 @@
               else if (batteryNum > 10) batteryIcon = 'mdi:battery-20';
               var batteryColor = batteryNum > 20 ? '${colors.green}' : '${colors.red}';
 
-              return '<div style="display:flex;align-items:center;justify-content:space-between;font-family:${design.fontFamily};">' +
+              return '<div style="display:flex;align-items:center;justify-content:space-between;">' +
                 '<div style="display:flex;align-items:center;gap:12px;">' +
                   '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:32px;color:' + stateColor + ';"></ha-icon>' +
                   '<div style="display:flex;flex-direction:column;">' +
@@ -696,7 +696,7 @@
             ]]]
           controls: |
             [[[
-              return '<div style="display:flex;justify-content:space-around;padding-top:12px;margin-top:12px;border-top:1px solid ${colors.contrast5};font-family:${design.fontFamily};">' +
+              return '<div style="display:flex;justify-content:space-around;padding-top:12px;margin-top:12px;border-top:1px solid ${colors.contrast5};">' +
                 '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
                   '<ha-icon icon="mdi:play" style="--mdc-icon-size:22px;color:${colors.green};"></ha-icon>' +
                   '<span style="font-size:10px;color:${colors.contrast14};margin-top:4px;">Start</span>' +
@@ -1433,7 +1433,7 @@
                   const doorIcon = door === 'Closed' ? 'mdi:car-door-lock' : 'mdi:car-door';
                   const windowColor = window === 'Closed' ? '${colors.green}' : '${colors.yellow}';
 
-                  return '<div style="display:flex;flex-direction:column;gap:16px;font-family:${design.fontFamily};">' +
+                  return '<div style="display:flex;flex-direction:column;gap:16px;">' +
                     '<div style="display:flex;align-items:center;justify-content:center;">' +
                       '<ha-icon icon="mdi:car" style="--mdc-icon-size:48px;color:${colors.blue};"></ha-icon>' +
                     '</div>' +
