@@ -225,8 +225,8 @@
           weather: |
             [[[
               const weather = states['weather.forecast_home'];
-              if (!weather) return '';
-              const state = weather.state || 'unknown';
+              if (!weather) return '''';
+              const condition = weather.state || 'unknown';
               const temp = weather.attributes.temperature ?? '--';
 
               const icons = {
@@ -241,13 +241,13 @@
                 'windy': 'mdi:weather-windy',
                 'lightning': 'mdi:weather-lightning'
               };
-              const icon = icons[state] || 'mdi:weather-cloudy';
-              const stateText = state.charAt(0).toUpperCase() + state.slice(1).replace(/-/g, ' ');
+              const icon = icons[condition] || 'mdi:weather-cloudy';
+              const conditionText = condition.charAt(0).toUpperCase() + condition.slice(1).replace(/-/g, ' ');
 
               return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;">' +
                 '<ha-icon icon="' + icon + '" style="--mdc-icon-size:24px;color:${colors.contrast15};"></ha-icon>' +
                 '<span style="font-size:22px;font-weight:600;color:${colors.contrast20};">' + temp + '°</span>' +
-                '<span style="font-size:13px;color:${colors.contrast10};">' + stateText + '</span>' +
+                '<span style="font-size:13px;color:${colors.contrast10};">' + conditionText + '</span>' +
               '</div>';
             ]]]
 
@@ -469,7 +469,7 @@
               var homeScore = isHome ? (a.team_score||0) : (a.opponent_score||0);
               var awayScore = isHome ? (a.opponent_score||0) : (a.team_score||0);
 
-              var center = '';
+              var center = '''';
               if (match.state === "IN") {
                 center = '<div style="text-align:center;"><div style="font-size:10px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE</div><div style="font-size:24px;font-weight:700;color:${colors.contrast20};">' + homeScore + ' - ' + awayScore + '</div></div>';
               } else {
@@ -479,11 +479,11 @@
               }
 
               return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-                '<div style="text-align:center;flex:1;"><img src="' + (homeLogo||'') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (homeName||'HOME') + '</div></div>' +
+                '<div style="text-align:center;flex:1;"><img src="' + (homeLogo||'''') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (homeName||'HOME') + '</div></div>' +
                 '<div style="flex:1.2;">' + center + '</div>' +
-                '<div style="text-align:center;flex:1;"><img src="' + (awayLogo||'') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (awayName||'AWAY') + '</div></div>' +
+                '<div style="text-align:center;flex:1;"><img src="' + (awayLogo||'''') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (awayName||'AWAY') + '</div></div>' +
               '</div>' +
-              '<div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};font-size:11px;color:${colors.contrast10};">' + (a.league||'') + (a.venue ? ' • ' + a.venue : '') + '</div>';
+              '<div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};font-size:11px;color:${colors.contrast10};">' + (a.league||'''') + (a.venue ? ' • ' + a.venue : '''') + '</div>';
             ]]]
 
       # ==================== VACUUM CARD ====================
@@ -503,20 +503,20 @@
             [[[
               const vac = states['vacuum.robovac'];
               const bat = states['sensor.robovac_battery'];
-              const state = vac ? vac.state : 'unavailable';
+              const vacStatus = vac ? vac.state : 'unavailable';
               const battery = bat ? bat.state : '0';
 
-              var stateColor = '${colors.contrast10}';
-              if (state === 'cleaning') stateColor = '${colors.green}';
-              else if (state === 'docked') stateColor = '${colors.blue}';
-              else if (state === 'returning') stateColor = '${colors.orange}';
-              else if (state === 'unavailable') stateColor = '${colors.red}';
+              var statusColor = '${colors.contrast10}';
+              if (vacStatus === 'cleaning') statusColor = '${colors.green}';
+              else if (vacStatus === 'docked') statusColor = '${colors.blue}';
+              else if (vacStatus === 'returning') statusColor = '${colors.orange}';
+              else if (vacStatus === 'unavailable') statusColor = '${colors.red}';
 
               return '<div style="display:flex;align-items:center;justify-content:space-between;">' +
                 '<div style="display:flex;align-items:center;gap:12px;">' +
-                  '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:28px;color:' + stateColor + ';"></ha-icon>' +
+                  '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:28px;color:' + statusColor + ';"></ha-icon>' +
                   '<div><div style="font-size:14px;font-weight:500;color:${colors.contrast18};">RoboVac</div>' +
-                  '<div style="font-size:12px;color:' + stateColor + ';text-transform:capitalize;">' + state + '</div></div>' +
+                  '<div style="font-size:12px;color:' + statusColor + ';text-transform:capitalize;">' + vacStatus + '</div></div>' +
                 '</div>' +
                 '<div style="display:flex;align-items:center;gap:4px;color:${colors.contrast15};">' +
                   '<ha-icon icon="mdi:battery" style="--mdc-icon-size:16px;"></ha-icon>' +
@@ -654,7 +654,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '';
+                      return '''';
                     ]]]
                   label: |
                     [[[
@@ -683,7 +683,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.purple};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '';
+                      return '''';
                     ]]]
                   label: |
                     [[[
@@ -711,7 +711,7 @@
                       if (motion && motion.state === 'on') {
                         return '<div style="background:${colors.blue};border-radius:100px;padding:6px;"><ha-icon icon="mdi:motion-sensor" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
                       }
-                      return '';
+                      return '''';
                     ]]]
                   label: |
                     [[[
@@ -740,7 +740,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '';
+                      return '''';
                     ]]]
                   label: |
                     [[[
@@ -787,7 +787,7 @@
                       if (yoto && yoto.state === 'playing') {
                         return '<div style="background:${colors.green};border-radius:100px;padding:6px;"><ha-icon icon="mdi:music" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
                       }
-                      return '';
+                      return '''';
                     ]]]
                   label: |
                     [[[
