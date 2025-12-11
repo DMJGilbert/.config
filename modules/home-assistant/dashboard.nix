@@ -748,7 +748,13 @@
 
               var scoreHtml = "";
               if (state === "PRE") {
-                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Next Match</span><span style="font-size:14px;font-weight:600;color:${colors.mauve};">' + kickoff + '</span></div>';
+                var kickoffDate = attr.date ? new Date(attr.date) : null;
+                var kickoffStr = kickoff;
+                if (kickoffDate && !isNaN(kickoffDate)) {
+                  var opts = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+                  kickoffStr = kickoffDate.toLocaleString('en-GB', opts);
+                }
+                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Next Match</span><span style="font-size:14px;font-weight:600;color:${colors.mauve};">' + kickoffStr + '</span></div>';
               } else if (state === "IN") {
                 scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE ' + clock + '</span><span style="font-size:28px;font-weight:700;color:${colors.text};">' + homeScore + ' - ' + awayScore + '</span></div>';
               } else {
