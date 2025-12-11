@@ -59,10 +59,11 @@
         styles:
           card:
             - background: ${colors.contrast1}
-            - border-radius: ${design.borderRadius}
-            - box-shadow: ${design.shadow}
+            - border-radius: 20px
+            - box-shadow: none
             - padding: 12px
-            - transition: transform 200ms ease, opacity 200ms ease
+            - transition: all 0.3s ease
+            - "-webkit-tap-highlight-color": transparent
           name:
             - font-family: ${design.fontFamily}
             - color: ${colors.contrast18}
@@ -77,9 +78,8 @@
           action: toggle
           haptic: light
         extra_styles: |
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+          ha-card:active {
+            transform: scale(0.98);
           }
 
       # ==================== HEADER / TITLE ====================
@@ -138,21 +138,24 @@
         styles:
           card:
             - background: ${colors.contrast1}
-            - border-radius: ${design.borderRadius}
-            - box-shadow: ${design.shadow}
+            - border-radius: 20px
             - padding: 14px
-            - height: 96px
+            - height: 100px
           grid:
             - grid-template-areas: '"i s" "n n" "l l"'
             - grid-template-columns: 1fr auto
             - grid-template-rows: auto 1fr auto
           icon:
-            - color: ${colors.contrast14}
-            - width: 24px
+            - width: 38px
+            - height: 38px
+            - color: ${colors.contrast10}
+            - background: "rgba(255,255,255,0.05)"
+            - border-radius: 50%
+            - padding: 8px
             - justify-self: start
           name:
             - font-family: ${design.fontFamily}
-            - font-size: 15px
+            - font-size: 14px
             - font-weight: 600
             - color: ${colors.contrast18}
             - justify-self: start
@@ -163,6 +166,7 @@
             - color: ${colors.contrast14}
             - justify-self: start
             - align-self: start
+            - opacity: "0.6"
           custom_fields:
             s:
               - justify-self: end
@@ -172,6 +176,7 @@
             styles:
               icon:
                 - color: "[[[ return variables.accent_color ]]]"
+                - background: "[[[ return variables.accent_color + '20' ]]]"
 
       # ==================== LIGHT CARD ====================
 
@@ -197,17 +202,21 @@
           ]]]
         styles:
           card:
-            - height: 96px
+            - height: 100px
             - padding: 14px
           grid:
             - grid-template-areas: '"i ." "n n" "l l"'
             - grid-template-rows: auto 1fr auto
           icon:
-            - width: 24px
-            - color: ${colors.contrast14}
+            - width: 38px
+            - height: 38px
+            - color: ${colors.contrast10}
             - justify-self: start
+            - background: "rgba(255,255,255,0.05)"
+            - border-radius: 50%
+            - padding: 8px
           name:
-            - font-size: 14px
+            - font-size: 13px
             - font-weight: 600
             - justify-self: start
             - align-self: end
@@ -215,23 +224,18 @@
             - font-size: 12px
             - justify-self: start
             - align-self: start
+            - opacity: "0.6"
         state:
           - value: "on"
-            icon: mdi:lightbulb-on
+            icon: mdi:lightbulb
             styles:
-              card:
-                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.contrast0}
-              name:
-                - color: ${colors.contrast0}
-              label:
-                - color: ${colors.contrast0}
+                - color: "[[[ return variables.accent_color ]]]"
+                - background: "[[[ return variables.accent_color + '20' ]]]"
           - value: "unavailable"
             styles:
               card:
-                - opacity: 0.5
-            label: Unavailable
+                - opacity: 0.4
 
       # ==================== SWITCH CARD ====================
 
@@ -244,14 +248,9 @@
           - value: "on"
             icon: mdi:power-plug
             styles:
-              card:
-                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.contrast0}
-              name:
-                - color: ${colors.contrast0}
-              label:
-                - color: ${colors.contrast0}
+                - color: "[[[ return variables.accent_color ]]]"
+                - background: "[[[ return variables.accent_color + '20' ]]]"
 
       # ==================== SENSOR / STAT CARD ====================
 
@@ -276,10 +275,14 @@
             - padding: 14px
           grid:
             - grid-template-areas: '"i l" "i n"'
-            - grid-template-columns: 40px 1fr
+            - grid-template-columns: 50px 1fr
           icon:
-            - width: 26px
+            - width: 36px
+            - height: 36px
             - color: "[[[ return variables.accent_color ]]]"
+            - background: "[[[ return variables.accent_color + '15' ]]]"
+            - border-radius: 50%
+            - padding: 6px
           name:
             - font-size: 11px
             - font-weight: 500
@@ -289,7 +292,7 @@
             - text-transform: uppercase
             - letter-spacing: 0.5px
           label:
-            - font-size: 22px
+            - font-size: 24px
             - font-weight: 700
             - color: ${colors.contrast18}
             - justify-self: start
@@ -301,7 +304,7 @@
           action: none
         styles:
           card:
-            - height: 72px
+            - height: 76px
             - padding: 12px 14px
 
       # ==================== PERSON CARD ====================
@@ -322,10 +325,14 @@
             - padding: 12px 14px
           grid:
             - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: 44px 1fr
+            - grid-template-columns: 50px 1fr
           icon:
-            - width: 28px
+            - width: 36px
+            - height: 36px
             - color: ${colors.purple}
+            - background: "${colors.purple}15"
+            - border-radius: 50%
+            - padding: 6px
           name:
             - font-size: 14px
             - font-weight: 600
@@ -336,11 +343,16 @@
             - justify-self: start
             - align-self: start
             - text-transform: capitalize
+            - opacity: "0.6"
         state:
           - value: "home"
             styles:
+              icon:
+                - color: ${colors.green}
+                - background: "${colors.green}20"
               label:
                 - color: ${colors.green}
+                - opacity: "1"
           - value: "not_home"
             styles:
               label:
@@ -357,25 +369,29 @@
           accent_color: ${colors.purple}
         styles:
           card:
-            - height: 72px
-            - padding: 12px
+            - height: 80px
+            - padding: 12px 8px
           grid:
             - grid-template-areas: '"i" "n"'
             - grid-template-rows: 1fr auto
           icon:
-            - width: 26px
+            - width: 38px
+            - height: 38px
             - color: "[[[ return variables.accent_color ]]]"
+            - background: "[[[ return variables.accent_color + '15' ]]]"
+            - border-radius: 50%
+            - padding: 8px
+            - justify-self: center
           name:
-            - font-size: 12px
+            - font-size: 11px
             - font-weight: 500
+            - color: ${colors.contrast14}
+            - justify-self: center
         state:
           - value: "on"
             styles:
-              card:
-                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.contrast0}
-              name:
+                - background: "[[[ return variables.accent_color ]]]"
                 - color: ${colors.contrast0}
 
       # ==================== MEDIA CARD ====================
@@ -401,16 +417,21 @@
           ]]]
         styles:
           card:
-            - height: 96px
+            - height: 100px
             - padding: 14px
           grid:
             - grid-template-areas: '"i ." "n n" "l l"'
             - grid-template-rows: auto 1fr auto
           icon:
-            - width: 24px
-            - color: ${colors.contrast14}
+            - width: 38px
+            - height: 38px
+            - color: ${colors.contrast10}
+            - background: "rgba(255,255,255,0.05)"
+            - border-radius: 50%
+            - padding: 8px
+            - justify-self: start
           name:
-            - font-size: 14px
+            - font-size: 13px
             - font-weight: 600
             - justify-self: start
             - align-self: end
@@ -419,39 +440,28 @@
             - justify-self: start
             - align-self: start
             - text-transform: capitalize
+            - opacity: "0.6"
         state:
           - value: "playing"
             icon: mdi:play-circle
             styles:
-              card:
-                - background: ${colors.green}
               icon:
-                - color: ${colors.contrast0}
-              name:
-                - color: ${colors.contrast0}
+                - color: ${colors.green}
+                - background: "${colors.green}20"
               label:
-                - color: ${colors.contrast0}
+                - color: ${colors.green}
+                - opacity: "1"
           - value: "paused"
             icon: mdi:pause-circle
             styles:
-              card:
-                - background: ${colors.yellow}
               icon:
-                - color: ${colors.contrast0}
-              name:
-                - color: ${colors.contrast0}
-              label:
-                - color: ${colors.contrast0}
+                - color: ${colors.yellow}
+                - background: "${colors.yellow}20"
           - value: "on"
             styles:
-              card:
-                - background: ${colors.blue}
               icon:
-                - color: ${colors.contrast0}
-              name:
-                - color: ${colors.contrast0}
-              label:
-                - color: ${colors.contrast0}
+                - color: ${colors.blue}
+                - background: "${colors.blue}20"
 
       # ==================== FAN CARD ====================
 
@@ -472,15 +482,10 @@
         state:
           - value: "on"
             styles:
-              card:
-                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.contrast0}
+                - color: "[[[ return variables.accent_color ]]]"
+                - background: "[[[ return variables.accent_color + '20' ]]]"
                 - animation: spin 1s linear infinite
-              name:
-                - color: ${colors.contrast0}
-              label:
-                - color: ${colors.contrast0}
         extra_styles: |
           @keyframes spin {
             from { transform: rotate(0deg); }
@@ -786,32 +791,22 @@
                 template: minimal_stat
                 name: Avg Temp
                 icon: mdi:thermometer
-                show_state: false
                 variables:
                   accent_color: ${colors.red}
-                custom_fields:
-                  l: |
-                    [[[
-                      const sensors = [
-                        states['sensor.hallway_sensor_temperature'],
-                        states['sensor.bathroom_sensor_temperature'],
-                        states['sensor.dyson_temperature'],
-                        states['sensor.aarlo_temperature_nursery']
-                      ].filter(s => s && s.state !== 'unavailable' && s.state !== 'unknown');
+                label: |
+                  [[[
+                    const sensors = [
+                      states['sensor.hallway_sensor_temperature'],
+                      states['sensor.bathroom_sensor_temperature'],
+                      states['sensor.dyson_temperature'],
+                      states['sensor.aarlo_temperature_nursery']
+                    ].filter(s => s && s.state !== 'unavailable' && s.state !== 'unknown');
 
-                      if (sensors.length === 0) return '--';
+                    if (sensors.length === 0) return '--';
 
-                      const sum = sensors.reduce((acc, s) => acc + parseFloat(s.state), 0);
-                      return (sum / sensors.length).toFixed(1) + '°';
-                    ]]]
-                styles:
-                  custom_fields:
-                    l:
-                      - font-size: 22px
-                      - font-weight: 700
-                      - color: ${colors.contrast18}
-                      - justify-self: start
-                      - align-self: end
+                    const sum = sensors.reduce((acc, s) => acc + parseFloat(s.state), 0);
+                    return (sum / sensors.length).toFixed(1) + '°';
+                  ]]]
 
           # Liverpool FC
           - type: custom:button-card
