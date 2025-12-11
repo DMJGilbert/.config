@@ -1,220 +1,393 @@
 {pkgs, ...}: let
-  # Catppuccin Mocha colors
+  # Minimal-HA Pixel-like theme colors
   colors = {
+    # Grayscale (dark mode)
+    contrast0 = "#1b1b1f"; # Darkest background
+    contrast1 = "#303034"; # Card background
+    contrast2 = "#111318";
+    contrast3 = "#171A21";
+    contrast4 = "#1C1F27";
+    contrast5 = "#262A35";
+    contrast6 = "#353946";
+    contrast7 = "#434856";
+    contrast8 = "#535865";
+    contrast9 = "#636774";
+    contrast10 = "#777A83";
+    contrast11 = "#898C94";
+    contrast12 = "#969AA6";
+    contrast13 = "#A4A9B6";
+    contrast14 = "#B3B8C6"; # Muted text
+    contrast15 = "#C3C8D5";
+    contrast16 = "#D4D8E2";
+    contrast17 = "#E1E5EF";
+    contrast18 = "#FFFFFF"; # Primary text
+
     # Accent colors
-    mauve = "#cba6f7";
-    peach = "#fab387";
-    blue = "#89b4fa";
-    green = "#a6e3a1";
-    red = "#f38ba8";
-    yellow = "#f9e2af";
-    # Text colors
-    text = "#cdd6f4"; # Primary text
-    subtext = "#a6adc8"; # Secondary/muted text
-    # Surface colors
-    surface0 = "#313244"; # Card backgrounds
-    base = "#1e1e2e"; # Page background
-    mantle = "#181825"; # Darker background
+    purple = "#EFB1FF";
+    yellow = "#FFDA78";
+    orange = "#FFB581";
+    red = "#FF918A";
+    green = "#CEF595";
+    watergreen = "#95F5A5";
+    blue = "#90BFFF";
+    pink = "#D683AA";
+    brown = "#7D6E68";
+
+    # RGB versions for gradients/tints
+    purpleRgb = "239, 177, 255";
+    yellowRgb = "255, 218, 120";
+    orangeRgb = "255, 181, 129";
+    redRgb = "255, 145, 138";
+    greenRgb = "206, 245, 149";
+    blueRgb = "144, 191, 255";
   };
 
-  # Opacity values for RGBA backgrounds
-  opacity = {
-    subtle = "0.1"; # Inactive/off states
-    light = "0.2"; # Default icon backgrounds
-    medium = "0.3"; # Active state overlays
+  # Design tokens
+  design = {
+    borderRadius = "18px";
+    cardGap = "12px";
+    shadow = "0px 4px 4px 0px rgba(0,0,0,0.16)";
+    fontFamily = "'Product Sans', 'Google Sans', sans-serif";
+    tintOpacity = "0.15";
   };
 
-  # Button card templates YAML content (as a string for inlining)
-  # Note: This includes the button_card_templates key itself to avoid indentation issues
   buttonCardTemplatesContent = ''
     button_card_templates:
-      # HaCasa-style Button Card Templates with Catppuccin Mocha colors
+      # ==================== BASE TEMPLATES ====================
 
-      hc_base_card:
-        variables:
-          card_color: "${colors.mauve}"
-          custom_label: ""
+      minimal_base:
+        styles:
+          card:
+            - background: ${colors.contrast1}
+            - border-radius: ${design.borderRadius}
+            - box-shadow: ${design.shadow}
+            - padding: 12px
+            - transition: transform 200ms ease, opacity 200ms ease
+          name:
+            - font-family: ${design.fontFamily}
+            - color: ${colors.contrast18}
+            - font-weight: 500
+          label:
+            - font-family: ${design.fontFamily}
+            - color: ${colors.contrast14}
+          state:
+            - font-family: ${design.fontFamily}
+            - color: ${colors.contrast18}
+        tap_action:
+          action: toggle
+          haptic: light
+        extra_styles: |
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+          }
+
+      # ==================== HEADER / TITLE ====================
+
+      minimal_header:
+        show_name: true
+        show_icon: false
+        show_label: true
+        show_state: false
+        styles:
+          card:
+            - background: transparent
+            - box-shadow: none
+            - padding: 16px 4px 8px 4px
+          grid:
+            - grid-template-areas: '"n" "l"'
+          name:
+            - font-family: ${design.fontFamily}
+            - font-size: 28px
+            - font-weight: 600
+            - color: ${colors.contrast18}
+            - justify-self: start
+          label:
+            - font-family: ${design.fontFamily}
+            - font-size: 14px
+            - color: ${colors.contrast14}
+            - justify-self: start
+
+      minimal_title:
+        show_name: true
+        show_icon: false
+        show_label: false
+        styles:
+          card:
+            - background: transparent
+            - box-shadow: none
+            - padding: 16px 4px 8px 4px
+          name:
+            - font-family: ${design.fontFamily}
+            - font-size: 18px
+            - font-weight: 600
+            - color: ${colors.contrast18}
+            - justify-self: start
+
+      # ==================== ROOM CARD ====================
+
+      minimal_room:
+        template: minimal_base
         show_name: true
         show_icon: true
         show_label: true
         show_state: false
+        variables:
+          room_icon: mdi:home
+          accent_color: ${colors.blue}
         styles:
-          grid:
-            - grid-template-areas: |
-                ". i" "n n" "l l"
-            - grid-template-rows: min-content min-content 1fr
           card:
-            - padding: 12px
-            - height: 100px
-            - background: ${colors.surface0}
-            - border-radius: 20px
+            - background: ${colors.contrast1}
+            - border-radius: ${design.borderRadius}
+            - box-shadow: ${design.shadow}
+            - padding: 14px
+            - height: 96px
+          grid:
+            - grid-template-areas: '"i s" "n n" "l l"'
+            - grid-template-columns: 1fr auto
+            - grid-template-rows: auto 1fr auto
+          icon:
+            - color: ${colors.contrast14}
+            - width: 24px
+            - justify-self: start
           name:
-            - text-align: left
-            - font-size: 14px
+            - font-family: ${design.fontFamily}
+            - font-size: 15px
             - font-weight: 600
+            - color: ${colors.contrast18}
             - justify-self: start
             - align-self: end
-            - color: ${colors.text}
           label:
-            - text-align: left
+            - font-family: ${design.fontFamily}
             - font-size: 12px
-            - font-weight: 400
+            - color: ${colors.contrast14}
             - justify-self: start
-            - align-self: center
-            - color: ${colors.subtext}
-          icon:
-            - width: 50%
-            - color: ${colors.subtext}
-          img_cell:
-            - background: rgba(203, 166, 247, 0.2)
-            - border-radius: 50%
-            - width: 35px
-            - height: 35px
             - align-self: start
-            - margin-bottom: 10px
-            - justify-self: end
+          custom_fields:
+            s:
+              - justify-self: end
+              - align-self: start
         state:
           - value: "on"
             styles:
-              card:
-                - background: "[[[ return variables.card_color ]]]"
-              name:
-                - color: "#11111b"
-              label:
-                - color: "#11111b"
               icon:
-                - color: "#11111b"
-              img_cell:
-                - background: rgba(17, 17, 27, 0.25)
-          - value: "off"
-            styles:
-              icon:
-                - color: ${colors.subtext}
-              img_cell:
-                - background: rgba(166, 173, 200, 0.1)
-          - value: "unavailable"
-            styles:
-              name:
-                - text-decoration: line-through
-              card:
-                - opacity: 0.5
-            label: Unavailable
+                - color: "[[[ return variables.accent_color ]]]"
 
-      hc_light_card:
-        template: hc_base_card
-        icon: mdi:lightbulb
+      # ==================== LIGHT CARD ====================
+
+      minimal_light:
+        template: minimal_base
+        show_name: true
+        show_icon: true
+        show_label: true
+        show_state: false
+        icon: mdi:lightbulb-outline
+        variables:
+          accent_color: ${colors.yellow}
         hold_action:
           action: more-info
         label: |
           [[[
             const state = states[entity.entity_id];
             if (!state) return 'Unknown';
-            if (state.attributes && state.attributes.brightness) {
-              var bri = Math.round(state.attributes.brightness / 2.55);
-              return bri + '%';
+            if (state.state === 'on' && state.attributes.brightness) {
+              return Math.round(state.attributes.brightness / 2.55) + '%';
             }
-            return state.state;
+            return state.state === 'on' ? 'On' : 'Off';
           ]]]
+        styles:
+          card:
+            - height: 96px
+            - padding: 14px
+          grid:
+            - grid-template-areas: '"i ." "n n" "l l"'
+            - grid-template-rows: auto 1fr auto
+          icon:
+            - width: 24px
+            - color: ${colors.contrast14}
+            - justify-self: start
+          name:
+            - font-size: 14px
+            - font-weight: 600
+            - justify-self: start
+            - align-self: end
+          label:
+            - font-size: 12px
+            - justify-self: start
+            - align-self: start
         state:
           - value: "on"
             icon: mdi:lightbulb-on
             styles:
               card:
-                - background: "[[[ return variables.card_color ]]]"
-              name:
-                - color: "#11111b"
-              label:
-                - color: "#11111b"
+                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: "#11111b"
-          - value: "off"
-            icon: mdi:lightbulb-outline
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
+          - value: "unavailable"
+            styles:
+              card:
+                - opacity: 0.5
+            label: Unavailable
 
-      hc_switch_card:
-        template: hc_base_card
-        icon: mdi:power-plug
-        hold_action:
-          action: more-info
-        label: "[[[ return states[entity.entity_id]?.state || 'Unknown' ]]]"
+      # ==================== SWITCH CARD ====================
 
-      hc_navigation_card:
+      minimal_switch:
+        template: minimal_light
+        icon: mdi:power-plug-outline
+        variables:
+          accent_color: ${colors.green}
+        state:
+          - value: "on"
+            icon: mdi:power-plug
+            styles:
+              card:
+                - background: "[[[ return variables.accent_color ]]]"
+              icon:
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
+
+      # ==================== SENSOR / STAT CARD ====================
+
+      minimal_sensor:
+        template: minimal_base
         show_name: true
         show_icon: true
         show_label: true
+        show_state: false
         variables:
-          hc_color: "${colors.blue}"
-          hc_label_prefix: ""
+          accent_color: ${colors.blue}
+        label: |
+          [[[
+            const state = states[entity.entity_id];
+            if (!state) return '--';
+            const unit = state.attributes?.unit_of_measurement || '';
+            return state.state + unit;
+          ]]]
         styles:
-          grid:
-            - grid-template-areas: '"n n" "l l"'
-            - grid-template-rows: 1fr 1fr
           card:
-            - padding: 20px
-            - height: 120px
-            - background: ${colors.surface0}
-            - border-radius: 20px
+            - height: 80px
+            - padding: 14px
+          grid:
+            - grid-template-areas: '"i l" "i n"'
+            - grid-template-columns: 40px 1fr
+          icon:
+            - width: 26px
+            - color: "[[[ return variables.accent_color ]]]"
           name:
-            - text-align: left
-            - font-size: 16px
-            - font-weight: 700
+            - font-size: 11px
+            - font-weight: 500
+            - color: ${colors.contrast14}
             - justify-self: start
             - align-self: start
-            - color: ${colors.text}
+            - text-transform: uppercase
+            - letter-spacing: 0.5px
           label:
+            - font-size: 22px
+            - font-weight: 700
+            - color: ${colors.contrast18}
             - justify-self: start
             - align-self: end
-            - font-size: 12px
-            - font-weight: 500
-            - color: ${colors.subtext}
-          img_cell:
-            - position: absolute
-            - top: 10%
-            - right: -10%
-            - overflow: visible
-          icon:
-            - position: absolute
-            - width: 8em
-            - opacity: 0.15
-            - color: "[[[ return variables.hc_color ]]]"
 
-      hc_scene_card:
+      minimal_stat:
+        template: minimal_sensor
+        tap_action:
+          action: none
+        styles:
+          card:
+            - height: 72px
+            - padding: 12px 14px
+
+      # ==================== PERSON CARD ====================
+
+      minimal_person:
+        template: minimal_base
+        show_name: true
+        show_icon: true
+        show_label: true
+        show_state: false
+        icon: mdi:account
+        label: "[[[ return states[entity.entity_id]?.state || 'Unknown' ]]]"
+        tap_action:
+          action: more-info
+        styles:
+          card:
+            - height: 72px
+            - padding: 12px 14px
+          grid:
+            - grid-template-areas: '"i n" "i l"'
+            - grid-template-columns: 44px 1fr
+          icon:
+            - width: 28px
+            - color: ${colors.purple}
+          name:
+            - font-size: 14px
+            - font-weight: 600
+            - justify-self: start
+            - align-self: end
+          label:
+            - font-size: 12px
+            - justify-self: start
+            - align-self: start
+            - text-transform: capitalize
+        state:
+          - value: "home"
+            styles:
+              label:
+                - color: ${colors.green}
+          - value: "not_home"
+            styles:
+              label:
+                - color: ${colors.contrast14}
+
+      # ==================== SCENE CARD ====================
+
+      minimal_scene:
+        template: minimal_base
         show_name: true
         show_icon: true
         show_label: false
         variables:
-          hc_color: "${colors.peach}"
+          accent_color: ${colors.purple}
         styles:
           card:
-            - padding: 15px
-            - height: 80px
-            - background: ${colors.surface0}
-            - border-radius: 20px
+            - height: 72px
+            - padding: 12px
           grid:
             - grid-template-areas: '"i" "n"'
-            - grid-template-rows: 1fr min-content
+            - grid-template-rows: 1fr auto
+          icon:
+            - width: 26px
+            - color: "[[[ return variables.accent_color ]]]"
           name:
             - font-size: 12px
-            - font-weight: 600
-            - color: ${colors.text}
-            - justify-self: center
-          icon:
-            - color: "[[[ return variables.hc_color ]]]"
-            - width: 30px
+            - font-weight: 500
         state:
           - value: "on"
             styles:
               card:
-                - background: "[[[ return variables.hc_color ]]]"
-              name:
-                - color: ${colors.base}
+                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.base}
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
 
-      hc_media_card:
-        template: hc_base_card
+      # ==================== MEDIA CARD ====================
+
+      minimal_media:
+        template: minimal_base
+        show_name: true
+        show_icon: true
+        show_label: true
         icon: mdi:television
         variables:
-          card_color: "${colors.blue}"
+          accent_color: ${colors.blue}
         hold_action:
           action: more-info
         label: |
@@ -228,121 +401,65 @@
           ]]]
         styles:
           card:
-            - height: 120px
+            - height: 96px
+            - padding: 14px
+          grid:
+            - grid-template-areas: '"i ." "n n" "l l"'
+            - grid-template-rows: auto 1fr auto
+          icon:
+            - width: 24px
+            - color: ${colors.contrast14}
+          name:
+            - font-size: 14px
+            - font-weight: 600
+            - justify-self: start
+            - align-self: end
+          label:
+            - font-size: 12px
+            - justify-self: start
+            - align-self: start
+            - text-transform: capitalize
         state:
-          - value: "on"
-            icon: mdi:television
-            styles:
-              card:
-                - background: ${colors.blue}
-              name:
-                - color: ${colors.base}
-              label:
-                - color: ${colors.base}
-              icon:
-                - color: ${colors.base}
           - value: "playing"
             icon: mdi:play-circle
             styles:
               card:
                 - background: ${colors.green}
-              name:
-                - color: ${colors.base}
-              label:
-                - color: ${colors.base}
               icon:
-                - color: ${colors.base}
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
           - value: "paused"
             icon: mdi:pause-circle
             styles:
               card:
                 - background: ${colors.yellow}
-              name:
-                - color: ${colors.base}
-              label:
-                - color: ${colors.base}
               icon:
-                - color: ${colors.base}
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
+          - value: "on"
+            styles:
+              card:
+                - background: ${colors.blue}
+              icon:
+                - color: ${colors.contrast0}
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
 
-      hc_sensor_card:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        label: |
-          [[[
-            const state = states[entity.entity_id];
-            if (!state) return 'Unknown';
-            return state.state + (state.attributes?.unit_of_measurement || "");
-          ]]]
-        styles:
-          card:
-            - padding: 12px
-            - height: 80px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: 40px 1fr
-          name:
-            - font-size: 12px
-            - color: ${colors.subtext}
-            - justify-self: start
-            - align-self: end
-          label:
-            - font-size: 18px
-            - font-weight: 700
-            - color: ${colors.text}
-            - justify-self: start
-            - align-self: start
-          icon:
-            - color: ${colors.mauve}
-            - width: 24px
+      # ==================== FAN CARD ====================
 
-      hc_header_card:
-        show_name: true
-        show_icon: false
-        show_label: true
-        show_state: false
-        styles:
-          card:
-            - background: transparent
-            - box-shadow: none
-            - padding: 20px 5px
-          grid:
-            - grid-template-areas: '"n" "l"'
-          name:
-            - font-size: 28px
-            - font-weight: 700
-            - color: ${colors.text}
-            - justify-self: start
-          label:
-            - font-size: 14px
-            - color: ${colors.subtext}
-            - justify-self: start
-
-      hc_title_card:
-        show_name: true
-        show_icon: false
-        show_label: false
-        styles:
-          card:
-            - background: transparent
-            - box-shadow: none
-            - padding: 10px 5px
-          name:
-            - font-size: 20px
-            - font-weight: 600
-            - color: ${colors.text}
-            - justify-self: start
-
-      hc_fan_card:
-        template: hc_base_card
+      minimal_fan:
+        template: minimal_light
         icon: mdi:fan
         variables:
-          card_color: "${colors.blue}"
-        hold_action:
-          action: more-info
+          accent_color: ${colors.blue}
         label: |
           [[[
             const state = states[entity.entity_id];
@@ -350,148 +467,29 @@
             if (state.state === 'on') {
               return (state.attributes?.percentage || 0) + '%';
             }
-            return state.state;
+            return 'Off';
           ]]]
         state:
           - value: "on"
-            icon: mdi:fan
             styles:
               card:
-                - background: "[[[ return variables.card_color ]]]"
-              name:
-                - color: ${colors.base}
-              label:
-                - color: ${colors.base}
+                - background: "[[[ return variables.accent_color ]]]"
               icon:
-                - color: ${colors.base}
+                - color: ${colors.contrast0}
                 - animation: spin 1s linear infinite
+              name:
+                - color: ${colors.contrast0}
+              label:
+                - color: ${colors.contrast0}
         extra_styles: |
           @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
           }
 
-      hc_person_card:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        label: "[[[ return states[entity.entity_id]?.state || 'Unknown' ]]]"
-        styles:
-          card:
-            - padding: 12px
-            - height: 80px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: 50px 1fr
-          name:
-            - font-size: 14px
-            - font-weight: 600
-            - color: ${colors.text}
-            - justify-self: start
-            - align-self: end
-          label:
-            - font-size: 12px
-            - color: ${colors.subtext}
-            - justify-self: start
-            - align-self: start
-          icon:
-            - color: ${colors.mauve}
-            - width: 30px
-        state:
-          - value: "home"
-            icon: mdi:home-account
-            styles:
-              label:
-                - color: ${colors.green}
-          - value: "not_home"
-            icon: mdi:account-arrow-right
-            styles:
-              label:
-                - color: ${colors.subtext}
+      # ==================== WEATHER COMPACT ====================
 
-      hc_vacuum_card:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        styles:
-          card:
-            - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"vacuum" "controls"'
-            - grid-template-rows: auto auto
-          custom_fields:
-            vacuum:
-              - justify-self: stretch
-            controls:
-              - justify-self: stretch
-        custom_fields:
-          vacuum: |
-            [[[
-              const vacuumEntity = states['vacuum.robovac'];
-              const batteryEntity = states['sensor.robovac_battery'];
-              const state = vacuumEntity ? vacuumEntity.state : 'unavailable';
-              const battery = batteryEntity ? batteryEntity.state : '0';
-              const batteryNum = parseInt(battery) ? parseInt(battery) : 0;
-
-              var stateColor = '${colors.subtext}';
-              if (state === 'cleaning') stateColor = '${colors.green}';
-              else if (state === 'docked') stateColor = '${colors.blue}';
-              else if (state === 'paused') stateColor = '${colors.yellow}';
-              else if (state === 'returning') stateColor = '${colors.peach}';
-              else if (state === 'idle') stateColor = '${colors.subtext}';
-              else if (state === 'unavailable') stateColor = '${colors.red}';
-
-              var batteryIcon = 'mdi:battery-alert';
-              if (batteryNum > 80) batteryIcon = 'mdi:battery';
-              else if (batteryNum > 60) batteryIcon = 'mdi:battery-80';
-              else if (batteryNum > 40) batteryIcon = 'mdi:battery-60';
-              else if (batteryNum > 20) batteryIcon = 'mdi:battery-40';
-              else if (batteryNum > 10) batteryIcon = 'mdi:battery-20';
-              var batteryColor = batteryNum > 20 ? '${colors.green}' : '${colors.red}';
-
-              return '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-                '<div style="display:flex;align-items:center;gap:12px;">' +
-                  '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:36px;color:' + stateColor + ';"></ha-icon>' +
-                  '<div style="display:flex;flex-direction:column;">' +
-                    '<span style="font-size:16px;font-weight:600;color:${colors.text};">RoboVac</span>' +
-                    '<span style="font-size:12px;color:' + stateColor + ';text-transform:capitalize;">' + state + '</span>' +
-                  '</div>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:4px;">' +
-                  '<ha-icon icon="' + batteryIcon + '" style="--mdc-icon-size:20px;color:' + batteryColor + ';"></ha-icon>' +
-                  '<span style="font-size:14px;font-weight:600;color:${colors.text};">' + battery + '%</span>' +
-                '</div>' +
-              '</div>';
-            ]]]
-          controls: |
-            [[[
-              return '<div style="display:flex;justify-content:space-around;padding-top:12px;border-top:1px solid ${colors.base};">' +
-                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
-                  '<ha-icon icon="mdi:play" style="--mdc-icon-size:24px;color:${colors.green};"></ha-icon>' +
-                  '<span style="font-size:11px;color:${colors.subtext};margin-top:4px;">Start</span>' +
-                '</div>' +
-                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
-                  '<ha-icon icon="mdi:pause" style="--mdc-icon-size:24px;color:${colors.yellow};"></ha-icon>' +
-                  '<span style="font-size:11px;color:${colors.subtext};margin-top:4px;">Pause</span>' +
-                '</div>' +
-                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
-                  '<ha-icon icon="mdi:home" style="--mdc-icon-size:24px;color:${colors.blue};"></ha-icon>' +
-                  '<span style="font-size:11px;color:${colors.subtext};margin-top:4px;">Dock</span>' +
-                '</div>' +
-                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
-                  '<ha-icon icon="mdi:map-marker" style="--mdc-icon-size:24px;color:${colors.peach};"></ha-icon>' +
-                  '<span style="font-size:11px;color:${colors.subtext};margin-top:4px;">Find</span>' +
-                '</div>' +
-              '</div>';
-            ]]]
-
-      hc_weather_detailed_card:
+      minimal_weather:
         show_name: false
         show_icon: false
         show_label: false
@@ -499,22 +497,18 @@
         entity: weather.forecast_home
         styles:
           card:
-            - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
+            - background: ${colors.contrast1}
+            - border-radius: ${design.borderRadius}
+            - box-shadow: ${design.shadow}
+            - padding: 14px 16px
         custom_fields:
           weather: |
             [[[
               const weather = states['weather.forecast_home'];
-              if (!weather) return '<div style="color:${colors.subtext};">Weather unavailable</div>';
+              if (!weather) return '<div style="color:${colors.contrast14};">Weather unavailable</div>';
               const state = weather.state || 'unknown';
               const attr = weather.attributes || {};
               const temp = attr.temperature ?? '--';
-              const humidity = attr.humidity ?? '--';
-              const wind = attr.wind_speed ?? '--';
-              const pressure = attr.pressure ?? '--';
-              const uv = attr.uv_index ?? 0;
-              const feelsLike = attr.apparent_temperature ?? temp;
 
               const weatherIcons = {
                 'sunny': 'mdi:weather-sunny',
@@ -533,224 +527,29 @@
               const weatherColors = {
                 'sunny': '${colors.yellow}',
                 'clear-night': '${colors.blue}',
-                'partlycloudy': '${colors.peach}',
-                'cloudy': '${colors.subtext}',
+                'partlycloudy': '${colors.orange}',
+                'cloudy': '${colors.contrast14}',
                 'rainy': '${colors.blue}',
                 'pouring': '${colors.blue}',
-                'snowy': '${colors.text}',
-                'fog': '${colors.subtext}',
-                'windy': '${colors.mauve}',
+                'snowy': '${colors.contrast18}',
+                'fog': '${colors.contrast14}',
+                'windy': '${colors.purple}',
                 'lightning': '${colors.yellow}'
               };
-              const color = weatherColors[state] || '${colors.subtext}';
+              const color = weatherColors[state] || '${colors.contrast14}';
 
-              const stateText = state.replace(/-/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+              const stateText = state.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-              return '<div style="display:flex;align-items:center;gap:16px;">' +
-                '<ha-icon icon="' + icon + '" style="--mdc-icon-size:52px;color:' + color + ';flex-shrink:0;"></ha-icon>' +
-                '<div style="display:flex;flex-direction:column;gap:2px;">' +
-                  '<div style="display:flex;align-items:baseline;gap:8px;">' +
-                    '<span style="font-size:36px;font-weight:700;color:${colors.text};">' + temp + '°</span>' +
-                    '<span style="font-size:14px;color:${colors.subtext};">Feels ' + feelsLike + '°</span>' +
-                  '</div>' +
-                  '<span style="font-size:13px;color:${colors.subtext};">' + stateText + '</span>' +
-                '</div>' +
-                '<div style="margin-left:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;">' +
-                  '<div style="display:flex;align-items:center;gap:6px;">' +
-                    '<ha-icon icon="mdi:water-percent" style="--mdc-icon-size:16px;color:${colors.blue};"></ha-icon>' +
-                    '<span style="font-size:13px;color:${colors.text};">' + humidity + '%</span>' +
-                  '</div>' +
-                  '<div style="display:flex;align-items:center;gap:6px;">' +
-                    '<ha-icon icon="mdi:weather-windy" style="--mdc-icon-size:16px;color:${colors.mauve};"></ha-icon>' +
-                    '<span style="font-size:13px;color:${colors.text};">' + wind + ' km/h</span>' +
-                  '</div>' +
-                  '<div style="display:flex;align-items:center;gap:6px;">' +
-                    '<ha-icon icon="mdi:gauge" style="--mdc-icon-size:16px;color:${colors.peach};"></ha-icon>' +
-                    '<span style="font-size:13px;color:${colors.text};">' + pressure + ' hPa</span>' +
-                  '</div>' +
-                  '<div style="display:flex;align-items:center;gap:6px;">' +
-                    '<ha-icon icon="mdi:white-balance-sunny" style="--mdc-icon-size:16px;color:${colors.yellow};"></ha-icon>' +
-                    '<span style="font-size:13px;color:${colors.text};">UV ' + uv + '</span>' +
-                  '</div>' +
-                '</div>' +
+              return '<div style="display:flex;align-items:center;gap:14px;font-family:${design.fontFamily};">' +
+                '<ha-icon icon="' + icon + '" style="--mdc-icon-size:32px;color:' + color + ';"></ha-icon>' +
+                '<span style="font-size:28px;font-weight:700;color:${colors.contrast18};">' + temp + '°</span>' +
+                '<span style="font-size:14px;color:${colors.contrast14};margin-left:auto;">' + stateText + '</span>' +
               '</div>';
             ]]]
 
-      hc_weather_compact_card:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        entity: weather.forecast_home
-        styles:
-          card:
-            - padding: 12px 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-        custom_fields:
-          weather: |
-            [[[
-              const weather = states['weather.forecast_home'];
-              if (!weather) return '<div style="color:${colors.subtext};">Weather unavailable</div>';
-              const state = weather.state || 'unknown';
-              const attr = weather.attributes || {};
-              const temp = attr.temperature ?? '--';
-              const feelsLike = attr.apparent_temperature ?? temp;
+      # ==================== FOOTBALL CARD ====================
 
-              const weatherIcons = {
-                'sunny': 'mdi:weather-sunny',
-                'clear-night': 'mdi:weather-night',
-                'partlycloudy': 'mdi:weather-partly-cloudy',
-                'cloudy': 'mdi:weather-cloudy',
-                'rainy': 'mdi:weather-rainy',
-                'pouring': 'mdi:weather-pouring',
-                'snowy': 'mdi:weather-snowy',
-                'fog': 'mdi:weather-fog',
-                'windy': 'mdi:weather-windy',
-                'lightning': 'mdi:weather-lightning'
-              };
-              const icon = weatherIcons[state] || 'mdi:weather-cloudy';
-
-              const weatherColors = {
-                'sunny': '${colors.yellow}',
-                'clear-night': '${colors.blue}',
-                'partlycloudy': '${colors.peach}',
-                'cloudy': '${colors.subtext}',
-                'rainy': '${colors.blue}',
-                'pouring': '${colors.blue}',
-                'snowy': '${colors.text}',
-                'fog': '${colors.subtext}',
-                'windy': '${colors.mauve}',
-                'lightning': '${colors.yellow}'
-              };
-              const color = weatherColors[state] || '${colors.subtext}';
-
-              const stateText = state.replace(/-/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
-
-              return '<div style="display:flex;align-items:center;gap:12px;">' +
-                '<ha-icon icon="' + icon + '" style="--mdc-icon-size:28px;color:' + color + ';"></ha-icon>' +
-                '<span style="font-size:24px;font-weight:700;color:${colors.text};">' + temp + '°</span>' +
-                '<span style="font-size:13px;color:${colors.subtext};">Feels ' + feelsLike + '°</span>' +
-                '<span style="font-size:13px;color:${colors.subtext};margin-left:auto;text-transform:capitalize;">' + stateText + '</span>' +
-              '</div>';
-            ]]]
-
-      hc_stat_card:
-        show_name: true
-        show_icon: true
-        show_label: false
-        show_state: true
-        styles:
-          card:
-            - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"i s" "i n"'
-            - grid-template-columns: 40px 1fr
-            - grid-template-rows: 1fr auto
-          icon:
-            - width: 28px
-            - justify-self: start
-          state:
-            - font-size: 28px
-            - font-weight: 700
-            - color: ${colors.text}
-            - justify-self: start
-            - align-self: end
-          name:
-            - font-size: 11px
-            - font-weight: 500
-            - color: ${colors.subtext}
-            - text-transform: uppercase
-            - letter-spacing: 0.5px
-            - justify-self: start
-            - align-self: start
-
-      hc_appliance_card:
-        show_name: true
-        show_icon: true
-        show_label: true
-        show_state: false
-        styles:
-          card:
-            - padding: 12px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"i n" "i l"'
-            - grid-template-columns: 40px 1fr
-          name:
-            - font-size: 12px
-            - color: ${colors.subtext}
-            - justify-self: start
-            - align-self: end
-          label:
-            - font-size: 16px
-            - font-weight: 600
-            - justify-self: start
-            - align-self: start
-          icon:
-            - width: 24px
-
-      hc_server_stats_card:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        styles:
-          card:
-            - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"stats stats stats" "uptime uptime uptime"'
-            - grid-template-columns: 1fr 1fr 1fr
-        custom_fields:
-          stats: |
-            [[[
-              const load1 = parseFloat(states['sensor.system_monitor_load_1m']?.state || 0).toFixed(1);
-              const load5 = parseFloat(states['sensor.system_monitor_load_5m']?.state || 0).toFixed(1);
-              const load15 = parseFloat(states['sensor.system_monitor_load_15m']?.state || 0).toFixed(1);
-              const disk = parseFloat(states['sensor.system_monitor_disk_free']?.state || 0).toFixed(0);
-              const updates = states['update.home_assistant_core']?.state === 'on' ? '1' : '0';
-
-              return `<div style="display:flex;justify-content:space-around;width:100%;">
-                <div style="display:flex;flex-direction:column;align-items:center;">
-                  <span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Load</span>
-                  <span style="font-size:18px;font-weight:600;color:${colors.text};">''${load1}</span>
-                  <span style="font-size:10px;color:${colors.subtext};">''${load5} / ''${load15}</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;">
-                  <span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Disk</span>
-                  <span style="font-size:18px;font-weight:600;color:${colors.text};">''${disk}</span>
-                  <span style="font-size:10px;color:${colors.subtext};">GiB free</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;">
-                  <span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Updates</span>
-                  <span style="font-size:18px;font-weight:600;color:''${updates > 0 ? '${colors.peach}' : '${colors.green}'};">''${updates}</span>
-                  <span style="font-size:10px;color:${colors.subtext};">pending</span>
-                </div>
-              </div>`;
-            ]]]
-          uptime: |
-            [[[
-              const bootState = states['sensor.system_monitor_last_boot']?.state;
-              const lastBoot = bootState ? new Date(bootState) : new Date();
-              const now = new Date();
-              const diff = now - lastBoot;
-              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-              return `<div style="display:flex;justify-content:center;margin-top:12px;padding-top:12px;border-top:1px solid ${colors.base};">
-                <span style="font-size:12px;color:${colors.subtext};">
-                  <span style="color:${colors.green};">●</span> Uptime: ''${days}d ''${hours}h
-                </span>
-              </div>`;
-            ]]]
-
-      hc_battery_alerts_card:
-        entity: sensor.processor_use
+      minimal_football:
         show_name: false
         show_icon: false
         show_label: false
@@ -758,34 +557,10 @@
         show_entity_picture: false
         styles:
           card:
+            - background: ${colors.contrast1}
+            - border-radius: ${design.borderRadius}
+            - box-shadow: ${design.shadow}
             - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-        custom_fields:
-          alerts: |
-            [[[
-              return '<div style="display:flex;align-items:center;justify-content:center;padding:8px;"><ha-icon icon="mdi:battery-check" style="color:${colors.green};--mdc-icon-size:20px;margin-right:8px;"></ha-icon><span style="font-size:14px;color:${colors.text};">All batteries OK</span></div>';
-            ]]]
-
-      hc_football_card:
-        show_name: false
-        show_icon: false
-        show_label: false
-        show_state: false
-        show_entity_picture: false
-        variables:
-          sensors: |
-            [[[
-              return ["sensor.liverpool", "sensor.liverpool_cl", "sensor.liverpool_fa", "sensor.liverpool_lc"];
-            ]]]
-        styles:
-          card:
-            - padding: 16px
-            - background: ${colors.surface0}
-            - border-radius: 20px
-          grid:
-            - grid-template-areas: '"content"'
-            - grid-template-columns: 1fr
         custom_fields:
           content: |
             [[[
@@ -814,28 +589,28 @@
 
               var match = liveMatch ? liveMatch : nextMatch;
               if (!match) {
-                return '<div style="text-align:center;color:${colors.subtext};padding:20px;">No upcoming matches</div>';
+                return '<div style="text-align:center;color:${colors.contrast14};padding:20px;font-family:${design.fontFamily};">No upcoming matches</div>';
               }
 
               var attr = match.attributes;
               var state = match.state;
               var isHome = attr.team_homeaway === "home";
-              var teamLogo = attr.team_logo ? attr.team_logo : "";
-              var oppLogo = attr.opponent_logo ? attr.opponent_logo : "";
-              var teamAbbr = attr.team_abbr ? attr.team_abbr : "HOME";
-              var oppAbbr = attr.opponent_abbr ? attr.opponent_abbr : "AWAY";
+              var teamLogo = attr.team_logo || "";
+              var oppLogo = attr.opponent_logo || "";
+              var teamAbbr = attr.team_abbr || "HOME";
+              var oppAbbr = attr.opponent_abbr || "AWAY";
               var homeLogo = isHome ? teamLogo : oppLogo;
               var awayLogo = isHome ? oppLogo : teamLogo;
               var homeName = isHome ? teamAbbr : oppAbbr;
               var awayName = isHome ? oppAbbr : teamAbbr;
-              var teamScore = attr.team_score ? attr.team_score : 0;
-              var oppScore = attr.opponent_score ? attr.opponent_score : 0;
+              var teamScore = attr.team_score || 0;
+              var oppScore = attr.opponent_score || 0;
               var homeScore = isHome ? teamScore : oppScore;
               var awayScore = isHome ? oppScore : teamScore;
-              var kickoff = attr.kickoff_in ? attr.kickoff_in : "--";
-              var clock = attr.clock ? attr.clock : "";
-              var venue = attr.venue ? attr.venue : "TBD";
-              var league = attr.league ? attr.league : "";
+              var kickoff = attr.kickoff_in || "--";
+              var clock = attr.clock || "";
+              var venue = attr.venue || "TBD";
+              var league = attr.league || "";
 
               var scoreHtml = "";
               if (state === "PRE") {
@@ -845,31 +620,106 @@
                   var opts = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
                   kickoffStr = kickoffDate.toLocaleString('en-GB', opts);
                 }
-                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Next Match</span><span style="font-size:14px;font-weight:600;color:${colors.mauve};">' + kickoffStr + '</span></div>';
+                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.contrast14};text-transform:uppercase;">Next Match</span><span style="font-size:14px;font-weight:600;color:${colors.purple};">' + kickoffStr + '</span></div>';
               } else if (state === "IN") {
-                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE ' + clock + '</span><span style="font-size:28px;font-weight:700;color:${colors.text};">' + homeScore + ' - ' + awayScore + '</span></div>';
+                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE ' + clock + '</span><span style="font-size:28px;font-weight:700;color:${colors.contrast18};">' + homeScore + ' - ' + awayScore + '</span></div>';
               } else {
-                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.subtext};text-transform:uppercase;">Final</span><span style="font-size:28px;font-weight:700;color:${colors.text};">' + homeScore + ' - ' + awayScore + '</span></div>';
+                scoreHtml = '<div style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:11px;color:${colors.contrast14};text-transform:uppercase;">Final</span><span style="font-size:28px;font-weight:700;color:${colors.contrast18};">' + homeScore + ' - ' + awayScore + '</span></div>';
               }
 
-              return '<div style="display:flex;flex-direction:column;gap:12px;">' +
+              return '<div style="display:flex;flex-direction:column;gap:12px;font-family:${design.fontFamily};">' +
                 '<div style="display:flex;align-items:center;justify-content:space-between;">' +
                   '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">' +
-                    '<img src="' + homeLogo + '" style="width:50px;height:50px;object-fit:contain;">' +
-                    '<span style="font-size:12px;font-weight:600;color:${colors.text};">' + homeName + '</span>' +
+                    '<img src="' + homeLogo + '" style="width:48px;height:48px;object-fit:contain;">' +
+                    '<span style="font-size:12px;font-weight:600;color:${colors.contrast18};">' + homeName + '</span>' +
                   '</div>' +
                   '<div style="flex:1;">' + scoreHtml + '</div>' +
                   '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">' +
-                    '<img src="' + awayLogo + '" style="width:50px;height:50px;object-fit:contain;">' +
-                    '<span style="font-size:12px;font-weight:600;color:${colors.text};">' + awayName + '</span>' +
+                    '<img src="' + awayLogo + '" style="width:48px;height:48px;object-fit:contain;">' +
+                    '<span style="font-size:12px;font-weight:600;color:${colors.contrast18};">' + awayName + '</span>' +
                   '</div>' +
                 '</div>' +
-                '<div style="text-align:center;padding-top:8px;border-top:1px solid ${colors.base};"><span style="font-size:11px;color:${colors.subtext};">' + league + (venue ? ' • ' + venue : "") + '</span></div>' +
+                '<div style="text-align:center;padding-top:8px;border-top:1px solid ${colors.contrast5};"><span style="font-size:11px;color:${colors.contrast14};">' + league + (venue ? ' • ' + venue : "") + '</span></div>' +
               '</div>';
             ]]]
+
+      # ==================== VACUUM CARD ====================
+
+      minimal_vacuum:
+        show_name: false
+        show_icon: false
+        show_label: false
+        show_state: false
+        styles:
+          card:
+            - background: ${colors.contrast1}
+            - border-radius: ${design.borderRadius}
+            - box-shadow: ${design.shadow}
+            - padding: 16px
+        custom_fields:
+          vacuum: |
+            [[[
+              const vacuumEntity = states['vacuum.robovac'];
+              const batteryEntity = states['sensor.robovac_battery'];
+              const state = vacuumEntity ? vacuumEntity.state : 'unavailable';
+              const battery = batteryEntity ? batteryEntity.state : '0';
+              const batteryNum = parseInt(battery) || 0;
+
+              var stateColor = '${colors.contrast14}';
+              if (state === 'cleaning') stateColor = '${colors.green}';
+              else if (state === 'docked') stateColor = '${colors.blue}';
+              else if (state === 'paused') stateColor = '${colors.yellow}';
+              else if (state === 'returning') stateColor = '${colors.orange}';
+              else if (state === 'unavailable') stateColor = '${colors.red}';
+
+              var batteryIcon = 'mdi:battery-alert';
+              if (batteryNum > 80) batteryIcon = 'mdi:battery';
+              else if (batteryNum > 60) batteryIcon = 'mdi:battery-80';
+              else if (batteryNum > 40) batteryIcon = 'mdi:battery-60';
+              else if (batteryNum > 20) batteryIcon = 'mdi:battery-40';
+              else if (batteryNum > 10) batteryIcon = 'mdi:battery-20';
+              var batteryColor = batteryNum > 20 ? '${colors.green}' : '${colors.red}';
+
+              return '<div style="display:flex;align-items:center;justify-content:space-between;font-family:${design.fontFamily};">' +
+                '<div style="display:flex;align-items:center;gap:12px;">' +
+                  '<ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:32px;color:' + stateColor + ';"></ha-icon>' +
+                  '<div style="display:flex;flex-direction:column;">' +
+                    '<span style="font-size:15px;font-weight:600;color:${colors.contrast18};">RoboVac</span>' +
+                    '<span style="font-size:12px;color:' + stateColor + ';text-transform:capitalize;">' + state + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:4px;">' +
+                  '<ha-icon icon="' + batteryIcon + '" style="--mdc-icon-size:18px;color:' + batteryColor + ';"></ha-icon>' +
+                  '<span style="font-size:14px;font-weight:600;color:${colors.contrast18};">' + battery + '%</span>' +
+                '</div>' +
+              '</div>';
+            ]]]
+          controls: |
+            [[[
+              return '<div style="display:flex;justify-content:space-around;padding-top:12px;margin-top:12px;border-top:1px solid ${colors.contrast5};font-family:${design.fontFamily};">' +
+                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
+                  '<ha-icon icon="mdi:play" style="--mdc-icon-size:22px;color:${colors.green};"></ha-icon>' +
+                  '<span style="font-size:10px;color:${colors.contrast14};margin-top:4px;">Start</span>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
+                  '<ha-icon icon="mdi:pause" style="--mdc-icon-size:22px;color:${colors.yellow};"></ha-icon>' +
+                  '<span style="font-size:10px;color:${colors.contrast14};margin-top:4px;">Pause</span>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
+                  '<ha-icon icon="mdi:home" style="--mdc-icon-size:22px;color:${colors.blue};"></ha-icon>' +
+                  '<span style="font-size:10px;color:${colors.contrast14};margin-top:4px;">Dock</span>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:8px;">' +
+                  '<ha-icon icon="mdi:map-marker" style="--mdc-icon-size:22px;color:${colors.orange};"></ha-icon>' +
+                  '<span style="font-size:10px;color:${colors.contrast14};margin-top:4px;">Find</span>' +
+                '</div>' +
+              '</div>';
+            ]]]
+        styles:
+          grid:
+            - grid-template-areas: '"vacuum" "controls"'
   '';
 
-  # Dashboard YAML content
   dashboardYaml = pkgs.writeText "hacasa.yaml" ''
     title: Home
     ${buttonCardTemplatesContent}
@@ -882,7 +732,7 @@
         cards:
           # Header
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: |
               [[[
                 var hour = new Date().getHours();
@@ -892,61 +742,55 @@
             label: |
               [[[
                 var date = new Date();
-                var options = { weekday: 'long', month: 'long', day: 'numeric' };
+                var options = { weekday: 'long', day: 'numeric', month: 'long' };
                 return date.toLocaleDateString('en-GB', options);
               ]]]
 
-          # Weather (Compact)
-          - type: custom:button-card
-            template: hc_weather_compact_card
-            entity: weather.forecast_home
-
-          # Stats Row
+          # Presence Chips
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_stat_card
-                name: Lights
-                icon: mdi:lightbulb-group
-                show_state: false
-                custom_fields:
-                  s: |
-                    [[[
-                      const lights = Object.values(states).filter(e =>
-                        e.entity_id.startsWith('light.') && e.state === 'on'
-                      );
-                      return lights.length;
-                    ]]]
-                styles:
-                  grid:
-                    - grid-template-areas: '"i s" "i n"'
-                    - grid-template-columns: 40px 1fr
-                  custom_fields:
-                    s:
-                      - font-size: 28px
-                      - font-weight: 700
-                      - color: ${colors.text}
-                      - justify-self: start
-                      - align-self: end
-                  icon:
-                    - color: ${colors.yellow}
+                template: minimal_person
+                entity: person.darren_gilbert
+                name: Darren
 
               - type: custom:button-card
-                template: hc_stat_card
+                template: minimal_person
+                entity: person.lorraine
+                name: Lorraine
+
+          # Weather + Stats Row
+          - type: custom:button-card
+            template: minimal_weather
+            entity: weather.forecast_home
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                template: minimal_stat
+                name: Lights
+                icon: mdi:lightbulb-group
+                entity: sensor.total_turned_on_lights_count_template
+                variables:
+                  accent_color: ${colors.yellow}
+
+              - type: custom:button-card
+                template: minimal_stat
                 name: Motion
                 icon: mdi:motion-sensor
                 entity: sensor.total_active_motion_sensors_count_template
-                styles:
-                  icon:
-                    - color: ${colors.blue}
+                variables:
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_stat_card
+                template: minimal_stat
                 name: Avg Temp
                 icon: mdi:thermometer
                 show_state: false
+                variables:
+                  accent_color: ${colors.red}
                 custom_fields:
-                  s: |
+                  l: |
                     [[[
                       const sensors = [
                         states['sensor.hallway_sensor_temperature'],
@@ -961,135 +805,129 @@
                       return (sum / sensors.length).toFixed(1) + '°';
                     ]]]
                 styles:
-                  grid:
-                    - grid-template-areas: '"i s" "i n"'
-                    - grid-template-columns: 40px 1fr
                   custom_fields:
-                    s:
-                      - font-size: 28px
+                    l:
+                      - font-size: 22px
                       - font-weight: 700
-                      - color: ${colors.text}
+                      - color: ${colors.contrast18}
                       - justify-self: start
                       - align-self: end
-                  icon:
-                    - color: ${colors.red}
 
-          # Liverpool FC - Shows next match from Premier League, Champions League, FA Cup, or League Cup
+          # Liverpool FC
           - type: custom:button-card
-            template: hc_football_card
+            template: minimal_football
             entity: sensor.liverpool
 
-          # People
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: hc_person_card
-                entity: person.darren_gilbert
-                name: Darren
-              - type: custom:button-card
-                template: hc_person_card
-                entity: person.lorraine
-                name: Lorraine
-
-          # Room Navigation Cards
+          # Rooms Title
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Rooms
 
+          # Room Cards Grid
           - type: grid
             columns: 2
             square: false
             cards:
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Living Room
                 icon: mdi:sofa
                 entity: group.living_room_lights
+                variables:
+                  accent_color: ${colors.orange}
                 label: |
                   [[[
                     var entities = states['group.living_room_lights']?.attributes?.entity_id || [];
                     var count = entities.filter(e => states[e]?.state === 'on').length;
                     return count + ' lights on';
                   ]]]
-                variables:
-                  hc_color: "${colors.peach}"
+                custom_fields:
+                  s: |
+                    [[[
+                      const tv = states['media_player.living_room_tv'];
+                      if (tv && (tv.state === 'playing' || tv.state === 'on')) {
+                        return '<ha-icon icon="mdi:television" style="--mdc-icon-size:16px;color:${colors.green};"></ha-icon>';
+                      }
+                      return "";
+                    ]]]
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/living-room
 
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Bedroom
                 icon: mdi:bed
                 entity: group.bedroom_lights
+                variables:
+                  accent_color: ${colors.purple}
                 label: |
                   [[[
                     var entities = states['group.bedroom_lights']?.attributes?.entity_id || [];
                     var count = entities.filter(e => states[e]?.state === 'on').length;
                     return count + ' lights on';
                   ]]]
-                variables:
-                  hc_color: "${colors.mauve}"
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/bedroom
 
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Bathroom
                 icon: mdi:shower
                 entity: group.bathroom_lights
+                variables:
+                  accent_color: ${colors.blue}
                 label: |
                   [[[
                     var temp = states['sensor.bathroom_sensor_temperature']?.state || '--';
                     var hum = states['sensor.bathroom_sensor_humidity']?.state || '--';
                     return temp + '°C • ' + Math.round(hum) + '%';
                   ]]]
-                variables:
-                  hc_color: "${colors.blue}"
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/bathroom
 
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Kitchen
                 icon: mdi:silverware-fork-knife
                 entity: group.kitchen_lights
+                variables:
+                  accent_color: ${colors.yellow}
                 label: |
                   [[[
                     var entities = states['group.kitchen_lights']?.attributes?.entity_id || [];
                     var count = entities.filter(e => states[e]?.state === 'on').length;
                     return count + ' lights on';
                   ]]]
-                variables:
-                  hc_color: "${colors.yellow}"
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/kitchen
 
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Hallway
                 icon: mdi:door
                 entity: group.hallway_lights
+                variables:
+                  accent_color: ${colors.green}
                 label: |
                   [[[
-                    var entities = states['group.hallway_lights']?.attributes?.entity_id || [];
-                    var count = entities.filter(e => states[e]?.state === 'on').length;
-                    return count + ' lights on';
+                    var temp = states['sensor.hallway_sensor_temperature']?.state || '--';
+                    return temp + '°C';
                   ]]]
-                variables:
-                  hc_color: "${colors.green}"
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/hallway
 
               - type: custom:button-card
-                template: hc_navigation_card
+                template: minimal_room
                 name: Robynne's Room
                 icon: mdi:teddy-bear
                 entity: group.robynne_lights
+                variables:
+                  accent_color: ${colors.pink}
                 label: |
                   [[[
                     var yoto = states['media_player.yoto_player']?.state;
@@ -1100,25 +938,32 @@
                     var count = entities.filter(e => states[e]?.state === 'on').length;
                     return count + ' lights on';
                   ]]]
-                variables:
-                  hc_color: "${colors.red}"
+                custom_fields:
+                  s: |
+                    [[[
+                      const yoto = states['media_player.yoto_player'];
+                      if (yoto && yoto.state === 'playing') {
+                        return '<ha-icon icon="mdi:music" style="--mdc-icon-size:16px;color:${colors.green};"></ha-icon>';
+                      }
+                      return "";
+                    ]]]
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace-hacasa/robynne
 
-          # Quick Actions / Scenes
+          # Scenes Title
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Scenes
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: All Off
                 icon: mdi:power
                 variables:
-                  hc_color: "${colors.red}"
+                  accent_color: ${colors.red}
                 tap_action:
                   action: call-service
                   service: light.turn_off
@@ -1126,59 +971,31 @@
                     entity_id: all
 
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 entity: input_boolean.party_mode
                 name: Party
                 icon: mdi:party-popper
                 variables:
-                  hc_color: "${colors.mauve}"
+                  accent_color: ${colors.purple}
 
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: Movie
                 icon: mdi:movie
                 variables:
-                  hc_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
                 tap_action:
                   action: call-service
                   service: light.turn_off
                   service_data:
                     entity_id: all
-                  confirmation:
-                    text: "Start Movie Mode?"
 
               - type: custom:button-card
-                template: hc_scene_card
-                name: Leave
-                icon: mdi:home-export-outline
-                variables:
-                  hc_color: "${colors.peach}"
-                tap_action:
-                  action: call-service
-                  service: automation.trigger
-                  service_data:
-                    entity_id: automation.leave_home
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: hc_scene_card
-                name: Bedtime
-                icon: mdi:bed
-                variables:
-                  hc_color: "${colors.mauve}"
-                tap_action:
-                  action: call-service
-                  service: light.turn_off
-                  service_data:
-                    entity_id: group.living_room_lights
-
-              - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: Bright
                 icon: mdi:brightness-7
                 variables:
-                  hc_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
                 tap_action:
                   action: call-service
                   service: light.turn_on
@@ -1186,103 +1003,31 @@
                     entity_id: group.living_room_lights
                     brightness: 255
 
-              - type: custom:button-card
-                template: hc_scene_card
-                name: Dim
-                icon: mdi:brightness-4
-                variables:
-                  hc_color: "${colors.peach}"
-                tap_action:
-                  action: call-service
-                  service: light.turn_on
-                  service_data:
-                    entity_id: group.living_room_lights
-                    brightness: 77
-
-              - type: custom:button-card
-                template: hc_scene_card
-                name: Robynne
-                icon: mdi:music
-                variables:
-                  hc_color: "${colors.green}"
-                tap_action:
-                  action: call-service
-                  service: script.turn_on
-                  service_data:
-                    entity_id: script.robynnes_playlist
-
           # RoboVac
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: RoboVac
 
           - type: custom:button-card
-            template: hc_vacuum_card
+            template: minimal_vacuum
             entity: vacuum.robovac
 
-          # Appliances (Conditional)
-          - type: conditional
-            conditions:
-              - condition: numeric_state
-                entity: sensor.sonoff_10022b2169_power
-                above: 5
-            card:
-              type: custom:button-card
-              show_name: false
-              show_icon: false
-              styles:
-                card:
-                  - padding: 16px
-                  - background: linear-gradient(135deg, ${colors.blue}22, ${colors.surface0})
-                  - border-radius: 20px
-                  - border-left: 4px solid ${colors.blue}
-              custom_fields:
-                appliance: |
-                  [[[
-                    const power = states['sensor.sonoff_10022b2169_power'].state;
-                    return `<div style="display:flex;align-items:center;gap:12px;">
-                      <ha-icon icon="mdi:washing-machine" style="--mdc-icon-size:32px;color:${colors.blue};animation:pulse 2s infinite;"></ha-icon>
-                      <div style="display:flex;flex-direction:column;">
-                        <span style="font-size:14px;font-weight:600;color:${colors.text};">Washing Machine Running</span>
-                        <span style="font-size:12px;color:${colors.subtext};">''${power}W</span>
-                      </div>
-                    </div>`;
-                  ]]]
-              extra_styles: |
-                @keyframes pulse {
-                  0%, 100% { opacity: 1; }
-                  50% { opacity: 0.6; }
-                }
-
-          # Media
+          # Media Title
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Media
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_media_card
+                template: minimal_media
                 entity: media_player.living_room_tv
                 name: Living Room
 
               - type: custom:button-card
-                template: hc_media_card
+                template: minimal_media
                 entity: media_player.apple_tv
                 name: Bedroom
-
-          # System
-          - type: custom:button-card
-            template: hc_title_card
-            name: System
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: hc_server_stats_card
-
-              - type: custom:button-card
-                template: hc_battery_alerts_card
 
       # ==================== LIVING ROOM VIEW ====================
       - title: Living Room
@@ -1291,12 +1036,12 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Living Room
             label: Lights & Media
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Lights
 
           - type: grid
@@ -1304,176 +1049,103 @@
             square: false
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.living_room_light
                 name: Main Light
                 variables:
-                  card_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.dining_room_light_3
                 name: Dining Light
                 variables:
-                  card_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.sofa_light_switch
                 name: Sofa Light
                 variables:
-                  card_color: "${colors.peach}"
+                  accent_color: ${colors.orange}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.tv_light
                 name: TV Light
                 variables:
-                  card_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Climate
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_fan_card
+                template: minimal_fan
                 entity: fan.dyson
                 name: Dyson
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.dyson_temperature
                 name: Temperature
                 icon: mdi:thermometer
+                variables:
+                  accent_color: ${colors.red}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.dyson_humidity
                 name: Humidity
                 icon: mdi:water-percent
+                variables:
+                  accent_color: ${colors.blue}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Air Quality
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.dyson_pm_2_5
                 name: PM 2.5
                 icon: mdi:blur
-                styles:
-                  icon:
-                    - color: ${colors.green}
+                variables:
+                  accent_color: ${colors.green}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.dyson_pm_10
                 name: PM 10
                 icon: mdi:blur-linear
-                styles:
-                  icon:
-                    - color: ${colors.blue}
+                variables:
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.dyson_volatile_organic_compounds_index
                 name: VOC
                 icon: mdi:molecule
-                styles:
-                  icon:
-                    - color: ${colors.peach}
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
-                name: HEPA Filter
-                icon: mdi:air-filter
-                label: |
-                  [[[
-                    return states['sensor.dyson_hepa_filter_life'].state + '%';
-                  ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 70px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 11px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                  label:
-                    - font-size: 16px
-                    - font-weight: 600
-                    - color: |
-                        [[[
-                          const val = parseInt(states['sensor.dyson_hepa_filter_life'].state);
-                          return val > 20 ? '${colors.text}' : '${colors.red}';
-                        ]]]
-                    - justify-self: start
-                  icon:
-                    - color: ${colors.blue}
-                    - width: 22px
-
-              - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
-                name: Carbon Filter
-                icon: mdi:air-filter
-                label: |
-                  [[[
-                    return states['sensor.dyson_carbon_filter_life'].state + '%';
-                  ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 70px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 11px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                  label:
-                    - font-size: 16px
-                    - font-weight: 600
-                    - color: |
-                        [[[
-                          const val = parseInt(states['sensor.dyson_carbon_filter_life'].state);
-                          return val > 20 ? '${colors.text}' : '${colors.red}';
-                        ]]]
-                    - justify-self: start
-                  icon:
-                    - color: ${colors.peach}
-                    - width: 22px
+                variables:
+                  accent_color: ${colors.orange}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Media
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_media_card
+                template: minimal_media
                 entity: media_player.lg_webos_smart_tv
                 name: LG TV
 
               - type: custom:button-card
-                template: hc_media_card
+                template: minimal_media
                 entity: media_player.living_room_tv
                 name: Apple TV
 
@@ -1484,48 +1156,48 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Bedroom
-            label: Lights
+            label: Lights & Media
 
           - type: grid
             columns: 2
             square: false
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.above_bed_light
                 name: Above Bed
                 variables:
-                  card_color: "${colors.mauve}"
+                  accent_color: ${colors.purple}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.bedroom_light_2
-                name: Bedroom Light
+                name: Main Light
                 variables:
-                  card_color: "${colors.mauve}"
+                  accent_color: ${colors.purple}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.darren_switch
                 name: Darren's Light
                 variables:
-                  card_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.lorraine_switch
                 name: Lorraine's Light
                 variables:
-                  card_color: "${colors.peach}"
+                  accent_color: ${colors.orange}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Media
 
           - type: custom:button-card
-            template: hc_media_card
+            template: minimal_media
             entity: media_player.apple_tv
             name: Apple TV
 
@@ -1536,64 +1208,64 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Bathroom
             label: Lights & Climate
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Lights
 
-          - type: grid
-            columns: 3
-            square: false
+          - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.bath_light
                 name: Bath
                 variables:
-                  card_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.sink_light
                 name: Sink
                 variables:
-                  card_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.toilet_light
                 name: Toilet
                 variables:
-                  card_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Climate
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.bathroom_sensor_temperature
                 name: Temperature
                 icon: mdi:thermometer
+                variables:
+                  accent_color: ${colors.red}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.bathroom_sensor_humidity
                 name: Humidity
                 icon: mdi:water-percent
+                variables:
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_switch_card
+                template: minimal_switch
                 entity: switch.fingerbot_extractor_switch
                 name: Extractor
                 icon: mdi:fan
-                variables:
-                  card_color: "${colors.green}"
 
       # ==================== KITCHEN VIEW ====================
       - title: Kitchen
@@ -1602,34 +1274,32 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Kitchen
             label: Lights
 
-          - type: grid
-            columns: 3
-            square: false
+          - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.kitchen_microwave
-                name: Kitchen
+                name: Main
                 variables:
-                  card_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.kitchen_sink
                 name: Sink
                 variables:
-                  card_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.kitchen_random
                 name: Other
                 variables:
-                  card_color: "${colors.yellow}"
+                  accent_color: ${colors.yellow}
 
       # ==================== HALLWAY VIEW ====================
       - title: Hallway
@@ -1638,39 +1308,43 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Hallway
             label: Lights & Sensors
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.hallway
                 name: Hallway
                 variables:
-                  card_color: "${colors.green}"
+                  accent_color: ${colors.green}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.doorway
                 name: Doorway
                 variables:
-                  card_color: "${colors.green}"
+                  accent_color: ${colors.green}
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.hallway_sensor_temperature
                 name: Temperature
                 icon: mdi:thermometer
+                variables:
+                  accent_color: ${colors.red}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.hallway_sensor_humidity
                 name: Humidity
                 icon: mdi:water-percent
+                variables:
+                  accent_color: ${colors.blue}
 
       # ==================== ROBYNNE'S ROOM VIEW ====================
       - title: Robynne's Room
@@ -1679,50 +1353,48 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Robynne's Room
             label: Lights & Media
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Lights
 
-          - type: grid
-            columns: 3
-            square: false
+          - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.robynne_light
                 name: Main Light
                 variables:
-                  card_color: "${colors.red}"
+                  accent_color: ${colors.pink}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.fairy_lights_switch
                 name: Fairy Lights
                 variables:
-                  card_color: "${colors.mauve}"
+                  accent_color: ${colors.purple}
 
               - type: custom:button-card
-                template: hc_light_card
+                template: minimal_light
                 entity: light.aarlo_nursery
                 name: Night Light
                 variables:
-                  card_color: "${colors.peach}"
+                  accent_color: ${colors.orange}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Yoto Player
 
           - type: custom:button-card
-            template: hc_media_card
+            template: minimal_media
             entity: media_player.yoto_player
             name: Yoto Player
             icon: mdi:speaker
             variables:
-              card_color: "${colors.green}"
+              accent_color: ${colors.green}
 
       # ==================== CAR VIEW ====================
       - title: Car
@@ -1731,80 +1403,78 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Ford
             label: Vehicle Status
 
-          # Status Overview Card
           - type: custom:button-card
             show_name: false
             show_icon: false
             show_label: false
             styles:
               card:
+                - background: ${colors.contrast1}
+                - border-radius: ${design.borderRadius}
+                - box-shadow: ${design.shadow}
                 - padding: 20px
-                - background: ${colors.surface0}
-                - border-radius: 20px
             custom_fields:
               status: |
                 [[[
-                  const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus'].state;
-                  const window = states['sensor.fordpass_wf02xxerk2la80437_windowposition'].state;
-                  const lastRefresh = states['sensor.fordpass_wf02xxerk2la80437_lastrefresh'].state;
-                  const messages = states['sensor.fordpass_wf02xxerk2la80437_messages'].state;
+                  const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state || 'Unknown';
+                  const window = states['sensor.fordpass_wf02xxerk2la80437_windowposition']?.state || 'Unknown';
+                  const lastRefresh = states['sensor.fordpass_wf02xxerk2la80437_lastrefresh']?.state;
+                  const messages = states['sensor.fordpass_wf02xxerk2la80437_messages']?.state || '0';
 
-                  const refreshDate = new Date(lastRefresh);
-                  const isStale = refreshDate.getFullYear() < 2020;
+                  const refreshDate = lastRefresh ? new Date(lastRefresh) : null;
+                  const isStale = !refreshDate || refreshDate.getFullYear() < 2020;
                   const refreshStr = isStale ? 'Not synced' : refreshDate.toLocaleString('en-GB');
 
                   const doorColor = door === 'Closed' ? '${colors.green}' : '${colors.red}';
                   const doorIcon = door === 'Closed' ? 'mdi:car-door-lock' : 'mdi:car-door';
                   const windowColor = window === 'Closed' ? '${colors.green}' : '${colors.yellow}';
 
-                  return `<div style="display:flex;flex-direction:column;gap:16px;">
-                    <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-                      <ha-icon icon="mdi:car" style="--mdc-icon-size:48px;color:${colors.blue};"></ha-icon>
-                    </div>
-
-                    <div style="display:flex;justify-content:space-around;text-align:center;">
-                      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                        <ha-icon icon="''${doorIcon}" style="--mdc-icon-size:24px;color:''${doorColor};"></ha-icon>
-                        <span style="font-size:12px;color:${colors.subtext};">Doors</span>
-                        <span style="font-size:14px;font-weight:600;color:${colors.text};">''${door}</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                        <ha-icon icon="mdi:car-door" style="--mdc-icon-size:24px;color:''${windowColor};"></ha-icon>
-                        <span style="font-size:12px;color:${colors.subtext};">Windows</span>
-                        <span style="font-size:14px;font-weight:600;color:${colors.text};">''${window}</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                        <ha-icon icon="mdi:message-badge" style="--mdc-icon-size:24px;color:''${messages > 0 ? '${colors.peach}' : '${colors.subtext}'};"></ha-icon>
-                        <span style="font-size:12px;color:${colors.subtext};">Messages</span>
-                        <span style="font-size:14px;font-weight:600;color:${colors.text};">''${messages}</span>
-                      </div>
-                    </div>
-
-                    <div style="display:flex;justify-content:center;padding-top:12px;border-top:1px solid ${colors.base};">
-                      <span style="font-size:11px;color:''${isStale ? '${colors.red}' : '${colors.subtext}'};">
-                        <ha-icon icon="mdi:sync" style="--mdc-icon-size:14px;margin-right:4px;"></ha-icon>
-                        ''${refreshStr}
-                      </span>
-                    </div>
-                  </div>`;
+                  return '<div style="display:flex;flex-direction:column;gap:16px;font-family:${design.fontFamily};">' +
+                    '<div style="display:flex;align-items:center;justify-content:center;">' +
+                      '<ha-icon icon="mdi:car" style="--mdc-icon-size:48px;color:${colors.blue};"></ha-icon>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-around;text-align:center;">' +
+                      '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+                        '<ha-icon icon="' + doorIcon + '" style="--mdc-icon-size:24px;color:' + doorColor + ';"></ha-icon>' +
+                        '<span style="font-size:11px;color:${colors.contrast14};">Doors</span>' +
+                        '<span style="font-size:14px;font-weight:600;color:${colors.contrast18};">' + door + '</span>' +
+                      '</div>' +
+                      '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+                        '<ha-icon icon="mdi:car-door" style="--mdc-icon-size:24px;color:' + windowColor + ';"></ha-icon>' +
+                        '<span style="font-size:11px;color:${colors.contrast14};">Windows</span>' +
+                        '<span style="font-size:14px;font-weight:600;color:${colors.contrast18};">' + window + '</span>' +
+                      '</div>' +
+                      '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+                        '<ha-icon icon="mdi:message-badge" style="--mdc-icon-size:24px;color:' + (parseInt(messages) > 0 ? '${colors.orange}' : '${colors.contrast14}') + ';"></ha-icon>' +
+                        '<span style="font-size:11px;color:${colors.contrast14};">Messages</span>' +
+                        '<span style="font-size:14px;font-weight:600;color:${colors.contrast18};">' + messages + '</span>' +
+                      '</div>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:center;padding-top:12px;border-top:1px solid ${colors.contrast5};">' +
+                      '<span style="font-size:11px;color:' + (isStale ? '${colors.red}' : '${colors.contrast14}') + ';">' +
+                        '<ha-icon icon="mdi:sync" style="--mdc-icon-size:14px;margin-right:4px;"></ha-icon>' +
+                        refreshStr +
+                      '</span>' +
+                    '</div>' +
+                  '</div>';
                 ]]]
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Controls
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: Lock
                 icon: mdi:car-door-lock
                 variables:
-                  hc_color: "${colors.green}"
+                  accent_color: ${colors.green}
                 tap_action:
                   action: call-service
                   service: button.press
@@ -1812,11 +1482,11 @@
                     entity_id: button.fordpass_wf02xxerk2la80437_doorlock
 
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: Unlock
                 icon: mdi:lock-open-variant
                 variables:
-                  hc_color: "${colors.peach}"
+                  accent_color: ${colors.orange}
                 tap_action:
                   action: call-service
                   service: button.press
@@ -1824,11 +1494,11 @@
                     entity_id: button.fordpass_wf02xxerk2la80437_doorunlock
 
               - type: custom:button-card
-                template: hc_scene_card
+                template: minimal_scene
                 name: Sync
                 icon: mdi:sync
                 variables:
-                  hc_color: "${colors.blue}"
+                  accent_color: ${colors.blue}
                 tap_action:
                   action: call-service
                   service: button.press
@@ -1836,228 +1506,49 @@
                     entity_id: button.fordpass_wf02xxerk2la80437_request_refresh
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Vehicle Stats
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
+                template: minimal_sensor
                 name: Fuel
                 icon: mdi:gas-station
                 entity: sensor.fordpass_wf02xxerk2la80437_fuel
+                variables:
+                  accent_color: ${colors.green}
                 label: |
                   [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_fuel'].state;
+                    const val = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state;
                     return val === 'unknown' ? '--' : val + '%';
                   ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.green}
-                    - width: 24px
 
               - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
+                template: minimal_sensor
                 name: Oil Life
                 icon: mdi:oil
                 entity: sensor.fordpass_wf02xxerk2la80437_oil
+                variables:
+                  accent_color: ${colors.yellow}
                 label: |
                   [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_oil'].state;
+                    const val = states['sensor.fordpass_wf02xxerk2la80437_oil']?.state;
                     return val === 'unknown' ? '--' : val + '%';
                   ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.yellow}
-                    - width: 24px
 
               - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
+                template: minimal_sensor
                 name: Battery
                 icon: mdi:car-battery
                 entity: sensor.fordpass_wf02xxerk2la80437_battery
+                variables:
+                  accent_color: ${colors.blue}
                 label: |
                   [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_battery'].state;
+                    const val = states['sensor.fordpass_wf02xxerk2la80437_battery']?.state;
                     return val === 'unknown' ? '--' : val + '%';
                   ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.blue}
-                    - width: 24px
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
-                name: Outside Temp
-                icon: mdi:thermometer
-                entity: sensor.fordpass_wf02xxerk2la80437_outsidetemp
-                label: |
-                  [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_outsidetemp'].state;
-                    return val === 'unknown' ? '--' : val + '°C';
-                  ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.peach}
-                    - width: 24px
-
-              - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
-                name: Cabin Temp
-                icon: mdi:car-seat-heater
-                entity: sensor.fordpass_wf02xxerk2la80437_cabintemperature
-                label: |
-                  [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_cabintemperature'].state;
-                    return val === 'unknown' ? '--' : val + '°C';
-                  ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.red}
-                    - width: 24px
-
-              - type: custom:button-card
-                show_name: true
-                show_icon: true
-                show_label: true
-                name: AdBlue
-                icon: mdi:water
-                entity: sensor.fordpass_wf02xxerk2la80437_exhaustfluidlevel
-                label: |
-                  [[[
-                    const val = states['sensor.fordpass_wf02xxerk2la80437_exhaustfluidlevel'].state;
-                    return val === 'unknown' ? '--' : val + '%';
-                  ]]]
-                styles:
-                  card:
-                    - padding: 12px
-                    - height: 80px
-                    - background: ${colors.surface0}
-                    - border-radius: 20px
-                  grid:
-                    - grid-template-areas: '"i n" "i l"'
-                    - grid-template-columns: 40px 1fr
-                  name:
-                    - font-size: 12px
-                    - color: ${colors.subtext}
-                    - justify-self: start
-                    - align-self: end
-                  label:
-                    - font-size: 18px
-                    - font-weight: 700
-                    - color: ${colors.text}
-                    - justify-self: start
-                    - align-self: start
-                  icon:
-                    - color: ${colors.blue}
-                    - width: 24px
 
       # ==================== FISH TANK VIEW ====================
       - title: Fish Tank
@@ -2066,198 +1557,67 @@
         type: custom:vertical-layout
         cards:
           - type: custom:button-card
-            template: hc_header_card
+            template: minimal_header
             name: Fish Tank
             label: Water Parameters
 
-          # Main Stats Row
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.current_temperature
                 name: Temperature
                 icon: mdi:thermometer
-                styles:
-                  icon:
-                    - color: ${colors.blue}
+                variables:
+                  accent_color: ${colors.blue}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.ph_value
                 name: pH Level
                 icon: mdi:ph
-                styles:
-                  icon:
-                    - color: ${colors.green}
+                variables:
+                  accent_color: ${colors.green}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.salinity_value
                 name: Salinity
                 icon: mdi:shaker-outline
-                styles:
-                  icon:
-                    - color: ${colors.peach}
+                variables:
+                  accent_color: ${colors.orange}
 
           - type: custom:button-card
-            template: hc_title_card
+            template: minimal_title
             name: Water Quality
 
           - type: horizontal-stack
             cards:
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.tds_value
                 name: TDS
                 icon: mdi:water-opacity
-                styles:
-                  icon:
-                    - color: ${colors.mauve}
+                variables:
+                  accent_color: ${colors.purple}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.ec_value
                 name: EC
                 icon: mdi:flash
-                styles:
-                  icon:
-                    - color: ${colors.yellow}
+                variables:
+                  accent_color: ${colors.yellow}
 
               - type: custom:button-card
-                template: hc_sensor_card
+                template: minimal_sensor
                 entity: sensor.orp_value
                 name: ORP
                 icon: mdi:molecule
-                styles:
-                  icon:
-                    - color: ${colors.green}
-
-          - type: custom:button-card
-            template: hc_title_card
-            name: Additional
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:button-card
-                template: hc_sensor_card
-                entity: sensor.proportion_value
-                name: Specific Gravity
-                icon: mdi:scale-balance
-                styles:
-                  icon:
-                    - color: ${colors.blue}
-
-              - type: custom:button-card
-                template: hc_sensor_card
-                entity: sensor.cf
-                name: CF
-                icon: mdi:water-check
-                styles:
-                  icon:
-                    - color: ${colors.peach}
-
-          # Water Parameters Overview Card
-          - type: custom:button-card
-            show_name: false
-            show_icon: false
-            show_label: false
-            styles:
-              card:
-                - padding: 20px
-                - background: ${colors.surface0}
-                - border-radius: 20px
-                - margin-top: 16px
-            custom_fields:
-              overview: |
-                [[[
-                  const temp = states['sensor.current_temperature'].state;
-                  const ph = states['sensor.ph_value'].state;
-                  const salinity = states['sensor.salinity_value'].state;
-                  const tds = states['sensor.tds_value'].state;
-                  const ec = states['sensor.ec_value'].state;
-                  const orp = states['sensor.orp_value'].state;
-                  const sg = states['sensor.proportion_value'].state;
-
-                  // pH status (ideal range 7.8-8.4 for saltwater)
-                  const phVal = parseFloat(ph);
-                  const phStatus = phVal >= 7.8 && phVal <= 8.5 ? '${colors.green}' : (phVal >= 7.5 && phVal <= 8.8 ? '${colors.yellow}' : '${colors.red}');
-                  const phIcon = phVal >= 7.8 && phVal <= 8.5 ? 'mdi:check-circle' : 'mdi:alert-circle';
-
-                  // Temperature status (ideal 23-26°C for tropical)
-                  const tempVal = parseFloat(temp);
-                  const tempStatus = tempVal >= 23 && tempVal <= 26 ? '${colors.green}' : (tempVal >= 21 && tempVal <= 28 ? '${colors.yellow}' : '${colors.red}');
-                  const tempIcon = tempVal >= 23 && tempVal <= 26 ? 'mdi:check-circle' : 'mdi:alert-circle';
-
-                  return `<div style="display:flex;flex-direction:column;gap:12px;">
-                    <div style="font-size:14px;font-weight:600;color:${colors.text};margin-bottom:8px;">
-                      <ha-icon icon="mdi:clipboard-check-outline" style="--mdc-icon-size:18px;color:${colors.mauve};margin-right:8px;"></ha-icon>
-                      Status Overview
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="color:${colors.subtext};">Temperature</span>
-                      <span style="display:flex;align-items:center;gap:6px;">
-                        <span style="color:${colors.text};">''${temp}°C</span>
-                        <ha-icon icon="''${tempIcon}" style="--mdc-icon-size:16px;color:''${tempStatus};"></ha-icon>
-                      </span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="color:${colors.subtext};">pH Level</span>
-                      <span style="display:flex;align-items:center;gap:6px;">
-                        <span style="color:${colors.text};">''${ph}</span>
-                        <ha-icon icon="''${phIcon}" style="--mdc-icon-size:16px;color:''${phStatus};"></ha-icon>
-                      </span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="color:${colors.subtext};">Salinity</span>
-                      <span style="color:${colors.text};">''${salinity} PPM</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="color:${colors.subtext};">Specific Gravity</span>
-                      <span style="color:${colors.text};">''${sg} S.G</span>
-                    </div>
-                  </div>`;
-                ]]]
-
-          # History Graphs
-          - type: custom:button-card
-            template: hc_title_card
-            name: History (24h)
-
-          - type: history-graph
-            entities:
-              - entity: sensor.current_temperature
-                name: Temperature
-              - entity: sensor.ph_value
-                name: pH
-            hours_to_show: 24
-            refresh_interval: 300
-            card_mod:
-              style: |
-                ha-card {
-                  background: ${colors.surface0};
-                  border-radius: 20px;
-                  padding: 12px;
-                }
-
-          - type: history-graph
-            entities:
-              - entity: sensor.salinity_value
-                name: Salinity
-              - entity: sensor.tds_value
-                name: TDS
-            hours_to_show: 24
-            refresh_interval: 300
-            card_mod:
-              style: |
-                ha-card {
-                  background: ${colors.surface0};
-                  border-radius: 20px;
-                  padding: 12px;
-                }
+                variables:
+                  accent_color: ${colors.green}
   '';
 in {
-  # Copy dashboard file to HA config (templates are inlined)
   systemd.tmpfiles.rules = [
     "L+ /var/lib/hass/hacasa.yaml - - - - ${dashboardYaml}"
   ];
