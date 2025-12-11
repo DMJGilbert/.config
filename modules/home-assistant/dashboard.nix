@@ -576,6 +576,97 @@
               '</div>';
             ]]]
 
+      hc_weather_compact_card:
+        show_name: false
+        show_icon: false
+        show_label: false
+        show_state: false
+        entity: weather.forecast_home
+        styles:
+          card:
+            - padding: 12px 16px
+            - background: ${colors.surface0}
+            - border-radius: 20px
+        custom_fields:
+          weather: |
+            [[[
+              const weather = states['weather.forecast_home'];
+              if (!weather) return '<div style="color:${colors.subtext};">Weather unavailable</div>';
+              const state = weather.state || 'unknown';
+              const attr = weather.attributes || {};
+              const temp = attr.temperature ?? '--';
+              const feelsLike = attr.apparent_temperature ?? temp;
+
+              const weatherIcons = {
+                'sunny': 'mdi:weather-sunny',
+                'clear-night': 'mdi:weather-night',
+                'partlycloudy': 'mdi:weather-partly-cloudy',
+                'cloudy': 'mdi:weather-cloudy',
+                'rainy': 'mdi:weather-rainy',
+                'pouring': 'mdi:weather-pouring',
+                'snowy': 'mdi:weather-snowy',
+                'fog': 'mdi:weather-fog',
+                'windy': 'mdi:weather-windy',
+                'lightning': 'mdi:weather-lightning'
+              };
+              const icon = weatherIcons[state] || 'mdi:weather-cloudy';
+
+              const weatherColors = {
+                'sunny': '${colors.yellow}',
+                'clear-night': '${colors.blue}',
+                'partlycloudy': '${colors.peach}',
+                'cloudy': '${colors.subtext}',
+                'rainy': '${colors.blue}',
+                'pouring': '${colors.blue}',
+                'snowy': '${colors.text}',
+                'fog': '${colors.subtext}',
+                'windy': '${colors.mauve}',
+                'lightning': '${colors.yellow}'
+              };
+              const color = weatherColors[state] || '${colors.subtext}';
+
+              const stateText = state.replace(/-/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+
+              return '<div style="display:flex;align-items:center;gap:12px;">' +
+                '<ha-icon icon="' + icon + '" style="--mdc-icon-size:28px;color:' + color + ';"></ha-icon>' +
+                '<span style="font-size:24px;font-weight:700;color:${colors.text};">' + temp + '°</span>' +
+                '<span style="font-size:13px;color:${colors.subtext};">Feels ' + feelsLike + '°</span>' +
+                '<span style="font-size:13px;color:${colors.subtext};margin-left:auto;text-transform:capitalize;">' + stateText + '</span>' +
+              '</div>';
+            ]]]
+
+      hc_stat_card:
+        show_name: true
+        show_icon: true
+        show_label: false
+        show_state: true
+        styles:
+          card:
+            - padding: 16px
+            - background: ${colors.surface0}
+            - border-radius: 20px
+          grid:
+            - grid-template-areas: '"i s" "i n"'
+            - grid-template-columns: 40px 1fr
+            - grid-template-rows: 1fr auto
+          icon:
+            - width: 28px
+            - justify-self: start
+          state:
+            - font-size: 28px
+            - font-weight: 700
+            - color: ${colors.text}
+            - justify-self: start
+            - align-self: end
+          name:
+            - font-size: 11px
+            - font-weight: 500
+            - color: ${colors.subtext}
+            - text-transform: uppercase
+            - letter-spacing: 0.5px
+            - justify-self: start
+            - align-self: start
+
       hc_appliance_card:
         show_name: true
         show_icon: true
@@ -805,10 +896,83 @@
                 return date.toLocaleDateString('en-GB', options);
               ]]]
 
-          # Weather
+          # Weather (Compact)
           - type: custom:button-card
-            template: hc_weather_detailed_card
+            template: hc_weather_compact_card
             entity: weather.forecast_home
+
+          # Stats Row
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                template: hc_stat_card
+                name: Lights
+                icon: mdi:lightbulb-group
+                show_state: false
+                custom_fields:
+                  s: |
+                    [[[
+                      const lights = Object.values(states).filter(e =>
+                        e.entity_id.startsWith('light.') && e.state === 'on'
+                      );
+                      return lights.length;
+                    ]]]
+                styles:
+                  grid:
+                    - grid-template-areas: '"i s" "i n"'
+                    - grid-template-columns: 40px 1fr
+                  custom_fields:
+                    s:
+                      - font-size: 28px
+                      - font-weight: 700
+                      - color: ${colors.text}
+                      - justify-self: start
+                      - align-self: end
+                  icon:
+                    - color: ${colors.yellow}
+
+              - type: custom:button-card
+                template: hc_stat_card
+                name: Motion
+                icon: mdi:motion-sensor
+                entity: sensor.total_active_motion_sensors_count_template
+                styles:
+                  icon:
+                    - color: ${colors.blue}
+
+              - type: custom:button-card
+                template: hc_stat_card
+                name: Avg Temp
+                icon: mdi:thermometer
+                show_state: false
+                custom_fields:
+                  s: |
+                    [[[
+                      const sensors = [
+                        states['sensor.hallway_sensor_temperature'],
+                        states['sensor.bathroom_sensor_temperature'],
+                        states['sensor.dyson_temperature'],
+                        states['sensor.aarlo_temperature_nursery']
+                      ].filter(s => s && s.state !== 'unavailable' && s.state !== 'unknown');
+
+                      if (sensors.length === 0) return '--';
+
+                      const sum = sensors.reduce((acc, s) => acc + parseFloat(s.state), 0);
+                      return (sum / sensors.length).toFixed(1) + '°';
+                    ]]]
+                styles:
+                  grid:
+                    - grid-template-areas: '"i s" "i n"'
+                    - grid-template-columns: 40px 1fr
+                  custom_fields:
+                    s:
+                      - font-size: 28px
+                      - font-weight: 700
+                      - color: ${colors.text}
+                      - justify-self: start
+                      - align-self: end
+                  icon:
+                    - color: ${colors.red}
 
           # Liverpool FC - Shows next match from Premier League, Champions League, FA Cup, or League Cup
           - type: custom:button-card
