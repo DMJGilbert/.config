@@ -47,7 +47,7 @@
     borderRadius = "18px";
     cardGap = "12px";
     shadow = "0px 4px 4px 0px rgba(0,0,0,0.16)";
-    fontFamily = "'Product Sans', 'Google Sans', sans-serif";
+    fontFamily = "\"'Product Sans', 'Google Sans', sans-serif\"";
     tintOpacity = "0.15";
   };
 
