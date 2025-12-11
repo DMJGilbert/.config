@@ -225,7 +225,7 @@
           weather: |
             [[[
               const weather = states['weather.forecast_home'];
-              if (!weather) return '''';
+              if (!weather) return "";
               const condition = weather.state || 'unknown';
               const temp = weather.attributes.temperature ?? '--';
 
@@ -469,7 +469,7 @@
               var homeScore = isHome ? (a.team_score||0) : (a.opponent_score||0);
               var awayScore = isHome ? (a.opponent_score||0) : (a.team_score||0);
 
-              var center = '''';
+              var center = "";
               if (match.state === "IN") {
                 center = '<div style="text-align:center;"><div style="font-size:10px;color:${colors.green};text-transform:uppercase;font-weight:600;">LIVE</div><div style="font-size:24px;font-weight:700;color:${colors.contrast20};">' + homeScore + ' - ' + awayScore + '</div></div>';
               } else {
@@ -479,11 +479,11 @@
               }
 
               return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-                '<div style="text-align:center;flex:1;"><img src="' + (homeLogo||'''') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (homeName||'HOME') + '</div></div>' +
+                '<div style="text-align:center;flex:1;"><img src="' + (homeLogo||"") + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (homeName||'HOME') + '</div></div>' +
                 '<div style="flex:1.2;">' + center + '</div>' +
-                '<div style="text-align:center;flex:1;"><img src="' + (awayLogo||'''') + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (awayName||'AWAY') + '</div></div>' +
+                '<div style="text-align:center;flex:1;"><img src="' + (awayLogo||"") + '" style="width:40px;height:40px;object-fit:contain;"><div style="font-size:11px;font-weight:600;color:${colors.contrast18};margin-top:4px;">' + (awayName||'AWAY') + '</div></div>' +
               '</div>' +
-              '<div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};font-size:11px;color:${colors.contrast10};">' + (a.league||'''') + (a.venue ? ' • ' + a.venue : '''') + '</div>';
+              '<div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid ${colors.contrast5};font-size:11px;color:${colors.contrast10};">' + (a.league||"") + (a.venue ? ' • ' + a.venue : "") + '</div>';
             ]]]
 
       # ==================== VACUUM CARD ====================
@@ -654,7 +654,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '''';
+                      return "";
                     ]]]
                   label: |
                     [[[
@@ -683,7 +683,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.purple};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '''';
+                      return "";
                     ]]]
                   label: |
                     [[[
@@ -711,7 +711,7 @@
                       if (motion && motion.state === 'on') {
                         return '<div style="background:${colors.blue};border-radius:100px;padding:6px;"><ha-icon icon="mdi:motion-sensor" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
                       }
-                      return '''';
+                      return "";
                     ]]]
                   label: |
                     [[[
@@ -740,7 +740,7 @@
                       if (on > 0) {
                         return '<div style="background:${colors.yellow};border-radius:100px;padding:6px 10px;font-size:12px;font-weight:600;color:${colors.contrast0};">' + on + '</div>';
                       }
-                      return '''';
+                      return "";
                     ]]]
                   label: |
                     [[[
@@ -787,7 +787,7 @@
                       if (yoto && yoto.state === 'playing') {
                         return '<div style="background:${colors.green};border-radius:100px;padding:6px;"><ha-icon icon="mdi:music" style="--mdc-icon-size:18px;color:${colors.contrast0};"></ha-icon></div>';
                       }
-                      return '''';
+                      return "";
                     ]]]
                   label: |
                     [[[
