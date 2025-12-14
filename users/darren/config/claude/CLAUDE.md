@@ -97,3 +97,47 @@ refactor(utils): extract date formatting to helper
 - Large lists should be virtualized
 - Images should be optimized and lazy-loaded
 - Bundle size should be monitored
+
+## Agent Orchestration
+
+For complex tasks, use specialist agents to handle domain-specific work efficiently.
+
+### Invocation Methods
+
+- **Orchestrator**: `use orchestrator` or `/orchestrate [task]` for multi-domain tasks
+- **Direct**: `use [agent-name]` for specific domain work
+
+### Available Specialists
+
+| Domain | Agent | Trigger Keywords |
+|--------|-------|------------------|
+| Frontend | frontend-developer | react, component, tailwind, shadcn, tsx |
+| Backend | backend-developer | api, endpoint, server, express, route |
+| Database | database-specialist | sql, schema, query, migration, prisma |
+| UI/UX | ui-ux-designer | design, accessibility, ux, layout, figma |
+| Security | security-auditor | security, vulnerability, owasp, audit |
+| Docs | documentation-expert | document, readme, api-docs, jsdoc |
+| Architecture | architect | architecture, pattern, scale, design |
+| Rust | rust-developer | rust, cargo, tokio, systems |
+| Dart | dart-developer | dart, flutter, widget, riverpod |
+| Nix | nix-specialist | nix, flake, home-manager, darwin |
+| Review | code-reviewer | review, pr, quality, lint |
+| Testing | test-engineer | test, vitest, playwright, coverage |
+
+### MCP Integration
+
+- `use context7` - Fetch up-to-date library documentation
+- `use magic-ui` - Access Magic UI components (layouts, motion, effects)
+- `use figma` - Access Figma design files and assets
+
+### Workflow Example
+
+```
+User: "Add a new user profile page with authentication"
+
+1. use orchestrator → Analyzes task, identifies agents needed
+2. Delegates to frontend-developer → Creates React components
+3. Delegates to backend-developer → Creates API endpoints
+4. Delegates to test-engineer → Writes tests
+5. Delegates to code-reviewer → Reviews final implementation
+```

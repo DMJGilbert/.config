@@ -6,6 +6,7 @@ name: {
   system,
   user,
   overlays,
+  sops-nix,
 }:
 darwin.lib.darwinSystem rec {
   inherit system;
@@ -15,8 +16,12 @@ darwin.lib.darwinSystem rec {
     # the overlays are available globally.
     {nixpkgs.overlays = overlays;}
 
+    # Encrypted secrets management
+    sops-nix.darwinModules.sops
+
     (../machines + "/${name}.nix")
     (../users + "/${user}/darwin.nix")
+    (../users + "/${user}/sops.nix")
     home-manager.darwinModules.home-manager
     {
       home-manager = {

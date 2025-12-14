@@ -24,6 +24,9 @@
         eval "$(/usr/local/bin/brew shellenv)"
       fi
 
+      # SOPS age key location
+      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+
       autoload -U up-line-or-beginning-search
       autoload -U down-line-or-beginning-search
       zle -N up-line-or-beginning-search
@@ -31,17 +34,29 @@
       bindkey "^[[A" up-line-or-beginning-search # Up
       bindkey "^[[B" down-line-or-beginning-search # Down
 
+      # Claude Code with MCP secrets (reads from sops-nix decrypted files)
+      # Secrets only loaded for the duration of the claude command
+      claude-mcp() {
+        GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
+        FIGMA_ACCESS_TOKEN="$(cat /run/secrets/FIGMA_ACCESS_TOKEN 2>/dev/null)" \
+        HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
+        HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
+        claude "$@"
+      }
+
       # Claude Code workflows (functions for argument support)
-      cc-review() { claude "/review $*"; }
-      cc-commit() { claude "/commit $*"; }
-      cc-pr() { claude "/pr $*"; }
-      cc-perf() { claude "/perf $*"; }
-      cc-health() { claude "/health $*"; }
-      cc-security() { claude "/security $*"; }
-      cc-explain() { claude "/explain $*"; }
-      cc-deps() { claude "/deps $*"; }
-      cc-prime() { claude "/prime $*"; }
-      cc-audit() { claude "/audit $*"; }
+      # Use claude-mcp for MCP server access, claude for basic usage
+      cc-review() { claude-mcp "/review $*"; }
+      cc-commit() { claude-mcp "/commit $*"; }
+      cc-pr() { claude-mcp "/pr $*"; }
+      cc-perf() { claude-mcp "/perf $*"; }
+      cc-health() { claude-mcp "/health $*"; }
+      cc-security() { claude-mcp "/security $*"; }
+      cc-explain() { claude-mcp "/explain $*"; }
+      cc-deps() { claude-mcp "/deps $*"; }
+      cc-prime() { claude-mcp "/prime $*"; }
+      cc-audit() { claude-mcp "/audit $*"; }
+      cc-orchestrate() { claude-mcp "/orchestrate $*"; }
     '';
     shellAliases = {
       # Navigation
