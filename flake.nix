@@ -19,6 +19,10 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     darwin,
@@ -26,6 +30,7 @@
     nixpkgs,
     home-manager,
     arion,
+    sops-nix,
     ...
   }: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -36,7 +41,7 @@
     ];
   in {
     darwinConfigurations.ryukyu = mkDarwin "ryukyu" {
-      inherit darwin nixpkgs home-manager overlays;
+      inherit darwin nixpkgs home-manager overlays sops-nix;
       system = "aarch64-darwin";
       user = "darren";
     };

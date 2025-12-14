@@ -1,0 +1,19 @@
+# SOPS configuration for encrypted secrets
+#
+# Setup instructions:
+# 1. Generate an age key: age-keygen -o ~/.config/sops/age/keys.txt
+# 2. Get your public key: age-keygen -y ~/.config/sops/age/keys.txt
+# 3. Replace YOUR_AGE_PUBLIC_KEY_HERE with your actual public key
+# 4. Create secrets/claude.yaml with your API keys
+# 5. Encrypt: sops -e -i secrets/claude.yaml
+#
+# To edit secrets: sops secrets/claude.yaml
+
+keys:
+  - &darren age1t0xygdnmfynt05td76zwth6hwrjj05jm39elmayasqvdpgdh9y3q2zz8g3
+
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *darren

@@ -4,6 +4,25 @@ Personal Nix configurations for macOS and NixOS systems, managed with Nix Flakes
 
 This repository is open source for educational purposes. Feel free to reference, adapt, or learn from these configurations for your own systems.
 
+## Architecture
+
+```
+flake.nix
+    │
+    ├── lib/mkdarwin.nix ──► darwinConfigurations.ryukyu
+    │       │
+    │       ├── machines/ryukyu.nix      (system config)
+    │       ├── users/darren/darwin.nix  (user system config)
+    │       └── users/darren/home-manager.nix (home config)
+    │
+    └── lib/mknixos.nix ──► nixosConfigurations.rubecula
+            │
+            ├── hardware/rubecula.nix    (hardware config)
+            ├── machines/rubecula.nix    (system config)
+            ├── users/darren/nixos.nix   (user system config)
+            └── users/darren/home-manager.nix (home config)
+```
+
 ## Systems
 
 | Host | Platform | Description |
@@ -11,40 +30,48 @@ This repository is open source for educational purposes. Feel free to reference,
 | `ryukyu` | macOS (Apple Silicon) | Primary development machine |
 | `rubecula` | NixOS (Intel) | Home server running on MacBook Pro with T2 chip |
 
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Rebuild macOS | `darwin-rebuild switch --flake .#ryukyu` |
+| Rebuild NixOS | `sudo nixos-rebuild switch --flake .#rubecula` |
+| Update inputs | `nix flake update` |
+| Check flake | `nix flake check` |
+| Format code | `alejandra .` |
+| Search packages | `nix search nixpkgs [name]` |
+
 ## Structure
 
 ```
 .
 ├── flake.nix                 # Flake definition and system outputs
 ├── flake.lock                # Locked dependencies
-├── lib/
+├── lib/                      # System builder functions
 │   ├── mkdarwin.nix          # Darwin system builder
 │   └── mknixos.nix           # NixOS system builder
-├── machines/
+├── machines/                 # Machine-specific configurations
 │   ├── shared.nix            # Shared configuration across systems
 │   ├── ryukyu.nix            # macOS-specific configuration
 │   └── rubecula.nix          # NixOS-specific configuration
-├── users/
-│   └── darren/
-│       ├── home-manager.nix  # Home Manager entry point
-│       ├── darwin.nix        # macOS user configuration
-│       ├── nixos.nix         # NixOS user configuration
-│       ├── zsh.nix           # Shell configuration
-│       ├── git.nix           # Git configuration
-│       ├── nvim.nix          # Neovim configuration
-│       ├── aerospace.nix     # Window manager (macOS)
-│       ├── claude-code.nix   # Claude Code commands
-│       └── config/           # Dotfiles and configs
-├── modules/
+├── users/darren/             # User configuration (Home Manager)
+│   ├── home-manager.nix      # Home Manager entry point
+│   ├── darwin.nix            # macOS user configuration
+│   ├── nixos.nix             # NixOS user configuration
+│   └── config/               # Dotfiles and configs
+├── modules/                  # Reusable NixOS modules
 │   └── home-assistant/       # Home Assistant configuration
-│       ├── components.nix
-│       ├── automations.nix
-│       └── dashboard.nix
-├── overlays/
-│   └── pkgs.nix              # Package overlays
-└── hardware/
+├── overlays/                 # Package overlays
+│   └── pkgs.nix              # Custom packages
+└── hardware/                 # Hardware configurations
     └── rubecula.nix          # Hardware configuration
 ```
+
+See module-specific documentation:
+- [lib/README.md](./lib/README.md) - System builder functions
+- [modules/home-assistant/README.md](./modules/home-assistant/README.md) - Home Assistant module
+- [overlays/README.md](./overlays/README.md) - Custom packages
+- [users/darren/README.md](./users/darren/README.md) - User configuration
 
 ## Features
 
@@ -75,37 +102,6 @@ This repository is open source for educational purposes. Feel free to reference,
 - **Modern CLI tools**: eza, bat, ripgrep, fzf, zoxide, btop
 - **Development**: Node.js, Rust, direnv with nix-direnv
 - **Claude Code** slash commands for code review, commit messages, and more
-
-## Usage
-
-### Prerequisites
-
-- [Nix](https://nixos.org/download.html) with flakes enabled
-- For macOS: [nix-darwin](https://github.com/LnL7/nix-darwin)
-
-### Building
-
-**macOS:**
-```bash
-darwin-rebuild switch --flake .#ryukyu
-```
-
-**NixOS:**
-```bash
-sudo nixos-rebuild switch --flake .#rubecula
-```
-
-### Updating
-
-```bash
-nix flake update
-```
-
-### Checking
-
-```bash
-nix flake check
-```
 
 ## Claude Code Commands
 
@@ -145,14 +141,6 @@ All commands are read-only and will not modify files, commit, or push.
 - [nix-darwin](https://github.com/LnL7/nix-darwin)
 - [nixos-hardware](https://github.com/NixOS/nixos-hardware)
 - [arion](https://github.com/hercules-ci/arion) (Docker Compose in Nix)
-
-## Formatting
-
-This project uses [alejandra](https://github.com/kamadorueda/alejandra) for Nix formatting:
-
-```bash
-alejandra .
-```
 
 ## License
 

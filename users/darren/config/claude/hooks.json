@@ -1,0 +1,92 @@
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".tsx"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using frontend-developer agent for React/TSX files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".nix"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using nix-specialist agent for Nix configuration files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".rs"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using rust-developer agent for Rust files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".dart"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using dart-developer agent for Dart/Flutter files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".test."
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using test-engineer agent for test files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".spec."
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using test-engineer agent for test files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "schema.prisma"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using database-specialist agent for Prisma schema files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".sql"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using database-specialist agent for SQL files"
+      }
+    }
+  ]
+}

@@ -9,6 +9,9 @@
 
   home = {
     stateVersion = "23.11";
+    sessionVariables = {
+      SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age/keys.txt";
+    };
     packages = with pkgs;
       [
         # neovim
@@ -56,6 +59,10 @@
         duf # Better df
         procs # Better ps
         delta # Better git diffs
+
+        # Secrets management
+        age # Encryption tool for sops
+        sops # Encrypted secrets
       ]
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
         # tools

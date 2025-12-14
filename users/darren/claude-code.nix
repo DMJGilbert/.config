@@ -8,6 +8,12 @@ lib.mkIf pkgs.stdenv.isDarwin {
     # Project guidelines
     ".claude/CLAUDE.md".source = ./config/claude/CLAUDE.md;
 
+    # MCP configuration
+    ".mcp.json".source = ./config/claude/mcp.json;
+
+    # Hooks configuration
+    ".claude/hooks.json".source = ./config/claude/hooks.json;
+
     # Slash commands
     ".claude/commands/review.md".source = ./config/claude/commands/review.md;
     ".claude/commands/commit.md".source = ./config/claude/commands/commit.md;
@@ -19,5 +25,21 @@ lib.mkIf pkgs.stdenv.isDarwin {
     ".claude/commands/deps.md".source = ./config/claude/commands/deps.md;
     ".claude/commands/prime.md".source = ./config/claude/commands/prime.md;
     ".claude/commands/audit.md".source = ./config/claude/commands/audit.md;
+    ".claude/commands/orchestrate.md".source = ./config/claude/commands/orchestrate.md;
+
+    # Specialist agents
+    ".claude/agents/orchestrator.md".source = ./config/claude/agents/orchestrator.md;
+    ".claude/agents/frontend-developer.md".source = ./config/claude/agents/frontend-developer.md;
+    ".claude/agents/backend-developer.md".source = ./config/claude/agents/backend-developer.md;
+    ".claude/agents/database-specialist.md".source = ./config/claude/agents/database-specialist.md;
+    ".claude/agents/ui-ux-designer.md".source = ./config/claude/agents/ui-ux-designer.md;
+    ".claude/agents/security-auditor.md".source = ./config/claude/agents/security-auditor.md;
+    ".claude/agents/documentation-expert.md".source = ./config/claude/agents/documentation-expert.md;
+    ".claude/agents/architect.md".source = ./config/claude/agents/architect.md;
+    ".claude/agents/rust-developer.md".source = ./config/claude/agents/rust-developer.md;
+    ".claude/agents/dart-developer.md".source = ./config/claude/agents/dart-developer.md;
+    ".claude/agents/nix-specialist.md".source = ./config/claude/agents/nix-specialist.md;
+    ".claude/agents/code-reviewer.md".source = ./config/claude/agents/code-reviewer.md;
+    ".claude/agents/test-engineer.md".source = ./config/claude/agents/test-engineer.md;
   };
 }
