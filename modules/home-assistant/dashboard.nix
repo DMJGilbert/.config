@@ -45,8 +45,8 @@
                 - color: "#FC691C"
                 - justify-self: start
 
-          # Hero Image with floating chips
-          - type: picture-elements
+          # Hero Image
+          - type: picture
             image: ${images.building}
             card_mod:
               style: |
@@ -55,221 +55,56 @@
                   margin: 0 16px;
                   overflow: hidden;
                 }
-            elements:
-              # Floating chips container
-              - type: custom:button-card
-                styles:
-                  card:
-                    - background: none
-                    - border: none
-                    - box-shadow: none
-                    - position: absolute
-                    - bottom: 12px
-                    - left: 50%
-                    - transform: translateX(-50%)
-                    - display: flex
-                    - gap: 8px
-                custom_fields:
-                  lights:
-                    card:
-                      type: custom:button-card
-                      entity: sensor.total_turned_on_lights_count_template
-                      icon: mdi:lightbulb
-                      show_state: true
-                      show_name: false
-                      styles:
-                        card:
-                          - background: rgba(255,255,255,0.95)
-                          - border-radius: 50px
-                          - padding: 6px 12px
-                          - box-shadow: 0 2px 8px rgba(0,0,0,0.15)
-                          - height: 32px
-                        icon:
-                          - width: 16px
-                          - color: "#FC691C"
-                        state:
-                          - font-size: 12px
-                          - font-weight: 500
-                  media:
-                    card:
-                      type: custom:button-card
-                      icon: mdi:television
-                      show_name: false
-                      show_state: false
-                      state:
-                        - value: "off"
-                          styles:
-                            icon:
-                              - color: gray
-                        - operator: default
-                          styles:
-                            icon:
-                              - color: "#22C55E"
-                      styles:
-                        card:
-                          - background: rgba(255,255,255,0.95)
-                          - border-radius: 50px
-                          - padding: 6px 12px
-                          - box-shadow: 0 2px 8px rgba(0,0,0,0.15)
-                          - height: 32px
-                        icon:
-                          - width: 16px
-                  motion:
-                    card:
-                      type: custom:button-card
-                      icon: mdi:motion-sensor
-                      show_name: false
-                      show_state: false
-                      styles:
-                        card:
-                          - background: rgba(255,255,255,0.95)
-                          - border-radius: 50px
-                          - padding: 6px 12px
-                          - box-shadow: 0 2px 8px rgba(0,0,0,0.15)
-                          - height: 32px
-                        icon:
-                          - width: 16px
-                          - color: |
-                              [[[
-                                const sensors = [
-                                  'binary_sensor.living_room_motion_sensor_occupancy',
-                                  'binary_sensor.bedroom_motion_sensor_occupancy',
-                                  'binary_sensor.hallway_motion_sensor_occupancy',
-                                  'binary_sensor.motion_sensor_motion'
-                                ];
-                                const active = sensors.filter(s => hass.states[s]?.state === 'on').length;
-                                return active > 0 ? '#3B82F6' : 'gray';
-                              ]]]
-                template:
-                  - chips_row
-                style:
-                  top: 85%
-                  left: 50%
+
+          # Status chips row
+          - type: custom:mushroom-chips-card
+            card_mod:
+              style: |
+                ha-card {
+                  --chip-background: rgba(0,0,0,0.05);
+                  padding: 0 16px;
+                }
+            chips:
+              - type: template
+                entity: sensor.total_turned_on_lights_count_template
+                icon: mdi:lightbulb
+                icon_color: orange
+                content: "{{ states('sensor.total_turned_on_lights_count_template') }} lights"
+              - type: template
+                icon: mdi:thermometer
+                content: "{{ state_attr('weather.forecast_home', 'temperature') }}°C"
+              - type: weather
+                entity: weather.forecast_home
+                show_temperature: false
+                show_conditions: true
 
           # Status Info Section
-          - type: custom:button-card
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-columns: 1fr
-                - gap: 8px
-            custom_fields:
-              weather:
-                card:
-                  type: custom:button-card
-                  entity: weather.forecast_home
-                  show_icon: true
-                  show_name: false
-                  show_state: true
-                  icon: mdi:map-marker
-                  styles:
-                    card:
-                      - background: none
-                      - border: none
-                      - box-shadow: none
-                      - padding: 0
-                      - justify-content: start
-                    grid:
-                      - grid-template-areas: '"i s"'
-                      - grid-template-columns: auto 1fr
-                    icon:
-                      - width: 14px
-                      - color: "#6B7280"
-                    state:
-                      - font-size: 13px
-                      - color: "#6B7280"
-                      - justify-self: start
-                  state_display: |
-                    [[[
-                      const w = hass.states["weather.forecast_home"];
-                      if (!w) return "Weather unavailable";
-                      const temp = w.attributes.temperature;
-                      const condition = w.state.replace(/_/g, " ");
-                      return condition.charAt(0).toUpperCase() + condition.slice(1) + " (" + temp + "°C)";
-                    ]]]
-              calendar:
-                card:
-                  type: custom:button-card
-                  entity: calendar.family
-                  show_icon: true
-                  show_name: false
-                  show_state: true
-                  icon: mdi:calendar
-                  styles:
-                    card:
-                      - background: none
-                      - border: none
-                      - box-shadow: none
-                      - padding: 0
-                      - justify-content: start
-                    grid:
-                      - grid-template-areas: '"i s"'
-                      - grid-template-columns: auto 1fr
-                    icon:
-                      - width: 14px
-                      - color: "#6B7280"
-                    state:
-                      - font-size: 13px
-                      - color: "#6B7280"
-                      - justify-self: start
-                  state_display: |
-                    [[[
-                      const cal = hass.states["calendar.family"];
-                      if (cal?.state === "on" && cal.attributes.message) {
-                        return cal.attributes.message;
-                      }
-                      return "No upcoming events";
-                    ]]]
-              football:
-                card:
-                  type: conditional
-                  conditions:
-                    - condition: or
-                      conditions:
-                        - condition: state
-                          entity: sensor.liverpool
-                          state: IN
-                        - condition: state
-                          entity: sensor.liverpool
-                          state: PRE
-                  card:
-                    type: custom:button-card
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-template-card
+                entity: calendar.family
+                icon: mdi:calendar
+                icon_color: gray
+                primary: "{{ state_attr('calendar.family', 'message') or 'No upcoming events' }}"
+                secondary: "{{ state_attr('calendar.family', 'start_time') }}"
+                card_mod:
+                  style: |
+                    ha-card { background: none; box-shadow: none; }
+              - type: conditional
+                conditions:
+                  - condition: state
                     entity: sensor.liverpool
-                    show_icon: true
-                    show_name: false
-                    show_state: true
-                    icon: mdi:soccer
-                    styles:
-                      card:
-                        - background: none
-                        - border: none
-                        - box-shadow: none
-                        - padding: 0
-                        - justify-content: start
-                      grid:
-                        - grid-template-areas: '"i s"'
-                        - grid-template-columns: auto 1fr
-                      icon:
-                        - width: 14px
-                        - color: "#6B7280"
-                      state:
-                        - font-size: 13px
-                        - color: "#6B7280"
-                        - justify-self: start
-                    state_display: |
-                      [[[
-                        const lfc = hass.states["sensor.liverpool"];
-                        if (!lfc) return "No match data";
-                        const a = lfc.attributes;
-                        const date = new Date(a.date);
-                        const day = date.toLocaleDateString("en-GB", { weekday: "short" });
-                        const time = date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-                        return a.team_abbr + " v " + a.opponent_abbr + ": " + day + " " + time;
-                      ]]]
+                    state_not: NOT_FOUND
+                card:
+                  type: custom:mushroom-template-card
+                  entity: sensor.liverpool
+                  icon: mdi:soccer
+                  icon_color: red
+                  primary: "{{ state_attr('sensor.liverpool', 'team_abbr') }} v {{ state_attr('sensor.liverpool', 'opponent_abbr') }}"
+                  secondary: "{{ as_timestamp(state_attr('sensor.liverpool', 'date')) | timestamp_custom('%a %H:%M') }}"
+                  card_mod:
+                    style: |
+                      ha-card { background: none; box-shadow: none; }
 
           # Tabbed Navigation
           - type: custom:tabbed-card
@@ -879,68 +714,37 @@
                               - font-size: 14px
                               - color: "#1A1A1A"
 
-          # Scenes Button (floating)
-          - type: custom:button-card
-            name: Scenes
-            icon: mdi:palette
-            tap_action:
-              action: fire-dom-event
-              browser_mod:
-                service: browser_mod.popup
-                data:
-                  title: Scenes
-                  content:
-                    type: custom:vertical-layout
-                    cards:
-                      - type: custom:mushroom-chips-card
-                        chips:
-                          - type: template
-                            icon: mdi:movie-open
-                            icon_color: blue
-                            content: Movie
-                            tap_action:
-                              action: call-service
-                              service: scene.turn_on
-                              target:
-                                entity_id: scene.movie
-                          - type: template
-                            icon: mdi:brightness-7
-                            icon_color: amber
-                            content: Bright
-                            tap_action:
-                              action: call-service
-                              service: light.turn_on
-                              target:
-                                entity_id: all
-                              data:
-                                brightness: 255
-                          - type: template
-                            icon: mdi:power
-                            icon_color: red
-                            content: All Off
-                            tap_action:
-                              action: call-service
-                              service: light.turn_off
-                              target:
-                                entity_id: all
-                        alignment: center
-            styles:
-              card:
-                - position: fixed
-                - bottom: 80px
-                - right: 16px
-                - background: "#FC691C"
-                - border-radius: 50px
-                - padding: 12px 20px
-                - box-shadow: 0 4px 12px rgba(252,105,28,0.4)
-                - z-index: 100
-              icon:
-                - color: white
-                - width: 20px
-              name:
-                - color: white
-                - font-size: 14px
-                - font-weight: 500
+          # Quick Actions Row
+          - type: custom:mushroom-chips-card
+            card_mod:
+              style: |
+                ha-card {
+                  --chip-background: #FC691C;
+                  --chip-icon-color: white;
+                  padding: 8px 16px;
+                }
+            alignment: center
+            chips:
+              - type: template
+                icon: mdi:lightbulb-group
+                icon_color: white
+                content: All On
+                tap_action:
+                  action: call-service
+                  service: light.turn_on
+                  target:
+                    entity_id: all
+                  data:
+                    brightness: 255
+              - type: template
+                icon: mdi:power
+                icon_color: white
+                content: All Off
+                tap_action:
+                  action: call-service
+                  service: light.turn_off
+                  target:
+                    entity_id: all
 
       # ==================== LIVING ROOM ====================
       - title: Living Room
