@@ -234,15 +234,76 @@ cards:
                     tap_action: &tap_other
                       action: navigate
                       navigation_path: "#tab-other"
-              - type: markdown
-                content: "Rooms content placeholder - room cards will go here"
+              # Room cards container
+              - type: custom:stack-in-card
+                mode: vertical
                 card_mod: &tab_content_style
                   style: |
                     ha-card {
-                      padding: 16px;
+                      padding: 12px 16px 8px 16px;
                       background: transparent;
                       box-shadow: none;
                     }
+                cards:
+                  # Living Room
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Living Room
+                      room_icon: mdi:sofa
+                      light_entity: group.living_room_lights
+                      motion_entity: binary_sensor.living_room_motion_sensor_occupancy
+                      media_entity: media_player.living_room_tv
+
+                  # Bedroom
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Bedroom
+                      room_icon: mdi:bed
+                      light_entity: group.bedroom_lights
+                      motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
+                      media_entity: media_player.apple_tv
+
+                  # Kitchen
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Kitchen
+                      room_icon: mdi:silverware-fork-knife
+                      light_entity: group.kitchen_lights
+                      motion_entity: null
+                      media_entity: null
+
+                  # Bathroom
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Bathroom
+                      room_icon: mdi:shower
+                      light_entity: group.bathroom_lights
+                      motion_entity: binary_sensor.motion_sensor_motion
+                      media_entity: null
+
+                  # Hallway
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Hallway
+                      room_icon: mdi:door
+                      light_entity: group.hallway_lights
+                      motion_entity: binary_sensor.hallway_motion_sensor_occupancy
+                      media_entity: null
+
+                  # Robynne's Room
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Robynne's Room
+                      room_icon: mdi:teddy-bear
+                      light_entity: group.robynne_lights
+                      motion_entity: binary_sensor.aarlo_motion_nursery
+                      media_entity: media_player.yoto_player
 
           "tab-peoples":
             type: custom:stack-in-card
