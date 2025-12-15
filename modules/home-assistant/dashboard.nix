@@ -9,30 +9,7 @@
         icon: mdi:home
         type: custom:vertical-layout
         cards:
-          # Header with time-based greeting
-          - type: custom:mushroom-title-card
-            title: |
-              {% set h = now().hour %}
-              {% if h < 12 %}Good Morning{% elif h < 18 %}Good Afternoon{% else %}Good Evening{% endif %}
-            subtitle: "{{ now().strftime('%A %d %B') }}"
-
-          # People Section
-          - type: horizontal-stack
-            cards:
-              - type: custom:mushroom-person-card
-                entity: person.darren_gilbert
-                icon_type: entity-picture
-                layout: horizontal
-                primary_info: name
-                secondary_info: state
-              - type: custom:mushroom-person-card
-                entity: person.lorraine
-                icon_type: entity-picture
-                layout: horizontal
-                primary_info: name
-                secondary_info: state
-
-          # Stats chips - consolidated view
+          # Compact header - weather + status in one row
           - type: custom:mushroom-chips-card
             chips:
               - type: weather
@@ -40,236 +17,91 @@
                 show_conditions: true
                 show_temperature: true
               - type: template
+                entity: person.darren_gilbert
+                icon: >
+                  {% if is_state('person.darren_gilbert', 'home') %}mdi:home-account{% else %}mdi:account-arrow-right{% endif %}
+                icon_color: >
+                  {% if is_state('person.darren_gilbert', 'home') %}green{% else %}blue{% endif %}
+                content: D
+                tap_action:
+                  action: more-info
+              - type: template
+                entity: person.lorraine
+                icon: >
+                  {% if is_state('person.lorraine', 'home') %}mdi:home-account{% else %}mdi:account-arrow-right{% endif %}
+                icon_color: >
+                  {% if is_state('person.lorraine', 'home') %}green{% else %}blue{% endif %}
+                content: L
+                tap_action:
+                  action: more-info
+              - type: template
                 icon: mdi:lightbulb-group
                 icon_color: "{% if states('sensor.total_turned_on_lights_count_template') | int > 0 %}amber{% else %}disabled{% endif %}"
-                content: "{{ states('sensor.total_turned_on_lights_count_template') }} lights"
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/system
-              - type: template
-                icon: mdi:motion-sensor
-                icon_color: "{% if states('sensor.total_active_motion_sensors_count_template') | int > 0 %}blue{% else %}disabled{% endif %}"
-                content: "{{ states('sensor.total_active_motion_sensors_count_template') }} motion"
+                content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
               - type: template
                 icon: mdi:thermometer
-                icon_color: red
+                icon_color: cyan
                 content: >
                   {% set temps = [
                     states('sensor.hallway_sensor_temperature'),
                     states('sensor.bathroom_sensor_temperature'),
                     states('sensor.dyson_temperature')
                   ] | reject('in', ['unavailable', 'unknown']) | map('float') | list %}
-                  {% if temps %}{{ (temps | sum / temps | length) | round(1) }}°{% else %}--{% endif %}
+                  {% if temps %}{{ (temps | sum / temps | length) | round(0) }}°{% else %}--{% endif %}
             alignment: center
 
-          # Football Match Card
-          - type: custom:mushroom-template-card
-            entity: sensor.liverpool
-            primary: >
-              {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
-              {% set ns = namespace(match=none, next_date=none) %}
-              {% for s in sensors %}
-                {% set sensor = states[s] %}
-                {% if sensor and sensor.state == 'IN' %}
-                  {% set ns.match = sensor %}
-                {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
-                  {% set d = sensor.attributes.date | as_datetime %}
-                  {% if not ns.next_date or d < ns.next_date %}
-                    {% set ns.next_date = d %}
-                    {% set ns.match = sensor %}
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-              {% if ns.match %}
-                {% set a = ns.match.attributes %}
-                {% if ns.match.state == 'IN' %}
-                  {{ a.team_abbr }} {{ a.team_score }} - {{ a.opponent_score }} {{ a.opponent_abbr }}
-                {% else %}
-                  {{ a.team_abbr }} vs {{ a.opponent_abbr }}
-                {% endif %}
-              {% else %}
-                No upcoming matches
-              {% endif %}
-            secondary: >
-              {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
-              {% set ns = namespace(match=none, next_date=none) %}
-              {% for s in sensors %}
-                {% set sensor = states[s] %}
-                {% if sensor and sensor.state == 'IN' %}
-                  {% set ns.match = sensor %}
-                {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
-                  {% set d = sensor.attributes.date | as_datetime %}
-                  {% if not ns.next_date or d < ns.next_date %}
-                    {% set ns.next_date = d %}
-                    {% set ns.match = sensor %}
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-              {% if ns.match %}
-                {% set a = ns.match.attributes %}
-                {% if ns.match.state == 'IN' %}
-                  LIVE - {{ a.league }}
-                {% else %}
-                  {{ a.date | as_datetime | as_local | as_timestamp | timestamp_custom('%a %d %b, %H:%M') }} - {{ a.league }}
-                {% endif %}
-              {% else %}
-              {% endif %}
-            icon: mdi:soccer
-            icon_color: >
-              {% if is_state('sensor.liverpool', 'IN') %}green{% else %}deep-purple{% endif %}
-            tap_action:
-              action: more-info
+          # Active/Playing section - only shows if something is active
+          - type: conditional
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity: media_player.living_room_tv
+                    state_not: "off"
+                  - condition: state
+                    entity: media_player.living_room_tv
+                    state_not: unavailable
+                  - condition: state
+                    entity: media_player.apple_tv
+                    state_not: "off"
+                  - condition: state
+                    entity: media_player.yoto_player
+                    state: playing
+            card:
+              type: custom:mushroom-chips-card
+              chips:
+                - type: conditional
+                  conditions:
+                    - condition: state
+                      entity: media_player.living_room_tv
+                      state_not: "off"
+                  chip:
+                    type: template
+                    entity: media_player.living_room_tv
+                    icon: mdi:television
+                    icon_color: green
+                    content: TV
+                    tap_action:
+                      action: more-info
+                - type: conditional
+                  conditions:
+                    - condition: state
+                      entity: media_player.yoto_player
+                      state: playing
+                  chip:
+                    type: template
+                    entity: media_player.yoto_player
+                    icon: mdi:music-box
+                    icon_color: pink
+                    content: Yoto
+                    tap_action:
+                      action: more-info
+              alignment: center
 
-          # Rooms Section - Consistent design
-          - type: custom:mushroom-title-card
-            title: Rooms
-
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-              # Living Room - shows lights + TV badge
-              - type: custom:mushroom-template-card
-                entity: group.living_room_lights
-                primary: Living Room
-                secondary: >
-                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% set temp = states('sensor.dyson_temperature') %}
-                  {{ on }} lights{% if temp not in ['unavailable', 'unknown'] %} • {{ temp | round(1) }}°{% endif %}
-                icon: mdi:sofa
-                icon_color: >
-                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}amber{% else %}disabled{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/living-room
-                hold_action:
-                  action: toggle
-                badge_icon: >
-                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}
-                    mdi:television
-                  {% elif is_state('binary_sensor.living_room_motion_sensor_occupancy', 'on') %}
-                    mdi:motion-sensor
-                  {% endif %}
-                badge_color: "{% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}green{% else %}blue{% endif %}"
-
-              # Bedroom - shows lights + motion badge
-              - type: custom:mushroom-template-card
-                entity: group.bedroom_lights
-                primary: Bedroom
-                secondary: >
-                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} lights on
-                icon: mdi:bed
-                icon_color: >
-                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}deep-purple{% else %}disabled{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/bedroom
-                hold_action:
-                  action: toggle
-                badge_icon: >
-                  {% if is_state('binary_sensor.bedroom_motion_sensor_occupancy', 'on') %}mdi:motion-sensor{% endif %}
-                badge_color: blue
-
-              # Bathroom - shows temp/humidity + motion badge
-              - type: custom:mushroom-template-card
-                entity: group.bathroom_lights
-                primary: Bathroom
-                secondary: >
-                  {% set temp = states('sensor.bathroom_sensor_temperature') %}
-                  {% set humidity = states('sensor.bathroom_sensor_humidity') %}
-                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(1) }}°{% endif %}{% if humidity not in ['unavailable', 'unknown'] %} • {{ humidity | round(0) }}%{% endif %}
-                icon: mdi:shower
-                icon_color: >
-                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue{% else %}disabled{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/bathroom
-                hold_action:
-                  action: toggle
-                badge_icon: >
-                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}mdi:motion-sensor{% endif %}
-                badge_color: blue
-
-              # Kitchen - shows lights
-              - type: custom:mushroom-template-card
-                entity: group.kitchen_lights
-                primary: Kitchen
-                secondary: >
-                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} lights on
-                icon: mdi:silverware-fork-knife
-                icon_color: >
-                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}amber{% else %}disabled{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/kitchen
-                hold_action:
-                  action: toggle
-
-              # Hallway - shows temp + motion badge
-              - type: custom:mushroom-template-card
-                entity: group.hallway_lights
-                primary: Hallway
-                secondary: >
-                  {% set temp = states('sensor.hallway_sensor_temperature') %}
-                  {% set humidity = states('sensor.hallway_sensor_humidity') %}
-                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(1) }}°{% endif %}{% if humidity not in ['unavailable', 'unknown'] %} • {{ humidity | round(0) }}%{% endif %}
-                icon: mdi:door
-                icon_color: >
-                  {% set entities = state_attr('group.hallway_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}amber{% else %}disabled{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/hallway
-                hold_action:
-                  action: toggle
-                badge_icon: >
-                  {% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}mdi:motion-sensor{% endif %}
-                badge_color: blue
-
-              # Robynne's Room - shows lights/yoto + music badge
-              - type: custom:mushroom-template-card
-                entity: group.robynne_lights
-                primary: Robynne's Room
-                secondary: >
-                  {% if is_state('media_player.yoto_player', 'playing') %}
-                    Yoto playing
-                  {% else %}
-                    {% set entities = state_attr('group.robynne_lights', 'entity_id') | default([]) %}
-                    {% set on = entities | select('is_state', 'on') | list | count %}
-                    {{ on }} lights on
-                  {% endif %}
-                icon: mdi:teddy-bear
-                icon_color: >
-                  {% if is_state('media_player.yoto_player', 'playing') %}green{% else %}pink{% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: /lovelace-home/robynne
-                hold_action:
-                  action: toggle
-                badge_icon: >
-                  {% if is_state('media_player.yoto_player', 'playing') %}mdi:music{% endif %}
-                badge_color: green
-
-          # Quick Actions Section
-          - type: custom:mushroom-title-card
-            title: Quick Actions
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:mushroom-template-card
-                primary: All Off
+          # Quick Actions - compact chip row
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 icon: mdi:power
                 icon_color: red
                 tap_action:
@@ -277,24 +109,21 @@
                   service: light.turn_off
                   target:
                     entity_id: all
-              - type: custom:mushroom-template-card
+              - type: template
                 entity: input_boolean.party_mode
-                primary: Party
                 icon: mdi:party-popper
                 icon_color: "{% if is_state('input_boolean.party_mode', 'on') %}deep-purple{% else %}disabled{% endif %}"
                 tap_action:
                   action: toggle
-              - type: custom:mushroom-template-card
-                primary: Movie
-                icon: mdi:movie
+              - type: template
+                icon: mdi:movie-open
                 icon_color: blue
                 tap_action:
                   action: call-service
                   service: scene.turn_on
                   target:
                     entity_id: scene.movie
-              - type: custom:mushroom-template-card
-                primary: Bright
+              - type: template
                 icon: mdi:brightness-7
                 icon_color: amber
                 tap_action:
@@ -304,38 +133,257 @@
                     entity_id: all
                   data:
                     brightness: 255
+              - type: template
+                entity: vacuum.robovac
+                icon: mdi:robot-vacuum
+                icon_color: >
+                  {% if is_state('vacuum.robovac', 'cleaning') %}green
+                  {% elif is_state('vacuum.robovac', 'returning') %}blue
+                  {% else %}disabled{% endif %}
+                tap_action:
+                  action: more-info
+            alignment: center
 
-          # RoboVac Section
-          - type: custom:mushroom-title-card
-            title: RoboVac
+          # Football - conditional, only shows if match upcoming/live
+          - type: conditional
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity: sensor.liverpool
+                    state: IN
+                  - condition: state
+                    entity: sensor.liverpool
+                    state: PRE
+            card:
+              type: custom:mushroom-template-card
+              entity: sensor.liverpool
+              primary: >
+                {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
+                {% set ns = namespace(match=none, next_date=none) %}
+                {% for s in sensors %}
+                  {% set sensor = states[s] %}
+                  {% if sensor and sensor.state == 'IN' %}
+                    {% set ns.match = sensor %}
+                  {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
+                    {% set d = sensor.attributes.date | as_datetime %}
+                    {% if not ns.next_date or d < ns.next_date %}
+                      {% set ns.next_date = d %}
+                      {% set ns.match = sensor %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if ns.match %}
+                  {% set a = ns.match.attributes %}
+                  {% if ns.match.state == 'IN' %}
+                    {{ a.team_abbr }} {{ a.team_score }}-{{ a.opponent_score }} {{ a.opponent_abbr }}
+                  {% else %}
+                    {{ a.team_abbr }} v {{ a.opponent_abbr }}
+                  {% endif %}
+                {% endif %}
+              secondary: >
+                {% set sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'] %}
+                {% set ns = namespace(match=none, next_date=none) %}
+                {% for s in sensors %}
+                  {% set sensor = states[s] %}
+                  {% if sensor and sensor.state == 'IN' %}
+                    {% set ns.match = sensor %}
+                  {% elif sensor and sensor.state == 'PRE' and sensor.attributes.date %}
+                    {% set d = sensor.attributes.date | as_datetime %}
+                    {% if not ns.next_date or d < ns.next_date %}
+                      {% set ns.next_date = d %}
+                      {% set ns.match = sensor %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if ns.match %}
+                  {% set a = ns.match.attributes %}
+                  {% if ns.match.state == 'IN' %}LIVE{% else %}{{ a.date | as_datetime | as_local | as_timestamp | timestamp_custom('%a %H:%M') }}{% endif %}
+                {% endif %}
+              icon: mdi:soccer
+              icon_color: >
+                {% if is_state('sensor.liverpool', 'IN') %}green{% else %}deep-purple{% endif %}
+              layout: horizontal
+              tap_action:
+                action: more-info
 
-          - type: custom:mushroom-vacuum-card
-            entity: vacuum.robovac
-            icon_animation: true
-            commands:
-              - start_pause
-              - stop
-              - return_home
-              - locate
-
-          # Media Section
-          - type: custom:mushroom-title-card
-            title: Media
-
-          - type: horizontal-stack
+          # Room Grid - 3 columns for density
+          - type: grid
+            columns: 3
+            square: true
             cards:
-              - type: custom:mushroom-media-player-card
-                entity: media_player.living_room_tv
-                icon_type: entity-picture
-                use_media_info: true
-                show_volume_level: false
-                collapsible_controls: true
-              - type: custom:mushroom-media-player-card
-                entity: media_player.apple_tv
-                icon_type: entity-picture
-                use_media_info: true
-                show_volume_level: false
-                collapsible_controls: true
+              # Living Room
+              - type: custom:mushroom-template-card
+                entity: group.living_room_lights
+                primary: Living
+                secondary: >
+                  {% set temp = states('sensor.dyson_temperature') %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                icon: mdi:sofa
+                icon_color: >
+                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
+                  {% if entities | select('is_state', 'on') | list | count > 0 %}amber{% else %}disabled{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/living-room
+                hold_action:
+                  action: toggle
+                layout: vertical
+                badge_icon: >
+                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}mdi:television{% endif %}
+                badge_color: green
+
+              # Bedroom
+              - type: custom:mushroom-template-card
+                entity: group.bedroom_lights
+                primary: Bedroom
+                secondary: >
+                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}{{ on }} on{% endif %}
+                icon: mdi:bed
+                icon_color: >
+                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
+                  {% if entities | select('is_state', 'on') | list | count > 0 %}deep-purple{% else %}disabled{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/bedroom
+                hold_action:
+                  action: toggle
+                layout: vertical
+
+              # Bathroom
+              - type: custom:mushroom-template-card
+                entity: group.bathroom_lights
+                primary: Bath
+                secondary: >
+                  {% set temp = states('sensor.bathroom_sensor_temperature') %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                icon: mdi:shower
+                icon_color: >
+                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue
+                  {% elif is_state('group.bathroom_lights', 'on') %}amber
+                  {% else %}disabled{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/bathroom
+                hold_action:
+                  action: toggle
+                layout: vertical
+
+              # Kitchen
+              - type: custom:mushroom-template-card
+                entity: group.kitchen_lights
+                primary: Kitchen
+                secondary: >
+                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% if on > 0 %}{{ on }} on{% endif %}
+                icon: mdi:silverware-fork-knife
+                icon_color: >
+                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
+                  {% if entities | select('is_state', 'on') | list | count > 0 %}amber{% else %}disabled{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/kitchen
+                hold_action:
+                  action: toggle
+                layout: vertical
+
+              # Hallway
+              - type: custom:mushroom-template-card
+                entity: group.hallway_lights
+                primary: Hallway
+                secondary: >
+                  {% set temp = states('sensor.hallway_sensor_temperature') %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                icon: mdi:door
+                icon_color: >
+                  {% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}blue
+                  {% elif is_state('group.hallway_lights', 'on') %}amber
+                  {% else %}disabled{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/hallway
+                hold_action:
+                  action: toggle
+                layout: vertical
+
+              # Robynne's Room
+              - type: custom:mushroom-template-card
+                entity: group.robynne_lights
+                primary: Robynne
+                secondary: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}Playing{% endif %}
+                icon: mdi:teddy-bear
+                icon_color: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}green{% else %}pink{% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/robynne
+                hold_action:
+                  action: toggle
+                layout: vertical
+                badge_icon: >
+                  {% if is_state('media_player.yoto_player', 'playing') %}mdi:music{% endif %}
+                badge_color: green
+
+          # Active Media - only if playing
+          - type: conditional
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity: media_player.living_room_tv
+                    state: playing
+                  - condition: state
+                    entity: media_player.apple_tv
+                    state: playing
+            card:
+              type: custom:mushroom-media-player-card
+              entity: >
+                {% if is_state('media_player.living_room_tv', 'playing') %}media_player.living_room_tv
+                {% else %}media_player.apple_tv{% endif %}
+              icon_type: entity-picture
+              use_media_info: true
+              show_volume_level: false
+              collapsible_controls: true
+              fill_container: true
+
+          # Energy rate - compact
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                entity: sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate
+                icon: mdi:lightning-bolt
+                icon_color: >
+                  {% set rate = states('sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate') | float(0) %}
+                  {% if rate < 15 %}green{% elif rate < 25 %}amber{% else %}red{% endif %}
+                content: "{{ states('sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate') | round(1) }}p"
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/energy
+              - type: template
+                entity: sensor.fordpass_wf02xxerk2la80437_fuel
+                icon: mdi:car
+                icon_color: >
+                  {% set fuel = states('sensor.fordpass_wf02xxerk2la80437_fuel') | float(0) %}
+                  {% if fuel > 50 %}green{% elif fuel > 25 %}amber{% else %}red{% endif %}
+                content: "{{ states('sensor.fordpass_wf02xxerk2la80437_fuel') }}%"
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/car
+              - type: template
+                entity: sensor.current_temperature
+                icon: mdi:fish
+                icon_color: >
+                  {% set temp = states('sensor.current_temperature') | float(0) %}
+                  {% if temp < 22 or temp > 28 %}red{% elif temp < 24 or temp > 26 %}orange{% else %}green{% endif %}
+                content: "{{ states('sensor.current_temperature') | round(0) }}°"
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace-home/fish
+            alignment: center
 
       # ==================== FLOORPLAN ====================
       - title: Floorplan
