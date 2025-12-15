@@ -79,15 +79,15 @@ button_card_templates:
     show_state: false
     styles:
       card:
-        - background: var(--card-background-color, #fff)
-        - border-radius: 28px
-        - border: 1px solid rgba(0,0,0,0.08)
-        - box-shadow: 0 2px 12px rgba(0,0,0,0.08)
-        - padding: 16px 20px
+        - background: '#ffffff'
+        - border-radius: 50px
+        - box-shadow: '0 2px 8px rgba(0,0,0,0.12)'
+        - padding: 12px 20px 12px 12px
         - margin-bottom: 12px
+        - border: none
       grid:
         - grid-template-areas: '"room_icon room_info device_icons"'
-        - grid-template-columns: 72px 1fr auto
+        - grid-template-columns: 80px 1fr auto
         - grid-template-rows: 1fr
         - align-items: center
       custom_fields:
@@ -106,18 +106,18 @@ button_card_templates:
         [[[
           const icon = variables.room_icon || 'mdi:home';
           return `<div style="
-            width: 72px;
-            height: 72px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+            overflow: hidden;
           ">
             <ha-icon icon="${icon}" style="
-              --mdc-icon-size: 32px;
-              color: #666;
+              --mdc-icon-size: 36px;
+              color: #8a8178;
             "></ha-icon>
           </div>`;
         ]]]
