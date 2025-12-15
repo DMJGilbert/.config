@@ -335,9 +335,26 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              - type: markdown
-                content: "Peoples content placeholder - person tracking cards will go here"
+              # Person cards container
+              - type: custom:stack-in-card
+                mode: vertical
                 card_mod: *tab_content_style
+                cards:
+                  # Darren
+                  - type: custom:button-card
+                    template: person_card
+                    variables:
+                      person_name: Darren
+                      person_entity: person.darren_gilbert
+                      battery_entity: sensor.hatchling_battery_level
+
+                  # Lorraine
+                  - type: custom:button-card
+                    template: person_card
+                    variables:
+                      person_name: Lorraine
+                      person_entity: person.lorraine
+                      battery_entity: sensor.lorraines_iphone_battery_level
 
           "tab-calendar":
             type: custom:stack-in-card

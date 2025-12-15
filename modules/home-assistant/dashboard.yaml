@@ -248,6 +248,162 @@ button_card_templates:
       action: more-info
       entity: '[[[ return variables.light_entity; ]]]'
 
+  # Person card template for peoples tab
+  # Variables: person_name, person_entity, battery_entity
+  person_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"person_image person_info battery_info"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        person_image:
+          - justify-self: start
+          - align-self: center
+        person_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        battery_info:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      person_image: |
+        [[[
+          const personEntity = variables.person_entity;
+          let imageUrl = '';
+
+          if (personEntity && states[personEntity] && states[personEntity].attributes.entity_picture) {
+            imageUrl = states[personEntity].attributes.entity_picture;
+          }
+
+          if (imageUrl) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${imageUrl}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="mdi:account" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      person_info: |
+        [[[
+          const personName = variables.person_name || 'Person';
+          const personEntity = variables.person_entity;
+
+          let locationText = 'Unknown';
+          let locationColor = 'var(--secondary-text-color)';
+
+          if (personEntity && states[personEntity]) {
+            const state = states[personEntity].state;
+            if (state === 'home') {
+              locationText = 'Home';
+              locationColor = '#4CAF50';
+            } else if (state === 'not_home') {
+              locationText = 'Away';
+            } else {
+              // It's a zone name
+              locationText = state.split('_').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+              ).join(' ');
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${personName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${locationColor};
+              line-height: 1.4;
+              text-align: left;
+            ">${locationText}</span>
+          </div>`;
+        ]]]
+      battery_info: |
+        [[[
+          const batteryEntity = variables.battery_entity;
+
+          if (!batteryEntity || !states[batteryEntity]) {
+            return '';
+          }
+
+          const batteryLevel = states[batteryEntity].state;
+          const batteryNum = parseInt(batteryLevel);
+          let batteryColor = '#d1d1d1';
+
+          if (!isNaN(batteryNum)) {
+            if (batteryNum <= 20) {
+              batteryColor = '#f44336';
+            } else if (batteryNum <= 50) {
+              batteryColor = '#ff9800';
+            } else {
+              batteryColor = '#d1d1d1';
+            }
+          }
+
+          return `<span style="
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: ${batteryColor};
+          ">Battery: ${batteryLevel}%</span>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.person_entity; ]]]'
+
 # ==================== VIEWS ====================
 views:
   - !include /var/lib/hass/views/home.yaml

@@ -453,7 +453,138 @@ A tabbed navigation section allowing users to switch between different content a
 
 ---
 
-### 5. Popup Cards (Bubble Card)
+### 5. Room Cards
+
+Pill-shaped cards displaying room information with circular images, motion status, and device icons.
+
+#### Structure
+
+```
+╭──────────────────────────────────────────────────────────────╮
+│ ┌──────┐                                                     │
+│ │      │  Living Room                      📺  💡            │
+│ │ 📷   │  Clear - 5m ago                                    │
+│ └──────┘                                                     │
+╰──────────────────────────────────────────────────────────────╯
+   80px      Room Name (16px bold)           TV  Light
+  circular   Status (13px secondary)         icons
+   image
+```
+
+#### Template Definition
+
+The `room_card` template is defined in `dashboard.yaml`:
+
+```yaml
+room_card:
+  show_icon: false
+  show_name: false
+  show_state: false
+  card_mod:
+    style: |
+      ha-card {
+        background: #ffffff !important;
+        border-radius: 50px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+        border: none !important;
+      }
+      :host-context(html.darkmode) ha-card,
+      :host-context(html[data-theme="dark"]) ha-card {
+        background: #1c1c1e !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+      }
+  styles:
+    card:
+      - padding: 0 20px 0 0
+      - margin-bottom: 12px
+      - height: 80px
+    grid:
+      - grid-template-areas: '"room_image room_info device_icons"'
+      - grid-template-columns: 80px 1fr auto
+      - grid-template-rows: 1fr
+      - align-items: center
+```
+
+#### Variables
+
+| Variable | Type | Required | Description | Example |
+|----------|------|----------|-------------|---------|
+| `room_name` | string | Yes | Display name | `"Living Room"` |
+| `room_icon` | string | No | Fallback MDI icon | `"mdi:sofa"` |
+| `room_image` | string | No | Unsplash/image URL | `"https://images.unsplash.com/..."` |
+| `light_entity` | entity_id | Yes | Light group | `"group.living_room_lights"` |
+| `motion_entity` | entity_id | No | Motion sensor | `"binary_sensor.living_room_motion"` |
+| `media_entity` | entity_id | No | Media player | `"media_player.living_room_tv"` |
+
+#### Usage Example
+
+```yaml
+- type: custom:button-card
+  template: room_card
+  variables:
+    room_name: Living Room
+    room_icon: mdi:sofa
+    room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop"
+    light_entity: group.living_room_lights
+    motion_entity: binary_sensor.living_room_motion_sensor_occupancy
+    media_entity: media_player.living_room_tv
+```
+
+#### Configured Rooms
+
+| Room | Icon | Image | Light Group | Motion Sensor | Media Player |
+|------|------|-------|-------------|---------------|--------------|
+| Living Room | mdi:sofa | Unsplash interior | group.living_room_lights | living_room_motion_sensor_occupancy | living_room_tv |
+| Bedroom | mdi:bed | Unsplash bedroom | group.bedroom_lights | bedroom_motion_sensor_occupancy | apple_tv |
+| Kitchen | mdi:silverware-fork-knife | Unsplash kitchen | group.kitchen_lights | - | - |
+| Bathroom | mdi:shower | Unsplash bathroom | group.bathroom_lights | motion_sensor_motion | - |
+| Hallway | mdi:door | Unsplash hallway | group.hallway_lights | hallway_motion_sensor_occupancy | - |
+| Robynne's Room | mdi:teddy-bear | Unsplash nursery | group.robynne_lights | aarlo_motion_nursery | yoto_player |
+
+#### Motion Status Display
+
+| Sensor State | Display | Color |
+|--------------|---------|-------|
+| `on` | "Motion detected" | Green (#4CAF50) |
+| `off` | "Clear - Xm ago" | Secondary text |
+| `unavailable` | "Sensor unavailable" | Secondary text |
+| `null` | "No motion sensor" | Secondary text |
+
+Time format: `Xs ago`, `Xm ago`, `Xh ago`, `Xd ago`
+
+#### Device Icons
+
+Icons appear in order: **TV first, then lightbulb**
+
+| Icon | Entity State | Color |
+|------|--------------|-------|
+| mdi:television | playing/on | Dark (#1a1a1a) |
+| mdi:television | off | Light (#d1d1d1) |
+| mdi:lightbulb | on | Dark (#1a1a1a) |
+| mdi:lightbulb | off | Light (#d1d1d1) |
+
+#### Design Specifications
+
+| Property | Value |
+|----------|-------|
+| Card height | 80px |
+| Border radius | 50px (pill shape) |
+| Image size | 80px circular |
+| Shadow | 0 2px 8px rgba(0,0,0,0.12) |
+| Dark mode background | #1c1c1e |
+| Light mode background | #ffffff |
+| Room name font | 16px, weight 600 |
+| Status font | 13px, secondary color |
+| Icon size | 28px |
+| Icon spacing | 16px between icons |
+
+#### Tap Action
+
+Tapping a room card opens the more-info dialog for the light group entity.
+
+---
+
+### 6. Popup Cards (Bubble Card)
 
 Each chip opens a slide-up popup showing active entities.
 
@@ -497,7 +628,7 @@ Each chip opens a slide-up popup showing active entities.
 
 ---
 
-### 6. Info Lines (Weather, Calendar, Liverpool)
+### 7. Info Lines (Weather, Calendar, Liverpool)
 
 Three text lines grouped with the hero image, displaying weather, calendar, and Liverpool FC fixture information. All elements share a single card with rounded corners and drop shadow.
 
@@ -654,7 +785,7 @@ Displays next fixture in format: `⚽ **HomeTeam v AwayTeam**: Day HH:MM`
 
 ---
 
-### 7. Required Template Sensors
+### 8. Required Template Sensors
 
 These sensors power the status chips. Defined in `rubecula.nix`:
 
