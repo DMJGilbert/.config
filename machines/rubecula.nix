@@ -104,7 +104,7 @@ in {
   # accidentally delete configuration.nix.
   # system.copySystemConfiguration = true;
 
-  environment.systemPackages = with pkgs; [vim unzip gcc arion];
+  environment.systemPackages = with pkgs; [vim unzip gcc];
 
   virtualisation.docker.enable = true;
 

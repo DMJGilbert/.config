@@ -14,14 +14,14 @@
       {
         plugin = catppuccin-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/catppuccin.lua;
+        config = builtins.readFile ./plugins/catppuccin.lua;
       }
 
       # Treesitter
       {
         plugin = nvim-treesitter.withAllGrammars;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/treesitter.lua;
+        config = builtins.readFile ./plugins/treesitter.lua;
       }
       nvim-treesitter-context
       nvim-ts-autotag
@@ -31,27 +31,33 @@
       {
         plugin = nvim-lspconfig;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/lsp.lua;
+        config = builtins.readFile ./plugins/lsp.lua;
       }
 
       # LSP UI enhancements
       {
         plugin = lspsaga-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/lspsaga.lua;
+        config = builtins.readFile ./plugins/lspsaga.lua;
       }
+
+      # Snippets (LuaSnip)
+      luasnip
+      friendly-snippets
+      cmp_luasnip
 
       # Completion
       {
         plugin = nvim-cmp;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/cmp.lua;
+        config = builtins.readFile ./plugins/cmp.lua;
       }
       cmp-nvim-lsp
+      cmp-nvim-lsp-signature-help
+      cmp-nvim-lua
       cmp-buffer
       cmp-path
       cmp-cmdline
-      vim-vsnip
       cmp-spell
       cmp-treesitter
       crates-nvim
@@ -60,7 +66,7 @@
       {
         plugin = telescope-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/telescope.lua;
+        config = builtins.readFile ./plugins/telescope.lua;
       }
       telescope-ui-select-nvim
       telescope-file-browser-nvim
@@ -71,28 +77,28 @@
       {
         plugin = conform-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/conform.lua;
+        config = builtins.readFile ./plugins/conform.lua;
       }
 
       # Git integration
       {
         plugin = gitsigns-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/gitsigns.lua;
+        config = builtins.readFile ./plugins/gitsigns.lua;
       }
 
       # UI plugins
       {
         plugin = noice-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/noice.lua;
+        config = builtins.readFile ./plugins/noice.lua;
       }
       nui-nvim
       nvim-notify
       {
         plugin = neo-tree-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/neotree.lua;
+        config = builtins.readFile ./plugins/neotree.lua;
       }
       nvim-web-devicons
       barbecue-nvim
@@ -111,7 +117,7 @@
       {
         plugin = persistence-nvim;
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/persistence.lua;
+        config = builtins.readFile ./plugins/persistence.lua;
       }
       nvim-coverage
 
@@ -122,17 +128,13 @@
           src = pkgs.writeTextDir "plugin/simple.lua" "";
         };
         type = "lua";
-        config = builtins.readFile ./config/nvim-nix/plugins/simple.lua;
+        config = builtins.readFile ./plugins/simple.lua;
       }
     ];
 
-    extraLuaConfig = ''
-      -- Map leader to space
-      vim.g.mapleader = " "
-
-      ${builtins.readFile ./config/nvim-nix/core/options.lua}
-      ${builtins.readFile ./config/nvim-nix/core/mappings.lua}
-      ${builtins.readFile ./config/nvim-nix/core/auto.lua}
-    '';
+    extraLuaConfig =
+      builtins.readFile ./core/options.lua
+      + builtins.readFile ./core/mappings.lua
+      + builtins.readFile ./core/auto.lua;
   };
 }

@@ -1,12 +1,12 @@
 # This function creates a nix-darwin system.
 name: {
   darwin,
-  nixpkgs,
   home-manager,
   system,
   user,
   overlays,
   sops-nix,
+  ...
 }:
 darwin.lib.darwinSystem rec {
   inherit system;

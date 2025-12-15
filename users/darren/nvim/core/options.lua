@@ -17,7 +17,7 @@ vim.opt.laststatus = 0
 -- Completion options
 vim.o.completeopt = "menuone,noinsert,noselect"
 vim.o.shortmess = vim.o.shortmess .. "c"
-vim.o.updatetime = 100
+vim.o.updatetime = 100 -- Faster completion and CursorHold events (default 4000ms)
 
 -- Search options
 vim.o.ignorecase = true
@@ -25,21 +25,21 @@ vim.o.smartcase = true
 vim.o.wrapscan = true
 vim.opt.inccommand = "split"
 
--- Indent options
+-- Indent options (4 spaces, common for most languages)
 vim.o.tabstop = 4
-vim.o.shiftwidth = 0
+vim.o.shiftwidth = 0 -- Use tabstop value
 vim.o.softtabstop = 4
-vim.o.expandtab = true
+vim.o.expandtab = true -- Use spaces instead of tabs
 vim.o.smartindent = true
 
 -- Line options
 vim.o.cursorline = true
 vim.o.showmatch = true
 vim.o.showbreak = "+++"
-vim.o.textwidth = 120
-vim.o.scrolloff = 10
+vim.o.textwidth = 120 -- Max line width for formatting (gq)
+vim.o.scrolloff = 10 -- Keep 10 lines visible above/below cursor
 vim.wo.linebreak = true
-vim.wo.colorcolumn = "100"
+vim.wo.colorcolumn = "100" -- Visual guide at column 100
 
 -- Move swapfiles and backupfiles to ~/.cache
 vim.o.directory = os.getenv("HOME") .. "/.cache/nvim"
@@ -49,7 +49,7 @@ vim.o.backupdir = os.getenv("HOME") .. "/.cache/nvim"
 -- Enable undo features, even after closing vim
 vim.o.undofile = true
 vim.o.undodir = os.getenv("HOME") .. "/.cache/nvim"
-vim.o.undolevels = 10000
+vim.o.undolevels = 10000 -- Maximum number of undo steps
 
 -- Lazy redraw ()
 vim.o.lazyredraw = false
@@ -89,7 +89,7 @@ vim.o.foldcolumn = "1"
 vim.o.foldenable = true
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.foldlevel = 10
+vim.o.foldlevel = 10 -- Start with folds open (0 = all closed)
 --
 vim.cmd("set foldtext=getline(v:foldstart).'...'.trim(getline(v:foldend))")
 vim.opt.fillchars = { fold = " " }

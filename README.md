@@ -140,7 +140,6 @@ All commands are read-only and will not modify files, commit, or push.
 - [home-manager](https://github.com/nix-community/home-manager)
 - [nix-darwin](https://github.com/LnL7/nix-darwin)
 - [nixos-hardware](https://github.com/NixOS/nixos-hardware)
-- [arion](https://github.com/hercules-ci/arion) (Docker Compose in Nix)
 
 ## License
 

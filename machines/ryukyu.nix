@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   username = "darren";
   userHome = "/Users/${username}";
 in {

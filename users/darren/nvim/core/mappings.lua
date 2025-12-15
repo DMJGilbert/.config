@@ -47,7 +47,7 @@ map("v", ">", ">gv", {})
 -- Map leader q, to close current buffer
 map("n", "<leader>q", "<cmd>bdelete<cr>")
 -- Map leader Q, to close all buffers
-map("n", "<leader>Q", "<cmd>bufdo bd<cr><cmd>Alpha<cr>")
+map("n", "<leader>Q", "<cmd>bufdo bd<cr>")
 
 -- Map escape from terminal input to Normal mode
 map("t", "<esc>", [[<C-\><C-n>]])

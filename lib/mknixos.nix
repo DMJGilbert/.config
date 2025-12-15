@@ -1,12 +1,12 @@
 # This function creates a NixOS system.
 name: {
-  hardware,
   nixpkgs,
   home-manager,
   system,
   user,
   overlays,
   extraModules ? [],
+  ...
 }:
 nixpkgs.lib.nixosSystem rec {
   inherit system;

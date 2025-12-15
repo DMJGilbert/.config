@@ -59,7 +59,6 @@ require("colorizer").setup({
 		"!TelescopePrompt",
 		"!TelescopeResults",
 		"!help",
-		"!DiffviewFiles",
 	},
 	user_default_options = {
 		RGB = true,
