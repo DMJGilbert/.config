@@ -159,6 +159,7 @@ The dashboard requires these custom cards (installed via Nix overlays):
 | `auto-entities` | `lovelace-auto-entities` | Dynamic entity lists in popups |
 | `bubble-card` | `hass-bubble-card` | Slide-up popup cards |
 | `layout-card` | `lovelace-layout-card` | Responsive grid layout |
+| `tabbed-card` | `lovelace-tabbed-card` | Tabbed card containers |
 
 ---
 
@@ -236,7 +237,6 @@ A hero image card with overlaid title and status chips. The title is positioned 
       name: Fleming Place
       show_icon: false
       show_state: false
-      entity: sun.sun
       tap_action:
         action: none
       card_mod:
@@ -246,6 +246,9 @@ A hero image card with overlaid title and status chips. The title is positioned 
             border-radius: 0;
             box-shadow: none;
             margin-bottom: 8px;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop") !important;
+            background-size: cover !important;
+            background-position: center !important;
           }
           @media (min-width: 768px) {
             ha-card { height: 240px !important; }
@@ -255,9 +258,6 @@ A hero image card with overlaid title and status chips. The title is positioned 
           }
       styles:
         card:
-          - background-image: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop")'
-          - background-size: cover
-          - background-position: center
           - height: 100%
           - border-radius: 0
         name:
@@ -344,6 +344,8 @@ A hero image card with overlaid title and status chips. The title is positioned 
 - Conditional visibility hides chips when count is 0
 - Frosted glass effect on chips (white background with shadow)
 - Responsive image height scales with screen size
+- Background image defined in `card_mod` (not `styles.card`) with `!important` to prevent resets on re-render
+- No entity binding on hero card to avoid unnecessary re-renders
 
 #### Removing Default Gap in stack-in-card
 
@@ -369,7 +371,89 @@ By default, `stack-in-card` adds `row-gap: 8px` between child cards via `hui-ver
 
 ---
 
-### 4. Popup Cards (Bubble Card)
+### 4. Tabbed Section
+
+A tabbed navigation section allowing users to switch between different content areas: Rooms, Peoples, Calendar, and Other.
+
+#### Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Rooms    Peoples    Calendar    Other                  │
+│  ─────                                                  │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│           [Tab Content Area]                            │
+│                                                         │
+╰─────────────────────────────────────────────────────────╯
+```
+
+#### Complete Code
+
+```yaml
+- type: custom:tabbed-card
+  card_mod:
+    style: |
+      ha-card {
+        margin: 0 16px 16px 16px;
+        border-radius: 24px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        overflow: hidden;
+        background: var(--card-background-color, #fff);
+      }
+      @media (min-width: 768px) {
+        ha-card { margin: 0 0 16px 0; }
+      }
+  styles:
+    --mdc-theme-primary: "#E85D04"
+    --mdc-tab-text-label-color-default: var(--secondary-text-color)
+  options:
+    defaultTabIndex: 0
+  tabs:
+    - attributes:
+        label: Rooms
+      card:
+        type: vertical-stack
+        cards:
+          # Room cards go here
+    - attributes:
+        label: Peoples
+      card:
+        type: vertical-stack
+        cards:
+          # Person tracking cards go here
+    - attributes:
+        label: Calendar
+      card:
+        type: vertical-stack
+        cards:
+          # Calendar views go here
+    - attributes:
+        label: Other
+      card:
+        type: vertical-stack
+        cards:
+          # Miscellaneous controls go here
+```
+
+**Design Decisions:**
+- Uses `custom:tabbed-card` for tab navigation
+- Orange (`#E85D04`) active tab indicator to match brand color
+- Secondary text color for inactive tabs
+- Card styling matches hero card (24px radius, shadow, responsive margins)
+- Each tab contains a `vertical-stack` for flexible content
+
+**Tab Contents (Planned):**
+| Tab | Content |
+|-----|---------|
+| Rooms | Room cards with thumbnails, status indicators |
+| Peoples | Person presence tracking, device trackers |
+| Calendar | Calendar events, schedules |
+| Other | Miscellaneous controls, settings |
+
+---
+
+### 5. Popup Cards (Bubble Card)
 
 Each chip opens a slide-up popup showing active entities.
 
@@ -413,7 +497,7 @@ Each chip opens a slide-up popup showing active entities.
 
 ---
 
-### 5. Info Lines (Weather, Calendar, Liverpool)
+### 6. Info Lines (Weather, Calendar, Liverpool)
 
 Three text lines grouped with the hero image, displaying weather, calendar, and Liverpool FC fixture information. All elements share a single card with rounded corners and drop shadow.
 
@@ -570,7 +654,7 @@ Displays next fixture in format: `⚽ **HomeTeam v AwayTeam**: Day HH:MM`
 
 ---
 
-### 6. Required Template Sensors
+### 7. Required Template Sensors
 
 These sensors power the status chips. Defined in `rubecula.nix`:
 
