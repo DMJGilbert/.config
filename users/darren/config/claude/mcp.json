@@ -24,10 +24,14 @@
       "args": ["-y", "@magicuidesign/mcp@latest"]
     },
     "figma": {
+      "command": "/Users/darren/.claude/scripts/figma-mcp-wrapper.sh",
+      "args": []
+    },
+    "memory": {
       "command": "npx",
-      "args": ["-y", "figma-developer-mcp"],
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
       "env": {
-        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+        "MEMORY_FILE_PATH": "/Users/darren/.local/share/claude/memory.jsonl"
       }
     }
   }

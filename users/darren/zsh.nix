@@ -38,7 +38,7 @@
       # Secrets only loaded for the duration of the claude command
       claude-mcp() {
         GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
-        FIGMA_ACCESS_TOKEN="$(cat /run/secrets/FIGMA_ACCESS_TOKEN 2>/dev/null)" \
+        FIGMA_API_KEY="$(cat /run/secrets/FIGMA_API_KEY 2>/dev/null)" \
         HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
         HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
         claude "$@"
@@ -59,6 +59,9 @@
       cc-orchestrate() { claude-mcp "/orchestrate $*"; }
     '';
     shellAliases = {
+      # Claude Code with secrets
+      cc = "claude-mcp";
+
       # Navigation
       ".." = "cd ..";
       "..." = "cd ../..";

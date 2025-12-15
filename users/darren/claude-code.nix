@@ -4,6 +4,11 @@
   ...
 }:
 lib.mkIf pkgs.stdenv.isDarwin {
+  # Ensure memory storage directory exists for MCP knowledge graph
+  home.activation.createClaudeMemoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.local/share/claude
+  '';
+
   home.file = {
     # Project guidelines
     ".claude/CLAUDE.md".source = ./config/claude/CLAUDE.md;
@@ -26,6 +31,12 @@ lib.mkIf pkgs.stdenv.isDarwin {
     ".claude/commands/prime.md".source = ./config/claude/commands/prime.md;
     ".claude/commands/audit.md".source = ./config/claude/commands/audit.md;
     ".claude/commands/orchestrate.md".source = ./config/claude/commands/orchestrate.md;
+
+    # MCP wrapper scripts
+    ".claude/scripts/figma-mcp-wrapper.sh" = {
+      source = ./config/claude/figma-mcp-wrapper.sh;
+      executable = true;
+    };
 
     # Specialist agents
     ".claude/agents/orchestrator.md".source = ./config/claude/agents/orchestrator.md;
