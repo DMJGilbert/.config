@@ -174,8 +174,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:lightbulb
                               item_entity: this.entity_id
                               show_toggle: true
@@ -234,8 +234,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:television
                               item_entity: this.entity_id
                               show_toggle: false
@@ -293,8 +293,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:thermostat
                               item_entity: this.entity_id
                               show_toggle: false
@@ -303,8 +303,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:fan
                               item_entity: this.entity_id
                               show_toggle: true
@@ -381,8 +381,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:motion-sensor
                               item_entity: this.entity_id
                               show_toggle: false
@@ -391,8 +391,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_item_card
+                            entity: this.entity_id
                             variables:
-                              item_name: this.attributes.friendly_name
                               item_icon: mdi:motion-sensor
                               item_entity: this.entity_id
                               show_toggle: false
@@ -464,6 +464,7 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_sensor_card
+                            entity: this.entity_id
                             variables:
                               sensor_name: Illuminance
                               sensor_icon: mdi:brightness-6
@@ -473,6 +474,7 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_sensor_card
+                            entity: this.entity_id
                             variables:
                               sensor_name: Temperature
                               sensor_icon: mdi:thermometer
@@ -482,6 +484,7 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_sensor_card
+                            entity: this.entity_id
                             variables:
                               sensor_name: Humidity
                               sensor_icon: mdi:water-percent
@@ -491,8 +494,8 @@ cards:
                           options:
                             type: custom:button-card
                             template: room_sensor_card
+                            entity: this.entity_id
                             variables:
-                              sensor_name: this.attributes.friendly_name
                               sensor_icon: mdi:battery
                               sensor_entity: this.entity_id
                       exclude:

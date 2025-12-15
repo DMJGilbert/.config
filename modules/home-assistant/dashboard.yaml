@@ -870,8 +870,8 @@ button_card_templates:
         ]]]
       item_info: |
         [[[
-          const itemName = variables.item_name || 'Item';
           const itemEntity = variables.item_entity;
+          const itemName = variables.item_name || (itemEntity && states[itemEntity]?.attributes?.friendly_name) || (itemEntity ? itemEntity.split('.')[1].replace(/_/g, ' ') : 'Item');
 
           let stateText = 'Unknown';
           let stateColor = 'var(--secondary-text-color)';
@@ -1065,7 +1065,8 @@ button_card_templates:
         ]]]
       sensor_info: |
         [[[
-          const sensorName = variables.sensor_name || 'Sensor';
+          const sensorEntity = variables.sensor_entity;
+          const sensorName = variables.sensor_name || (sensorEntity && states[sensorEntity]?.attributes?.friendly_name) || (sensorEntity ? sensorEntity.split('.')[1].replace(/_/g, ' ') : 'Sensor');
           const secEntity = variables.sensor_secondary_entity;
 
           let secondaryText = '';
