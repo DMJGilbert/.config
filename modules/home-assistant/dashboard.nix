@@ -585,97 +585,99 @@
         icon: mdi:sofa
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Living Room
-            subtitle: Lights & Climate
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
-              - type: template
-                entity: group.living_room_lights
-                icon: mdi:lightbulb
-                icon_color: "{% if is_state('group.living_room_lights', 'on') %}amber{% else %}disabled{% endif %}"
-                content: >
-                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} on
+              - type: back
               - type: template
                 entity: sensor.dyson_temperature
                 icon: mdi:thermometer
-                icon_color: red
-                content: "{{ states('sensor.dyson_temperature') }}°"
+                icon_color: cyan
+                content: "{{ states('sensor.dyson_temperature') | round(0) }}°"
               - type: template
                 entity: fan.dyson
                 icon: mdi:fan
                 icon_color: "{% if is_state('fan.dyson', 'on') %}blue{% else %}disabled{% endif %}"
                 content: "{% if is_state('fan.dyson', 'on') %}{{ state_attr('fan.dyson', 'percentage') | default(0) }}%{% else %}Off{% endif %}"
                 tap_action:
-                  action: toggle
+                  action: more-info
+              - type: template
+                entity: binary_sensor.living_room_motion_sensor_occupancy
+                icon: mdi:motion-sensor
+                icon_color: "{% if is_state('binary_sensor.living_room_motion_sensor_occupancy', 'on') %}blue{% else %}disabled{% endif %}"
             alignment: center
 
+          # Lights - compact 2x2 grid
           - type: grid
             columns: 2
             square: false
             cards:
               - type: custom:mushroom-light-card
                 entity: light.living_room_light
-                name: Main Light
+                name: Main
                 use_light_color: true
                 show_brightness_control: true
                 collapsible_controls: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.dining_room_light_3
-                name: Dining Light
+                name: Dining
                 use_light_color: true
                 show_brightness_control: true
                 collapsible_controls: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.sofa_light_switch
-                name: Sofa Light
+                name: Sofa
                 use_light_color: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.tv_light
-                name: TV Light
+                name: TV
                 use_light_color: true
                 show_brightness_control: true
-                show_color_control: true
                 collapsible_controls: true
+                layout: horizontal
 
-          - type: custom:mushroom-title-card
-            title: Climate
-
+          # Climate control
           - type: custom:mushroom-fan-card
             entity: fan.dyson
-            name: Dyson Fan
+            name: Dyson
             show_percentage_control: true
             collapsible_controls: true
+            layout: horizontal
 
-          - type: custom:mushroom-title-card
-            title: Climate History
+          # Media - only show if active
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.living_room_tv
+                state_not: "off"
+            card:
+              type: custom:mushroom-media-player-card
+              entity: media_player.living_room_tv
+              name: TV
+              icon_type: entity-picture
+              use_media_info: true
+              show_volume_level: true
+              collapsible_controls: true
 
+          # Temperature graph - compact
           - type: custom:mini-graph-card
             entities:
               - entity: sensor.dyson_temperature
-                name: Temperature
-                color: "#f44336"
+                name: Temp
+                color: var(--primary-color)
             hours_to_show: 24
-            points_per_hour: 4
+            points_per_hour: 2
             line_width: 2
+            height: 80
             show:
-              labels: true
-              legend: true
-
-          - type: custom:mushroom-title-card
-            title: Media
-
-          - type: custom:mushroom-media-player-card
-            entity: media_player.living_room_tv
-            name: Apple TV
-            icon_type: entity-picture
-            use_media_info: true
-            show_volume_level: true
-            collapsible_controls: true
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
       # ==================== BEDROOM ====================
       - title: Bedroom
@@ -683,28 +685,17 @@
         icon: mdi:bed
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Bedroom
-            subtitle: Lights & Media
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
-              - type: template
-                entity: group.bedroom_lights
-                icon: mdi:lightbulb
-                icon_color: "{% if is_state('group.bedroom_lights', 'on') %}deep-purple{% else %}disabled{% endif %}"
-                content: >
-                  {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} on
+              - type: back
               - type: template
                 entity: binary_sensor.bedroom_motion_sensor_occupancy
                 icon: mdi:motion-sensor
                 icon_color: "{% if is_state('binary_sensor.bedroom_motion_sensor_occupancy', 'on') %}blue{% else %}disabled{% endif %}"
-                content: "{% if is_state('binary_sensor.bedroom_motion_sensor_occupancy', 'on') %}Motion{% else %}Clear{% endif %}"
             alignment: center
 
+          # Lights - compact 2x2 grid
           - type: grid
             columns: 2
             square: false
@@ -715,30 +706,39 @@
                 use_light_color: true
                 show_brightness_control: true
                 collapsible_controls: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.bedroom_light_2
-                name: Main Light
+                name: Main
                 use_light_color: true
                 show_brightness_control: true
                 collapsible_controls: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.darren_switch
-                name: Darren's Light
+                name: Darren
                 use_light_color: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.lorraine_switch
-                name: Lorraine's Light
+                name: Lorraine
                 use_light_color: true
+                layout: horizontal
 
-          - type: custom:mushroom-title-card
-            title: Media
-
-          - type: custom:mushroom-media-player-card
-            entity: media_player.apple_tv
-            name: Bedroom TV
-            use_media_info: true
-            show_volume_level: true
-            collapsible_controls: true
+          # Media - only show if active
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.apple_tv
+                state_not: "off"
+            card:
+              type: custom:mushroom-media-player-card
+              entity: media_player.apple_tv
+              name: Bedroom TV
+              icon_type: entity-picture
+              use_media_info: true
+              show_volume_level: true
+              collapsible_controls: true
 
       # ==================== BATHROOM ====================
       - title: Bathroom
@@ -746,18 +746,15 @@
         icon: mdi:shower
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Bathroom
-            subtitle: Lights & Climate
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.bathroom_sensor_temperature
                 icon: mdi:thermometer
-                icon_color: red
-                content: "{{ states('sensor.bathroom_sensor_temperature') | round(1) }}°"
+                icon_color: cyan
+                content: "{{ states('sensor.bathroom_sensor_temperature') | round(0) }}°"
               - type: template
                 entity: sensor.bathroom_sensor_humidity
                 icon: mdi:water-percent
@@ -769,42 +766,49 @@
                 entity: binary_sensor.motion_sensor_motion
                 icon: mdi:motion-sensor
                 icon_color: "{% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue{% else %}disabled{% endif %}"
-                content: "{% if is_state('binary_sensor.motion_sensor_motion', 'on') %}Motion{% else %}Clear{% endif %}"
             alignment: center
 
-          - type: horizontal-stack
+          # Lights - horizontal row
+          - type: grid
+            columns: 3
+            square: false
             cards:
               - type: custom:mushroom-light-card
                 entity: light.bath_light
                 name: Bath
                 use_light_color: true
+                layout: vertical
               - type: custom:mushroom-light-card
                 entity: light.sink_light
                 name: Sink
                 use_light_color: true
+                layout: vertical
               - type: custom:mushroom-light-card
                 entity: light.toilet_light
                 name: Toilet
                 use_light_color: true
+                layout: vertical
 
-          - type: custom:mushroom-title-card
-            title: Climate History
-
+          # Climate graph - compact
           - type: custom:mini-graph-card
             entities:
               - entity: sensor.bathroom_sensor_temperature
-                name: Temperature
-                color: "#f44336"
+                name: Temp
+                color: var(--primary-color)
               - entity: sensor.bathroom_sensor_humidity
                 name: Humidity
-                color: "#2196f3"
+                color: var(--info-color)
                 y_axis: secondary
             hours_to_show: 24
-            points_per_hour: 4
+            points_per_hour: 2
             line_width: 2
+            height: 80
             show:
-              labels: true
-              legend: true
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
       # ==================== KITCHEN ====================
       - title: Kitchen
@@ -812,37 +816,32 @@
         icon: mdi:silverware-fork-knife
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Kitchen
-            subtitle: Lights
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
-              - type: template
-                entity: group.kitchen_lights
-                icon: mdi:lightbulb
-                icon_color: "{% if is_state('group.kitchen_lights', 'on') %}amber{% else %}disabled{% endif %}"
-                content: >
-                  {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} on
+              - type: back
             alignment: center
 
-          - type: horizontal-stack
+          # Lights - horizontal row
+          - type: grid
+            columns: 3
+            square: false
             cards:
               - type: custom:mushroom-light-card
                 entity: light.kitchen_microwave
                 name: Main
                 use_light_color: true
+                layout: vertical
               - type: custom:mushroom-light-card
                 entity: light.kitchen_sink
                 name: Sink
                 use_light_color: true
+                layout: vertical
               - type: custom:mushroom-light-card
                 entity: light.kitchen_random
                 name: Other
                 use_light_color: true
+                layout: vertical
 
       # ==================== HALLWAY ====================
       - title: Hallway
@@ -850,18 +849,15 @@
         icon: mdi:door
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Hallway
-            subtitle: Lights & Sensors
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.hallway_sensor_temperature
                 icon: mdi:thermometer
-                icon_color: red
-                content: "{{ states('sensor.hallway_sensor_temperature') | round(1) }}°"
+                icon_color: cyan
+                content: "{{ states('sensor.hallway_sensor_temperature') | round(0) }}°"
               - type: template
                 entity: sensor.hallway_sensor_humidity
                 icon: mdi:water-percent
@@ -871,38 +867,44 @@
                 entity: binary_sensor.hallway_motion_sensor_occupancy
                 icon: mdi:motion-sensor
                 icon_color: "{% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}blue{% else %}disabled{% endif %}"
-                content: "{% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}Motion{% else %}Clear{% endif %}"
             alignment: center
 
-          - type: horizontal-stack
+          # Lights - horizontal row
+          - type: grid
+            columns: 2
+            square: false
             cards:
               - type: custom:mushroom-light-card
                 entity: light.hallway
                 name: Hallway
                 use_light_color: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.doorway
                 name: Doorway
                 use_light_color: true
+                layout: horizontal
 
-          - type: custom:mushroom-title-card
-            title: Climate History
-
+          # Climate graph - compact
           - type: custom:mini-graph-card
             entities:
               - entity: sensor.hallway_sensor_temperature
-                name: Temperature
-                color: "#f44336"
+                name: Temp
+                color: var(--primary-color)
               - entity: sensor.hallway_sensor_humidity
                 name: Humidity
-                color: "#2196f3"
+                color: var(--info-color)
                 y_axis: secondary
             hours_to_show: 24
-            points_per_hour: 4
+            points_per_hour: 2
             line_width: 2
+            height: 80
             show:
-              labels: true
-              legend: true
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
       # ==================== ROBYNNE'S ROOM ====================
       - title: Robynne's Room
@@ -910,21 +912,10 @@
         icon: mdi:teddy-bear
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Robynne's Room
-            subtitle: Lights & Media
-
-          # Status chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
-              - type: template
-                entity: group.robynne_lights
-                icon: mdi:lightbulb
-                icon_color: "{% if is_state('group.robynne_lights', 'on') %}pink{% else %}disabled{% endif %}"
-                content: >
-                  {% set entities = state_attr('group.robynne_lights', 'entity_id') | default([]) %}
-                  {% set on = entities | select('is_state', 'on') | list | count %}
-                  {{ on }} on
+              - type: back
               - type: template
                 entity: media_player.yoto_player
                 icon: mdi:music
@@ -932,23 +923,26 @@
                 content: "{% if is_state('media_player.yoto_player', 'playing') %}Playing{% else %}Idle{% endif %}"
             alignment: center
 
-          - type: horizontal-stack
+          # Lights - horizontal row
+          - type: grid
+            columns: 2
+            square: false
             cards:
               - type: custom:mushroom-light-card
                 entity: light.robynne_light
-                name: Main Light
+                name: Main
                 use_light_color: true
+                layout: horizontal
               - type: custom:mushroom-light-card
                 entity: light.fairy_lights_switch
-                name: Fairy Lights
+                name: Fairy
                 use_light_color: true
+                layout: horizontal
 
-          - type: custom:mushroom-title-card
-            title: Yoto Player
-
+          # Yoto Player
           - type: custom:mushroom-media-player-card
             entity: media_player.yoto_player
-            name: Yoto Player
+            name: Yoto
             icon_type: icon
             use_media_info: true
             media_controls:
@@ -964,12 +958,10 @@
         icon: mdi:car
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Ford Puma
-            subtitle: Vehicle Status
-
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.fordpass_wf02xxerk2la80437_fuel
                 icon: mdi:gas-station
@@ -993,38 +985,41 @@
                 content: "{{ states('sensor.fordpass_wf02xxerk2la80437_oil') }}%"
             alignment: center
 
-          - type: custom:mushroom-template-card
-            entity: sensor.fordpass_wf02xxerk2la80437_doorstatus
-            primary: Doors
-            secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_doorstatus') }}"
-            icon: mdi:car-door
-            icon_color: >
-              {% if is_state('sensor.fordpass_wf02xxerk2la80437_doorstatus', 'Closed') %}green{% else %}red{% endif %}
-
-          - type: custom:mushroom-template-card
-            entity: sensor.fordpass_wf02xxerk2la80437_windowposition
-            primary: Windows
-            secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_windowposition') }}"
-            icon: mdi:car-door
-            icon_color: >
-              {% if is_state('sensor.fordpass_wf02xxerk2la80437_windowposition', 'Closed') %}green{% else %}red{% endif %}
-
-          - type: custom:mushroom-template-card
-            entity: device_tracker.fordpass_wf02xxerk2la80437_tracker
-            primary: Location
-            secondary: "{{ states('device_tracker.fordpass_wf02xxerk2la80437_tracker') }}"
-            icon: mdi:map-marker
-            icon_color: blue
-            tap_action:
-              action: more-info
-
-          - type: custom:mushroom-title-card
-            title: Controls
-
-          - type: horizontal-stack
+          # Status grid
+          - type: grid
+            columns: 2
+            square: false
             cards:
               - type: custom:mushroom-template-card
-                primary: Lock
+                entity: sensor.fordpass_wf02xxerk2la80437_doorstatus
+                primary: Doors
+                secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_doorstatus') }}"
+                icon: mdi:car-door
+                icon_color: >
+                  {% if is_state('sensor.fordpass_wf02xxerk2la80437_doorstatus', 'Closed') %}green{% else %}red{% endif %}
+                layout: horizontal
+              - type: custom:mushroom-template-card
+                entity: sensor.fordpass_wf02xxerk2la80437_windowposition
+                primary: Windows
+                secondary: "{{ states('sensor.fordpass_wf02xxerk2la80437_windowposition') }}"
+                icon: mdi:car-window-closed
+                icon_color: >
+                  {% if is_state('sensor.fordpass_wf02xxerk2la80437_windowposition', 'Closed') %}green{% else %}red{% endif %}
+                layout: horizontal
+              - type: custom:mushroom-template-card
+                entity: device_tracker.fordpass_wf02xxerk2la80437_tracker
+                primary: Location
+                secondary: "{{ states('device_tracker.fordpass_wf02xxerk2la80437_tracker') }}"
+                icon: mdi:map-marker
+                icon_color: blue
+                tap_action:
+                  action: more-info
+                layout: horizontal
+
+          # Controls
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 icon: mdi:car-door-lock
                 icon_color: green
                 tap_action:
@@ -1032,8 +1027,7 @@
                   service: button.press
                   target:
                     entity_id: button.fordpass_wf02xxerk2la80437_doorlock
-              - type: custom:mushroom-template-card
-                primary: Unlock
+              - type: template
                 icon: mdi:car-door-lock-open
                 icon_color: red
                 tap_action:
@@ -1041,8 +1035,7 @@
                   service: button.press
                   target:
                     entity_id: button.fordpass_wf02xxerk2la80437_doorunlock
-              - type: custom:mushroom-template-card
-                primary: Refresh
+              - type: template
                 icon: mdi:refresh
                 icon_color: blue
                 tap_action:
@@ -1050,6 +1043,7 @@
                   service: button.press
                   target:
                     entity_id: button.fordpass_wf02xxerk2la80437_request_refresh
+            alignment: center
 
       # ==================== FISH ====================
       - title: Fish
@@ -1057,59 +1051,29 @@
         icon: mdi:fish
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Aquarium
-            subtitle: Water Parameters
-
-          # Key metrics as chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.current_temperature
                 icon: mdi:thermometer
                 icon_color: >
                   {% set temp = states('sensor.current_temperature') | float(0) %}
                   {% if temp < 22 or temp > 28 %}red{% elif temp < 24 or temp > 26 %}orange{% else %}green{% endif %}
-                content: "{{ states('sensor.current_temperature') }}°C"
+                content: "{{ states('sensor.current_temperature') | round(1) }}°"
               - type: template
                 entity: sensor.ph_value
                 icon: mdi:ph
                 icon_color: >
                   {% set ph = states('sensor.ph_value') | float(0) %}
                   {% if ph < 6.5 or ph > 8.5 %}red{% elif ph < 7 or ph > 8 %}orange{% else %}green{% endif %}
-                content: "pH {{ states('sensor.ph_value') }}"
+                content: "{{ states('sensor.ph_value') }}"
             alignment: center
 
-          # Modern circular gauges for key parameters
-          - type: horizontal-stack
-            cards:
-              - type: custom:modern-circular-gauge
-                entity: sensor.current_temperature
-                name: Temperature
-                min: 20
-                max: 30
-                inner:
-                  color_stops:
-                    "20": "#2196f3"
-                    "24": "#4caf50"
-                    "26": "#ff9800"
-                    "28": "#f44336"
-              - type: custom:modern-circular-gauge
-                entity: sensor.ph_value
-                name: pH
-                min: 6
-                max: 9
-                inner:
-                  color_stops:
-                    "6": "#f44336"
-                    "6.5": "#ff9800"
-                    "7": "#4caf50"
-                    "8": "#ff9800"
-                    "8.5": "#f44336"
-
-          # Other parameters grid
+          # Parameters grid - compact
           - type: grid
-            columns: 2
+            columns: 3
             square: false
             cards:
               - type: custom:mushroom-entity-card
@@ -1117,79 +1081,75 @@
                 name: TDS
                 icon: mdi:water-opacity
                 icon_color: teal
-
+                layout: vertical
               - type: custom:mushroom-entity-card
                 entity: sensor.ec_value
-                name: Conductivity
+                name: EC
                 icon: mdi:flash
                 icon_color: amber
-
+                layout: vertical
               - type: custom:mushroom-entity-card
                 entity: sensor.salinity_value
-                name: Salinity
+                name: Salt
                 icon: mdi:shaker-outline
                 icon_color: cyan
-
+                layout: vertical
               - type: custom:mushroom-entity-card
                 entity: sensor.orp_value
                 name: ORP
                 icon: mdi:molecule
                 icon_color: green
-
+                layout: vertical
               - type: custom:mushroom-entity-card
                 entity: sensor.proportion_value
-                name: Specific Gravity
+                name: SG
                 icon: mdi:weight
                 icon_color: indigo
-
+                layout: vertical
               - type: custom:mushroom-entity-card
                 entity: sensor.cf
                 name: CF
                 icon: mdi:water-percent
                 icon_color: light-blue
+                layout: vertical
 
-          # History Graphs with ApexCharts
-          - type: custom:mushroom-title-card
-            title: History
-            subtitle: Last 24 hours
-
-          - type: custom:apexcharts-card
-            header:
-              show: true
-              title: Temperature
-              show_states: true
-              colorize_states: true
-            graph_span: 24h
-            series:
+          # Temperature graph - compact
+          - type: custom:mini-graph-card
+            entities:
               - entity: sensor.current_temperature
-                name: Temperature
-                stroke_width: 2
-                color: "#2196f3"
-            apex_config:
-              chart:
-                height: 180
-              yaxis:
-                min: 22
-                max: 28
+                name: Temp
+                color: var(--primary-color)
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 2
+            height: 80
+            show:
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
-          - type: custom:apexcharts-card
-            header:
-              show: true
-              title: Water Quality
-              show_states: true
-            graph_span: 24h
-            series:
+          # Water quality graph - compact
+          - type: custom:mini-graph-card
+            entities:
               - entity: sensor.ph_value
                 name: pH
-                stroke_width: 2
-                color: "#9c27b0"
+                color: var(--primary-color)
               - entity: sensor.tds_value
                 name: TDS
-                stroke_width: 2
-                color: "#009688"
-            apex_config:
-              chart:
-                height: 180
+                color: var(--info-color)
+                y_axis: secondary
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 2
+            height: 80
+            show:
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
       # ==================== ENERGY ====================
       - title: Energy
@@ -1197,43 +1157,35 @@
         icon: mdi:lightning-bolt
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: Energy
-            subtitle: Octopus Energy
-
-          # Current rate chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate
-                icon: mdi:currency-gbp
+                icon: mdi:lightning-bolt
                 icon_color: >
                   {% set rate = states('sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate') | float(0) %}
                   {% if rate < 15 %}green{% elif rate < 25 %}amber{% else %}red{% endif %}
-                content: "{{ states('sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate') | round(2) }}p/kWh"
+                content: "{{ states('sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate') | round(1) }}p/kWh"
             alignment: center
 
-          - type: custom:apexcharts-card
-            header:
-              show: true
-              title: Electricity Rate (Today)
-              show_states: true
-              colorize_states: true
-            graph_span: 24h
-            span:
-              start: day
-            series:
+          # Rate graph - compact
+          - type: custom:mini-graph-card
+            entities:
               - entity: sensor.octopus_energy_electricity_16k0150212_2500001111806_current_rate
                 name: Rate
-                type: area
-                stroke_width: 2
-                color: "#4caf50"
-                opacity: 0.3
-            apex_config:
-              chart:
-                height: 200
-              yaxis:
-                decimalsInFloat: 1
+                color: var(--primary-color)
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 2
+            height: 120
+            show:
+              labels: true
+              name: false
+              icon: false
+              state: true
+              legend: false
 
       # ==================== SYSTEM ====================
       - title: System
@@ -1241,91 +1193,57 @@
         icon: mdi:cog
         type: custom:vertical-layout
         cards:
-          - type: custom:mushroom-title-card
-            title: System
-            subtitle: Monitoring & Status
-
-          # System Load chips
+          # Status bar
           - type: custom:mushroom-chips-card
             chips:
+              - type: back
               - type: template
                 entity: sensor.system_monitor_load_1m
                 icon: mdi:chip
                 icon_color: >
                   {% set load = states('sensor.system_monitor_load_1m') | float(0) %}
                   {% if load > 2 %}red{% elif load > 1 %}orange{% else %}green{% endif %}
-                content: "Load: {{ states('sensor.system_monitor_load_1m') }}"
+                content: "{{ states('sensor.system_monitor_load_1m') | round(1) }}"
               - type: template
-                entity: sensor.system_monitor_disk_free
+                entity: sensor.system_monitor_disk_use_percent
                 icon: mdi:harddisk
                 icon_color: >
-                  {% set free = states('sensor.system_monitor_disk_free') | float(0) %}
-                  {% if free < 10 %}red{% elif free < 50 %}orange{% else %}green{% endif %}
-                content: "{{ states('sensor.system_monitor_disk_free') | round(0) }} GB free"
+                  {% set pct = states('sensor.system_monitor_disk_use_percent') | float(0) %}
+                  {% if pct > 90 %}red{% elif pct > 70 %}orange{% else %}green{% endif %}
+                content: "{{ states('sensor.system_monitor_disk_use_percent') | round(0) }}%"
               - type: template
                 entity: sensor.entities
                 icon: mdi:format-list-bulleted
                 icon_color: blue
-                content: "{{ states('sensor.entities') }} entities"
+                content: "{{ states('sensor.entities') }}"
             alignment: center
 
-          # System gauges
-          - type: horizontal-stack
-            cards:
-              - type: custom:modern-circular-gauge
-                entity: sensor.system_monitor_load_1m
-                name: Load (1m)
-                min: 0
-                max: 4
-                inner:
-                  color_stops:
-                    "0": "#4caf50"
-                    "1": "#ff9800"
-                    "2": "#f44336"
-              - type: custom:modern-circular-gauge
-                entity: sensor.system_monitor_disk_use_percent
-                name: Disk
-                min: 0
-                max: 100
-                inner:
-                  color_stops:
-                    "0": "#4caf50"
-                    "70": "#ff9800"
-                    "90": "#f44336"
-
-          # Home Assistant Stats
-          - type: custom:mushroom-title-card
-            title: Home Assistant
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:mushroom-entity-card
+          # HA Stats - compact
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 entity: sensor.integrations
-                name: Integrations
                 icon: mdi:puzzle
                 icon_color: purple
-              - type: custom:mushroom-entity-card
+                content: "{{ states('sensor.integrations') }}"
+              - type: template
                 entity: sensor.automations
-                name: Automations
                 icon: mdi:robot
                 icon_color: blue
-              - type: custom:mushroom-entity-card
+                content: "{{ states('sensor.automations') }}"
+              - type: template
                 entity: sensor.devices
-                name: Devices
                 icon: mdi:devices
                 icon_color: teal
+                content: "{{ states('sensor.devices') }}"
+            alignment: center
 
-          # Low Battery Section
-          - type: custom:mushroom-title-card
-            title: Low Battery
-            subtitle: Devices below 30%
-
+          # Low Battery Section - auto-entities
           - type: custom:auto-entities
             card:
-              type: grid
-              columns: 2
-              square: false
-            card_param: cards
+              type: custom:mushroom-chips-card
+              alignment: center
+            card_param: chips
             filter:
               include:
                 - entity_id: "sensor.*battery*"
@@ -1333,95 +1251,80 @@
                   not:
                     state: unavailable
                   options:
-                    type: custom:mushroom-entity-card
+                    type: template
+                    entity: this.entity_id
+                    icon: mdi:battery-low
                     icon_color: >
                       {% set batt = states(config.entity) | float(0) %}
                       {% if batt < 10 %}red{% elif batt < 20 %}orange{% else %}amber{% endif %}
+                    content: "{{ states(config.entity) | round(0) }}%"
+                    tap_action:
+                      action: more-info
               exclude:
                 - state: unavailable
                 - state: unknown
             sort:
               method: state
               numeric: true
-            show_empty: true
-            unique: true
+            show_empty: false
 
-          # Unavailable Devices
-          - type: custom:mushroom-title-card
-            title: Unavailable
-            subtitle: Offline devices
-
+          # Unavailable Devices - auto-entities
           - type: custom:auto-entities
             card:
-              type: grid
-              columns: 2
-              square: false
-            card_param: cards
+              type: custom:mushroom-chips-card
+              alignment: center
+            card_param: chips
             filter:
               include:
                 - state: unavailable
                   domain: light
                   options:
-                    type: custom:mushroom-entity-card
+                    type: template
+                    entity: this.entity_id
+                    icon: mdi:alert-circle
                     icon_color: red
+                    tap_action:
+                      action: more-info
                 - state: unavailable
                   domain: switch
                   options:
-                    type: custom:mushroom-entity-card
+                    type: template
+                    entity: this.entity_id
+                    icon: mdi:alert-circle
                     icon_color: red
-                - state: unavailable
-                  domain: binary_sensor
-                  entity_id: "*door*"
-                  options:
-                    type: custom:mushroom-entity-card
-                    icon_color: red
-                - state: unavailable
-                  domain: binary_sensor
-                  entity_id: "*motion*"
-                  options:
-                    type: custom:mushroom-entity-card
-                    icon_color: red
+                    tap_action:
+                      action: more-info
             sort:
               method: friendly_name
-            show_empty: true
-            unique: true
+            show_empty: false
 
-          # History Graphs
-          - type: custom:mushroom-title-card
-            title: History
-            subtitle: System load over time
-
-          - type: custom:apexcharts-card
-            header:
-              show: true
-              title: System Load
-              show_states: true
-            graph_span: 24h
-            series:
+          # System load graph - compact
+          - type: custom:mini-graph-card
+            entities:
               - entity: sensor.system_monitor_load_1m
                 name: 1m
-                stroke_width: 2
-                color: "#f44336"
+                color: var(--error-color)
               - entity: sensor.system_monitor_load_5m
                 name: 5m
-                stroke_width: 2
-                color: "#ff9800"
+                color: var(--warning-color)
               - entity: sensor.system_monitor_load_15m
                 name: 15m
-                stroke_width: 2
-                color: "#4caf50"
-            apex_config:
-              chart:
-                height: 200
+                color: var(--success-color)
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 2
+            height: 80
+            show:
+              labels: false
+              name: false
+              icon: false
+              state: true
+              legend: false
 
-          # Quick Actions
-          - type: custom:mushroom-title-card
-            title: Actions
-
-          - type: horizontal-stack
-            cards:
-              - type: custom:mushroom-template-card
-                primary: Restart HA
+          # Actions - compact chips
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
                 icon: mdi:restart
                 icon_color: red
                 tap_action:
@@ -1430,9 +1333,8 @@
                   target:
                     entity_id: button.homeassistant_restart
                   confirmation:
-                    text: Are you sure you want to restart Home Assistant?
-              - type: custom:mushroom-template-card
-                primary: Reload
+                    text: Restart Home Assistant?
+              - type: template
                 icon: mdi:reload
                 icon_color: orange
                 tap_action:
@@ -1440,6 +1342,7 @@
                   service: button.press
                   target:
                     entity_id: button.homeassistant_reload
+            alignment: center
   '';
 in {
   systemd.tmpfiles.rules = [
