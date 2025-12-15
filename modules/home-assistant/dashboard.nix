@@ -185,10 +185,11 @@
                       - justify-self: start
                   state_display: |
                     [[[
-                      const w = entity;
+                      const w = hass.states["weather.forecast_home"];
+                      if (!w) return "Weather unavailable";
                       const temp = w.attributes.temperature;
-                      const condition = w.state.replace(/_/g, ' ');
-                      return condition.charAt(0).toUpperCase() + condition.slice(1) + ' (' + temp + '°C)';
+                      const condition = w.state.replace(/_/g, " ");
+                      return condition.charAt(0).toUpperCase() + condition.slice(1) + " (" + temp + "°C)";
                     ]]]
               calendar:
                 card:
@@ -217,10 +218,11 @@
                       - justify-self: start
                   state_display: |
                     [[[
-                      if (entity.state === 'on' && entity.attributes.message) {
-                        return entity.attributes.message;
+                      const cal = hass.states["calendar.family"];
+                      if (cal?.state === "on" && cal.attributes.message) {
+                        return cal.attributes.message;
                       }
-                      return 'No upcoming events';
+                      return "No upcoming events";
                     ]]]
               football:
                 card:
@@ -260,11 +262,13 @@
                         - justify-self: start
                     state_display: |
                       [[[
-                        const a = entity.attributes;
+                        const lfc = hass.states["sensor.liverpool"];
+                        if (!lfc) return "No match data";
+                        const a = lfc.attributes;
                         const date = new Date(a.date);
-                        const day = date.toLocaleDateString('en-GB', { weekday: 'short' });
-                        const time = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                        return a.team_abbr + ' v ' + a.opponent_abbr + ': ' + day + ' ' + time;
+                        const day = date.toLocaleDateString("en-GB", { weekday: "short" });
+                        const time = date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+                        return a.team_abbr + " v " + a.opponent_abbr + ": " + day + " " + time;
                       ]]]
 
           # Tabbed Navigation
@@ -711,12 +715,13 @@
                       custom_fields:
                         info: |
                           [[[
-                            if (entity.state === 'on' && entity.attributes.message) {
-                              const start = entity.attributes.start_time;
-                              return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">' + entity.attributes.message + '</div>' +
-                                     '<div style="font-size:13px;color:#6B7280;">' + start + '</div>';
+                            const cal = hass.states["calendar.family"];
+                            if (cal?.state === "on" && cal.attributes.message) {
+                              const start = cal.attributes.start_time;
+                              return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">" + cal.attributes.message + "</div>" +
+                                     "<div style=\"font-size:13px;color:#6B7280;\">" + start + "</div>";
                             }
-                            return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">No upcoming events</div>';
+                            return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">No upcoming events</div>";
                           ]]]
 
                     # Football match
@@ -758,12 +763,14 @@
                         custom_fields:
                           info: |
                             [[[
-                              const a = entity.attributes;
+                              const lfc = hass.states["sensor.liverpool"];
+                              if (!lfc) return "<div>No match data</div>";
+                              const a = lfc.attributes;
                               const date = new Date(a.date);
-                              const formatted = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }) +
-                                               ' at ' + date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                              return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">' + a.team_name + ' v ' + a.opponent_long_name + '</div>' +
-                                     '<div style="font-size:13px;color:#6B7280;">' + formatted + ' · ' + a.league + '</div>';
+                              const formatted = date.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" }) +
+                                               " at " + date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+                              return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">" + a.team_name + " v " + a.opponent_long_name + "</div>" +
+                                     "<div style=\"font-size:13px;color:#6B7280;\">" + formatted + " · " + a.league + "</div>";
                             ]]]
 
               # ===== OTHER TAB =====
@@ -1043,10 +1050,12 @@
                       custom_fields:
                         info: |
                           [[[
-                            const state = entity.state;
-                            const source = entity.attributes.source || 'Off';
-                            return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">LG Smart TV</div>' +
-                                   '<div style="font-size:13px;color:#6B7280;">' + (state === 'off' ? 'Off' : source) + '</div>';
+                            const tv = hass.states["media_player.living_room_tv"];
+                            if (!tv) return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">LG Smart TV</div><div style=\"font-size:13px;color:#6B7280;\">Unavailable</div>";
+                            const state = tv.state;
+                            const source = tv.attributes.source || "Off";
+                            return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">LG Smart TV</div>" +
+                                   "<div style=\"font-size:13px;color:#6B7280;\">" + (state === "off" ? "Off" : source) + "</div>";
                           ]]]
                         icon: '<ha-icon icon="mdi:television" style="width:40px;height:40px;color:#6B7280;"></ha-icon>'
 
@@ -1073,8 +1082,10 @@
                       custom_fields:
                         info: |
                           [[[
-                            const state = entity.state;
-                            const title = entity.attributes.media_title || "";
+                            const atv = hass.states["media_player.apple_tv"];
+                            if (!atv) return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">Apple TV</div><div style=\"font-size:13px;color:#6B7280;\">Unavailable</div>";
+                            const state = atv.state;
+                            const title = atv.attributes.media_title || "";
                             return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">Apple TV</div>" +
                                    "<div style=\"font-size:13px;color:#6B7280;\">" + (state === "playing" ? "Playing: " + title : state) + "</div>";
                           ]]]
@@ -1103,8 +1114,9 @@
                       custom_fields:
                         info: |
                           [[[
-                            const state = entity?.state || "unavailable";
-                            const title = entity?.attributes?.media_title || "";
+                            const hp = hass.states["media_player.homepod"];
+                            const state = hp?.state || "unavailable";
+                            const title = hp?.attributes?.media_title || "";
                             return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">HomePod</div>" +
                                    "<div style=\"font-size:13px;color:#6B7280;\">" + (state === "playing" ? "Playing: " + title : state) + "</div>";
                           ]]]
