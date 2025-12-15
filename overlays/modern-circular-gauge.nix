@@ -1,22 +1,22 @@
 {
   lib,
-  stdenv,
-  fetchFromGitHub,
+  stdenvNoCC,
+  fetchurl,
 }:
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   pname = "modern-circular-gauge";
   version = "0.13.1";
 
-  src = fetchFromGitHub {
-    owner = "selvalt7";
-    repo = "modern-circular-gauge";
-    rev = "v${version}";
-    hash = "sha256-1ckhyi2kwa8z4c9311qx0lihn1g03vry0pz922crni6dgfd8a3s9=";
+  src = fetchurl {
+    url = "https://github.com/selvalt7/modern-circular-gauge/releases/download/v${version}/modern-circular-gauge.js";
+    hash = "sha256-BU5j/o9tBBD7JjIYvlZZPVV0OGNq5t5hyDblf3dTGIY=";
   };
 
+  dontUnpack = true;
+
   installPhase = ''
-    mkdir $out
-    cp -v dist/modern-circular-gauge.js $out/
+    mkdir -p $out
+    cp $src $out/modern-circular-gauge.js
   '';
 
   meta = with lib; {

@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
     owner = "Clooos";
     repo = "Bubble-Card";
     rev = "v${version}";
-    hash = "sha256-04bhixxxpry7bznx3dl93qh7s4q7pqw88as5fqj4dmp2bmd113p3=";
+    hash = "sha256-444QWl3i1kYkdkUrhDi+BxN9IB6JttHtX8fn23uPcBE=";
   };
 
   installPhase = ''
