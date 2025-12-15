@@ -1,11 +1,23 @@
 {pkgs, ...}: let
+  # Main files
+  dashboardYaml = pkgs.writeText "home.yaml" (builtins.readFile ./dashboard.yaml);
   floorplanSvg = ./floorplan.svg;
-  dashboardYaml = pkgs.writeText "hacasa.yaml" (builtins.readFile ./dashboard.yaml);
+
+  # Directories (automatically includes all files)
+  viewsDir = ./views;
+  templatesDir = ./templates;
+  popupsDir = ./popups;
 in {
-  # Copy the dashboard YAML to Home Assistant config directory
+  # Symlink dashboard files to Home Assistant config directory
   systemd.tmpfiles.rules = [
+    # Main files
     "L+ /var/lib/hass/home.yaml - - - - ${dashboardYaml}"
     "L+ /var/lib/hass/floorplan.svg - - - - ${floorplanSvg}"
+
+    # Directories
+    "L+ /var/lib/hass/views - - - - ${viewsDir}"
+    "L+ /var/lib/hass/templates - - - - ${templatesDir}"
+    "L+ /var/lib/hass/popups - - - - ${popupsDir}"
   ];
 
   # Configure Home Assistant to use the dashboard
