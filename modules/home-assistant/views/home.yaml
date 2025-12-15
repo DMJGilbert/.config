@@ -201,50 +201,67 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: custom:button-card
-                template: transparent
-                tap_action:
-                  action: none
-                styles:
-                  card:
-                    - padding: 12px 16px 0 16px
-                  grid:
-                    - grid-template-areas: '"r p c o"'
-                    - grid-template-columns: auto auto auto auto 1fr
-                    - justify-content: start
-                    - column-gap: 24px
-                  custom_fields:
-                    r:
-                      - padding: 8px 0
-                      - border-bottom: 2px solid #E85D04
-                      - color: "#E85D04"
-                      - font-weight: 500
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    p:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    c:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    o:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                custom_fields:
-                  r: Rooms
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Rooms
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-rooms"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - font-weight: 500
+                        - color: "#E85D04"
+                        - border-bottom: 2px solid #E85D04
+                        - padding-bottom: 6px
+                  - type: custom:button-card
+                    name: Peoples
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-peoples"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Calendar
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-calendar"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Other
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-other"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
               - type: markdown
                 content: "Rooms content placeholder - room cards will go here"
                 card_mod:
@@ -259,50 +276,67 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: custom:button-card
-                template: transparent
-                tap_action:
-                  action: none
-                styles:
-                  card:
-                    - padding: 12px 16px 0 16px
-                  grid:
-                    - grid-template-areas: '"r p c o"'
-                    - grid-template-columns: auto auto auto auto 1fr
-                    - justify-content: start
-                    - column-gap: 24px
-                  custom_fields:
-                    r:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    p:
-                      - padding: 8px 0
-                      - border-bottom: 2px solid #E85D04
-                      - color: "#E85D04"
-                      - font-weight: 500
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    c:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    o:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
-                  p: Peoples
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Rooms
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-rooms"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Peoples
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-peoples"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - font-weight: 500
+                        - color: "#E85D04"
+                        - border-bottom: 2px solid #E85D04
+                        - padding-bottom: 6px
+                  - type: custom:button-card
+                    name: Calendar
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-calendar"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Other
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-other"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
               - type: markdown
                 content: "Peoples content placeholder - person tracking cards will go here"
                 card_mod:
@@ -317,50 +351,67 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: custom:button-card
-                template: transparent
-                tap_action:
-                  action: none
-                styles:
-                  card:
-                    - padding: 12px 16px 0 16px
-                  grid:
-                    - grid-template-areas: '"r p c o"'
-                    - grid-template-columns: auto auto auto auto 1fr
-                    - justify-content: start
-                    - column-gap: 24px
-                  custom_fields:
-                    r:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    p:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    c:
-                      - padding: 8px 0
-                      - border-bottom: 2px solid #E85D04
-                      - color: "#E85D04"
-                      - font-weight: 500
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    o:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
-                  c: Calendar
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Rooms
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-rooms"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Peoples
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-peoples"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Calendar
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-calendar"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - font-weight: 500
+                        - color: "#E85D04"
+                        - border-bottom: 2px solid #E85D04
+                        - padding-bottom: 6px
+                  - type: custom:button-card
+                    name: Other
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-other"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
               - type: markdown
                 content: "Calendar content placeholder - calendar views will go here"
                 card_mod:
@@ -375,50 +426,67 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: custom:button-card
-                template: transparent
-                tap_action:
-                  action: none
-                styles:
-                  card:
-                    - padding: 12px 16px 0 16px
-                  grid:
-                    - grid-template-areas: '"r p c o"'
-                    - grid-template-columns: auto auto auto auto 1fr
-                    - justify-content: start
-                    - column-gap: 24px
-                  custom_fields:
-                    r:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    p:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    c:
-                      - padding: 8px 0
-                      - color: var(--secondary-text-color)
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                    o:
-                      - padding: 8px 0
-                      - border-bottom: 2px solid #E85D04
-                      - color: "#E85D04"
-                      - font-weight: 500
-                      - font-size: 15px
-                      - cursor: pointer
-                      - pointer-events: auto
-                custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
-                  o: Other
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Rooms
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-rooms"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Peoples
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-peoples"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Calendar
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-calendar"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - color: var(--secondary-text-color)
+                  - type: custom:button-card
+                    name: Other
+                    tap_action:
+                      action: navigate
+                      navigation_path: "#tab-other"
+                    styles:
+                      card:
+                        - background: transparent
+                        - box-shadow: none
+                        - padding: 8px 0
+                        - border-radius: 0
+                      name:
+                        - font-size: 15px
+                        - font-weight: 500
+                        - color: "#E85D04"
+                        - border-bottom: 2px solid #E85D04
+                        - padding-bottom: 6px
               - type: markdown
                 content: "Other content placeholder - miscellaneous controls will go here"
                 card_mod:
