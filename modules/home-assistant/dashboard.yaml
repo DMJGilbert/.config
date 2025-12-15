@@ -39,20 +39,19 @@ views:
             }
         cards:
           # Hero Image
-          - type: custom:button-card
-            show_name: false
-            show_icon: false
-            show_state: false
-            styles:
-              card:
-                - background-image: url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop")
-                - background-size: cover
-                - background-position: center
-                - height: 240px
-                - border-radius: 0
-                - box-shadow: none
-            tap_action:
-              action: none
+          - type: picture
+            image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop
+            card_mod:
+              style: |
+                ha-card {
+                  height: 240px;
+                  border-radius: 0;
+                  box-shadow: none;
+                }
+                ha-card img {
+                  object-fit: cover;
+                  height: 100%;
+                }
 
           # Status Chips Container
           - type: custom:mushroom-chips-card
@@ -80,24 +79,11 @@ views:
                   type: template
                   entity: sensor.total_turned_on_lights_count_template
                   icon: mdi:lightbulb
-                  icon_color: grey
+                  icon_color: amber
                   content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
                   tap_action:
-                    action: fire-dom-event
-                    browser_mod:
-                      service: browser_mod.popup
-                      data:
-                        title: Active Lights
-                        content:
-                          type: custom:auto-entities
-                          card:
-                            type: entities
-                          filter:
-                            include:
-                              - domain: light
-                                state: "on"
-                          sort:
-                            method: friendly_name
+                    action: navigate
+                    navigation_path: "#lights-popup"
 
               # Media Players Chip
               - type: conditional
@@ -108,24 +94,11 @@ views:
                   type: template
                   entity: sensor.total_media_players_playing_template
                   icon: mdi:television
-                  icon_color: grey
+                  icon_color: blue
                   content: "{{ states('sensor.total_media_players_playing_template') }}"
                   tap_action:
-                    action: fire-dom-event
-                    browser_mod:
-                      service: browser_mod.popup
-                      data:
-                        title: Active Media Players
-                        content:
-                          type: custom:auto-entities
-                          card:
-                            type: entities
-                          filter:
-                            include:
-                              - domain: media_player
-                                state: playing
-                          sort:
-                            method: friendly_name
+                    action: navigate
+                    navigation_path: "#media-popup"
 
               # Motion Sensors Chip
               - type: conditional
@@ -136,22 +109,82 @@ views:
                   type: template
                   entity: sensor.total_active_motion_sensors_count_template
                   icon: mdi:run
-                  icon_color: grey
+                  icon_color: green
                   content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
                   tap_action:
-                    action: fire-dom-event
-                    browser_mod:
-                      service: browser_mod.popup
-                      data:
-                        title: Active Motion Sensors
-                        content:
-                          type: custom:auto-entities
-                          card:
-                            type: entities
-                          filter:
-                            include:
-                              - domain: binary_sensor
-                                device_class: motion
-                                state: "on"
-                          sort:
-                            method: friendly_name
+                    action: navigate
+                    navigation_path: "#motion-popup"
+
+      # ==================== BUBBLE-CARD POPUPS ====================
+      # Lights Popup
+      - type: vertical-stack
+        cards:
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: "#lights-popup"
+            name: Active Lights
+            icon: mdi:lightbulb
+            styles: |
+              .bubble-pop-up-container {
+                background: var(--card-background-color);
+              }
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Lights On
+            filter:
+              include:
+                - domain: light
+                  state: "on"
+            sort:
+              method: friendly_name
+
+      # Media Popup
+      - type: vertical-stack
+        cards:
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: "#media-popup"
+            name: Active Media
+            icon: mdi:television
+            styles: |
+              .bubble-pop-up-container {
+                background: var(--card-background-color);
+              }
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Media Playing
+            filter:
+              include:
+                - domain: media_player
+                  state: playing
+            sort:
+              method: friendly_name
+
+      # Motion Popup
+      - type: vertical-stack
+        cards:
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: "#motion-popup"
+            name: Active Motion
+            icon: mdi:run
+            styles: |
+              .bubble-pop-up-container {
+                background: var(--card-background-color);
+              }
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Motion Detected
+            filter:
+              include:
+                - domain: binary_sensor
+                  device_class: motion
+                  state: "on"
+                - domain: binary_sensor
+                  device_class: occupancy
+                  state: "on"
+            sort:
+              method: friendly_name
