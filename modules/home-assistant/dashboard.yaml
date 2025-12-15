@@ -77,14 +77,18 @@ button_card_templates:
     show_icon: false
     show_name: false
     show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+          border: none !important;
+        }
     styles:
       card:
-        - background: '#ffffff'
-        - border-radius: 50px
-        - box-shadow: '0 2px 8px rgba(0,0,0,0.12)'
         - padding: 12px 20px 12px 12px
         - margin-bottom: 12px
-        - border: none
       grid:
         - grid-template-areas: '"room_icon room_info device_icons"'
         - grid-template-columns: 80px 1fr auto
