@@ -43,6 +43,34 @@ button_card_templates:
         - grid-template-columns: 1fr
         - gap: 6px
 
+  # Tab button base styling
+  tab_button:
+    template: transparent
+    show_icon: false
+    show_state: false
+    styles:
+      card:
+        - padding: 8px 0
+      name:
+        - font-size: 15px
+
+  # Active tab button
+  tab_button_active:
+    template: tab_button
+    styles:
+      name:
+        - font-weight: 500
+        - color: "#E85D04"
+        - border-bottom: 2px solid #E85D04
+        - padding-bottom: 6px
+
+  # Inactive tab button
+  tab_button_inactive:
+    template: tab_button
+    styles:
+      name:
+        - color: var(--secondary-text-color)
+
 # ==================== VIEWS ====================
 views:
   - !include /var/lib/hass/views/home.yaml

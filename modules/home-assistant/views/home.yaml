@@ -200,7 +200,7 @@ cards:
           "tab-rooms":
             type: custom:stack-in-card
             mode: vertical
-            card_mod:
+            card_mod: &tab_container_style
               style: |
                 ha-card {
                   background: transparent !important;
@@ -208,75 +208,35 @@ cards:
                 }
             cards:
               - type: horizontal-stack
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent !important;
-                      box-shadow: none !important;
-                    }
+                card_mod: *tab_container_style
                 cards:
                   - type: custom:button-card
+                    template: tab_button_active
                     name: Rooms
-                    tap_action:
+                    tap_action: &tap_rooms
                       action: navigate
                       navigation_path: "#tab-rooms"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                        - border-bottom: 2px solid #E85D04
-                        - padding-bottom: 6px
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Peoples
-                    tap_action:
+                    tap_action: &tap_peoples
                       action: navigate
                       navigation_path: "#tab-peoples"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Calendar
-                    tap_action:
+                    tap_action: &tap_calendar
                       action: navigate
                       navigation_path: "#tab-calendar"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Other
-                    tap_action:
+                    tap_action: &tap_other
                       action: navigate
                       navigation_path: "#tab-other"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
               - type: markdown
                 content: "Rooms content placeholder - room cards will go here"
-                card_mod:
+                card_mod: &tab_content_style
                   style: |
                     ha-card {
                       padding: 16px;
@@ -287,263 +247,86 @@ cards:
           "tab-peoples":
             type: custom:stack-in-card
             mode: vertical
-            card_mod:
-              style: |
-                ha-card {
-                  background: transparent !important;
-                  box-shadow: none !important;
-                }
+            card_mod: *tab_container_style
             cards:
               - type: horizontal-stack
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent !important;
-                      box-shadow: none !important;
-                    }
+                card_mod: *tab_container_style
                 cards:
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_rooms
                   - type: custom:button-card
+                    template: tab_button_active
                     name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                        - border-bottom: 2px solid #E85D04
-                        - padding-bottom: 6px
+                    tap_action: *tap_peoples
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_calendar
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_other
               - type: markdown
                 content: "Peoples content placeholder - person tracking cards will go here"
-                card_mod:
-                  style: |
-                    ha-card {
-                      padding: 16px;
-                      background: transparent;
-                      box-shadow: none;
-                    }
+                card_mod: *tab_content_style
 
           "tab-calendar":
             type: custom:stack-in-card
             mode: vertical
-            card_mod:
-              style: |
-                ha-card {
-                  background: transparent !important;
-                  box-shadow: none !important;
-                }
+            card_mod: *tab_container_style
             cards:
               - type: horizontal-stack
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent !important;
-                      box-shadow: none !important;
-                    }
+                card_mod: *tab_container_style
                 cards:
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_rooms
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_peoples
                   - type: custom:button-card
+                    template: tab_button_active
                     name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                        - border-bottom: 2px solid #E85D04
-                        - padding-bottom: 6px
+                    tap_action: *tap_calendar
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_other
               - type: markdown
                 content: "Calendar content placeholder - calendar views will go here"
-                card_mod:
-                  style: |
-                    ha-card {
-                      padding: 16px;
-                      background: transparent;
-                      box-shadow: none;
-                    }
+                card_mod: *tab_content_style
 
           "tab-other":
             type: custom:stack-in-card
             mode: vertical
-            card_mod:
-              style: |
-                ha-card {
-                  background: transparent !important;
-                  box-shadow: none !important;
-                }
+            card_mod: *tab_container_style
             cards:
               - type: horizontal-stack
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent !important;
-                      box-shadow: none !important;
-                    }
+                card_mod: *tab_container_style
                 cards:
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_rooms
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_peoples
                   - type: custom:button-card
+                    template: tab_button_inactive
                     name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - color: var(--secondary-text-color)
+                    tap_action: *tap_calendar
                   - type: custom:button-card
+                    template: tab_button_active
                     name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    styles:
-                      card:
-                        - background: transparent
-                        - box-shadow: none
-                        - padding: 8px 0
-                        - border-radius: 0
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                        - border-bottom: 2px solid #E85D04
-                        - padding-bottom: 6px
+                    tap_action: *tap_other
               - type: markdown
                 content: "Other content placeholder - miscellaneous controls will go here"
-                card_mod:
-                  style: |
-                    ha-card {
-                      padding: 16px;
-                      background: transparent;
-                      box-shadow: none;
-                    }
+                card_mod: *tab_content_style
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml
