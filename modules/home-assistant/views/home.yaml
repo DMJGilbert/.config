@@ -444,8 +444,8 @@ cards:
                       card_name: System
                       card_icon: mdi:server
                       card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1m']?.state || '0'; return 'Load: ' + load; })()}"
-                      info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state || '0'; return Math.round(parseFloat(disk)) + ' GiB free'; })()}"
+                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1m']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; })()}"
+                      info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; })()}"
 
                   # Car
                   - type: custom:button-card
@@ -458,8 +458,8 @@ cards:
                       card_name: Car
                       card_icon: mdi:car
                       card_image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state || 'Unknown'; return 'Doors: ' + door; })()}"
-                      info_template: "${(() => { const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state || '?'; return fuel !== 'unknown' ? 'Fuel: ' + fuel + '%' : ''; })()}"
+                      status_template: "${(() => { const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state; return (door === 'unavailable' || door === 'unknown' || !door) ? 'Unavailable' : 'Doors: ' + door; })()}"
+                      info_template: "${(() => { const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state; return (fuel === 'unavailable' || fuel === 'unknown' || !fuel) ? '' : 'Fuel: ' + fuel + '%'; })()}"
 
                   # Tank
                   - type: custom:button-card
@@ -472,8 +472,8 @@ cards:
                       card_name: Tank
                       card_icon: mdi:fishbowl
                       card_image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const temp = states['sensor.current_temperature']?.state || '?'; return temp + '°C'; })()}"
-                      info_template: "${(() => { const ph = states['sensor.ph_value']?.state || '?'; return 'pH: ' + ph; })()}"
+                      status_template: "${(() => { const temp = states['sensor.current_temperature']?.state; return (temp === 'unavailable' || temp === 'unknown' || !temp) ? 'Unavailable' : temp + '°C'; })()}"
+                      info_template: "${(() => { const ph = states['sensor.ph_value']?.state; return (ph === 'unavailable' || ph === 'unknown' || !ph) ? '' : 'pH: ' + ph; })()}"
 
                   # RoboVac
                   - type: custom:button-card
@@ -486,8 +486,8 @@ cards:
                       card_name: RoboVac
                       card_icon: mdi:robot-vacuum
                       card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const state = states['vacuum.robovac']?.state || 'unknown'; return state.charAt(0).toUpperCase() + state.slice(1); })()}"
-                      info_template: "${(() => { const battery = states['sensor.robovac_battery']?.state || '?'; return battery !== 'unavailable' ? 'Battery: ' + battery + '%' : ''; })()}"
+                      status_template: "${(() => { const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); })()}"
+                      info_template: "${(() => { const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; })()}"
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml

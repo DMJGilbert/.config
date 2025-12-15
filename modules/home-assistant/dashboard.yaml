@@ -342,7 +342,10 @@ button_card_templates:
 
           if (personEntity && states[personEntity]) {
             const state = states[personEntity].state;
-            if (state === 'home') {
+            if (state === 'unavailable' || state === 'unknown') {
+              locationText = 'Unavailable';
+              locationColor = '#d1d1d1';
+            } else if (state === 'home') {
               locationText = 'Home';
               locationColor = '#4CAF50';
             } else if (state === 'not_home') {
@@ -382,6 +385,16 @@ button_card_templates:
           }
 
           const batteryLevel = states[batteryEntity].state;
+
+          // Handle unavailable/unknown states
+          if (batteryLevel === 'unavailable' || batteryLevel === 'unknown') {
+            return `<span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: #d1d1d1;
+            ">Battery: —</span>`;
+          }
+
           const batteryNum = parseInt(batteryLevel);
           let batteryColor = '#d1d1d1';
 
@@ -845,12 +858,14 @@ button_card_templates:
           const itemIcon = variables.item_icon || 'mdi:help-circle';
           const itemEntity = variables.item_entity;
           let isOn = false;
+          let isUnavailable = false;
           let iconColor = '#8a8178';
 
           if (itemEntity && states[itemEntity]) {
             const st = states[itemEntity].state;
+            isUnavailable = st === 'unavailable' || st === 'unknown';
             isOn = st === 'on' || st === 'playing' || st === 'home';
-            iconColor = isOn ? '#E85D04' : '#8a8178';
+            iconColor = isUnavailable ? '#d1d1d1' : (isOn ? '#E85D04' : '#8a8178');
           }
 
           return `<div style="
@@ -881,7 +896,14 @@ button_card_templates:
             const st = entState.state;
             const domain = itemEntity.split('.')[0];
 
-            if (domain === 'light') {
+            // Handle unavailable/unknown states first
+            if (st === 'unavailable') {
+              stateText = 'Unavailable';
+              stateColor = '#d1d1d1';
+            } else if (st === 'unknown') {
+              stateText = 'Unknown';
+              stateColor = '#d1d1d1';
+            } else if (domain === 'light') {
               if (st === 'on') {
                 const brightness = entState.attributes.brightness;
                 if (brightness) {
@@ -1068,13 +1090,16 @@ button_card_templates:
           const sensorEntity = variables.sensor_entity;
           const sensorName = variables.sensor_name || (sensorEntity && states[sensorEntity]?.attributes?.friendly_name) || (sensorEntity ? sensorEntity.split('.')[1].replace(/_/g, ' ') : 'Sensor');
           const secEntity = variables.sensor_secondary_entity;
+          const isUnavailable = sensorEntity && states[sensorEntity] && (states[sensorEntity].state === 'unavailable' || states[sensorEntity].state === 'unknown');
 
           let secondaryText = '';
 
-          if (secEntity && states[secEntity]) {
+          if (isUnavailable) {
+            secondaryText = 'Unavailable';
+          } else if (secEntity && states[secEntity]) {
             const st = states[secEntity].state;
             const unit = states[secEntity].attributes.unit_of_measurement || '';
-            secondaryText = st + (unit ? ' ' + unit : '');
+            secondaryText = (st === 'unavailable' || st === 'unknown') ? 'Unavailable' : (st + (unit ? ' ' + unit : ''));
           }
 
           return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -1101,13 +1126,14 @@ button_card_templates:
 
           const st = states[sensorEntity].state;
           const unit = states[sensorEntity].attributes.unit_of_measurement || '';
+          const isUnavailable = st === 'unavailable' || st === 'unknown';
 
           return `<span style="
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 18px;
             font-weight: 600;
-            color: var(--primary-text-color);
-          ">${st}${unit ? ' ' + unit : ''}</span>`;
+            color: ${isUnavailable ? '#d1d1d1' : 'var(--primary-text-color)'};
+          ">${isUnavailable ? '—' : (st + (unit ? ' ' + unit : ''))}</span>`;
         ]]]
     tap_action:
       action: more-info
