@@ -251,6 +251,7 @@ cards:
                     variables:
                       room_name: Living Room
                       room_icon: mdi:sofa
+                      room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop"
                       light_entity: group.living_room_lights
                       motion_entity: binary_sensor.living_room_motion_sensor_occupancy
                       media_entity: media_player.living_room_tv
@@ -261,6 +262,7 @@ cards:
                     variables:
                       room_name: Bedroom
                       room_icon: mdi:bed
+                      room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
                       light_entity: group.bedroom_lights
                       motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
                       media_entity: media_player.apple_tv
@@ -271,6 +273,7 @@ cards:
                     variables:
                       room_name: Kitchen
                       room_icon: mdi:silverware-fork-knife
+                      room_image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop"
                       light_entity: group.kitchen_lights
                       motion_entity: null
                       media_entity: null
@@ -281,6 +284,7 @@ cards:
                     variables:
                       room_name: Bathroom
                       room_icon: mdi:shower
+                      room_image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=200&h=200&fit=crop"
                       light_entity: group.bathroom_lights
                       motion_entity: binary_sensor.motion_sensor_motion
                       media_entity: null
@@ -291,6 +295,7 @@ cards:
                     variables:
                       room_name: Hallway
                       room_icon: mdi:door
+                      room_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
                       light_entity: group.hallway_lights
                       motion_entity: binary_sensor.hallway_motion_sensor_occupancy
                       media_entity: null
@@ -301,6 +306,7 @@ cards:
                     variables:
                       room_name: Robynne's Room
                       room_icon: mdi:teddy-bear
+                      room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
                       light_entity: group.robynne_lights
                       motion_entity: binary_sensor.aarlo_motion_nursery
                       media_entity: media_player.yoto_player

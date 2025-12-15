@@ -82,48 +82,78 @@ button_card_templates:
         ha-card {
           background: #ffffff !important;
           border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
           border: none !important;
+        }
+        @media (prefers-color-scheme: dark) {
+          ha-card {
+            background: #1c1c1e !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+          }
+        }
+        :host-context([data-theme="dark"]) ha-card,
+        :host-context(.darkmode) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
         }
     styles:
       card:
         - padding: 12px 20px 12px 12px
         - margin-bottom: 12px
       grid:
-        - grid-template-areas: '"room_icon room_info device_icons"'
+        - grid-template-areas: '"room_image room_info device_icons"'
         - grid-template-columns: 80px 1fr auto
         - grid-template-rows: 1fr
         - align-items: center
       custom_fields:
-        room_icon:
+        room_image:
           - justify-self: start
           - align-self: center
         room_info:
           - justify-self: start
           - align-self: center
           - padding-left: 16px
+          - text-align: left
         device_icons:
           - justify-self: end
           - align-self: center
     custom_fields:
-      room_icon: |
+      room_image: |
         [[[
+          const image = variables.room_image || '';
           const icon = variables.room_icon || 'mdi:home';
-          return `<div style="
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-          ">
-            <ha-icon icon="${icon}" style="
-              --mdc-icon-size: 36px;
-              color: #8a8178;
-            "></ha-icon>
-          </div>`;
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
         ]]]
       room_info: |
         [[[
@@ -161,19 +191,21 @@ button_card_templates:
             }
           }
 
-          return `<div style="display: flex; flex-direction: column;">
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
             <span style="
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
               font-size: 16px;
               font-weight: 600;
               color: var(--primary-text-color);
               line-height: 1.3;
+              text-align: left;
             ">${roomName}</span>
             <span style="
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
               font-size: 13px;
               color: ${statusColor};
               line-height: 1.4;
+              text-align: left;
             ">${statusText}</span>
           </div>`;
         ]]]
@@ -200,18 +232,18 @@ button_card_templates:
 
           let icons = '';
 
-          if (hasLight) {
-            icons += `<ha-icon icon="mdi:lightbulb" style="
-              --mdc-icon-size: 28px;
-              color: ${lightColor};
-              margin-right: 16px;
-            "></ha-icon>`;
-          }
-
           if (hasMedia) {
             icons += `<ha-icon icon="mdi:television" style="
               --mdc-icon-size: 28px;
               color: ${mediaColor};
+              margin-right: 16px;
+            "></ha-icon>`;
+          }
+
+          if (hasLight) {
+            icons += `<ha-icon icon="mdi:lightbulb" style="
+              --mdc-icon-size: 28px;
+              color: ${lightColor};
             "></ha-icon>`;
           }
 
