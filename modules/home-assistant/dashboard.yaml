@@ -85,14 +85,8 @@ button_card_templates:
           box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
           border: none !important;
         }
-        @media (prefers-color-scheme: dark) {
-          ha-card {
-            background: #1c1c1e !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-          }
-        }
-        :host-context([data-theme="dark"]) ha-card,
-        :host-context(.darkmode) ha-card {
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
           background: #1c1c1e !important;
           box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
         }
