@@ -202,7 +202,20 @@ cards:
             mode: vertical
             cards:
               - type: horizontal-stack
-                cards: &tab_buttons_rooms
+                card_mod:
+                  style: |
+                    hui-horizontal-stack-card {
+                      display: flex;
+                      justify-content: flex-start;
+                      gap: 8px;
+                      padding: 12px 16px;
+                    }
+                    hui-horizontal-stack-card > * {
+                      flex: 0 0 auto !important;
+                      width: auto !important;
+                      min-width: 0 !important;
+                    }
+                cards:
                   - type: custom:button-card
                     name: Rooms
                     tap_action:
@@ -211,11 +224,12 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid #E85D04
+                        - padding: 8px 16px
+                        - border-bottom: 2px solid #E85D04
+                        - margin-bottom: -1px
                       name:
-                        - font-size: 14px
-                        - font-weight: 600
+                        - font-size: 15px
+                        - font-weight: 500
                         - color: "#E85D04"
                   - type: custom:button-card
                     name: Peoples
@@ -225,10 +239,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -239,10 +252,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -253,20 +265,39 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
               - type: markdown
-                content: "**Rooms Tab**\n\nRooms content placeholder - room cards will go here"
+                content: "Rooms content placeholder - room cards will go here"
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
 
           "tab-peoples":
             type: custom:stack-in-card
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    hui-horizontal-stack-card {
+                      display: flex;
+                      justify-content: flex-start;
+                      gap: 8px;
+                      padding: 12px 16px;
+                    }
+                    hui-horizontal-stack-card > * {
+                      flex: 0 0 auto !important;
+                      width: auto !important;
+                      min-width: 0 !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -276,10 +307,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -290,11 +320,12 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid #E85D04
+                        - padding: 8px 16px
+                        - border-bottom: 2px solid #E85D04
+                        - margin-bottom: -1px
                       name:
-                        - font-size: 14px
-                        - font-weight: 600
+                        - font-size: 15px
+                        - font-weight: 500
                         - color: "#E85D04"
                   - type: custom:button-card
                     name: Calendar
@@ -304,10 +335,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -318,20 +348,39 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
               - type: markdown
-                content: "**Peoples Tab**\n\nPeoples content placeholder - person tracking cards will go here"
+                content: "Peoples content placeholder - person tracking cards will go here"
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
 
           "tab-calendar":
             type: custom:stack-in-card
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    hui-horizontal-stack-card {
+                      display: flex;
+                      justify-content: flex-start;
+                      gap: 8px;
+                      padding: 12px 16px;
+                    }
+                    hui-horizontal-stack-card > * {
+                      flex: 0 0 auto !important;
+                      width: auto !important;
+                      min-width: 0 !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -341,10 +390,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -355,10 +403,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -369,11 +416,12 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid #E85D04
+                        - padding: 8px 16px
+                        - border-bottom: 2px solid #E85D04
+                        - margin-bottom: -1px
                       name:
-                        - font-size: 14px
-                        - font-weight: 600
+                        - font-size: 15px
+                        - font-weight: 500
                         - color: "#E85D04"
                   - type: custom:button-card
                     name: Other
@@ -383,20 +431,39 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
               - type: markdown
-                content: "**Calendar Tab**\n\nCalendar content placeholder - calendar views will go here"
+                content: "Calendar content placeholder - calendar views will go here"
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
 
           "tab-other":
             type: custom:stack-in-card
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    hui-horizontal-stack-card {
+                      display: flex;
+                      justify-content: flex-start;
+                      gap: 8px;
+                      padding: 12px 16px;
+                    }
+                    hui-horizontal-stack-card > * {
+                      flex: 0 0 auto !important;
+                      width: auto !important;
+                      min-width: 0 !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -406,10 +473,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -420,10 +486,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -434,10 +499,9 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid transparent
+                        - padding: 8px 16px
                       name:
-                        - font-size: 14px
+                        - font-size: 15px
                         - font-weight: 400
                         - color: var(--secondary-text-color)
                   - type: custom:button-card
@@ -448,14 +512,22 @@ cards:
                     template: transparent
                     styles:
                       card:
-                        - padding: 12px 0
-                        - border-bottom: 3px solid #E85D04
+                        - padding: 8px 16px
+                        - border-bottom: 2px solid #E85D04
+                        - margin-bottom: -1px
                       name:
-                        - font-size: 14px
-                        - font-weight: 600
+                        - font-size: 15px
+                        - font-weight: 500
                         - color: "#E85D04"
               - type: markdown
-                content: "**Other Tab**\n\nOther content placeholder - miscellaneous controls will go here"
+                content: "Other content placeholder - miscellaneous controls will go here"
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml
