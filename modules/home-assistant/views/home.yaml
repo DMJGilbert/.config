@@ -380,9 +380,22 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              - type: markdown
-                content: "Calendar content placeholder - calendar views will go here"
+              # Calendar cards container
+              - type: custom:stack-in-card
+                mode: vertical
                 card_mod: *tab_content_style
+                cards:
+                  # Family Calendar
+                  - type: custom:button-card
+                    template: calendar_card
+                    entity: calendar.family
+                    triggers_update:
+                      - calendar.family
+                    variables:
+                      calendar_entity: calendar.family
+                      calendar_name: Family
+                      calendar_icon: mdi:account-group
+                      calendar_image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop"
 
           "tab-other":
             type: custom:stack-in-card

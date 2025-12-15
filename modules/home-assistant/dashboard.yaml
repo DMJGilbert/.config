@@ -554,6 +554,187 @@ button_card_templates:
       action: more-info
       entity: '[[[ return variables.status_entity || variables.info_entity; ]]]'
 
+  # Calendar card template for calendar tab
+  # Variables: calendar_entity, calendar_name, calendar_icon, calendar_image
+  calendar_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"cal_image cal_info cal_date"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        cal_image:
+          - justify-self: start
+          - align-self: center
+        cal_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        cal_date:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      cal_image: |
+        [[[
+          const image = variables.calendar_image || '';
+          const icon = variables.calendar_icon || 'mdi:calendar';
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      cal_info: |
+        [[[
+          const calEntity = variables.calendar_entity;
+          const calName = variables.calendar_name || 'Calendar';
+
+          let eventName = 'No upcoming events';
+          let eventColor = 'var(--secondary-text-color)';
+
+          if (calEntity && states[calEntity]) {
+            const calState = states[calEntity];
+            if (calState.state === 'on' && calState.attributes.message) {
+              eventName = calState.attributes.message;
+              eventColor = '#E85D04';
+            } else if (calState.attributes.message) {
+              eventName = calState.attributes.message;
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${calName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${eventColor};
+              line-height: 1.4;
+              text-align: left;
+              max-width: 180px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            ">${eventName}</span>
+          </div>`;
+        ]]]
+      cal_date: |
+        [[[
+          const calEntity = variables.calendar_entity;
+
+          if (!calEntity || !states[calEntity]) {
+            return '';
+          }
+
+          const calState = states[calEntity];
+          const startTime = calState.attributes.start_time;
+          const allDay = calState.attributes.all_day;
+
+          if (!startTime && !calState.attributes.message) {
+            return '';
+          }
+
+          if (!startTime) {
+            return '';
+          }
+
+          const startDate = new Date(startTime);
+          const now = new Date();
+          const isToday = startDate.toDateString() === now.toDateString();
+          const tomorrow = new Date(now);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const isTomorrow = startDate.toDateString() === tomorrow.toDateString();
+
+          let dateText = '';
+          let timeText = '';
+
+          if (isToday) {
+            dateText = 'Today';
+          } else if (isTomorrow) {
+            dateText = 'Tomorrow';
+          } else {
+            const options = { month: 'short', day: 'numeric' };
+            dateText = startDate.toLocaleDateString('en-GB', options);
+          }
+
+          if (!allDay) {
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+            timeText = startDate.toLocaleTimeString('en-GB', timeOptions);
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-end;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              font-weight: 500;
+              color: var(--secondary-text-color);
+            ">${dateText}</span>
+            ${timeText ? `<span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 12px;
+              color: #d1d1d1;
+            ">${timeText}</span>` : ''}
+          </div>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.calendar_entity; ]]]'
+
 # ==================== VIEWS ====================
 views:
   - !include /var/lib/hass/views/home.yaml
