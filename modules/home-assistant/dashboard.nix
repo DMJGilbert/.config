@@ -603,6 +603,32 @@
             show_percentage_control: true
             collapsible_controls: true
 
+          - type: custom:mushroom-title-card
+            title: Climate History
+
+          - type: custom:mini-graph-card
+            entities:
+              - entity: sensor.dyson_temperature
+                name: Temperature
+                color: "#f44336"
+            hours_to_show: 24
+            points_per_hour: 4
+            line_width: 2
+            show:
+              labels: true
+              legend: true
+
+          - type: custom:mushroom-title-card
+            title: Media
+
+          - type: custom:mushroom-media-player-card
+            entity: media_player.living_room_tv
+            name: Apple TV
+            icon_type: entity-picture
+            use_media_info: true
+            show_volume_level: true
+            collapsible_controls: true
+
       # ==================== BEDROOM ====================
       - title: Bedroom
         path: bedroom

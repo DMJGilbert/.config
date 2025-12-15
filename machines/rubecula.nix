@@ -327,7 +327,7 @@ in {
               type = "module";
             }
             {
-              url = "/local/nixos-lovelace-modules/floorplan-card.js";
+              url = "/local/nixos-lovelace-modules/floorplan.js";
               type = "module";
             }
           ];
