@@ -308,6 +308,60 @@ cards:
                     show_empty: true
                     card_param: cards
 
+                  # Section: Sensors
+                  - type: custom:button-card
+                    template: transparent
+                    name: Sensors
+                    styles:
+                      card:
+                        - padding: 16px 0 4px 0
+                      name:
+                        - font-size: 14px
+                        - font-weight: 600
+                        - color: var(--secondary-text-color)
+                        - text-transform: uppercase
+                        - letter-spacing: 0.5px
+                        - justify-self: start
+                    tap_action:
+                      action: none
+
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: sensor
+                          entity_id: "*hallway*temperature*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_icon: mdi:thermometer
+                              sensor_entity: this.entity_id
+                        - domain: sensor
+                          entity_id: "*hallway*humidity*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_icon: mdi:water-percent
+                              sensor_entity: this.entity_id
+                      exclude:
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: false
+                    card_param: cards
+
           # ==================== OTHER TAB ====================
           "tab-other":
             type: custom:stack-in-card
@@ -409,24 +463,6 @@ cards:
                         - justify-self: start
                     tap_action:
                       action: none
-
-                  # Hallway Temperature
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.hallway_sensor_temperature
-                    variables:
-                      sensor_name: Temperature
-                      sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.hallway_sensor_temperature
-
-                  # Hallway Humidity
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.hallway_sensor_humidity
-                    variables:
-                      sensor_name: Humidity
-                      sensor_icon: mdi:water-percent
-                      sensor_entity: sensor.hallway_sensor_humidity
 
                   - type: custom:auto-entities
                     card:
