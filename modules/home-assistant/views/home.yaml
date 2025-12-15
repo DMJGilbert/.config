@@ -267,6 +267,7 @@ cards:
                       light_entity: group.bedroom_lights
                       motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
                       media_entity: media_player.apple_tv
+                      room_path: /lovelace-home/room-bedroom
 
                   # Kitchen
                   - type: custom:button-card
@@ -278,6 +279,7 @@ cards:
                       light_entity: group.kitchen_lights
                       motion_entity: null
                       media_entity: null
+                      room_path: /lovelace-home/room-kitchen
 
                   # Bathroom
                   - type: custom:button-card
@@ -289,6 +291,7 @@ cards:
                       light_entity: group.bathroom_lights
                       motion_entity: binary_sensor.motion_sensor_motion
                       media_entity: null
+                      room_path: /lovelace-home/room-bathroom
 
                   # Hallway
                   - type: custom:button-card
@@ -300,6 +303,7 @@ cards:
                       light_entity: group.hallway_lights
                       motion_entity: binary_sensor.hallway_motion_sensor_occupancy
                       media_entity: null
+                      room_path: /lovelace-home/room-hallway
 
                   # Robynne's Room
                   - type: custom:button-card
@@ -311,6 +315,7 @@ cards:
                       light_entity: group.robynne_lights
                       motion_entity: binary_sensor.aarlo_motion_nursery
                       media_entity: media_player.yoto_player
+                      room_path: /lovelace-home/room-robynne
 
           "tab-peoples":
             type: custom:stack-in-card

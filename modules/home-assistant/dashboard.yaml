@@ -1117,3 +1117,8 @@ button_card_templates:
 views:
   - !include /var/lib/hass/views/home.yaml
   - !include /var/lib/hass/views/room-living-room.yaml
+  - !include /var/lib/hass/views/room-bedroom.yaml
+  - !include /var/lib/hass/views/room-kitchen.yaml
+  - !include /var/lib/hass/views/room-bathroom.yaml
+  - !include /var/lib/hass/views/room-hallway.yaml
+  - !include /var/lib/hass/views/room-robynne.yaml

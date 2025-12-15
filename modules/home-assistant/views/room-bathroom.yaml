@@ -1,7 +1,7 @@
-# ==================== LIVING ROOM VIEW ====================
-title: Living Room
-path: room-living-room
-icon: mdi:sofa
+# ==================== BATHROOM VIEW ====================
+title: Bathroom
+path: room-bathroom
+icon: mdi:shower
 panel: true
 
 cards:
@@ -24,7 +24,7 @@ cards:
           :host { max-width: 1200px !important; }
         }
     cards:
-      # -------------------- Hero Card with Title Overlay --------------------
+      # -------------------- Hero Card --------------------
       - type: custom:stack-in-card
         mode: vertical
         card_mod:
@@ -44,12 +44,10 @@ cards:
                 ha-card { margin: 16px 0 16px 0; }
               }
         cards:
-          # Hero Image with Dark Overlay and Title
           - type: custom:button-card
             template: room_hero
             variables:
-              room_name: Living Room
-              room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop"
+              room_name: Bathroom
             card_mod:
               style: |
                 ha-card {
@@ -57,7 +55,7 @@ cards:
                   border-radius: 0;
                   box-shadow: none;
                   margin-bottom: 8px;
-                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop") !important;
+                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200&h=600&fit=crop") !important;
                   background-size: cover !important;
                   background-position: center !important;
                 }
@@ -68,7 +66,6 @@ cards:
                   ha-card { height: 280px !important; }
                 }
 
-          # Status Chips for this room
           - type: custom:mushroom-chips-card
             alignment: center
             card_mod:
@@ -86,10 +83,10 @@ cards:
                 }
             chips:
               - type: template
-                entity: group.living_room_lights
+                entity: group.bathroom_lights
                 icon: mdi:lightbulb
-                icon_color: "{{ 'amber' if is_state('group.living_room_lights', 'on') else 'grey' }}"
-                content: "{{ expand('group.living_room_lights') | selectattr('state', 'eq', 'on') | list | count }}"
+                icon_color: "{{ 'amber' if is_state('group.bathroom_lights', 'on') else 'grey' }}"
+                content: "{{ expand('group.bathroom_lights') | selectattr('state', 'eq', 'on') | list | count }}"
 
       # -------------------- Tabbed Section --------------------
       - type: custom:state-switch
@@ -146,7 +143,6 @@ cards:
                     tap_action: &tap_other
                       action: navigate
                       navigation_path: "#tab-other"
-              # Lights content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: &tab_content_style
@@ -169,7 +165,7 @@ cards:
                           }
                     filter:
                       include:
-                        - group: group.living_room_lights
+                        - group: group.bathroom_lights
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -211,7 +207,6 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              # Media content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
@@ -229,13 +224,13 @@ cards:
                     filter:
                       include:
                         - domain: media_player
-                          entity_id: "*living_room*"
+                          entity_id: "*bathroom*"
                           options:
                             type: custom:button-card
                             template: room_item_card
                             entity: this.entity_id
                             variables:
-                              item_icon: mdi:television
+                              item_icon: mdi:speaker
                               item_entity: this.entity_id
                               show_toggle: false
                       exclude:
@@ -270,29 +265,10 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              # Climate content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
                 cards:
-                  # Dyson Climate
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: climate.dyson
-                    variables:
-                      item_icon: mdi:thermostat
-                      item_entity: climate.dyson
-                      show_toggle: false
-
-                  # Dyson Fan
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: fan.dyson
-                    variables:
-                      item_icon: mdi:fan
-                      item_entity: fan.dyson
-                      show_toggle: true
-
                   - type: custom:auto-entities
                     card:
                       type: custom:stack-in-card
@@ -306,7 +282,7 @@ cards:
                     filter:
                       include:
                         - domain: climate
-                          entity_id: "*living_room*"
+                          entity_id: "*bathroom*"
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -316,7 +292,7 @@ cards:
                               item_entity: this.entity_id
                               show_toggle: false
                         - domain: fan
-                          entity_id: "*living_room*"
+                          entity_id: "*bathroom*"
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -329,7 +305,7 @@ cards:
                         - state: unavailable
                     sort:
                       method: friendly_name
-                    show_empty: false
+                    show_empty: true
                     card_param: cards
 
           # ==================== OTHER TAB ====================
@@ -357,7 +333,6 @@ cards:
                     template: tab_button_active
                     name: Other
                     tap_action: *tap_other
-              # Other content - Motion, Power, Sensors
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
@@ -379,73 +354,15 @@ cards:
                     tap_action:
                       action: none
 
-                  - type: custom:auto-entities
-                    card:
-                      type: custom:stack-in-card
-                      mode: vertical
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent !important;
-                            box-shadow: none !important;
-                          }
-                    filter:
-                      include:
-                        - domain: binary_sensor
-                          entity_id: "*living_room*motion*"
-                          attributes:
-                            device_class: motion
-                          options:
-                            type: custom:button-card
-                            template: room_item_card
-                            entity: this.entity_id
-                            variables:
-                              item_icon: mdi:motion-sensor
-                              item_entity: this.entity_id
-                              show_toggle: false
-                        - domain: binary_sensor
-                          entity_id: "*living_room*occupancy*"
-                          options:
-                            type: custom:button-card
-                            template: room_item_card
-                            entity: this.entity_id
-                            variables:
-                              item_icon: mdi:motion-sensor
-                              item_entity: this.entity_id
-                              show_toggle: false
-                      exclude:
-                        - state: unavailable
-                    sort:
-                      method: friendly_name
-                    show_empty: false
-                    card_param: cards
-
-                  # Section: Power Monitoring
+                  # Bathroom motion sensor
                   - type: custom:button-card
-                    template: transparent
-                    name: Power Monitoring
-                    styles:
-                      card:
-                        - padding: 16px 0 4px 0
-                      name:
-                        - font-size: 14px
-                        - font-weight: 600
-                        - color: var(--secondary-text-color)
-                        - text-transform: uppercase
-                        - letter-spacing: 0.5px
-                        - justify-self: start
-                    tap_action:
-                      action: none
-
-                  # Media Switch Power (TV/AV setup in living room)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.media_switch_power
+                    template: room_item_card
+                    entity: binary_sensor.motion_sensor_motion
                     variables:
-                      sensor_name: Media Setup
-                      sensor_icon: mdi:flash
-                      sensor_entity: sensor.media_switch_power
-                      sensor_secondary_entity: sensor.media_switch_add_electricity
+                      item_name: Bathroom Motion
+                      item_icon: mdi:motion-sensor
+                      item_entity: binary_sensor.motion_sensor_motion
+                      show_toggle: false
 
                   # Section: Sensors
                   - type: custom:button-card
@@ -464,88 +381,29 @@ cards:
                     tap_action:
                       action: none
 
-                  # Dyson Temperature
+                  # Bathroom Temperature
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_temperature
+                    entity: sensor.bathroom_sensor_temperature
                     variables:
                       sensor_name: Temperature
                       sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.dyson_temperature
+                      sensor_entity: sensor.bathroom_sensor_temperature
 
-                  # Dyson Humidity
+                  # Bathroom Humidity
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_humidity
+                    entity: sensor.bathroom_sensor_humidity
                     variables:
                       sensor_name: Humidity
                       sensor_icon: mdi:water-percent
-                      sensor_entity: sensor.dyson_humidity
+                      sensor_entity: sensor.bathroom_sensor_humidity
 
-                  # Dyson Air Quality (PM 2.5)
+                  # Bathroom Sensor Battery
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_pm_2_5
+                    entity: sensor.bathroom_sensor_battery
                     variables:
-                      sensor_name: Air Quality (PM 2.5)
-                      sensor_icon: mdi:blur
-                      sensor_entity: sensor.dyson_pm_2_5
-
-                  - type: custom:auto-entities
-                    card:
-                      type: custom:stack-in-card
-                      mode: vertical
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent !important;
-                            box-shadow: none !important;
-                          }
-                    filter:
-                      include:
-                        - domain: sensor
-                          entity_id: "*living_room*illuminance*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Illuminance
-                              sensor_icon: mdi:brightness-6
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*temperature*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Temperature
-                              sensor_icon: mdi:thermometer
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*humidity*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Humidity
-                              sensor_icon: mdi:water-percent
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*battery*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_icon: mdi:battery
-                              sensor_entity: this.entity_id
-                      exclude:
-                        - state: unavailable
-                        - entity_id: "*signal*"
-                    sort:
-                      method: friendly_name
-                    show_empty: false
-                    card_param: cards
+                      sensor_name: Sensor Battery
+                      sensor_icon: mdi:battery
+                      sensor_entity: sensor.bathroom_sensor_battery

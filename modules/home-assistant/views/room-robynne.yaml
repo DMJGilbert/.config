@@ -1,7 +1,7 @@
-# ==================== LIVING ROOM VIEW ====================
-title: Living Room
-path: room-living-room
-icon: mdi:sofa
+# ==================== ROBYNNE'S ROOM VIEW ====================
+title: Robynne's Room
+path: room-robynne
+icon: mdi:teddy-bear
 panel: true
 
 cards:
@@ -24,7 +24,7 @@ cards:
           :host { max-width: 1200px !important; }
         }
     cards:
-      # -------------------- Hero Card with Title Overlay --------------------
+      # -------------------- Hero Card --------------------
       - type: custom:stack-in-card
         mode: vertical
         card_mod:
@@ -44,12 +44,10 @@ cards:
                 ha-card { margin: 16px 0 16px 0; }
               }
         cards:
-          # Hero Image with Dark Overlay and Title
           - type: custom:button-card
             template: room_hero
             variables:
-              room_name: Living Room
-              room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop"
+              room_name: Robynne's Room
             card_mod:
               style: |
                 ha-card {
@@ -57,7 +55,7 @@ cards:
                   border-radius: 0;
                   box-shadow: none;
                   margin-bottom: 8px;
-                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop") !important;
+                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=1200&h=600&fit=crop") !important;
                   background-size: cover !important;
                   background-position: center !important;
                 }
@@ -68,7 +66,6 @@ cards:
                   ha-card { height: 280px !important; }
                 }
 
-          # Status Chips for this room
           - type: custom:mushroom-chips-card
             alignment: center
             card_mod:
@@ -86,10 +83,10 @@ cards:
                 }
             chips:
               - type: template
-                entity: group.living_room_lights
+                entity: group.robynne_lights
                 icon: mdi:lightbulb
-                icon_color: "{{ 'amber' if is_state('group.living_room_lights', 'on') else 'grey' }}"
-                content: "{{ expand('group.living_room_lights') | selectattr('state', 'eq', 'on') | list | count }}"
+                icon_color: "{{ 'amber' if is_state('group.robynne_lights', 'on') else 'grey' }}"
+                content: "{{ expand('group.robynne_lights') | selectattr('state', 'eq', 'on') | list | count }}"
 
       # -------------------- Tabbed Section --------------------
       - type: custom:state-switch
@@ -146,7 +143,6 @@ cards:
                     tap_action: &tap_other
                       action: navigate
                       navigation_path: "#tab-other"
-              # Lights content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: &tab_content_style
@@ -169,7 +165,7 @@ cards:
                           }
                     filter:
                       include:
-                        - group: group.living_room_lights
+                        - group: group.robynne_lights
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -211,39 +207,18 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              # Media content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
                 cards:
-                  - type: custom:auto-entities
-                    card:
-                      type: custom:stack-in-card
-                      mode: vertical
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent !important;
-                            box-shadow: none !important;
-                          }
-                    filter:
-                      include:
-                        - domain: media_player
-                          entity_id: "*living_room*"
-                          options:
-                            type: custom:button-card
-                            template: room_item_card
-                            entity: this.entity_id
-                            variables:
-                              item_icon: mdi:television
-                              item_entity: this.entity_id
-                              show_toggle: false
-                      exclude:
-                        - state: unavailable
-                    sort:
-                      method: friendly_name
-                    show_empty: true
-                    card_param: cards
+                  # Yoto Player
+                  - type: custom:button-card
+                    template: room_item_card
+                    entity: media_player.yoto_player
+                    variables:
+                      item_icon: mdi:speaker
+                      item_entity: media_player.yoto_player
+                      show_toggle: false
 
           # ==================== CLIMATE TAB ====================
           "tab-climate":
@@ -270,29 +245,10 @@ cards:
                     template: tab_button_inactive
                     name: Other
                     tap_action: *tap_other
-              # Climate content
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
                 cards:
-                  # Dyson Climate
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: climate.dyson
-                    variables:
-                      item_icon: mdi:thermostat
-                      item_entity: climate.dyson
-                      show_toggle: false
-
-                  # Dyson Fan
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: fan.dyson
-                    variables:
-                      item_icon: mdi:fan
-                      item_entity: fan.dyson
-                      show_toggle: true
-
                   - type: custom:auto-entities
                     card:
                       type: custom:stack-in-card
@@ -306,7 +262,17 @@ cards:
                     filter:
                       include:
                         - domain: climate
-                          entity_id: "*living_room*"
+                          entity_id: "*robynne*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:thermostat
+                              item_entity: this.entity_id
+                              show_toggle: false
+                        - domain: climate
+                          entity_id: "*nursery*"
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -316,7 +282,17 @@ cards:
                               item_entity: this.entity_id
                               show_toggle: false
                         - domain: fan
-                          entity_id: "*living_room*"
+                          entity_id: "*robynne*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:fan
+                              item_entity: this.entity_id
+                              show_toggle: true
+                        - domain: fan
+                          entity_id: "*nursery*"
                           options:
                             type: custom:button-card
                             template: room_item_card
@@ -329,7 +305,7 @@ cards:
                         - state: unavailable
                     sort:
                       method: friendly_name
-                    show_empty: false
+                    show_empty: true
                     card_param: cards
 
           # ==================== OTHER TAB ====================
@@ -357,7 +333,6 @@ cards:
                     template: tab_button_active
                     name: Other
                     tap_action: *tap_other
-              # Other content - Motion, Power, Sensors
               - type: custom:stack-in-card
                 mode: vertical
                 card_mod: *tab_content_style
@@ -379,73 +354,35 @@ cards:
                     tap_action:
                       action: none
 
-                  - type: custom:auto-entities
-                    card:
-                      type: custom:stack-in-card
-                      mode: vertical
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent !important;
-                            box-shadow: none !important;
-                          }
-                    filter:
-                      include:
-                        - domain: binary_sensor
-                          entity_id: "*living_room*motion*"
-                          attributes:
-                            device_class: motion
-                          options:
-                            type: custom:button-card
-                            template: room_item_card
-                            entity: this.entity_id
-                            variables:
-                              item_icon: mdi:motion-sensor
-                              item_entity: this.entity_id
-                              show_toggle: false
-                        - domain: binary_sensor
-                          entity_id: "*living_room*occupancy*"
-                          options:
-                            type: custom:button-card
-                            template: room_item_card
-                            entity: this.entity_id
-                            variables:
-                              item_icon: mdi:motion-sensor
-                              item_entity: this.entity_id
-                              show_toggle: false
-                      exclude:
-                        - state: unavailable
-                    sort:
-                      method: friendly_name
-                    show_empty: false
-                    card_param: cards
-
-                  # Section: Power Monitoring
+                  # Nursery Motion (Arlo camera)
                   - type: custom:button-card
-                    template: transparent
-                    name: Power Monitoring
-                    styles:
-                      card:
-                        - padding: 16px 0 4px 0
-                      name:
-                        - font-size: 14px
-                        - font-weight: 600
-                        - color: var(--secondary-text-color)
-                        - text-transform: uppercase
-                        - letter-spacing: 0.5px
-                        - justify-self: start
-                    tap_action:
-                      action: none
-
-                  # Media Switch Power (TV/AV setup in living room)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.media_switch_power
+                    template: room_item_card
+                    entity: binary_sensor.aarlo_motion_nursery
                     variables:
-                      sensor_name: Media Setup
-                      sensor_icon: mdi:flash
-                      sensor_entity: sensor.media_switch_power
-                      sensor_secondary_entity: sensor.media_switch_add_electricity
+                      item_name: Nursery Motion
+                      item_icon: mdi:motion-sensor
+                      item_entity: binary_sensor.aarlo_motion_nursery
+                      show_toggle: false
+
+                  # Nursery Sound
+                  - type: custom:button-card
+                    template: room_item_card
+                    entity: binary_sensor.aarlo_sound_nursery
+                    variables:
+                      item_name: Sound Detection
+                      item_icon: mdi:volume-high
+                      item_entity: binary_sensor.aarlo_sound_nursery
+                      show_toggle: false
+
+                  # Nursery Cry Detection
+                  - type: custom:button-card
+                    template: room_item_card
+                    entity: binary_sensor.aarlo_cry_nursery
+                    variables:
+                      item_name: Cry Detection
+                      item_icon: mdi:emoticon-cry-outline
+                      item_entity: binary_sensor.aarlo_cry_nursery
+                      show_toggle: false
 
                   # Section: Sensors
                   - type: custom:button-card
@@ -464,88 +401,56 @@ cards:
                     tap_action:
                       action: none
 
-                  # Dyson Temperature
+                  # Nursery Temperature (Arlo)
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_temperature
+                    entity: sensor.aarlo_temperature_nursery
                     variables:
                       sensor_name: Temperature
                       sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.dyson_temperature
+                      sensor_entity: sensor.aarlo_temperature_nursery
 
-                  # Dyson Humidity
+                  # Nursery Humidity (Arlo)
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_humidity
+                    entity: sensor.aarlo_humidity_nursery
                     variables:
                       sensor_name: Humidity
                       sensor_icon: mdi:water-percent
-                      sensor_entity: sensor.dyson_humidity
+                      sensor_entity: sensor.aarlo_humidity_nursery
 
-                  # Dyson Air Quality (PM 2.5)
+                  # Nursery Air Quality (Arlo)
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.dyson_pm_2_5
+                    entity: sensor.aarlo_air_quality_nursery
                     variables:
-                      sensor_name: Air Quality (PM 2.5)
-                      sensor_icon: mdi:blur
-                      sensor_entity: sensor.dyson_pm_2_5
+                      sensor_name: Air Quality
+                      sensor_icon: mdi:air-filter
+                      sensor_entity: sensor.aarlo_air_quality_nursery
 
-                  - type: custom:auto-entities
-                    card:
-                      type: custom:stack-in-card
-                      mode: vertical
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent !important;
-                            box-shadow: none !important;
-                          }
-                    filter:
-                      include:
-                        - domain: sensor
-                          entity_id: "*living_room*illuminance*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Illuminance
-                              sensor_icon: mdi:brightness-6
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*temperature*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Temperature
-                              sensor_icon: mdi:thermometer
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*humidity*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_name: Humidity
-                              sensor_icon: mdi:water-percent
-                              sensor_entity: this.entity_id
-                        - domain: sensor
-                          entity_id: "*living_room*battery*"
-                          options:
-                            type: custom:button-card
-                            template: room_sensor_card
-                            entity: this.entity_id
-                            variables:
-                              sensor_icon: mdi:battery
-                              sensor_entity: this.entity_id
-                      exclude:
-                        - state: unavailable
-                        - entity_id: "*signal*"
-                    sort:
-                      method: friendly_name
-                    show_empty: false
-                    card_param: cards
+                  # Yoto Temperature
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.yoto_player_temperature
+                    variables:
+                      sensor_name: Yoto Temperature
+                      sensor_icon: mdi:thermometer
+                      sensor_entity: sensor.yoto_player_temperature
+
+                  # Yoto Battery
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.yoto_player_battery_level
+                    variables:
+                      sensor_name: Yoto Battery
+                      sensor_icon: mdi:battery
+                      sensor_entity: sensor.yoto_player_battery_level
+
+                  # Nursery Camera Battery
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.aarlo_battery_level_nursery
+                    variables:
+                      sensor_name: Camera Battery
+                      sensor_icon: mdi:battery
+                      sensor_entity: sensor.aarlo_battery_level_nursery
