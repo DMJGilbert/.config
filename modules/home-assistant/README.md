@@ -191,53 +191,18 @@ layout:
 
 ---
 
-### 2. Header / Title Card
+### 2. Hero Image with Title Overlay and Status Chips
 
-Displays the home name in orange, left-aligned.
-
-```yaml
-- type: custom:button-card
-  name: Fleming Place
-  show_icon: false
-  show_state: false
-  styles:
-    card:
-      - background: transparent
-      - box-shadow: none
-      - border: none
-      - border-radius: 0
-      - padding: 20px 16px 12px 16px
-    name:
-      - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
-      - font-size: 30px
-      - font-weight: 500
-      - color: "#E85D04"
-      - justify-self: start
-      - text-align: left
-      - width: 100%
-      - letter-spacing: -0.5px
-```
-
-**Design Decisions:**
-- Helvetica Neue for a clean, modern look
-- 30px size balances prominence without overwhelming
-- Orange (#E85D04) provides brand consistency
-- No borders/shadows for minimal aesthetic
-- Left-aligned to follow natural reading flow
-
----
-
-### 3. Hero Image with Status Chips
-
-A hero image card with overlaid status chips showing counts of active devices.
+A hero image card with overlaid title and status chips. The title is positioned over the image with a dark gradient overlay for readability, saving vertical space.
 
 #### Structure
 
 ```
 ┌─────────────────────────────────────┐
+│ Fleming Place                       │
 │                                     │
 │           Hero Image                │
-│                                     │
+│      (dark gradient overlay)        │
 │      ┌─────┐ ┌─────┐ ┌─────┐       │
 │      │ 💡 5│ │ 📺 2│ │ 🏃 1│       │
 │      └─────┘ └─────┘ └─────┘       │
@@ -250,23 +215,30 @@ A hero image card with overlaid status chips showing counts of active devices.
 - type: custom:stack-in-card
   mode: vertical
   card_mod:
-    style: |
-      ha-card {
-        border-radius: 24px;
-        margin: 0 16px 16px 16px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-        overflow: hidden;
-        background: transparent;
-      }
-      @media (min-width: 768px) {
+    style:
+      hui-vertical-stack-card $: |
+        #root { row-gap: 0px !important; }
+      .: |
+        :host { row-gap: 0px; }
         ha-card {
-          margin: 0 0 16px 0;
+          border-radius: 24px;
+          margin: 16px 16px 16px 16px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+          overflow: hidden;
+          background: var(--card-background-color, #fff);
         }
-      }
+        @media (min-width: 768px) {
+          ha-card { margin: 16px 0 16px 0; }
+        }
   cards:
-    # Hero Image
-    - type: picture
-      image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop
+    # Hero Image with Dark Overlay and Title
+    - type: custom:button-card
+      name: Fleming Place
+      show_icon: false
+      show_state: false
+      entity: sun.sun
+      tap_action:
+        action: none
       card_mod:
         style: |
           ha-card {
@@ -274,22 +246,39 @@ A hero image card with overlaid status chips showing counts of active devices.
             max-height: 280px;
             border-radius: 0;
             box-shadow: none;
-          }
-          ha-card img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
+            margin-bottom: 8px;
           }
           @media (min-width: 768px) {
-            ha-card {
-              height: 240px;
-            }
+            ha-card { height: 240px; }
           }
           @media (min-width: 1200px) {
-            ha-card {
-              height: 280px;
-            }
+            ha-card { height: 280px; }
           }
+      styles:
+        card:
+          - background-image: |
+              linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.4) 0%,
+                rgba(0, 0, 0, 0.2) 40%,
+                rgba(0, 0, 0, 0.1) 60%,
+                rgba(0, 0, 0, 0.3) 100%
+              ),
+              url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop")
+          - background-size: cover
+          - background-position: center
+          - height: 100%
+          - border-radius: 0
+        name:
+          - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+          - font-size: 36px
+          - font-weight: 500
+          - color: "#E85D04"
+          - text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5)
+          - position: absolute
+          - top: 24px
+          - left: 24px
+          - letter-spacing: -0.5px
 
     # Status Chips Container
     - type: custom:mushroom-chips-card
@@ -355,11 +344,37 @@ A hero image card with overlaid status chips showing counts of active devices.
 ```
 
 **Design Decisions:**
+- Title integrated into hero image to save vertical space
+- Dark gradient overlay (40% top, 20-10% middle, 30% bottom) ensures title readability
+- Orange (#E85D04) title text maintains brand consistency with darker text-shadow for contrast
+- 36px font size (increased from 30px) for better visibility over image
 - `stack-in-card` merges image and chips into seamless card
 - Chips use negative margin (-50px) to overlay on image
 - Conditional visibility hides chips when count is 0
 - Frosted glass effect on chips (white background with shadow)
 - Responsive image height scales with screen size
+
+#### Removing Default Gap in stack-in-card
+
+By default, `stack-in-card` adds `row-gap: 8px` between child cards via `hui-vertical-stack-card`. To remove this gap, use card_mod's shadow DOM piercing syntax (`$`):
+
+```yaml
+- type: custom:stack-in-card
+  mode: vertical
+  card_mod:
+    style:
+      hui-vertical-stack-card $: |
+        #root { row-gap: 0px !important; }
+      .: |
+        ha-card {
+          /* your ha-card styles here */
+        }
+```
+
+**How it works:**
+- `hui-vertical-stack-card $:` pierces into the shadow DOM of the internal vertical stack component
+- `#root` is the container element that applies the default `row-gap`
+- `.` targets the host element for regular ha-card styling
 
 ---
 
