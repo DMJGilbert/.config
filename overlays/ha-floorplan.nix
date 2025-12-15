@@ -1,23 +1,22 @@
 {
   lib,
-  stdenv,
-  fetchFromGitHub,
+  stdenvNoCC,
+  fetchurl,
 }:
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   pname = "ha-floorplan";
   version = "1.1.3";
 
-  src = fetchFromGitHub {
-    owner = "ExperienceLovelace";
-    repo = "ha-floorplan";
-    rev = "v${version}";
-    hash = "sha256-rCgeHTGQtexl7BkKXSqJ6xymQV4eOdOsgdFlGWQmVws=";
+  src = fetchurl {
+    url = "https://github.com/ExperienceLovelace/ha-floorplan/releases/download/v${version}/floorplan.js";
+    hash = "sha256-SaxHXfeSVCzh0dvXwwHnmrABj7gqoCejAAEJba2SIxg=";
   };
 
+  dontUnpack = true;
+
   installPhase = ''
-    mkdir $out
-    cp -v dist/floorplan.js $out/
-    cp -v dist/floorplan-card.js $out/
+    mkdir -p $out
+    cp $src $out/floorplan.js
   '';
 
   meta = with lib; {
