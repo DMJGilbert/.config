@@ -319,6 +319,8 @@ cards:
             cards:
               - type: custom:button-card
                 template: transparent
+                tap_action:
+                  action: none
                 styles:
                   card:
                     - padding: 12px 16px 0 16px
@@ -375,6 +377,8 @@ cards:
             cards:
               - type: custom:button-card
                 template: transparent
+                tap_action:
+                  action: none
                 styles:
                   card:
                     - padding: 12px 16px 0 16px
