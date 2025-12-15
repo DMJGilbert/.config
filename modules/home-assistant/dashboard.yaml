@@ -250,7 +250,7 @@ button_card_templates:
       entity: '[[[ return variables.light_entity; ]]]'
 
   # Person card template for peoples tab
-  # Variables: person_name, person_entity, battery_entity
+  # Variables: person_name, person_entity, battery_entity, steps_entity
   person_card:
     show_icon: false
     show_name: false
@@ -379,40 +379,49 @@ button_card_templates:
       battery_info: |
         [[[
           const batteryEntity = variables.battery_entity;
+          const stepsEntity = variables.steps_entity;
+          let lines = [];
 
-          if (!batteryEntity || !states[batteryEntity]) {
-            return '';
-          }
-
-          const batteryLevel = states[batteryEntity].state;
-
-          // Handle unavailable/unknown states
-          if (batteryLevel === 'unavailable' || batteryLevel === 'unknown') {
-            return `<span style="
-              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-              font-size: 13px;
-              color: #d1d1d1;
-            ">Battery: —</span>`;
-          }
-
-          const batteryNum = parseInt(batteryLevel);
-          let batteryColor = '#d1d1d1';
-
-          if (!isNaN(batteryNum)) {
-            if (batteryNum <= 20) {
-              batteryColor = '#f44336';
-            } else if (batteryNum <= 50) {
-              batteryColor = '#ff9800';
-            } else {
-              batteryColor = '#d1d1d1';
+          // Steps info
+          if (stepsEntity && states[stepsEntity]) {
+            const steps = states[stepsEntity].state;
+            if (steps !== 'unavailable' && steps !== 'unknown') {
+              const stepsNum = parseInt(steps);
+              const formatted = !isNaN(stepsNum) ? stepsNum.toLocaleString() : steps;
+              lines.push(`<span style="
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                color: #d1d1d1;
+              "><ha-icon icon="mdi:shoe-print" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${formatted}</span>`);
             }
           }
 
-          return `<span style="
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 13px;
-            color: ${batteryColor};
-          ">Battery: ${batteryLevel}%</span>`;
+          // Battery info
+          if (batteryEntity && states[batteryEntity]) {
+            const batteryLevel = states[batteryEntity].state;
+            if (batteryLevel !== 'unavailable' && batteryLevel !== 'unknown') {
+              const batteryNum = parseInt(batteryLevel);
+              let batteryColor = '#d1d1d1';
+              if (!isNaN(batteryNum)) {
+                if (batteryNum <= 20) {
+                  batteryColor = '#f44336';
+                } else if (batteryNum <= 50) {
+                  batteryColor = '#ff9800';
+                }
+              }
+              lines.push(`<span style="
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                color: ${batteryColor};
+              "><ha-icon icon="mdi:battery" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${batteryLevel}%</span>`);
+            }
+          }
+
+          if (lines.length === 0) return '';
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            ${lines.join('')}
+          </div>`;
         ]]]
     tap_action:
       action: more-info

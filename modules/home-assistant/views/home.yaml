@@ -349,18 +349,30 @@ cards:
                   # Darren
                   - type: custom:button-card
                     template: person_card
+                    entity: person.darren_gilbert
+                    triggers_update:
+                      - person.darren_gilbert
+                      - sensor.hatchling_battery_level
+                      - sensor.hatchling_steps
                     variables:
                       person_name: Darren
                       person_entity: person.darren_gilbert
                       battery_entity: sensor.hatchling_battery_level
+                      steps_entity: sensor.hatchling_steps
 
                   # Lorraine
                   - type: custom:button-card
                     template: person_card
+                    entity: person.lorraine
+                    triggers_update:
+                      - person.lorraine
+                      - sensor.lorraines_iphone_battery_level
+                      - sensor.lorraines_iphone_steps
                     variables:
                       person_name: Lorraine
                       person_entity: person.lorraine
                       battery_entity: sensor.lorraines_iphone_battery_level
+                      steps_entity: sensor.lorraines_iphone_steps
 
           "tab-calendar":
             type: custom:stack-in-card
