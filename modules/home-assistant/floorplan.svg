@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 550" width="600" height="550">
+  <defs>
+    <style>
+      .room { stroke: #45475a; stroke-width: 2; transition: all 0.3s ease; }
+      .room:hover { filter: brightness(1.1); }
+      .room-label { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 16px; fill: #1e1e2e; text-anchor: middle; font-weight: 500; pointer-events: none; }
+      .light-icon { fill: #6c7086; transition: fill 0.3s ease; cursor: pointer; }
+      .light-icon.on { fill: #f9e2af; filter: drop-shadow(0 0 8px #f9e2af); }
+      .motion-icon { fill: #6c7086; transition: fill 0.3s ease; }
+      .motion-icon.detected { fill: #89b4fa; filter: drop-shadow(0 0 6px #89b4fa); }
+      .temp-label { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 12px; fill: #585b70; text-anchor: middle; pointer-events: none; }
+      .outer-wall { fill: none; stroke: #313244; stroke-width: 6; }
+      .inner-wall { stroke: #45475a; stroke-width: 3; }
+      .door { fill: #cdd6f4; stroke: #45475a; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="550" fill="#11111b"/>
+
+  <!-- Outer walls / building shape -->
+  <path class="outer-wall" d="M20,20 L20,530 L300,530 L300,450 L580,450 L580,20 Z"/>
+
+  <!-- Bedroom - top left, large -->
+  <g id="area.bedroom" class="room-group">
+    <rect id="room.bedroom" class="room" x="25" y="25" width="250" height="230" fill="#e6e6ef"/>
+    <text class="room-label" x="150" y="145">Bedroom</text>
+    <!-- Light icon -->
+    <circle id="light.bedroom" class="light-icon" cx="150" cy="100" r="10"/>
+    <!-- Motion sensor -->
+    <circle id="motion.bedroom" class="motion-icon" cx="60" cy="60" r="5"/>
+    <!-- Temperature -->
+    <text id="temp.bedroom" class="temp-label" x="150" y="170"></text>
+  </g>
+
+  <!-- Dining Room - center top -->
+  <g id="area.dining" class="room-group">
+    <rect id="room.dining" class="room" x="280" y="25" width="120" height="150" fill="#a6a060"/>
+    <text class="room-label" x="340" y="90">Dining</text>
+    <text class="room-label" x="340" y="110">room</text>
+    <!-- Light icon -->
+    <circle id="light.dining" class="light-icon" cx="340" cy="140" r="10"/>
+  </g>
+
+  <!-- Living Room - top right, large -->
+  <g id="area.living_room" class="room-group">
+    <rect id="room.living_room" class="room" x="405" y="25" width="170" height="220" fill="#e68080"/>
+    <text class="room-label" x="490" y="120">Living</text>
+    <text class="room-label" x="490" y="142">room</text>
+    <!-- Light icon -->
+    <circle id="light.living_room" class="light-icon" cx="490" cy="80" r="10"/>
+    <!-- Motion sensor -->
+    <circle id="motion.living_room" class="motion-icon" cx="440" cy="60" r="5"/>
+    <!-- Temperature -->
+    <text id="temp.living_room" class="temp-label" x="490" y="170"></text>
+  </g>
+
+  <!-- Kitchen - right side, below living room -->
+  <g id="area.kitchen" class="room-group">
+    <rect id="room.kitchen" class="room" x="405" y="250" width="170" height="95" fill="#90d090"/>
+    <text class="room-label" x="490" y="305">Kitchen</text>
+    <!-- Light icon -->
+    <circle id="light.kitchen" class="light-icon" cx="490" cy="270" r="10"/>
+  </g>
+
+  <!-- Bathroom - right side, below kitchen -->
+  <g id="area.bathroom" class="room-group">
+    <rect id="room.bathroom" class="room" x="455" y="350" width="120" height="95" fill="#74b9e8"/>
+    <text class="room-label" x="515" y="405">Bathroom</text>
+    <!-- Light icon -->
+    <circle id="light.bathroom" class="light-icon" cx="515" cy="370" r="10"/>
+    <!-- Motion sensor -->
+    <circle id="motion.bathroom" class="motion-icon" cx="480" cy="365" r="5"/>
+    <!-- Temperature -->
+    <text id="temp.bathroom" class="temp-label" x="515" y="430"></text>
+  </g>
+
+  <!-- Hallway - center, connecting space -->
+  <g id="area.hallway" class="room-group">
+    <polygon id="room.hallway" class="room" points="280,180 280,450 450,450 450,350 400,350 400,250 280,250 280,180" fill="#9a8a7a"/>
+    <text class="room-label" x="360" y="360">Hallway</text>
+    <!-- Light icon -->
+    <circle id="light.hallway" class="light-icon" cx="340" cy="320" r="10"/>
+    <!-- Motion sensor -->
+    <circle id="motion.hallway" class="motion-icon" cx="320" cy="400" r="5"/>
+    <!-- Temperature -->
+    <text id="temp.hallway" class="temp-label" x="360" y="385"></text>
+  </g>
+
+  <!-- Robynne's Room - bottom left, large -->
+  <g id="area.robynne" class="room-group">
+    <rect id="room.robynne" class="room" x="25" y="260" width="250" height="265" fill="#d8a8e8"/>
+    <text class="room-label" x="150" y="400">Robynne</text>
+    <!-- Light icon -->
+    <circle id="light.robynne" class="light-icon" cx="150" cy="350" r="10"/>
+    <!-- Motion sensor -->
+    <circle id="motion.robynne" class="motion-icon" cx="60" cy="300" r="5"/>
+    <!-- Yoto player indicator -->
+    <rect id="media.yoto" x="200" y="460" width="35" height="25" rx="3" fill="#45475a"/>
+  </g>
+
+  <!-- Front door area -->
+  <g id="front_door">
+    <rect class="door" x="300" y="510" width="50" height="20" rx="2"/>
+    <rect x="360" y="515" width="30" height="10" fill="#45475a" rx="2"/>
+  </g>
+
+  <!-- Inner walls -->
+  <line class="inner-wall" x1="280" y1="25" x2="280" y2="255"/>
+  <line class="inner-wall" x1="280" y1="255" x2="25" y2="255"/>
+  <line class="inner-wall" x1="405" y1="25" x2="405" y2="250"/>
+  <line class="inner-wall" x1="280" y1="180" x2="405" y2="180"/>
+  <line class="inner-wall" x1="405" y1="250" x2="580" y2="250"/>
+  <line class="inner-wall" x1="405" y1="350" x2="455" y2="350"/>
+  <line class="inner-wall" x1="455" y1="350" x2="455" y2="450"/>
+
+</svg>

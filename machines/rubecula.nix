@@ -214,6 +214,8 @@ in {
         pkgs.lovelace-auto-entities
         pkgs.lovelace-tabbed-card
         pkgs.lovelace-layout-card
+        pkgs.modern-circular-gauge
+        pkgs.ha-floorplan
         mini-graph-card
         multiple-entity-row
         decluttering-card
@@ -318,6 +320,14 @@ in {
             }
             {
               url = "/local/nixos-lovelace-modules/layout-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/modern-circular-gauge.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/floorplan-card.js";
               type = "module";
             }
           ];
