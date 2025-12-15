@@ -573,7 +573,7 @@
                             const yoto = hass.states['media_player.yoto_player'];
                             let secondary = 'All off';
                             if (yoto?.state === 'playing') secondary = 'Yoto playing';
-                            return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Robynne' + "'" + 's Room</div>' +
+                            return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">Robynne's Room</div>" +
                                    '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
                           ]]]
                         badges: |
@@ -1301,14 +1301,14 @@
                           ha-card { border: 1px solid #E5E5E5; border-radius: 16px; margin: 8px 16px; }
                     - type: custom:mushroom-light-card
                       entity: light.darren_switch
-                      name: Darren's Side
+                      name: "Darren's Side"
                       use_light_color: true
                       card_mod:
                         style: |
                           ha-card { border: 1px solid #E5E5E5; border-radius: 16px; margin: 8px 16px; }
                     - type: custom:mushroom-light-card
                       entity: light.lorraine_switch
-                      name: Lorraine's Side
+                      name: "Lorraine's Side"
                       use_light_color: true
                       card_mod:
                         style: |
@@ -1596,7 +1596,7 @@
                           ha-card { border: 1px solid #E5E5E5; border-radius: 16px; margin: 8px 16px; }
 
       # ==================== ROBYNNE'S ROOM ====================
-      - title: Robynne's Room
+      - title: "Robynne's Room"
         path: robynne
         icon: mdi:teddy-bear
         type: custom:vertical-layout
@@ -1613,7 +1613,7 @@
                 - display: flex
                 - justify-content: space-between
             custom_fields:
-              title: '<div style="font-size:28px;font-weight:400;color:#FC691C;">Robynne' + "'" + 's Room</div>'
+              title: "<div style=\"font-size:28px;font-weight:400;color:#FC691C;\">Robynne's Room</div>"
               back:
                 card:
                   type: custom:button-card
