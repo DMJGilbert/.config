@@ -842,14 +842,14 @@ button_card_templates:
     custom_fields:
       item_icon: |
         [[[
-          const icon = variables.item_icon || 'mdi:help-circle';
-          const entity = variables.item_entity;
+          const itemIcon = variables.item_icon || 'mdi:help-circle';
+          const itemEntity = variables.item_entity;
           let isOn = false;
           let iconColor = '#8a8178';
 
-          if (entity && states[entity]) {
-            const state = states[entity].state;
-            isOn = state === 'on' || state === 'playing' || state === 'home';
+          if (itemEntity && states[itemEntity]) {
+            const st = states[itemEntity].state;
+            isOn = st === 'on' || st === 'playing' || st === 'home';
             iconColor = isOn ? '#E85D04' : '#8a8178';
           }
 
@@ -862,7 +862,7 @@ button_card_templates:
             align-items: center;
             justify-content: center;
           ">
-            <ha-icon icon="${icon}" style="
+            <ha-icon icon="${itemIcon}" style="
               --mdc-icon-size: 28px;
               color: ${iconColor};
             "></ha-icon>
@@ -871,61 +871,61 @@ button_card_templates:
       item_info: |
         [[[
           const itemName = variables.item_name || 'Item';
-          const entity = variables.item_entity;
+          const itemEntity = variables.item_entity;
 
           let stateText = 'Unknown';
           let stateColor = 'var(--secondary-text-color)';
 
-          if (entity && states[entity]) {
-            const entityState = states[entity];
-            const state = entityState.state;
-            const domain = entity.split('.')[0];
+          if (itemEntity && states[itemEntity]) {
+            const entState = states[itemEntity];
+            const st = entState.state;
+            const domain = itemEntity.split('.')[0];
 
             if (domain === 'light') {
-              if (state === 'on') {
-                const brightness = entityState.attributes.brightness;
+              if (st === 'on') {
+                const brightness = entState.attributes.brightness;
                 if (brightness) {
                   stateText = Math.round((brightness / 255) * 100) + '%';
                 } else {
                   stateText = 'On';
                 }
                 stateColor = '#4CAF50';
-              } else if (state === 'off') {
+              } else if (st === 'off') {
                 stateText = 'Off';
               } else {
-                stateText = state.charAt(0).toUpperCase() + state.slice(1);
+                stateText = st.charAt(0).toUpperCase() + st.slice(1);
               }
             } else if (domain === 'media_player') {
-              if (state === 'playing') {
-                const title = entityState.attributes.media_title || 'Playing';
+              if (st === 'playing') {
+                const title = entState.attributes.media_title || 'Playing';
                 stateText = title.length > 25 ? title.substring(0, 25) + '...' : title;
                 stateColor = '#4CAF50';
-              } else if (state === 'paused') {
+              } else if (st === 'paused') {
                 stateText = 'Paused';
                 stateColor = '#ff9800';
-              } else if (state === 'idle') {
+              } else if (st === 'idle') {
                 stateText = 'Idle';
               } else {
-                stateText = state.charAt(0).toUpperCase() + state.slice(1);
+                stateText = st.charAt(0).toUpperCase() + st.slice(1);
               }
             } else if (domain === 'climate' || domain === 'fan') {
-              if (state === 'off') {
+              if (st === 'off') {
                 stateText = 'Off';
               } else {
-                const temp = entityState.attributes.current_temperature;
+                const temp = entState.attributes.current_temperature;
                 if (temp) {
-                  stateText = state.charAt(0).toUpperCase() + state.slice(1) + ' - ' + temp + '°C';
+                  stateText = st.charAt(0).toUpperCase() + st.slice(1) + ' - ' + temp + '°C';
                 } else {
-                  stateText = state.charAt(0).toUpperCase() + state.slice(1);
+                  stateText = st.charAt(0).toUpperCase() + st.slice(1);
                 }
                 stateColor = '#4CAF50';
               }
             } else if (domain === 'binary_sensor') {
-              if (state === 'on') {
+              if (st === 'on') {
                 stateText = 'Detected';
                 stateColor = '#4CAF50';
               } else {
-                const lastChanged = new Date(entityState.last_changed);
+                const lastChanged = new Date(entState.last_changed);
                 const now = new Date();
                 const diffMs = now - lastChanged;
                 const diffMins = Math.floor(diffMs / 60000);
@@ -939,10 +939,10 @@ button_card_templates:
                 }
               }
             } else if (domain === 'sensor') {
-              const unit = entityState.attributes.unit_of_measurement || '';
-              stateText = state + (unit ? ' ' + unit : '');
+              const unit = entState.attributes.unit_of_measurement || '';
+              stateText = st + (unit ? ' ' + unit : '');
             } else {
-              stateText = state.charAt(0).toUpperCase() + state.slice(1);
+              stateText = st.charAt(0).toUpperCase() + st.slice(1);
             }
           }
 
@@ -965,14 +965,14 @@ button_card_templates:
       item_control: |
         [[[
           const showToggle = variables.show_toggle;
-          const entity = variables.item_entity;
+          const itemEntity = variables.item_entity;
 
-          if (!showToggle || !entity) return '';
+          if (!showToggle || !itemEntity) return '';
 
-          const domain = entity.split('.')[0];
+          const domain = itemEntity.split('.')[0];
           if (domain !== 'light' && domain !== 'switch' && domain !== 'fan') return '';
 
-          const isOn = states[entity]?.state === 'on';
+          const isOn = states[itemEntity]?.state === 'on';
 
           return `<div style="
             width: 52px;
@@ -1047,7 +1047,7 @@ button_card_templates:
     custom_fields:
       sensor_icon: |
         [[[
-          const icon = variables.sensor_icon || 'mdi:eye';
+          const sensorIcon = variables.sensor_icon || 'mdi:eye';
           return `<div style="
             width: 56px;
             height: 56px;
@@ -1057,7 +1057,7 @@ button_card_templates:
             align-items: center;
             justify-content: center;
           ">
-            <ha-icon icon="${icon}" style="
+            <ha-icon icon="${sensorIcon}" style="
               --mdc-icon-size: 28px;
               color: #8a8178;
             "></ha-icon>
@@ -1066,14 +1066,14 @@ button_card_templates:
       sensor_info: |
         [[[
           const sensorName = variables.sensor_name || 'Sensor';
-          const secondaryEntity = variables.sensor_secondary_entity;
+          const secEntity = variables.sensor_secondary_entity;
 
           let secondaryText = '';
 
-          if (secondaryEntity && states[secondaryEntity]) {
-            const state = states[secondaryEntity].state;
-            const unit = states[secondaryEntity].attributes.unit_of_measurement || '';
-            secondaryText = state + (unit ? ' ' + unit : '');
+          if (secEntity && states[secEntity]) {
+            const st = states[secEntity].state;
+            const unit = states[secEntity].attributes.unit_of_measurement || '';
+            secondaryText = st + (unit ? ' ' + unit : '');
           }
 
           return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -1094,19 +1094,19 @@ button_card_templates:
         ]]]
       sensor_value: |
         [[[
-          const entity = variables.sensor_entity;
+          const sensorEntity = variables.sensor_entity;
 
-          if (!entity || !states[entity]) return '';
+          if (!sensorEntity || !states[sensorEntity]) return '';
 
-          const state = states[entity].state;
-          const unit = states[entity].attributes.unit_of_measurement || '';
+          const st = states[sensorEntity].state;
+          const unit = states[sensorEntity].attributes.unit_of_measurement || '';
 
           return `<span style="
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 18px;
             font-weight: 600;
             color: var(--primary-text-color);
-          ">${state}${unit ? ' ' + unit : ''}</span>`;
+          ">${st}${unit ? ' ' + unit : ''}</span>`;
         ]]]
     tap_action:
       action: more-info
