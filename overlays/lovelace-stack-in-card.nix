@@ -1,22 +1,22 @@
 {
   lib,
   stdenv,
-  fetchFromGitHub,
+  fetchurl,
 }:
 stdenv.mkDerivation rec {
   pname = "lovelace-stack-in-card";
   version = "0.2.0";
 
-  src = fetchFromGitHub {
-    owner = "custom-cards";
-    repo = "stack-in-card";
-    rev = version;
-    hash = "sha256-EVv1C6AcrYeMS5lYDRodkl3CTRpbg3szi1uhDc3boZ4=";
+  src = fetchurl {
+    url = "https://github.com/custom-cards/stack-in-card/releases/download/${version}/stack-in-card.js";
+    hash = "sha256-PrPIkJByd8XknwlR//eHr3APBMMxW+TA162Ujk7wEb0=";
   };
+
+  dontUnpack = true;
 
   installPhase = ''
     mkdir $out
-    cp -v dist/stack-in-card.js $out/
+    cp -v $src $out/stack-in-card.js
   '';
 
   meta = with lib; {
