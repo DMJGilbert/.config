@@ -45,4 +45,4 @@ button_card_templates:
 
 # ==================== VIEWS ====================
 views:
-  - !include views/home.yaml
+  - !include /var/lib/hass/views/home.yaml

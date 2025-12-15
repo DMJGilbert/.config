@@ -160,13 +160,13 @@ cards:
                   - color: var(--secondary-text-color)
                   - text-align: left
             custom_fields:
-              weather: !include ../templates/weather_info.yaml
-              calendar: !include ../templates/calendar_info.yaml
-              liverpool: !include ../templates/liverpool_info.yaml
+              weather: !include /var/lib/hass/templates/weather_info.yaml
+              calendar: !include /var/lib/hass/templates/calendar_info.yaml
+              liverpool: !include /var/lib/hass/templates/liverpool_info.yaml
             tap_action:
               action: none
 
       # -------------------- Popups --------------------
-      - !include ../popups/lights.yaml
-      - !include ../popups/media.yaml
-      - !include ../popups/motion.yaml
+      - !include /var/lib/hass/popups/lights.yaml
+      - !include /var/lib/hass/popups/media.yaml
+      - !include /var/lib/hass/popups/motion.yaml
