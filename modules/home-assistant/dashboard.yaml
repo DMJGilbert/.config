@@ -8,7 +8,7 @@ views:
     layout:
       max_width: 500
     cards:
-      # Header - Title
+      # Header - Title with underline
       - type: custom:button-card
         name: Fleming Place
         styles:
@@ -16,428 +16,486 @@ views:
             - background: none
             - border: none
             - box-shadow: none
-            - padding: 16px 16px 8px 16px
+            - padding: 16px 16px 0 16px
           name:
             - font-size: 28px
             - font-weight: 400
             - color: "#FC691C"
             - justify-self: start
+            - padding-bottom: 12px
+            - border-bottom: 3px solid #FC691C
+            - width: 100%
 
-      # Hero Image
-      - type: picture
+      # Hero Image with overlaid status chips
+      - type: picture-elements
         image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=780&h=360&fit=crop
         card_mod:
           style: |
             ha-card {
               border-radius: 16px;
-              margin: 0 16px;
+              margin: 8px 16px;
               overflow: hidden;
             }
-
-      # Status chips row
-      - type: custom:mushroom-chips-card
-        card_mod:
-          style: |
-            ha-card {
-              --chip-background: rgba(0,0,0,0.05);
-              padding: 0 16px;
-            }
-        chips:
-          - type: template
-            entity: sensor.total_turned_on_lights_count_template
-            icon: mdi:lightbulb
-            icon_color: orange
-            content: "{{ states('sensor.total_turned_on_lights_count_template') }} lights"
-          - type: template
-            icon: mdi:thermometer
-            content: "{{ state_attr('weather.forecast_home', 'temperature') }}°C"
-          - type: weather
-            entity: weather.forecast_home
-            show_temperature: false
-            show_conditions: true
-
-      # Status Info Section
-      - type: vertical-stack
-        cards:
-          - type: custom:mushroom-template-card
-            entity: calendar.family
-            icon: mdi:calendar
-            icon_color: gray
-            primary: "{{ state_attr('calendar.family', 'message') or 'No upcoming events' }}"
-            secondary: "{{ state_attr('calendar.family', 'start_time') }}"
+        elements:
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                entity: sensor.total_turned_on_lights_count_template
+                icon: mdi:lightbulb
+                content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
+              - type: template
+                icon: mdi:video
+                content: |
+                  [[[
+                    const tvs = ['media_player.living_room_tv', 'media_player.apple_tv'];
+                    return tvs.filter(e => ['on', 'playing'].includes(hass.states[e]?.state)).length;
+                  ]]]
+              - type: template
+                icon: mdi:motion-sensor
+                content: |
+                  [[[
+                    const sensors = [
+                      'binary_sensor.living_room_motion_sensor_occupancy',
+                      'binary_sensor.bedroom_motion_sensor_occupancy',
+                      'binary_sensor.hallway_motion_sensor_occupancy'
+                    ];
+                    return sensors.filter(e => hass.states[e]?.state === 'on').length;
+                  ]]]
             card_mod:
               style: |
-                ha-card { background: none; box-shadow: none; }
-          - type: conditional
-            conditions:
-              - condition: state
-                entity: sensor.liverpool
-                state_not: NOT_FOUND
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  --chip-background: rgba(255,255,255,0.95);
+                  --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                  --chip-border-radius: 20px;
+                  --chip-padding: 0 10px;
+                  --chip-height: 32px;
+                }
+            style:
+              bottom: 8%
+              left: 50%
+              transform: translateX(-50%)
+              width: 90%
+
+      # Info Section - Weather, Calendar, Football
+      - type: custom:button-card
+        styles:
+          card:
+            - background: none
+            - border: none
+            - box-shadow: none
+            - padding: 4px 16px 8px 16px
+          grid:
+            - grid-template-areas: '"info"'
+          custom_fields:
+            info:
+              - text-align: left
+        custom_fields:
+          info: |
+            [[[
+              const weather = hass.states['weather.forecast_home'];
+              const temp = weather?.attributes?.temperature || '--';
+              const condition = weather?.state?.replace(/_/g, ' ') || 'unknown';
+              const humidity = weather?.attributes?.humidity || '--';
+
+              let html = '<div style="font-size:13px;color:#6B7280;line-height:1.8;">';
+              html += '<div>🌡️ <strong>' + condition.charAt(0).toUpperCase() + condition.slice(1) + '</strong> (' + humidity + '% humidity, ' + temp + ' C)</div>';
+
+              const cal = hass.states['calendar.family'];
+              if (cal?.attributes?.message) {
+                const start = cal.attributes.start_time;
+                let timeStr = '';
+                if (start) {
+                  const d = new Date(start);
+                  const days = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+                  if (days === 0) timeStr = 'Today';
+                  else if (days === 1) timeStr = 'Tomorrow';
+                  else timeStr = days + ' days';
+                }
+                html += '<div>📅 <strong>' + cal.attributes.message + ':</strong> ' + timeStr + '</div>';
+              }
+
+              const lfc = hass.states['sensor.liverpool'];
+              if (lfc?.state !== 'NOT_FOUND' && lfc?.attributes?.opponent_long_name) {
+                const matchDate = new Date(lfc.attributes.date);
+                const dayName = matchDate.toLocaleDateString('en-GB', { weekday: 'long' });
+                const time = matchDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                html += '<div>⚽ <strong>' + lfc.attributes.team_name + ' v ' + lfc.attributes.opponent_long_name + ':</strong> ' + dayName + ' ' + time + '</div>';
+              }
+
+              html += '</div>';
+              return html;
+            ]]]
+
+      # Tabbed Section: Rooms / People
+      - type: custom:tabbed-card
+        styles:
+          "--mdc-tab-text-label-color-default": "#9CA3AF"
+          "--mdc-theme-primary": "#FC691C"
+        tabs:
+          # ========== ROOMS TAB ==========
+          - attributes:
+              label: Rooms
             card:
-              type: custom:mushroom-template-card
-              entity: sensor.liverpool
-              icon: mdi:soccer
-              icon_color: red
-              primary: "{{ state_attr('sensor.liverpool', 'team_name') }} v {{ state_attr('sensor.liverpool', 'opponent_long_name') }}"
-              secondary: "{{ as_timestamp(state_attr('sensor.liverpool', 'date')) | timestamp_custom('%A %H:%M') }}"
-              card_mod:
-                style: |
-                  ha-card { background: none; box-shadow: none; }
+              type: vertical-stack
+              cards:
+                # Living Room
+                - type: custom:button-card
+                  entity: group.living_room_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/living-room
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      img:
+                        - border-radius: 8px
+                        - width: 56px
+                        - height: 56px
+                        - object-fit: cover
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                        - gap: 2px
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const motion = hass.states['binary_sensor.living_room_motion_sensor_occupancy'];
+                        let secondary = 'Clear';
+                        if (motion?.state === 'on') {
+                          secondary = 'Motion detected';
+                        } else if (motion?.last_changed) {
+                          const ago = Math.floor((Date.now() - new Date(motion.last_changed)) / 1000);
+                          if (ago < 60) secondary = 'Clear - ' + ago + ' seconds ago';
+                          else if (ago < 3600) secondary = 'Clear - ' + Math.floor(ago/60) + ' min ago';
+                        }
+                        return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Living Room</div>' +
+                               '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const lightEntities = entity.attributes.entity_id || [];
+                        const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                        let badgeHtml = "";
+                        if (lightsOn > 0) badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                        const tvState = hass.states["media_player.living_room_tv"];
+                        if (tvState?.state === "playing" || tvState?.state === "on") {
+                          badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">1 Media</div>";
+                        }
+                        return badgeHtml || "<div style=\"font-size:12px;color:#9CA3AF;\">All off</div>";
+                      ]]]
 
-      # Section: Rooms
-      - type: custom:button-card
-        name: Rooms
-        styles:
-          card:
-            - background: none
-            - border: none
-            - box-shadow: none
-            - padding: 16px 16px 8px 16px
-          name:
-            - font-size: 18px
-            - font-weight: 600
-            - color: "#1A1A1A"
-            - justify-self: start
+                # Bedroom
+                - type: custom:button-card
+                  entity: group.bedroom_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/bedroom
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      img:
+                        - border-radius: 8px
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const motion = hass.states['binary_sensor.bedroom_motion_sensor_occupancy'];
+                        let secondary = 'Clear';
+                        if (motion?.state === 'on') {
+                          secondary = 'Motion detected';
+                        } else if (motion?.last_changed) {
+                          const ago = Math.floor((Date.now() - new Date(motion.last_changed)) / 1000);
+                          if (ago < 60) secondary = 'Clear - ' + ago + ' seconds ago';
+                          else if (ago < 3600) secondary = 'Clear - ' + Math.floor(ago/60) + ' min ago';
+                        }
+                        return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Bedroom</div>' +
+                               '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const lightEntities = entity.attributes.entity_id || [];
+                        const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                        let badgeHtml = "";
+                        if (lightsOn > 0) badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                        const atvState = hass.states["media_player.apple_tv"];
+                        if (atvState?.state === "playing") {
+                          badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">1 Media</div>";
+                        }
+                        return badgeHtml || "<div style=\"font-size:12px;color:#9CA3AF;\">All off</div>";
+                      ]]]
 
-      - type: vertical-stack
-        cards:
-          # Living Room
-          - type: custom:button-card
-            entity: group.living_room_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/living-room
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                img:
-                  - border-radius: 50%
-                  - width: 48px
-                  - height: 48px
-                  - object-fit: cover
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-                  - gap: 2px
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === 'on').length;
-                  const motion = hass.states['binary_sensor.living_room_motion_sensor_occupancy'];
-                  let secondary = 'Clear';
-                  if (motion?.state === 'on') {
-                    secondary = 'Motion detected';
-                  } else if (motion?.last_changed) {
-                    const ago = Math.floor((Date.now() - new Date(motion.last_changed)) / 60000);
-                    if (ago < 60) secondary = 'Clear - ' + ago + ' min ago';
-                  }
-                  return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Living Room</div>' +
-                         '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const lightEntities = entity.attributes.entity_id || [];
-                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
-                  let badgeHtml = "";
-                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
-                  const tvState = hass.states["media_player.living_room_tv"];
-                  if (tvState?.state === "playing" || tvState?.state === "on") {
-                    badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
-                  }
-                  return badgeHtml || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
-                ]]]
+                # Bathroom
+                - type: custom:button-card
+                  entity: group.bathroom_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/bathroom
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const temp = hass.states['sensor.bathroom_sensor_temperature']?.state;
+                        const humidity = hass.states['sensor.bathroom_sensor_humidity']?.state;
+                        let secondary = "";
+                        if (temp && temp !== "unavailable") secondary += Math.round(temp) + "°";
+                        if (humidity && humidity !== "unavailable") secondary += " · " + Math.round(humidity) + "% humidity";
+                        return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Bathroom</div>' +
+                               '<div style="font-size:13px;color:#6B7280;">' + (secondary || 'All off') + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const lightEntities = entity.attributes.entity_id || [];
+                        const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                        if (lightsOn > 0) return "<div style=\"font-size:12px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                        return "";
+                      ]]]
 
-          # Bedroom
-          - type: custom:button-card
-            entity: group.bedroom_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/bedroom
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                img:
-                  - border-radius: 50%
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const motion = hass.states['binary_sensor.bedroom_motion_sensor_occupancy'];
-                  let secondary = 'Clear';
-                  if (motion?.state === 'on') {
-                    secondary = 'Motion detected';
-                  } else if (motion?.last_changed) {
-                    const ago = Math.floor((Date.now() - new Date(motion.last_changed)) / 60000);
-                    if (ago < 60) secondary = 'Clear - ' + ago + ' min ago';
-                  }
-                  return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Bedroom</div>' +
-                         '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const lightEntities = entity.attributes.entity_id || [];
-                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
-                  let badgeHtml = "";
-                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
-                  const atvState = hass.states["media_player.apple_tv"];
-                  if (atvState?.state === "playing") {
-                    badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
-                  }
-                  return badgeHtml || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
-                ]]]
+                # Kitchen
+                - type: custom:button-card
+                  entity: group.kitchen_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/kitchen
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const entities = entity.attributes.entity_id || [];
+                        const on = entities.filter(e => hass.states[e]?.state === 'on').length;
+                        return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Kitchen</div>' +
+                               '<div style="font-size:13px;color:#6B7280;">' + (on > 0 ? on + ' lights on' : 'All off') + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const lightEntities = entity.attributes.entity_id || [];
+                        const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                        if (lightsOn > 0) return "<div style=\"font-size:12px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                        return "";
+                      ]]]
 
-          # Bathroom
-          - type: custom:button-card
-            entity: group.bathroom_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/bathroom
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const temp = hass.states['sensor.bathroom_sensor_temperature']?.state;
-                  const humidity = hass.states['sensor.bathroom_sensor_humidity']?.state;
-                  let secondary = "";
-                  if (temp && temp !== "unavailable") secondary += Math.round(temp) + "°";
-                  if (humidity && humidity !== "unavailable") secondary += " · " + Math.round(humidity) + "% humidity";
-                  return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Bathroom</div>' +
-                         '<div style="font-size:13px;color:#6B7280;">' + (secondary || 'All off') + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const lightEntities = entity.attributes.entity_id || [];
-                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
-                  if (lightsOn > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
-                  return "";
-                ]]]
+                # Hallway
+                - type: custom:button-card
+                  entity: group.hallway_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/hallway
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const temp = hass.states['sensor.hallway_sensor_temperature']?.state;
+                        const motion = hass.states['binary_sensor.hallway_motion_sensor_occupancy'];
+                        let secondary = "";
+                        if (temp && temp !== "unavailable") secondary += Math.round(temp) + "°";
+                        if (motion?.state === "on") {
+                          secondary += " · Motion";
+                        }
+                        return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Hallway</div>' +
+                               '<div style="font-size:13px;color:#6B7280;">' + (secondary || 'All off') + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const entities = entity.attributes.entity_id || [];
+                        const on = entities.filter(e => hass.states[e]?.state === "on").length;
+                        if (on > 0) return "<div style=\"font-size:12px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
+                        return "";
+                      ]]]
 
-          # Kitchen
-          - type: custom:button-card
-            entity: group.kitchen_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/kitchen
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === 'on').length;
-                  return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Kitchen</div>' +
-                         '<div style="font-size:13px;color:#6B7280;">' + (on > 0 ? on + ' lights on' : 'All off') + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const lightEntities = entity.attributes.entity_id || [];
-                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
-                  if (lightsOn > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
-                  return "";
-                ]]]
+                # Robynne's Room
+                - type: custom:button-card
+                  entity: group.robynne_lights
+                  tap_action:
+                    action: navigate
+                    navigation_path: /lovelace-home/robynne
+                  styles:
+                    card:
+                      - background: white
+                      - border-radius: 16px
+                      - box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+                      - padding: 12px 16px
+                      - margin: 4px 0
+                    grid:
+                      - grid-template-areas: '"img info badges"'
+                      - grid-template-columns: 56px 1fr auto
+                      - gap: 12px
+                    custom_fields:
+                      info:
+                        - display: flex
+                        - flex-direction: column
+                        - justify-content: center
+                        - align-items: start
+                      badges:
+                        - display: flex
+                        - flex-direction: column
+                        - align-items: end
+                        - justify-content: center
+                  custom_fields:
+                    img: '<img src="https://images.unsplash.com/photo-1617104678098-de229db51175?w=112&h=112&fit=crop" style="border-radius:8px;width:56px;height:56px;object-fit:cover;">'
+                    info: |
+                      [[[
+                        const yoto = hass.states['media_player.yoto_player'];
+                        let secondary = 'All off';
+                        if (yoto?.state === 'playing') secondary = 'Yoto playing';
+                        return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">Robynne's Room</div>" +
+                               '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
+                      ]]]
+                    badges: |
+                      [[[
+                        const lightEntities = entity.attributes.entity_id || [];
+                        const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                        let badgeHtml = "";
+                        if (lightsOn > 0) badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                        const yotoState = hass.states["media_player.yoto_player"];
+                        if (yotoState?.state === "playing") badgeHtml += "<div style=\"font-size:12px;color:#6B7280;\">1 Media</div>";
+                        return badgeHtml;
+                      ]]]
 
-          # Hallway
-          - type: custom:button-card
-            entity: group.hallway_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/hallway
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const temp = hass.states['sensor.hallway_sensor_temperature']?.state;
-                  const motion = hass.states['binary_sensor.hallway_motion_sensor_occupancy'];
-                  let secondary = "";
-                  if (temp && temp !== "unavailable") secondary += Math.round(temp) + "°";
-                  if (motion?.state === "on") {
-                    secondary += " · Motion";
-                  }
-                  return '<div style="font-size:16px;font-weight:500;color:#1A1A1A;">Hallway</div>' +
-                         '<div style="font-size:13px;color:#6B7280;">' + (secondary || 'All off') + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  if (on > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
-                  return "";
-                ]]]
+          # ========== PEOPLE TAB ==========
+          - attributes:
+              label: Peoples
+            card:
+              type: vertical-stack
+              cards:
+                - type: custom:mushroom-person-card
+                  entity: person.darren_gilbert
+                  card_mod:
+                    style: |
+                      ha-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 4px 0; }
+                - type: custom:mushroom-person-card
+                  entity: person.lorraine
+                  card_mod:
+                    style: |
+                      ha-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 4px 0; }
 
-          # Robynne's Room
-          - type: custom:button-card
-            entity: group.robynne_lights
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace-home/robynne
-            styles:
-              card:
-                - background: none
-                - border: none
-                - box-shadow: none
-                - padding: 12px 16px
-              grid:
-                - grid-template-areas: '"img info badges"'
-                - grid-template-columns: 48px 1fr auto
-                - gap: 12px
-              custom_fields:
-                info:
-                  - display: flex
-                  - flex-direction: column
-                  - justify-content: center
-                  - align-items: start
-                badges:
-                  - display: flex
-                  - flex-direction: column
-                  - align-items: end
-                  - justify-content: center
-            custom_fields:
-              img: '<img src="https://images.unsplash.com/photo-1617104678098-de229db51175?w=96&h=96&fit=crop" style="border-radius:50%;width:48px;height:48px;object-fit:cover;">'
-              info: |
-                [[[
-                  const yoto = hass.states['media_player.yoto_player'];
-                  let secondary = 'All off';
-                  if (yoto?.state === 'playing') secondary = 'Yoto playing';
-                  return "<div style=\"font-size:16px;font-weight:500;color:#1A1A1A;\">Robynne's Room</div>" +
-                         '<div style="font-size:13px;color:#6B7280;">' + secondary + '</div>';
-                ]]]
-              badges: |
-                [[[
-                  const lightEntities = entity.attributes.entity_id || [];
-                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
-                  let badgeHtml = "";
-                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
-                  const yotoState = hass.states["media_player.yoto_player"];
-                  if (yotoState?.state === "playing") badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
-                  return badgeHtml;
-                ]]]
+          # ========== CALENDAR TAB ==========
+          - attributes:
+              label: Calendar
+            card:
+              type: vertical-stack
+              cards:
+                - type: custom:atomic-calendar-revive
+                  entities:
+                    - entity: calendar.family
+                  card_mod:
+                    style: |
+                      ha-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 4px 0; }
 
-      # Section: People
-      - type: custom:button-card
-        name: People
-        styles:
-          card:
-            - background: none
-            - border: none
-            - box-shadow: none
-            - padding: 16px 16px 8px 16px
-          name:
-            - font-size: 18px
-            - font-weight: 600
-            - color: "#1A1A1A"
-            - justify-self: start
-
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: custom:mushroom-person-card
-            entity: person.darren_gilbert
-            card_mod:
-              style: |
-                ha-card { border: 1px solid #E5E5E5; border-radius: 16px; }
-          - type: custom:mushroom-person-card
-            entity: person.lorraine
-            card_mod:
-              style: |
-                ha-card { border: 1px solid #E5E5E5; border-radius: 16px; }
+          # ========== OTHER TAB ==========
+          - attributes:
+              label: Other
+            card:
+              type: vertical-stack
+              cards:
+                - type: custom:mushroom-entity-card
+                  entity: sensor.liverpool
+                  name: Liverpool FC
+                  card_mod:
+                    style: |
+                      ha-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 4px 0; }
 
       # Section: Quick Links
       - type: custom:button-card
