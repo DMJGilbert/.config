@@ -92,8 +92,9 @@ button_card_templates:
         }
     styles:
       card:
-        - padding: 12px 20px 12px 12px
+        - padding: 0 20px 0 0
         - margin-bottom: 12px
+        - height: 80px
       grid:
         - grid-template-areas: '"room_image room_info device_icons"'
         - grid-template-columns: 80px 1fr auto
