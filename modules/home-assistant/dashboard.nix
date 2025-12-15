@@ -207,18 +207,28 @@
               tap_action:
                 action: more-info
 
-          # Room Grid - 3 columns for density
+          # Room Grid - 2 columns with detail
           - type: grid
-            columns: 3
-            square: true
+            columns: 2
+            square: false
             cards:
               # Living Room
               - type: custom:mushroom-template-card
                 entity: group.living_room_lights
-                primary: Living
+                primary: Living Room
                 secondary: >
+                  {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
                   {% set temp = states('sensor.dyson_temperature') %}
-                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                  {% set motion = states.binary_sensor.living_room_motion_sensor_occupancy %}
+                  {% set parts = [] %}
+                  {% if on > 0 %}{% set parts = parts + [on ~ ' lights'] %}{% endif %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{% set parts = parts + [temp | round(0) ~ '°'] %}{% endif %}
+                  {% if motion and motion.state == 'on' %}{% set parts = parts + ['Motion'] %}
+                  {% elif motion and motion.last_changed %}{% set ago = ((now() - motion.last_changed).total_seconds() / 60) | int %}
+                    {% if ago < 60 %}{% set parts = parts + [ago ~ 'm ago'] %}{% endif %}
+                  {% endif %}
+                  {{ parts | join(' · ') }}
                 icon: mdi:sofa
                 icon_color: >
                   {% set entities = state_attr('group.living_room_lights', 'entity_id') | default([]) %}
@@ -228,10 +238,12 @@
                   navigation_path: /lovelace-home/living-room
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
                 badge_icon: >
-                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}mdi:television{% endif %}
-                badge_color: green
+                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}mdi:television
+                  {% elif is_state('binary_sensor.living_room_motion_sensor_occupancy', 'on') %}mdi:motion-sensor{% endif %}
+                badge_color: >
+                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on') %}green{% else %}blue{% endif %}
 
               # Bedroom
               - type: custom:mushroom-template-card
@@ -240,7 +252,14 @@
                 secondary: >
                   {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
                   {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}{{ on }} on{% endif %}
+                  {% set motion = states.binary_sensor.bedroom_motion_sensor_occupancy %}
+                  {% set parts = [] %}
+                  {% if on > 0 %}{% set parts = parts + [on ~ ' lights'] %}{% endif %}
+                  {% if motion and motion.state == 'on' %}{% set parts = parts + ['Motion'] %}
+                  {% elif motion and motion.last_changed %}{% set ago = ((now() - motion.last_changed).total_seconds() / 60) | int %}
+                    {% if ago < 60 %}{% set parts = parts + [ago ~ 'm ago'] %}{% endif %}
+                  {% endif %}
+                  {{ parts | join(' · ') }}
                 icon: mdi:bed
                 icon_color: >
                   {% set entities = state_attr('group.bedroom_lights', 'entity_id') | default([]) %}
@@ -250,15 +269,27 @@
                   navigation_path: /lovelace-home/bedroom
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
+                badge_icon: >
+                  {% if is_state('binary_sensor.bedroom_motion_sensor_occupancy', 'on') %}mdi:motion-sensor{% endif %}
+                badge_color: blue
 
               # Bathroom
               - type: custom:mushroom-template-card
                 entity: group.bathroom_lights
-                primary: Bath
+                primary: Bathroom
                 secondary: >
+                  {% set entities = state_attr('group.bathroom_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
                   {% set temp = states('sensor.bathroom_sensor_temperature') %}
-                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                  {% set humidity = states('sensor.bathroom_sensor_humidity') %}
+                  {% set motion = states.binary_sensor.motion_sensor_motion %}
+                  {% set parts = [] %}
+                  {% if on > 0 %}{% set parts = parts + [on ~ ' lights'] %}{% endif %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{% set parts = parts + [temp | round(0) ~ '°'] %}{% endif %}
+                  {% if humidity not in ['unavailable', 'unknown'] %}{% set parts = parts + [humidity | round(0) ~ '%'] %}{% endif %}
+                  {% if motion and motion.state == 'on' %}{% set parts = parts + ['Motion'] %}{% endif %}
+                  {{ parts | join(' · ') }}
                 icon: mdi:shower
                 icon_color: >
                   {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}blue
@@ -269,7 +300,10 @@
                   navigation_path: /lovelace-home/bathroom
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
+                badge_icon: >
+                  {% if is_state('binary_sensor.motion_sensor_motion', 'on') %}mdi:motion-sensor{% endif %}
+                badge_color: blue
 
               # Kitchen
               - type: custom:mushroom-template-card
@@ -278,7 +312,7 @@
                 secondary: >
                   {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
                   {% set on = entities | select('is_state', 'on') | list | count %}
-                  {% if on > 0 %}{{ on }} on{% endif %}
+                  {% if on > 0 %}{{ on }} lights{% else %}All off{% endif %}
                 icon: mdi:silverware-fork-knife
                 icon_color: >
                   {% set entities = state_attr('group.kitchen_lights', 'entity_id') | default([]) %}
@@ -288,15 +322,25 @@
                   navigation_path: /lovelace-home/kitchen
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
 
               # Hallway
               - type: custom:mushroom-template-card
                 entity: group.hallway_lights
                 primary: Hallway
                 secondary: >
+                  {% set entities = state_attr('group.hallway_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
                   {% set temp = states('sensor.hallway_sensor_temperature') %}
-                  {% if temp not in ['unavailable', 'unknown'] %}{{ temp | round(0) }}°{% endif %}
+                  {% set motion = states.binary_sensor.hallway_motion_sensor_occupancy %}
+                  {% set parts = [] %}
+                  {% if on > 0 %}{% set parts = parts + [on ~ ' lights'] %}{% endif %}
+                  {% if temp not in ['unavailable', 'unknown'] %}{% set parts = parts + [temp | round(0) ~ '°'] %}{% endif %}
+                  {% if motion and motion.state == 'on' %}{% set parts = parts + ['Motion'] %}
+                  {% elif motion and motion.last_changed %}{% set ago = ((now() - motion.last_changed).total_seconds() / 60) | int %}
+                    {% if ago < 60 %}{% set parts = parts + [ago ~ 'm ago'] %}{% endif %}
+                  {% endif %}
+                  {{ parts | join(' · ') }}
                 icon: mdi:door
                 icon_color: >
                   {% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}blue
@@ -307,14 +351,22 @@
                   navigation_path: /lovelace-home/hallway
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
+                badge_icon: >
+                  {% if is_state('binary_sensor.hallway_motion_sensor_occupancy', 'on') %}mdi:motion-sensor{% endif %}
+                badge_color: blue
 
               # Robynne's Room
               - type: custom:mushroom-template-card
                 entity: group.robynne_lights
-                primary: Robynne
+                primary: Robynne's Room
                 secondary: >
-                  {% if is_state('media_player.yoto_player', 'playing') %}Playing{% endif %}
+                  {% set entities = state_attr('group.robynne_lights', 'entity_id') | default([]) %}
+                  {% set on = entities | select('is_state', 'on') | list | count %}
+                  {% set parts = [] %}
+                  {% if on > 0 %}{% set parts = parts + [on ~ ' lights'] %}{% endif %}
+                  {% if is_state('media_player.yoto_player', 'playing') %}{% set parts = parts + ['Yoto playing'] %}{% endif %}
+                  {{ parts | join(' · ') if parts else 'All off' }}
                 icon: mdi:teddy-bear
                 icon_color: >
                   {% if is_state('media_player.yoto_player', 'playing') %}green{% else %}pink{% endif %}
@@ -323,10 +375,76 @@
                   navigation_path: /lovelace-home/robynne
                 hold_action:
                   action: toggle
-                layout: vertical
+                layout: horizontal
                 badge_icon: >
                   {% if is_state('media_player.yoto_player', 'playing') %}mdi:music{% endif %}
                 badge_color: green
+
+          # Room quick controls
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                icon: mdi:lightbulb-group
+                icon_color: "{% if states('sensor.total_turned_on_lights_count_template') | int > 0 %}amber{% else %}disabled{% endif %}"
+                content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
+                tap_action:
+                  action: call-service
+                  service: light.turn_off
+                  target:
+                    entity_id: all
+                  confirmation:
+                    text: Turn off all lights?
+                hold_action:
+                  action: call-service
+                  service: light.turn_on
+                  target:
+                    entity_id: all
+                  data:
+                    brightness: 255
+              - type: template
+                icon: mdi:thermometer
+                icon_color: cyan
+                content: >
+                  {% set temps = [
+                    states('sensor.hallway_sensor_temperature'),
+                    states('sensor.bathroom_sensor_temperature'),
+                    states('sensor.dyson_temperature')
+                  ] | reject('in', ['unavailable', 'unknown']) | map('float') | list %}
+                  {% if temps %}{{ (temps | sum / temps | length) | round(0) }}°{% else %}--{% endif %}
+              - type: template
+                icon: mdi:motion-sensor
+                icon_color: >
+                  {% set motion_sensors = [
+                    'binary_sensor.living_room_motion_sensor_occupancy',
+                    'binary_sensor.bedroom_motion_sensor_occupancy',
+                    'binary_sensor.hallway_motion_sensor_occupancy',
+                    'binary_sensor.motion_sensor_motion'
+                  ] %}
+                  {% set active = motion_sensors | select('is_state', 'on') | list | count %}
+                  {% if active > 0 %}blue{% else %}disabled{% endif %}
+                content: >
+                  {% set motion_sensors = [
+                    'binary_sensor.living_room_motion_sensor_occupancy',
+                    'binary_sensor.bedroom_motion_sensor_occupancy',
+                    'binary_sensor.hallway_motion_sensor_occupancy',
+                    'binary_sensor.motion_sensor_motion'
+                  ] %}
+                  {{ motion_sensors | select('is_state', 'on') | list | count }}
+              - type: template
+                icon: mdi:television
+                icon_color: >
+                  {% if is_state('media_player.living_room_tv', 'playing') or is_state('media_player.living_room_tv', 'on')
+                     or is_state('media_player.apple_tv', 'playing') %}green{% else %}disabled{% endif %}
+                tap_action:
+                  action: more-info
+                  entity: media_player.living_room_tv
+              - type: template
+                entity: fan.dyson
+                icon: mdi:fan
+                icon_color: "{% if is_state('fan.dyson', 'on') %}blue{% else %}disabled{% endif %}"
+                tap_action:
+                  action: more-info
+            alignment: center
 
           # Active Media - only if playing
           - type: conditional
@@ -1238,12 +1356,17 @@
                 content: "{{ states('sensor.devices') }}"
             alignment: center
 
-          # Low Battery Section - auto-entities
+          # Low Battery Section
+          - type: custom:mushroom-title-card
+            title: Low Battery
+            subtitle: Below 30%
+
           - type: custom:auto-entities
             card:
-              type: custom:mushroom-chips-card
-              alignment: center
-            card_param: chips
+              type: entities
+              card_mod:
+                style: |
+                  ha-card { background: none; box-shadow: none; }
             filter:
               include:
                 - entity_id: "sensor.*battery*"
@@ -1251,15 +1374,11 @@
                   not:
                     state: unavailable
                   options:
-                    type: template
-                    entity: this.entity_id
-                    icon: mdi:battery-low
+                    type: custom:mushroom-entity-card
                     icon_color: >
                       {% set batt = states(config.entity) | float(0) %}
                       {% if batt < 10 %}red{% elif batt < 20 %}orange{% else %}amber{% endif %}
-                    content: "{{ states(config.entity) | round(0) }}%"
-                    tap_action:
-                      action: more-info
+                    layout: horizontal
               exclude:
                 - state: unavailable
                 - state: unknown
@@ -1268,32 +1387,45 @@
               numeric: true
             show_empty: false
 
-          # Unavailable Devices - auto-entities
+          # Unavailable Devices
+          - type: custom:mushroom-title-card
+            title: Unavailable
+            subtitle: Offline devices
+
           - type: custom:auto-entities
             card:
-              type: custom:mushroom-chips-card
-              alignment: center
-            card_param: chips
+              type: entities
+              card_mod:
+                style: |
+                  ha-card { background: none; box-shadow: none; }
             filter:
               include:
                 - state: unavailable
                   domain: light
                   options:
-                    type: template
-                    entity: this.entity_id
-                    icon: mdi:alert-circle
+                    type: custom:mushroom-entity-card
                     icon_color: red
-                    tap_action:
-                      action: more-info
+                    layout: horizontal
                 - state: unavailable
                   domain: switch
                   options:
-                    type: template
-                    entity: this.entity_id
-                    icon: mdi:alert-circle
+                    type: custom:mushroom-entity-card
                     icon_color: red
-                    tap_action:
-                      action: more-info
+                    layout: horizontal
+                - state: unavailable
+                  domain: binary_sensor
+                  entity_id: "*motion*"
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+                    layout: horizontal
+                - state: unavailable
+                  domain: binary_sensor
+                  entity_id: "*door*"
+                  options:
+                    type: custom:mushroom-entity-card
+                    icon_color: red
+                    layout: horizontal
             sort:
               method: friendly_name
             show_empty: false
