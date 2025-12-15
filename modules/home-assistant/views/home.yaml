@@ -242,75 +242,33 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: horizontal-stack
-                card_mod:
-                  style: |
-                    hui-horizontal-stack-card {
-                      display: flex;
-                      justify-content: flex-start;
-                      gap: 8px;
-                      padding: 12px 16px;
-                    }
-                    hui-horizontal-stack-card > * {
-                      flex: 0 0 auto !important;
-                      width: auto !important;
-                      min-width: 0 !important;
-                    }
-                cards:
-                  - type: custom:button-card
-                    name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                        - border-bottom: 2px solid #E85D04
-                        - margin-bottom: -1px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                  - type: custom:button-card
-                    name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
+              - type: custom:button-card
+                template: transparent
+                styles:
+                  card:
+                    - padding: 12px 16px 0 16px
+                  grid:
+                    - grid-template-areas: '"tabs"'
+                    - grid-template-columns: 1fr
+                  custom_fields:
+                    tabs:
+                      - justify-self: start
+                custom_fields:
+                  tabs: |
+                    <div style="display: flex; gap: 24px;">
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-rooms'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Rooms</span>
+                      </div>
+                      <div style="padding: 8px 0; border-bottom: 2px solid #E85D04;">
+                        <span style="color: #E85D04; font-weight: 500; font-size: 15px;">Peoples</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-calendar'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Calendar</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-other'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Other</span>
+                      </div>
+                    </div>
               - type: markdown
                 content: "Peoples content placeholder - person tracking cards will go here"
                 card_mod:
@@ -325,75 +283,33 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: horizontal-stack
-                card_mod:
-                  style: |
-                    hui-horizontal-stack-card {
-                      display: flex;
-                      justify-content: flex-start;
-                      gap: 8px;
-                      padding: 12px 16px;
-                    }
-                    hui-horizontal-stack-card > * {
-                      flex: 0 0 auto !important;
-                      width: auto !important;
-                      min-width: 0 !important;
-                    }
-                cards:
-                  - type: custom:button-card
-                    name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                        - border-bottom: 2px solid #E85D04
-                        - margin-bottom: -1px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
-                  - type: custom:button-card
-                    name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
+              - type: custom:button-card
+                template: transparent
+                styles:
+                  card:
+                    - padding: 12px 16px 0 16px
+                  grid:
+                    - grid-template-areas: '"tabs"'
+                    - grid-template-columns: 1fr
+                  custom_fields:
+                    tabs:
+                      - justify-self: start
+                custom_fields:
+                  tabs: |
+                    <div style="display: flex; gap: 24px;">
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-rooms'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Rooms</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-peoples'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Peoples</span>
+                      </div>
+                      <div style="padding: 8px 0; border-bottom: 2px solid #E85D04;">
+                        <span style="color: #E85D04; font-weight: 500; font-size: 15px;">Calendar</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-other'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Other</span>
+                      </div>
+                    </div>
               - type: markdown
                 content: "Calendar content placeholder - calendar views will go here"
                 card_mod:
@@ -408,75 +324,33 @@ cards:
             type: custom:stack-in-card
             mode: vertical
             cards:
-              - type: horizontal-stack
-                card_mod:
-                  style: |
-                    hui-horizontal-stack-card {
-                      display: flex;
-                      justify-content: flex-start;
-                      gap: 8px;
-                      padding: 12px 16px;
-                    }
-                    hui-horizontal-stack-card > * {
-                      flex: 0 0 auto !important;
-                      width: auto !important;
-                      min-width: 0 !important;
-                    }
-                cards:
-                  - type: custom:button-card
-                    name: Rooms
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-rooms"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Peoples
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-peoples"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Calendar
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-calendar"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 400
-                        - color: var(--secondary-text-color)
-                  - type: custom:button-card
-                    name: Other
-                    tap_action:
-                      action: navigate
-                      navigation_path: "#tab-other"
-                    template: transparent
-                    styles:
-                      card:
-                        - padding: 8px 16px
-                        - border-bottom: 2px solid #E85D04
-                        - margin-bottom: -1px
-                      name:
-                        - font-size: 15px
-                        - font-weight: 500
-                        - color: "#E85D04"
+              - type: custom:button-card
+                template: transparent
+                styles:
+                  card:
+                    - padding: 12px 16px 0 16px
+                  grid:
+                    - grid-template-areas: '"tabs"'
+                    - grid-template-columns: 1fr
+                  custom_fields:
+                    tabs:
+                      - justify-self: start
+                custom_fields:
+                  tabs: |
+                    <div style="display: flex; gap: 24px;">
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-rooms'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Rooms</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-peoples'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Peoples</span>
+                      </div>
+                      <div style="padding: 8px 0; cursor: pointer;" onclick="window.location.hash='#tab-calendar'">
+                        <span style="color: var(--secondary-text-color); font-size: 15px;">Calendar</span>
+                      </div>
+                      <div style="padding: 8px 0; border-bottom: 2px solid #E85D04;">
+                        <span style="color: #E85D04; font-weight: 500; font-size: 15px;">Other</span>
+                      </div>
+                    </div>
               - type: markdown
                 content: "Other content placeholder - miscellaneous controls will go here"
                 card_mod:
