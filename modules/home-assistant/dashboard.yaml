@@ -153,15 +153,15 @@ views:
                 ]]]
               badges: |
                 [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  let html = "";
-                  if (on > 0) html += "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
-                  const tv = hass.states["media_player.living_room_tv"];
-                  if (tv?.state === "playing" || tv?.state === "on") {
-                    html += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
+                  const lightEntities = entity.attributes.entity_id || [];
+                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                  let badgeHtml = "";
+                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                  const tvState = hass.states["media_player.living_room_tv"];
+                  if (tvState?.state === "playing" || tvState?.state === "on") {
+                    badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
                   }
-                  return html || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
+                  return badgeHtml || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
                 ]]]
 
           # Bedroom
@@ -210,15 +210,15 @@ views:
                 ]]]
               badges: |
                 [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  let html = "";
-                  if (on > 0) html += "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
-                  const tv = hass.states["media_player.apple_tv"];
-                  if (tv?.state === "playing") {
-                    html += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
+                  const lightEntities = entity.attributes.entity_id || [];
+                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                  let badgeHtml = "";
+                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                  const atvState = hass.states["media_player.apple_tv"];
+                  if (atvState?.state === "playing") {
+                    badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
                   }
-                  return html || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
+                  return badgeHtml || "<div style=\"font-size:11px;color:#6B7280;\">All off</div>";
                 ]]]
 
           # Bathroom
@@ -262,9 +262,9 @@ views:
                 ]]]
               badges: |
                 [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  if (on > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
+                  const lightEntities = entity.attributes.entity_id || [];
+                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                  if (lightsOn > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
                   return "";
                 ]]]
 
@@ -306,9 +306,9 @@ views:
                 ]]]
               badges: |
                 [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  if (on > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
+                  const lightEntities = entity.attributes.entity_id || [];
+                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                  if (lightsOn > 0) return "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
                   return "";
                 ]]]
 
@@ -400,13 +400,13 @@ views:
                 ]]]
               badges: |
                 [[[
-                  const entities = entity.attributes.entity_id || [];
-                  const on = entities.filter(e => hass.states[e]?.state === "on").length;
-                  let html = "";
-                  if (on > 0) html += "<div style=\"font-size:11px;color:#6B7280;\">" + on + " Light" + (on > 1 ? "s" : "") + "</div>";
-                  const yoto = hass.states["media_player.yoto_player"];
-                  if (yoto?.state === "playing") html += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
-                  return html;
+                  const lightEntities = entity.attributes.entity_id || [];
+                  const lightsOn = lightEntities.filter(e => hass.states[e]?.state === "on").length;
+                  let badgeHtml = "";
+                  if (lightsOn > 0) badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">" + lightsOn + " Light" + (lightsOn > 1 ? "s" : "") + "</div>";
+                  const yotoState = hass.states["media_player.yoto_player"];
+                  if (yotoState?.state === "playing") badgeHtml += "<div style=\"font-size:11px;color:#6B7280;\">1 Media</div>";
+                  return badgeHtml;
                 ]]]
 
       # Section: People
