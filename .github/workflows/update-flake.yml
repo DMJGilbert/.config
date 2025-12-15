@@ -1,0 +1,68 @@
+name: Update Flake Inputs
+
+on:
+  schedule:
+    - cron: "0 6 * * 0" # Weekly on Sunday at 6am UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-flake:
+    name: Update flake.lock
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v16
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+
+      - name: Update flake inputs
+        run: nix flake update
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet flake.lock; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get updated inputs
+        if: steps.changes.outputs.changed == 'true'
+        id: inputs
+        run: |
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          git diff flake.lock | head -100
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update flake inputs"
+          title: "chore(deps): update flake inputs"
+          body: |
+            Automated weekly flake input updates.
+
+            ## Changes
+
+            ```diff
+            ${{ steps.inputs.outputs.diff }}
+            ```
+
+            ## Checklist
+
+            - [ ] Review the changes to `flake.lock`
+            - [ ] Ensure CI passes
+            - [ ] Test locally if needed: `nix flake check`
+          branch: chore/update-flake-inputs
+          delete-branch: true
+          labels: |
+            dependencies
+            automated

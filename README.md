@@ -1,5 +1,7 @@
 # Nix Configuration
 
+[![CI](https://github.com/DMJGilbert/.config/actions/workflows/ci.yml/badge.svg)](https://github.com/DMJGilbert/.config/actions/workflows/ci.yml)
+
 Personal Nix configurations for macOS and NixOS systems, managed with Nix Flakes, nix-darwin, and Home Manager.
 
 This repository is open source for educational purposes. Feel free to reference, adapt, or learn from these configurations for your own systems.

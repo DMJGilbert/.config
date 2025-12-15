@@ -47,12 +47,14 @@
           statix # Nix linter
           deadnix # Find dead code
           nil # Nix LSP
+          stylua # Lua formatter
         ];
         shellHook = ''
-          echo "🔧 Nix config development shell"
+          echo "Nix config development shell"
           echo "  alejandra .  - format nix files"
           echo "  statix check - lint nix files"
           echo "  deadnix .    - find dead code"
+          echo "  stylua .     - format lua files"
         '';
       };
     });
