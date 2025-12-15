@@ -255,6 +255,7 @@ cards:
                       light_entity: group.living_room_lights
                       motion_entity: binary_sensor.living_room_motion_sensor_occupancy
                       media_entity: media_player.living_room_tv
+                      room_path: /lovelace-home/room-living-room
 
                   # Bedroom
                   - type: custom:button-card
