@@ -408,9 +408,53 @@ cards:
                     template: tab_button_active
                     name: Other
                     tap_action: *tap_other
-              - type: markdown
-                content: "Other content placeholder - miscellaneous controls will go here"
+              # Other cards container
+              - type: custom:stack-in-card
+                mode: vertical
                 card_mod: *tab_content_style
+                cards:
+                  # System
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.system_monitor_load_1m
+                    triggers_update:
+                      - sensor.system_monitor_load_1m
+                      - sensor.system_monitor_disk_free
+                      - sensor.system_monitor_last_boot
+                    variables:
+                      card_name: System
+                      card_icon: mdi:server
+                      card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1m']?.state || '0'; return 'Load: ' + load; })()}"
+                      info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state || '0'; return Math.round(parseFloat(disk)) + ' GiB free'; })()}"
+
+                  # Car
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.fordpass_wf02xxerk2la80437_fuel
+                    triggers_update:
+                      - sensor.fordpass_wf02xxerk2la80437_fuel
+                      - sensor.fordpass_wf02xxerk2la80437_doorstatus
+                    variables:
+                      card_name: Car
+                      card_icon: mdi:car
+                      card_image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state || 'Unknown'; return 'Doors: ' + door; })()}"
+                      info_template: "${(() => { const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state || '?'; return fuel !== 'unknown' ? 'Fuel: ' + fuel + '%' : ''; })()}"
+
+                  # Tank
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.current_temperature
+                    triggers_update:
+                      - sensor.current_temperature
+                      - sensor.ph_value
+                    variables:
+                      card_name: Tank
+                      card_icon: mdi:fishbowl
+                      card_image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const temp = states['sensor.current_temperature']?.state || '?'; return temp + '°C'; })()}"
+                      info_template: "${(() => { const ph = states['sensor.ph_value']?.state || '?'; return 'pH: ' + ph; })()}"
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml

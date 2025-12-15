@@ -404,6 +404,156 @@ button_card_templates:
       action: more-info
       entity: '[[[ return variables.person_entity; ]]]'
 
+  # Info card template for other tab (System, Car, Tank, etc.)
+  # Variables: card_name, card_icon, card_image, status_entity, status_template, info_entity, info_template
+  info_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"card_image card_info extra_info"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        card_image:
+          - justify-self: start
+          - align-self: center
+        card_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        extra_info:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      card_image: |
+        [[[
+          const image = variables.card_image || '';
+          const icon = variables.card_icon || 'mdi:information';
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      card_info: |
+        [[[
+          const cardName = variables.card_name || 'Info';
+          const statusEntity = variables.status_entity;
+          const statusTemplate = variables.status_template;
+
+          let statusText = '';
+          let statusColor = 'var(--secondary-text-color)';
+
+          if (statusTemplate) {
+            // Use custom template
+            try {
+              statusText = eval('`' + statusTemplate + '`');
+            } catch (e) {
+              statusText = 'Error';
+            }
+          } else if (statusEntity && states[statusEntity]) {
+            statusText = states[statusEntity].state;
+            const unit = states[statusEntity].attributes.unit_of_measurement || '';
+            if (unit) statusText += ' ' + unit;
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${cardName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${statusColor};
+              line-height: 1.4;
+              text-align: left;
+            ">${statusText}</span>
+          </div>`;
+        ]]]
+      extra_info: |
+        [[[
+          const infoEntity = variables.info_entity;
+          const infoTemplate = variables.info_template;
+
+          let infoText = '';
+
+          if (infoTemplate) {
+            try {
+              infoText = eval('`' + infoTemplate + '`');
+            } catch (e) {
+              infoText = '';
+            }
+          } else if (infoEntity && states[infoEntity]) {
+            infoText = states[infoEntity].state;
+            const unit = states[infoEntity].attributes.unit_of_measurement || '';
+            if (unit) infoText += ' ' + unit;
+          }
+
+          if (!infoText) return '';
+
+          return `<span style="
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #d1d1d1;
+          ">${infoText}</span>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.status_entity || variables.info_entity; ]]]'
+
 # ==================== VIEWS ====================
 views:
   - !include /var/lib/hass/views/home.yaml
