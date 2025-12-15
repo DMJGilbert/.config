@@ -202,6 +202,12 @@ cards:
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -277,6 +283,12 @@ cards:
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -352,6 +364,12 @@ cards:
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
@@ -427,6 +445,12 @@ cards:
             mode: vertical
             cards:
               - type: horizontal-stack
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                    }
                 cards:
                   - type: custom:button-card
                     name: Rooms
