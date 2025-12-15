@@ -236,9 +236,9 @@ cards:
                       - cursor: pointer
                 custom_fields:
                   r: Rooms
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none; pointer-events: auto;'>Peoples</a>"
+                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none; pointer-events: auto;'>Calendar</a>"
+                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none; pointer-events: auto;'>Other</a>"
               - type: markdown
                 content: "Rooms content placeholder - room cards will go here"
                 card_mod:
@@ -287,10 +287,10 @@ cards:
                       - font-size: 15px
                       - cursor: pointer
                 custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
+                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none; pointer-events: auto;'>Rooms</a>"
                   p: Peoples
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none; pointer-events: auto;'>Calendar</a>"
+                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none; pointer-events: auto;'>Other</a>"
               - type: markdown
                 content: "Peoples content placeholder - person tracking cards will go here"
                 card_mod:
@@ -339,10 +339,10 @@ cards:
                       - font-size: 15px
                       - cursor: pointer
                 custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
+                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none; pointer-events: auto;'>Rooms</a>"
+                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none; pointer-events: auto;'>Peoples</a>"
                   c: Calendar
-                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none;'>Other</a>"
+                  o: "<a href='#tab-other' style='color: inherit; text-decoration: none; pointer-events: auto;'>Other</a>"
               - type: markdown
                 content: "Calendar content placeholder - calendar views will go here"
                 card_mod:
@@ -391,9 +391,9 @@ cards:
                       - font-size: 15px
                       - cursor: pointer
                 custom_fields:
-                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none;'>Rooms</a>"
-                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none;'>Peoples</a>"
-                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none;'>Calendar</a>"
+                  r: "<a href='#tab-rooms' style='color: inherit; text-decoration: none; pointer-events: auto;'>Rooms</a>"
+                  p: "<a href='#tab-peoples' style='color: inherit; text-decoration: none; pointer-events: auto;'>Peoples</a>"
+                  c: "<a href='#tab-calendar' style='color: inherit; text-decoration: none; pointer-events: auto;'>Calendar</a>"
                   o: Other
               - type: markdown
                 content: "Other content placeholder - miscellaneous controls will go here"
