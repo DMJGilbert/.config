@@ -55,17 +55,16 @@ cards:
             card_mod:
               style: |
                 ha-card {
-                  height: 200px;
-                  max-height: 280px;
+                  height: 200px !important;
                   border-radius: 0;
                   box-shadow: none;
                   margin-bottom: 8px;
                 }
                 @media (min-width: 768px) {
-                  ha-card { height: 240px; }
+                  ha-card { height: 240px !important; }
                 }
                 @media (min-width: 1200px) {
-                  ha-card { height: 280px; }
+                  ha-card { height: 280px !important; }
                 }
             styles:
               card:
