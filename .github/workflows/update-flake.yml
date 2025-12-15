@@ -18,7 +18,7 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v21
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Update flake inputs
         run: nix flake update

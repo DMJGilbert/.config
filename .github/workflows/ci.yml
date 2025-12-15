@@ -22,7 +22,7 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v21
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Check Nix formatting (alejandra)
         run: nix develop --command alejandra --check .
@@ -48,7 +48,7 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v21
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Run flake check
         run: nix flake check
