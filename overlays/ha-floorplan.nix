@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
     owner = "ExperienceLovelace";
     repo = "ha-floorplan";
     rev = "v${version}";
-    hash = "sha256-02sp4rj1jrfih6nd6f8ybr0sc77bi4m5s2hrxijyrdch64fiwa5c=";
+    hash = "sha256-rCgeHTGQtexl7BkKXSqJ6xymQV4eOdOsgdFlGWQmVws=";
   };
 
   installPhase = ''
