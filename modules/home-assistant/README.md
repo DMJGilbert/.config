@@ -104,25 +104,29 @@ To add a new card, see [overlays/README.md](../../overlays/README.md).
 
 ### Design System
 
-The dashboard follows a modern, clean design with consistent styling.
+The dashboard follows a modern, clean design with consistent styling and responsive layout.
 
 #### Color Palette
 
 | Color | Hex | Usage |
 |-------|-----|-------|
-| Primary Orange | `#E85D04` | Headings, accents, dividers |
+| Primary Orange | `#E85D04` | Page title, accents |
 | Text Dark | `#333333` | Primary text on light backgrounds |
-| Background Light | `rgba(255,255,255,0.95)` | Chip backgrounds, cards |
-| Shadow | `rgba(0,0,0,0.1-0.15)` | Card shadows, chip shadows |
+| Chip Background | `rgba(255,255,255,0.95)` | Status chip backgrounds |
+| Card Shadow | `rgba(0,0,0,0.1)` | Subtle card elevation |
+| Chip Shadow | `rgba(0,0,0,0.15)` | Chip elevation |
+| Amber | `amber` | Lights chip icon |
+| Blue | `blue` | Media chip icon |
+| Green | `green` | Motion chip icon |
 
 #### Typography
 
-| Element | Size | Weight |
-|---------|------|--------|
-| Page Title | `2.5rem` | 600 |
-| Card Title | `1.25rem` | 500 |
-| Body Text | `14px` | 400 |
-| Chip Text | `14px` | 500 |
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Page Title | Helvetica Neue | 30px | 500 |
+| Card Title | System | 1.25rem | 500 |
+| Body Text | System | 14px | 400 |
+| Chip Text | System | 14px | 500 |
 
 #### Spacing & Layout
 
@@ -130,28 +134,66 @@ The dashboard follows a modern, clean design with consistent styling.
 |----------|-------|
 | Card Border Radius | `24px` |
 | Chip Border Radius | `24px` |
-| Card Margin | `16px` |
+| Card Margin | `16px` (phone), `0` (tablet+) |
 | Card Padding | `16px-24px` |
 | Content Gap | `8px` |
 
-### Required Custom Cards (HACS)
+#### Responsive Breakpoints
 
-The dashboard requires these custom cards installed via HACS:
+| Breakpoint | Max Width | Hero Height |
+|------------|-----------|-------------|
+| Phone (default) | 600px | 200px |
+| Tablet (768px+) | 800px | 240px |
+| Desktop (1200px+) | 1200px | 280px |
 
-| Card | Repository | Purpose |
-|------|------------|---------|
-| `button-card` | `custom-cards/button-card` | Custom styled buttons and cards |
-| `mushroom` | `piitaya/lovelace-mushroom` | Modern chip and entity cards |
-| `stack-in-card` | `custom-cards/stack-in-card` | Combine cards without borders |
-| `card-mod` | `thomasloven/lovelace-card-mod` | Custom CSS styling |
-| `auto-entities` | `thomasloven/lovelace-auto-entities` | Dynamic entity lists |
-| `browser-mod` | `thomasloven/hass-browser_mod` | Popups and browser control |
+### Required Custom Cards
 
-### Dashboard Components
+The dashboard requires these custom cards (installed via Nix overlays):
 
-#### Header Card
+| Card | Package | Purpose |
+|------|---------|---------|
+| `button-card` | `button-card` | Custom styled buttons and title |
+| `mushroom` | `mushroom` | Status chips with conditional visibility |
+| `stack-in-card` | `lovelace-stack-in-card` | Combine hero image with chips overlay |
+| `card-mod` | `card-mod` | Custom CSS styling and media queries |
+| `auto-entities` | `lovelace-auto-entities` | Dynamic entity lists in popups |
+| `bubble-card` | `hass-bubble-card` | Slide-up popup cards |
+| `layout-card` | `lovelace-layout-card` | Responsive grid layout |
 
-The header displays the home title with an orange accent.
+---
+
+## Dashboard Components
+
+### 1. Responsive Layout
+
+The view uses `layout-card` with `grid-layout` for responsive behavior:
+
+```yaml
+type: custom:layout-card
+layout_type: custom:grid-layout
+layout:
+  grid-template-columns: 1fr
+  max_width: 600px
+  margin: 0 auto
+  mediaquery:
+    "(min-width: 768px)":
+      grid-template-columns: 1fr
+      max_width: 800px
+    "(min-width: 1200px)":
+      grid-template-columns: 1fr
+      max_width: 1200px
+```
+
+**Behavior:**
+- Single column layout at all breakpoints
+- Content centered with `margin: 0 auto`
+- Max width scales up on larger screens
+
+---
+
+### 2. Header / Title Card
+
+Displays the home name in orange, left-aligned.
 
 ```yaml
 - type: custom:button-card
@@ -162,74 +204,455 @@ The header displays the home title with an orange accent.
     card:
       - background: transparent
       - box-shadow: none
-      - padding: 24px 16px 0 16px
+      - border: none
+      - border-radius: 0
+      - padding: 20px 16px 12px 16px
     name:
-      - font-size: 2.5rem
-      - font-weight: 600
+      - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+      - font-size: 30px
+      - font-weight: 500
       - color: "#E85D04"
       - justify-self: start
-      - padding-bottom: 16px
-      - border-bottom: 3px solid #E85D04
+      - text-align: left
       - width: 100%
+      - letter-spacing: -0.5px
 ```
 
-#### Hero Image with Status Chips
+**Design Decisions:**
+- Helvetica Neue for a clean, modern look
+- 30px size balances prominence without overwhelming
+- Orange (#E85D04) provides brand consistency
+- No borders/shadows for minimal aesthetic
+- Left-aligned to follow natural reading flow
 
-A hero image with overlaid status chips showing active devices.
+---
 
-**Required Template Sensors:**
-- `sensor.total_turned_on_lights_count_template` - Count of lights that are on
-- `sensor.total_media_players_playing_template` - Count of media players playing
-- `sensor.total_active_motion_sensors_count_template` - Count of motion sensors detecting motion
+### 3. Hero Image with Status Chips
 
-**Chip Behavior:**
-- Chips automatically hide when count is 0
-- Tap on chip opens popup with list of active entities
-- Uses `browser_mod.popup` for interactive popups
+A hero image card with overlaid status chips showing counts of active devices.
 
-**Popup Configuration:**
-```yaml
-tap_action:
-  action: fire-dom-event
-  browser_mod:
-    service: browser_mod.popup
-    data:
-      title: Active Lights
-      content:
-        type: custom:auto-entities
-        card:
-          type: entities
-        filter:
-          include:
-            - domain: light
-              state: "on"
-        sort:
-          method: friendly_name
+#### Structure
+
+```
+┌─────────────────────────────────────┐
+│                                     │
+│           Hero Image                │
+│                                     │
+│      ┌─────┐ ┌─────┐ ┌─────┐       │
+│      │ 💡 5│ │ 📺 2│ │ 🏃 1│       │
+│      └─────┘ └─────┘ └─────┘       │
+└─────────────────────────────────────┘
 ```
 
-### Helper Sensors Setup
-
-Create these template sensors in Home Assistant for the dashboard:
+#### Complete Code
 
 ```yaml
-# configuration.yaml or templates.yaml
+- type: custom:stack-in-card
+  mode: vertical
+  card_mod:
+    style: |
+      ha-card {
+        border-radius: 24px;
+        margin: 0 16px 16px 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        overflow: hidden;
+        background: transparent;
+      }
+      @media (min-width: 768px) {
+        ha-card {
+          margin: 0 0 16px 0;
+        }
+      }
+  cards:
+    # Hero Image
+    - type: picture
+      image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop
+      card_mod:
+        style: |
+          ha-card {
+            height: 200px;
+            max-height: 280px;
+            border-radius: 0;
+            box-shadow: none;
+          }
+          ha-card img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+          }
+          @media (min-width: 768px) {
+            ha-card {
+              height: 240px;
+            }
+          }
+          @media (min-width: 1200px) {
+            ha-card {
+              height: 280px;
+            }
+          }
+
+    # Status Chips Container
+    - type: custom:mushroom-chips-card
+      card_mod:
+        style: |
+          ha-card {
+            --chip-background: rgba(255,255,255,0.95);
+            --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            --chip-border-radius: 24px;
+            --chip-padding: 0 12px;
+            --chip-height: 36px;
+            background: transparent;
+            margin-top: -50px;
+            position: relative;
+            z-index: 1;
+          }
+      alignment: center
+      chips:
+        # Lights Chip
+        - type: conditional
+          conditions:
+            - entity: sensor.total_turned_on_lights_count_template
+              state_not: "0"
+          chip:
+            type: template
+            entity: sensor.total_turned_on_lights_count_template
+            icon: mdi:lightbulb
+            icon_color: amber
+            content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
+            tap_action:
+              action: navigate
+              navigation_path: "#lights-popup"
+
+        # Media Players Chip
+        - type: conditional
+          conditions:
+            - entity: sensor.total_media_players_playing_template
+              state_not: "0"
+          chip:
+            type: template
+            entity: sensor.total_media_players_playing_template
+            icon: mdi:television
+            icon_color: blue
+            content: "{{ states('sensor.total_media_players_playing_template') }}"
+            tap_action:
+              action: navigate
+              navigation_path: "#media-popup"
+
+        # Motion Sensors Chip
+        - type: conditional
+          conditions:
+            - entity: sensor.total_active_motion_sensors_count_template
+              state_not: "0"
+          chip:
+            type: template
+            entity: sensor.total_active_motion_sensors_count_template
+            icon: mdi:run
+            icon_color: green
+            content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
+            tap_action:
+              action: navigate
+              navigation_path: "#motion-popup"
+```
+
+**Design Decisions:**
+- `stack-in-card` merges image and chips into seamless card
+- Chips use negative margin (-50px) to overlay on image
+- Conditional visibility hides chips when count is 0
+- Frosted glass effect on chips (white background with shadow)
+- Responsive image height scales with screen size
+
+---
+
+### 4. Popup Cards (Bubble Card)
+
+Each chip opens a slide-up popup showing active entities.
+
+```yaml
+# Lights Popup
+- type: vertical-stack
+  cards:
+    - type: custom:bubble-card
+      card_type: pop-up
+      hash: "#lights-popup"
+      name: Active Lights
+      icon: mdi:lightbulb
+      styles: |
+        .bubble-pop-up-container {
+          background: var(--card-background-color);
+        }
+    - type: custom:auto-entities
+      card:
+        type: entities
+        title: Lights On
+      filter:
+        include:
+          - domain: light
+            state: "on"
+      sort:
+        method: friendly_name
+```
+
+**Popup Hashes:**
+| Chip | Hash | Filter |
+|------|------|--------|
+| Lights | `#lights-popup` | `domain: light, state: "on"` |
+| Media | `#media-popup` | `domain: media_player, state: playing` |
+| Motion | `#motion-popup` | `domain: binary_sensor, device_class: motion/occupancy, state: "on"` |
+
+**How it works:**
+1. Chip tap action navigates to hash (e.g., `#lights-popup`)
+2. Bubble-card listens for hash and slides up popup
+3. `auto-entities` dynamically lists matching entities
+4. Popup dismisses when tapping outside or swiping down
+
+---
+
+### 5. Info Lines (Weather, Calendar, Liverpool)
+
+Three text lines grouped with the hero image, displaying weather, calendar, and Liverpool FC fixture information. All elements share a single card with rounded corners and drop shadow.
+
+#### Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Fleming Place                                           │
+└─────────────────────────────────────────────────────────┘
+╭─────────────────────────────────────────────────────────╮
+│                    [Hero Image]                         │
+│                  [Status Chips]                         │
+│─────────────────────────────────────────────────────────│
+│ ☁️  Cloudy (82% humidity, 11.3°C)                      │
+│ 📅 Work holiday: Now                                    │
+│ ⚽ Tottenham Hotspur v Liverpool: Saturday 17:30       │
+╰─────────────────────────────────────────────────────────╯
+        ↑ Grouped card with 24px radius + drop shadow
+```
+
+**Icons:** Each line has an 18px icon with 8px right margin
+**Bold text:** Condition, event name, and matchup are bold
+
+#### Weather Line
+
+Displays current weather with dynamic icon in format: `[icon] **Condition** (humidity%, temp°C)`
+
+**Entity:** `weather.forecast_home`
+
+**Output Examples:**
+- `☁️ **Cloudy** (82% humidity, 11.3°C)`
+- `⛅ **Partly Cloudy** (65% humidity, 18.5°C)`
+- `☀️ **Sunny** (45% humidity, 24.0°C)`
+
+**Weather Icon Mapping:**
+| Condition | Icon |
+|-----------|------|
+| sunny | mdi:weather-sunny |
+| cloudy | mdi:weather-cloudy |
+| partlycloudy | mdi:weather-partly-cloudy |
+| rainy | mdi:weather-rainy |
+| pouring | mdi:weather-pouring |
+| snowy | mdi:weather-snowy |
+| fog | mdi:weather-fog |
+| lightning | mdi:weather-lightning |
+
+#### Calendar Line
+
+Shows the next upcoming event with countdown in format: `📅 **Event**: X days Y hours`
+
+**Icon:** `mdi:calendar`
+
+**Data Sources:**
+- `calendar.family`
+- `calendar.events`
+- `calendar.calendar`
+- `calendar.home`
+
+**Output Examples:**
+- `📅 **Ballet**: 2 days 4 hours`
+- `📅 **Work holiday**: Now`
+- `📅 **Doctor appointment**: 1 day`
+- `📅 No upcoming events`
+
+**Countdown Logic:**
+- Scans all calendars to find earliest event
+- Shows "Now" for current/past events
+- Shows hours only if less than 1 day
+- Shows days and hours combined otherwise
+
+#### Liverpool Line
+
+Displays next fixture in format: `⚽ **HomeTeam v AwayTeam**: Day HH:MM`
+
+**Icon:** `mdi:soccer`
+
+**Data Sources:**
+- `sensor.liverpool` (Premier League)
+- `sensor.liverpool_cl` (Champions League)
+- `sensor.liverpool_fa` (FA Cup)
+- `sensor.liverpool_lc` (League Cup)
+
+**Output Examples:**
+- `⚽ **Liverpool v Tottenham Hotspur**: Saturday 17:30` (home game)
+- `⚽ **Manchester City v Liverpool**: Sunday 16:30` (away game)
+- `⚽ No upcoming fixtures`
+
+**Features:**
+- Combines all competition sensors to find next match
+- Always uses "v" format with home team first
+- Shows full opponent name
+- Displays day of week and kickoff time
+
+#### Complete Code
+
+```yaml
+- type: custom:button-card
+  entity: weather.forecast_home
+  show_name: false
+  show_state: false
+  show_icon: false
+  triggers_update:
+    - weather.forecast_home
+    - calendar.family
+    - calendar.events
+    - calendar.calendar
+    - calendar.home
+    - sensor.liverpool
+    - sensor.liverpool_cl
+    - sensor.liverpool_fa
+    - sensor.liverpool_lc
+  styles:
+    card:
+      - background: transparent
+      - box-shadow: none
+      - border: none
+      - padding: 0 16px 16px 16px
+    grid:
+      - grid-template-areas: '"weather" "calendar" "liverpool"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: auto auto auto
+      - gap: 4px
+    custom_fields:
+      weather:
+        - font-size: 14px
+        - color: "var(--secondary-text-color)"
+        - text-align: left
+      # calendar and liverpool styles identical
+  custom_fields:
+    weather: |
+      [[[
+        // JavaScript template for weather formatting
+      ]]]
+    calendar: |
+      [[[
+        // JavaScript template for calendar countdown
+      ]]]
+    liverpool: |
+      [[[
+        // JavaScript template for fixture info
+      ]]]
+```
+
+**Design Decisions:**
+- Info lines grouped with hero image in single `stack-in-card`
+- Shared container with 24px rounded corners and drop shadow
+- Card background: `var(--card-background-color, #fff)`
+- Drop shadow: `0 4px 24px rgba(0,0,0,0.15)`
+- 18px icons with 8px right margin for visual hierarchy
+- Key information (condition, event, matchup) in bold `<b>` tags
+- 14px secondary text color for subtle appearance
+- 6px gap between lines, 16px padding
+- Uses `triggers_update` to react to all data sources
+
+---
+
+### 6. Required Template Sensors
+
+These sensors power the status chips. Defined in `rubecula.nix`:
+
+```yaml
 template:
   - sensor:
-      - name: "Total Turned On Lights Count Template"
-        state: >
-          {{ states.light | selectattr('state', 'eq', 'on') | list | count }}
+      name: "Total Turned On Lights Count Template"
+      state: >
+        {{ states.light
+           | rejectattr('attributes.entity_id', 'defined')
+           | selectattr('state', 'eq', 'on')
+           | list | count }}
 
-      - name: "Total Media Players Playing Template"
-        state: >
-          {{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}
+  - sensor:
+      name: "Total Media Players Playing Template"
+      state: >
+        {{ states.media_player
+           | selectattr('state', 'eq', 'playing')
+           | list | count }}
 
-      - name: "Total Active Motion Sensors Count Template"
-        state: >
-          {{ states.binary_sensor
-             | selectattr('attributes.device_class', 'defined')
-             | selectattr('attributes.device_class', 'eq', 'motion')
-             | selectattr('state', 'eq', 'on')
-             | list | count }}
+  - sensor:
+      name: "Total Active Motion Sensors Count Template"
+      state: >
+        {{ states.binary_sensor
+           | selectattr('attributes.device_class', 'eq', 'motion')
+           | selectattr('state', 'eq', 'on')
+           | list | count
+           + states.binary_sensor
+           | selectattr('attributes.device_class', 'eq', 'occupancy')
+           | selectattr('state', 'eq', 'on')
+           | list | count }}
+```
+
+**Entity IDs:**
+- `sensor.total_turned_on_lights_count_template`
+- `sensor.total_media_players_playing_template`
+- `sensor.total_active_motion_sensors_count_template`
+
+---
+
+### Component Dependency Graph
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    layout-card                          │
+│                  (responsive grid)                      │
+└─────────────────────────────────────────────────────────┘
+                          │
+     ┌────────────────────┼────────────────────┐
+     ▼                    ▼                    ▼
+┌─────────────┐    ┌─────────────┐      ┌─────────────┐
+│ button-card │    │stack-in-card│      │ bubble-card │
+│   (title)   │    │ (hero+chips)│      │  (popups)   │
+└─────────────┘    └─────────────┘      └─────────────┘
+                          │                    │
+                   ┌──────┴──────┐             │
+                   ▼             ▼             ▼
+            ┌──────────┐  ┌──────────┐  ┌──────────┐
+            │ picture  │  │ mushroom │  │  auto-   │
+            │  card    │  │  chips   │  │ entities │
+            └──────────┘  └──────────┘  └──────────┘
+                               │
+                               ▼
+                        ┌─────────────┐
+                        │  template   │
+                        │  sensors    │
+                        └─────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│              button-card (info lines)                   │
+│         vertically stacked custom_fields                │
+└─────────────────────────────────────────────────────────┘
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+   ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+   │   weather   │ │  calendar   │ │  liverpool  │
+   │custom_field │ │custom_field │ │custom_field │
+   └─────────────┘ └─────────────┘ └─────────────┘
+          │               │               │
+          ▼               ▼               ▼
+   ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+   │   weather.  │ │  calendar.  │ │   sensor.   │
+   │forecast_home│ │   family    │ │  liverpool  │
+   └─────────────┘ │   events    │ │ liverpool_cl│
+                   │   calendar  │ │ liverpool_fa│
+                   │   home      │ │ liverpool_lc│
+                   └─────────────┘ └─────────────┘
 ```
 
 ## Service Management

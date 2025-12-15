@@ -1,0 +1,32 @@
+|
+  [[[
+    const sensors = ['sensor.liverpool', 'sensor.liverpool_cl', 'sensor.liverpool_fa', 'sensor.liverpool_lc'];
+    let nextMatch = null;
+    let nextDate = null;
+
+    for (const sensor of sensors) {
+      const s = states[sensor];
+      if (s && s.state !== 'NOT_FOUND' && s.state !== 'unavailable' && s.attributes.date) {
+        const matchDate = new Date(s.attributes.date);
+        if (!nextDate || matchDate < nextDate) {
+          nextDate = matchDate;
+          nextMatch = s;
+        }
+      }
+    }
+
+    const icon = '<ha-icon icon="mdi:soccer" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon>';
+
+    if (!nextMatch) return icon + 'No upcoming fixtures';
+
+    const opponent = nextMatch.attributes.opponent_long_name || nextMatch.attributes.opponent_name || 'TBD';
+    const homeAway = nextMatch.attributes.team_homeaway;
+
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = days[nextDate.getDay()];
+    const time = nextDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+    const matchup = homeAway === 'home' ? `Liverpool v ${opponent}` : `${opponent} v Liverpool`;
+
+    return `${icon}<b>${matchup}</b>: ${dayName} ${time}`;
+  ]]]

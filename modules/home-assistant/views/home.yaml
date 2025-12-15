@@ -1,0 +1,172 @@
+# ==================== HOME VIEW ====================
+title: Home
+path: home
+icon: mdi:home
+panel: true
+
+cards:
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr
+      margin: 0 auto
+    card_mod:
+      style: |
+        :host {
+          max-width: 600px !important;
+          margin: 0 auto !important;
+          display: block !important;
+        }
+        @media (min-width: 768px) {
+          :host { max-width: 800px !important; }
+        }
+        @media (min-width: 1200px) {
+          :host { max-width: 1200px !important; }
+        }
+    cards:
+      # -------------------- Header --------------------
+      - type: custom:button-card
+        template: page_header
+        name: Fleming Place
+
+      # -------------------- Hero Card --------------------
+      - type: custom:stack-in-card
+        mode: vertical
+        card_mod:
+          style: &hero_card_style |
+            :host { row-gap: 0px; }
+            ha-card {
+              border-radius: 24px;
+              margin: 0 16px 16px 16px;
+              box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+              overflow: hidden;
+              background: var(--card-background-color, #fff);
+            }
+            @media (min-width: 768px) {
+              ha-card { margin: 0 0 16px 0; }
+            }
+        cards:
+          # Hero Image
+          - type: picture
+            image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop
+            card_mod:
+              style: |
+                ha-card {
+                  height: 200px;
+                  max-height: 280px;
+                  border-radius: 0;
+                  box-shadow: none;
+                }
+                ha-card img {
+                  object-fit: cover;
+                  width: 100%;
+                  height: 100%;
+                }
+                @media (min-width: 768px) {
+                  ha-card { height: 240px; }
+                }
+                @media (min-width: 1200px) {
+                  ha-card { height: 280px; }
+                }
+
+          # Status Chips
+          - type: custom:mushroom-chips-card
+            alignment: center
+            card_mod:
+              style: |
+                ha-card {
+                  --chip-background: rgba(255,255,255,0.95);
+                  --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                  --chip-border-radius: 24px;
+                  --chip-padding: 0 12px;
+                  --chip-height: 36px;
+                  background: transparent;
+                  margin-top: -50px;
+                  position: relative;
+                  z-index: 1;
+                }
+            chips:
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_turned_on_lights_count_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_turned_on_lights_count_template
+                  icon: mdi:lightbulb
+                  icon_color: amber
+                  content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#lights-popup"
+
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_media_players_playing_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_media_players_playing_template
+                  icon: mdi:television
+                  icon_color: blue
+                  content: "{{ states('sensor.total_media_players_playing_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#media-popup"
+
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_active_motion_sensors_count_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_active_motion_sensors_count_template
+                  icon: mdi:run
+                  icon_color: green
+                  content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#motion-popup"
+
+          # Info Lines
+          - type: custom:button-card
+            template: info_lines
+            entity: weather.forecast_home
+            triggers_update:
+              - weather.forecast_home
+              - calendar.family
+              - calendar.events
+              - calendar.calendar
+              - calendar.home
+              - sensor.liverpool
+              - sensor.liverpool_cl
+              - sensor.liverpool_fa
+              - sensor.liverpool_lc
+            styles:
+              grid:
+                - grid-template-areas: '"weather" "calendar" "liverpool"'
+                - grid-template-rows: auto auto auto
+              custom_fields: &info_line_style
+                weather:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+                calendar:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+                liverpool:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+            custom_fields:
+              weather: !include ../templates/weather_info.yaml
+              calendar: !include ../templates/calendar_info.yaml
+              liverpool: !include ../templates/liverpool_info.yaml
+            tap_action:
+              action: none
+
+      # -------------------- Popups --------------------
+      - !include ../popups/lights.yaml
+      - !include ../popups/media.yaml
+      - !include ../popups/motion.yaml

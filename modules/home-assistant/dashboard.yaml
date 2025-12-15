@@ -1,190 +1,48 @@
 title: Fleming Place
+
+# ==================== BUTTON-CARD TEMPLATES ====================
+button_card_templates:
+  # Base transparent card (no background, shadow, or border)
+  transparent:
+    styles:
+      card:
+        - background: transparent
+        - box-shadow: none
+        - border: none
+        - border-radius: 0
+
+  # Page header title
+  page_header:
+    template: transparent
+    show_icon: false
+    show_state: false
+    styles:
+      card:
+        - padding: 20px 16px 12px 16px
+      name:
+        - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+        - font-size: 30px
+        - font-weight: 500
+        - color: "#E85D04"
+        - justify-self: start
+        - text-align: left
+        - width: 100%
+        - letter-spacing: -0.5px
+
+  # Info line styling (weather, calendar, etc.)
+  info_lines:
+    template: transparent
+    show_name: false
+    show_state: false
+    show_icon: false
+    styles:
+      card:
+        - padding: 16px
+        - margin-top: 8px
+      grid:
+        - grid-template-columns: 1fr
+        - gap: 6px
+
+# ==================== VIEWS ====================
 views:
-  # ==================== HOME ====================
-  - title: Home
-    path: home
-    icon: mdi:home
-    type: custom:vertical-layout
-    cards:
-      # ==================== HEADER SECTION ====================
-      - type: custom:button-card
-        name: Fleming Place
-        show_icon: false
-        show_state: false
-        styles:
-          card:
-            - background: transparent
-            - box-shadow: none
-            - padding: 24px 16px 0 16px
-          name:
-            - font-size: 2.5rem
-            - font-weight: 600
-            - color: "#E85D04"
-            - justify-self: start
-            - padding-bottom: 16px
-            - border-bottom: 3px solid #E85D04
-            - width: 100%
-
-      # ==================== HERO IMAGE WITH STATUS CHIPS ====================
-      - type: custom:stack-in-card
-        mode: vertical
-        card_mod:
-          style: |
-            ha-card {
-              border-radius: 24px;
-              margin: 16px;
-              box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-              overflow: hidden;
-              background: transparent;
-            }
-        cards:
-          # Hero Image
-          - type: picture
-            image: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop
-            card_mod:
-              style: |
-                ha-card {
-                  height: 240px;
-                  border-radius: 0;
-                  box-shadow: none;
-                }
-                ha-card img {
-                  object-fit: cover;
-                  height: 100%;
-                }
-
-          # Status Chips Container
-          - type: custom:mushroom-chips-card
-            card_mod:
-              style: |
-                ha-card {
-                  --chip-background: rgba(255,255,255,0.95);
-                  --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                  --chip-border-radius: 24px;
-                  --chip-padding: 0 12px;
-                  --chip-height: 36px;
-                  background: transparent;
-                  margin-top: -50px;
-                  position: relative;
-                  z-index: 1;
-                }
-            alignment: center
-            chips:
-              # Lights Chip
-              - type: conditional
-                conditions:
-                  - entity: sensor.total_turned_on_lights_count_template
-                    state_not: "0"
-                chip:
-                  type: template
-                  entity: sensor.total_turned_on_lights_count_template
-                  icon: mdi:lightbulb
-                  icon_color: amber
-                  content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
-                  tap_action:
-                    action: navigate
-                    navigation_path: "#lights-popup"
-
-              # Media Players Chip
-              - type: conditional
-                conditions:
-                  - entity: sensor.total_media_players_playing_template
-                    state_not: "0"
-                chip:
-                  type: template
-                  entity: sensor.total_media_players_playing_template
-                  icon: mdi:television
-                  icon_color: blue
-                  content: "{{ states('sensor.total_media_players_playing_template') }}"
-                  tap_action:
-                    action: navigate
-                    navigation_path: "#media-popup"
-
-              # Motion Sensors Chip
-              - type: conditional
-                conditions:
-                  - entity: sensor.total_active_motion_sensors_count_template
-                    state_not: "0"
-                chip:
-                  type: template
-                  entity: sensor.total_active_motion_sensors_count_template
-                  icon: mdi:run
-                  icon_color: green
-                  content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
-                  tap_action:
-                    action: navigate
-                    navigation_path: "#motion-popup"
-
-      # ==================== BUBBLE-CARD POPUPS ====================
-      # Lights Popup
-      - type: vertical-stack
-        cards:
-          - type: custom:bubble-card
-            card_type: pop-up
-            hash: "#lights-popup"
-            name: Active Lights
-            icon: mdi:lightbulb
-            styles: |
-              .bubble-pop-up-container {
-                background: var(--card-background-color);
-              }
-          - type: custom:auto-entities
-            card:
-              type: entities
-              title: Lights On
-            filter:
-              include:
-                - domain: light
-                  state: "on"
-            sort:
-              method: friendly_name
-
-      # Media Popup
-      - type: vertical-stack
-        cards:
-          - type: custom:bubble-card
-            card_type: pop-up
-            hash: "#media-popup"
-            name: Active Media
-            icon: mdi:television
-            styles: |
-              .bubble-pop-up-container {
-                background: var(--card-background-color);
-              }
-          - type: custom:auto-entities
-            card:
-              type: entities
-              title: Media Playing
-            filter:
-              include:
-                - domain: media_player
-                  state: playing
-            sort:
-              method: friendly_name
-
-      # Motion Popup
-      - type: vertical-stack
-        cards:
-          - type: custom:bubble-card
-            card_type: pop-up
-            hash: "#motion-popup"
-            name: Active Motion
-            icon: mdi:run
-            styles: |
-              .bubble-pop-up-container {
-                background: var(--card-background-color);
-              }
-          - type: custom:auto-entities
-            card:
-              type: entities
-              title: Motion Detected
-            filter:
-              include:
-                - domain: binary_sensor
-                  device_class: motion
-                  state: "on"
-                - domain: binary_sensor
-                  device_class: occupancy
-                  state: "on"
-            sort:
-              method: friendly_name
+  - !include views/home.yaml
