@@ -200,6 +200,12 @@ cards:
           "tab-rooms":
             type: custom:stack-in-card
             mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
             cards:
               - type: horizontal-stack
                 card_mod:
@@ -281,6 +287,12 @@ cards:
           "tab-peoples":
             type: custom:stack-in-card
             mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
             cards:
               - type: horizontal-stack
                 card_mod:
@@ -362,6 +374,12 @@ cards:
           "tab-calendar":
             type: custom:stack-in-card
             mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
             cards:
               - type: horizontal-stack
                 card_mod:
@@ -443,6 +461,12 @@ cards:
           "tab-other":
             type: custom:stack-in-card
             mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
             cards:
               - type: horizontal-stack
                 card_mod:
