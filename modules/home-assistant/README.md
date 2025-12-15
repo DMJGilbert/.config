@@ -242,29 +242,20 @@ A hero image card with overlaid title and status chips. The title is positioned 
       card_mod:
         style: |
           ha-card {
-            height: 200px;
-            max-height: 280px;
+            height: 200px !important;
             border-radius: 0;
             box-shadow: none;
             margin-bottom: 8px;
           }
           @media (min-width: 768px) {
-            ha-card { height: 240px; }
+            ha-card { height: 240px !important; }
           }
           @media (min-width: 1200px) {
-            ha-card { height: 280px; }
+            ha-card { height: 280px !important; }
           }
       styles:
         card:
-          - background-image: |
-              linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.4) 0%,
-                rgba(0, 0, 0, 0.2) 40%,
-                rgba(0, 0, 0, 0.1) 60%,
-                rgba(0, 0, 0, 0.3) 100%
-              ),
-              url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop")
+          - background-image: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop")'
           - background-size: cover
           - background-position: center
           - height: 100%
