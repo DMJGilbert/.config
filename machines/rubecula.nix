@@ -215,6 +215,7 @@ in {
         pkgs.lovelace-tabbed-card
         pkgs.lovelace-layout-card
         pkgs.lovelace-stack-in-card
+        pkgs.lovelace-state-switch
         pkgs.modern-circular-gauge
         pkgs.ha-floorplan
         mini-graph-card
@@ -277,6 +278,10 @@ in {
             }
             {
               url = "/local/nixos-lovelace-modules/tabbed-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/state-switch.js";
               type = "module";
             }
             {
