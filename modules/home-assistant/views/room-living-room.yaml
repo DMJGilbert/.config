@@ -276,6 +276,24 @@ cards:
                 mode: vertical
                 card_mod: *tab_content_style
                 cards:
+                  # Dyson Climate
+                  - type: custom:button-card
+                    template: room_item_card
+                    entity: climate.dyson
+                    variables:
+                      item_icon: mdi:thermostat
+                      item_entity: climate.dyson
+                      show_toggle: false
+
+                  # Dyson Fan
+                  - type: custom:button-card
+                    template: room_item_card
+                    entity: fan.dyson
+                    variables:
+                      item_icon: mdi:fan
+                      item_entity: fan.dyson
+                      show_toggle: true
+
                   - type: custom:auto-entities
                     card:
                       type: custom:stack-in-card
@@ -312,7 +330,7 @@ cards:
                         - state: unavailable
                     sort:
                       method: friendly_name
-                    show_empty: true
+                    show_empty: false
                     card_param: cards
 
           # ==================== OTHER TAB ====================
@@ -446,6 +464,33 @@ cards:
                         - justify-self: start
                     tap_action:
                       action: none
+
+                  # Dyson Temperature
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.dyson_temperature
+                    variables:
+                      sensor_name: Temperature
+                      sensor_icon: mdi:thermometer
+                      sensor_entity: sensor.dyson_temperature
+
+                  # Dyson Humidity
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.dyson_humidity
+                    variables:
+                      sensor_name: Humidity
+                      sensor_icon: mdi:water-percent
+                      sensor_entity: sensor.dyson_humidity
+
+                  # Dyson Air Quality (PM 2.5)
+                  - type: custom:button-card
+                    template: room_sensor_card
+                    entity: sensor.dyson_pm_2_5
+                    variables:
+                      sensor_name: Air Quality (PM 2.5)
+                      sensor_icon: mdi:blur
+                      sensor_entity: sensor.dyson_pm_2_5
 
                   - type: custom:auto-entities
                     card:
