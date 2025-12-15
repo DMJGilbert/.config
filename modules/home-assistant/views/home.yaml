@@ -475,6 +475,20 @@ cards:
                       status_template: "${(() => { const temp = states['sensor.current_temperature']?.state || '?'; return temp + '°C'; })()}"
                       info_template: "${(() => { const ph = states['sensor.ph_value']?.state || '?'; return 'pH: ' + ph; })()}"
 
+                  # RoboVac
+                  - type: custom:button-card
+                    template: info_card
+                    entity: vacuum.robovac
+                    triggers_update:
+                      - vacuum.robovac
+                      - sensor.robovac_battery
+                    variables:
+                      card_name: RoboVac
+                      card_icon: mdi:robot-vacuum
+                      card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const state = states['vacuum.robovac']?.state || 'unknown'; return state.charAt(0).toUpperCase() + state.slice(1); })()}"
+                      info_template: "${(() => { const battery = states['sensor.robovac_battery']?.state || '?'; return battery !== 'unavailable' ? 'Battery: ' + battery + '%' : ''; })()}"
+
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml
       - !include /var/lib/hass/popups/media.yaml
