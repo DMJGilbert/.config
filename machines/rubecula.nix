@@ -214,6 +214,7 @@ in {
         pkgs.lovelace-auto-entities
         pkgs.lovelace-tabbed-card
         pkgs.lovelace-layout-card
+        pkgs.lovelace-stack-in-card
         pkgs.modern-circular-gauge
         pkgs.ha-floorplan
         mini-graph-card
@@ -320,6 +321,10 @@ in {
             }
             {
               url = "/local/nixos-lovelace-modules/layout-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/stack-in-card.js";
               type = "module";
             }
             {
