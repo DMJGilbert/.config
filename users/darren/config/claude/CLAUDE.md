@@ -126,13 +126,13 @@ All complex tasks follow the RIPER phases for thorough, structured execution:
 
 ### Phase Details
 
-| Phase | Purpose | Key Actions |
-|-------|---------|-------------|
-| **RESEARCH** | Deep understanding | Read code, search memory, gather context |
-| **INNOVATE** | Solution exploration | Generate options, evaluate trade-offs |
-| **PLAN** | Design approach | Define tasks, identify dependencies, order execution |
-| **EXECUTE** | Implementation | Delegate to agents, make changes, validate |
-| **REVIEW** | Quality assurance | Verify outputs, update knowledge graph, report |
+| Phase        | Purpose              | Key Actions                                          |
+| ------------ | -------------------- | ---------------------------------------------------- |
+| **RESEARCH** | Deep understanding   | Read code, search memory, gather context             |
+| **INNOVATE** | Solution exploration | Generate options, evaluate trade-offs                |
+| **PLAN**     | Design approach      | Define tasks, identify dependencies, order execution |
+| **EXECUTE**  | Implementation       | Delegate to agents, make changes, validate           |
+| **REVIEW**   | Quality assurance    | Verify outputs, update knowledge graph, report       |
 
 ### Anti-Patterns
 
@@ -178,14 +178,14 @@ Based on [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) and [Multi-Agent Deb
 
 **Specialized Perspectives**:
 
-| Perspective | Focus |
-|-------------|-------|
-| Bug Hunter | Logic errors, edge cases, race conditions |
-| Security Auditor | Injection, auth gaps, data exposure |
-| Performance Analyst | Big O, N+1 queries, memory leaks |
+| Perspective            | Focus                                     |
+| ---------------------- | ----------------------------------------- |
+| Bug Hunter             | Logic errors, edge cases, race conditions |
+| Security Auditor       | Injection, auth gaps, data exposure       |
+| Performance Analyst    | Big O, N+1 queries, memory leaks          |
 | Maintainability Expert | Readability, function size, test coverage |
-| Historical Context | Codebase patterns, regression risk |
-| Contracts Reviewer | API contracts, type definitions |
+| Historical Context     | Codebase patterns, regression risk        |
+| Contracts Reviewer     | API contracts, type definitions           |
 
 **Used by**: code-reviewer agent
 
@@ -220,13 +220,13 @@ Based on [Verbalized Sampling](https://arxiv.org/abs/2510.01171) - achieves **2-
 
 **Perspectives Explored**:
 
-| Perspective | Question |
-|-------------|----------|
-| Pragmatist | What's the simplest solution that works? |
+| Perspective   | Question                                   |
+| ------------- | ------------------------------------------ |
+| Pragmatist    | What's the simplest solution that works?   |
 | Perfectionist | What's the ideal, no-constraints solution? |
-| Skeptic | What could go wrong? Hidden assumptions? |
-| Innovator | How would this be solved in 5 years? |
-| User | What does the end user actually need? |
+| Skeptic       | What could go wrong? Hidden assumptions?   |
+| Innovator     | How would this be solved in 5 years?       |
+| User          | What does the end user actually need?      |
 
 **Phases**: DIVERGE → EXPLORE → EVALUATE → REFINE → SYNTHESIZE
 
@@ -255,14 +255,14 @@ mcp__memory__aim_create_entities([{
 
 ### Quick Reference
 
-| Technique | Command/Agent | When to Use |
-|-----------|---------------|-------------|
-| Self-Refinement | `/reflect`, orchestrator | After completing significant work |
-| CoVe | Built into agents | Verifying complex outputs |
-| Multi-Perspective | code-reviewer | Code reviews, PR analysis |
-| Five Whys | `/why` | Debugging, incident analysis |
-| Verbalized Sampling | `/brainstorm` | Generating diverse solutions |
-| Memory Updates | All agents | After decisions, learnings |
+| Technique           | Command/Agent            | When to Use                       |
+| ------------------- | ------------------------ | --------------------------------- |
+| Self-Refinement     | `/reflect`, orchestrator | After completing significant work |
+| CoVe                | Built into agents        | Verifying complex outputs         |
+| Multi-Perspective   | code-reviewer            | Code reviews, PR analysis         |
+| Five Whys           | `/why`                   | Debugging, incident analysis      |
+| Verbalized Sampling | `/brainstorm`            | Generating diverse solutions      |
+| Memory Updates      | All agents               | After decisions, learnings        |
 
 ## Development Best Practices
 
@@ -302,22 +302,22 @@ RED → GREEN → REFACTOR
 3. Clean up while green
 ```
 
-| Anti-Pattern | Why Bad | Solution |
-|--------------|---------|----------|
-| Tests after code | Pass immediately, prove nothing | Delete and restart |
-| Arbitrary timeouts | Flaky, slow | Condition-based waiting |
-| Testing implementation | Brittle on refactor | Test behavior |
+| Anti-Pattern           | Why Bad                         | Solution                |
+| ---------------------- | ------------------------------- | ----------------------- |
+| Tests after code       | Pass immediately, prove nothing | Delete and restart      |
+| Arbitrary timeouts     | Flaky, slow                     | Condition-based waiting |
+| Testing implementation | Brittle on refactor             | Test behavior           |
 
 ### Code Review Frequency (in code-reviewer agent)
 
 **Review early, review often** - catch issues before they compound.
 
-| Scenario | Review Type |
-|----------|-------------|
-| Per task (subagent work) | After each task |
-| Major feature | Before integration |
-| Pre-merge | Full review |
-| Stuck/blocked | Ad-hoc |
+| Scenario                 | Review Type        |
+| ------------------------ | ------------------ |
+| Per task (subagent work) | After each task    |
+| Major feature            | Before integration |
+| Pre-merge                | Full review        |
+| Stuck/blocked            | Ad-hoc             |
 
 ### Git Workflow Best Practices
 
@@ -336,12 +336,12 @@ RED → GREEN → REFACTOR
 
 ### Nix Best Practices (in nix-specialist agent)
 
-| Do | Don't |
-|----|-------|
-| `writeShellApplication` | `writeShellScriptBin` |
-| `nix build --print-out-paths` | Impose build timeouts |
-| Fix ShellCheck warnings | Suppress them |
-| `alejandra` after changes | Skip formatting |
+| Do                             | Don't                  |
+| ------------------------------ | ---------------------- |
+| `writeShellApplication`        | `writeShellScriptBin`  |
+| `nix build --print-out-paths`  | Impose build timeouts  |
+| Fix ShellCheck warnings        | Suppress them          |
+| `alejandra` after changes      | Skip formatting        |
 | flake-parts for complex flakes | Manual flake structure |
 
 ## Agent Orchestration
@@ -356,21 +356,21 @@ For complex tasks, use specialist agents to handle domain-specific work efficien
 
 ### Available Specialists
 
-| Domain | Agent | Trigger Keywords |
-|--------|-------|------------------|
-| Frontend | frontend-developer | react, component, tailwind, shadcn, tsx |
-| Backend | backend-developer | api, endpoint, server, express, route |
-| Database | database-specialist | sql, schema, query, migration, prisma |
-| UI/UX | ui-ux-designer | design, accessibility, ux, layout |
-| Security | security-auditor | security, vulnerability, owasp, audit |
-| Docs | documentation-expert | document, readme, api-docs, jsdoc |
-| Architecture | architect | architecture, pattern, scale, design |
-| Rust | rust-developer | rust, cargo, tokio, systems |
-| Dart | dart-developer | dart, flutter, widget, riverpod |
-| Nix | nix-specialist | nix, flake, home-manager, darwin |
-| Review | code-reviewer | review, pr, quality, lint |
-| Testing | test-engineer | test, vitest, playwright, coverage |
-| Home Assistant | home-assistant-dev | home-assistant, automation, dashboard, lovelace |
+| Domain         | Agent                | Trigger Keywords                                |
+| -------------- | -------------------- | ----------------------------------------------- |
+| Frontend       | frontend-developer   | react, component, tailwind, shadcn, tsx         |
+| Backend        | backend-developer    | api, endpoint, server, express, route           |
+| Database       | database-specialist  | sql, schema, query, migration, prisma           |
+| UI/UX          | ui-ux-designer       | design, accessibility, ux, layout               |
+| Security       | security-auditor     | security, vulnerability, owasp, audit           |
+| Docs           | documentation-expert | document, readme, api-docs, jsdoc               |
+| Architecture   | architect            | architecture, pattern, scale, design            |
+| Rust           | rust-developer       | rust, cargo, tokio, systems                     |
+| Dart           | dart-developer       | dart, flutter, widget, riverpod                 |
+| Nix            | nix-specialist       | nix, flake, home-manager, darwin                |
+| Review         | code-reviewer        | review, pr, quality, lint                       |
+| Testing        | test-engineer        | test, vitest, playwright, coverage              |
+| Home Assistant | home-assistant-dev   | home-assistant, automation, dashboard, lovelace |
 
 ### Agent Configuration
 
@@ -380,7 +380,7 @@ Agents are defined in `.claude/agents/*.md` files with YAML frontmatter:
 ---
 name: agent-name
 description: What this agent does
-permissionMode: acceptEdits  # Optional: controls file edit permissions
+permissionMode: acceptEdits # Optional: controls file edit permissions
 tools:
   - Read
   - Write
@@ -389,29 +389,28 @@ tools:
 skills:
   - test-driven-development
 ---
-
 # Agent instructions in markdown...
 ```
 
 #### Frontmatter Fields
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `name` | Yes | Unique identifier (lowercase, hyphens) |
-| `description` | Yes | Natural language description of agent's purpose |
-| `tools` | No | List of tools agent can use. If omitted, inherits all from main thread |
-| `permissionMode` | No | Permission handling for subagent context |
-| `skills` | No | List of skills to auto-load |
-| `model` | No | Model to use (`sonnet`, `opus`, `haiku`, or `inherit`) |
+| Field            | Required | Description                                                            |
+| ---------------- | -------- | ---------------------------------------------------------------------- |
+| `name`           | Yes      | Unique identifier (lowercase, hyphens)                                 |
+| `description`    | Yes      | Natural language description of agent's purpose                        |
+| `tools`          | No       | List of tools agent can use. If omitted, inherits all from main thread |
+| `permissionMode` | No       | Permission handling for subagent context                               |
+| `skills`         | No       | List of skills to auto-load                                            |
+| `model`          | No       | Model to use (`sonnet`, `opus`, `haiku`, or `inherit`)                 |
 
 #### Permission Modes
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| `default` | Prompts for permission on first tool use | Read-only agents |
-| `acceptEdits` | Auto-accepts file edit permissions | Agents that modify files |
-| `plan` | Read-only, cannot modify files | Analysis/review agents |
-| `bypassPermissions` | Skips all prompts | Trusted automation only |
+| Mode                | Description                              | Use Case                 |
+| ------------------- | ---------------------------------------- | ------------------------ |
+| `default`           | Prompts for permission on first tool use | Read-only agents         |
+| `acceptEdits`       | Auto-accepts file edit permissions       | Agents that modify files |
+| `plan`              | Read-only, cannot modify files           | Analysis/review agents   |
+| `bypassPermissions` | Skips all prompts                        | Trusted automation only  |
 
 **Note**: Agents with `Write`, `Edit`, or `Bash` tools should use `permissionMode: acceptEdits` to allow file modifications in subagent context. Without this, edits may not persist due to context isolation.
 
@@ -428,6 +427,7 @@ Due to a Claude Code bug, **subagent file operations don't persist** to the file
 3. Main thread applies changes using Edit tool (more efficient than whole files)
 
 **Example prompt addition for file tasks:**
+
 ```
 Due to bug #4462, return edits instead of writing directly.
 Format: "Replace: [old text]" → "With: [new text]"
@@ -444,33 +444,33 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 #### Available MCP Servers
 
-| MCP Server | Purpose | Key Tools |
-|------------|---------|-----------|
-| **memory** | Persistent knowledge graph | `aim_create_entities`, `aim_search_nodes`, `aim_read_graph` |
-| **context7** | Library documentation | `resolve-library-id`, `get-library-docs` |
-| **github** | Repository operations | `get_pull_request`, `search_issues`, `create_pull_request_review` |
-| **sequential-thinking** | Complex reasoning | `sequentialthinking` for multi-step analysis |
-| **magic-ui** | UI components | Component implementations, animations, effects |
-| **puppeteer** | Browser automation | Screenshots, navigation, form filling |
-| **hass-mcp** | Home Assistant | Entity control, automation, dashboard |
-| **filesystem** | Safe file operations | Sandboxed access to Developer/, .config/, tmp/ |
-| **obsidian** | Obsidian vault | Search notes, create docs, specs, ADRs |
+| MCP Server              | Purpose                    | Key Tools                                                         |
+| ----------------------- | -------------------------- | ----------------------------------------------------------------- |
+| **memory**              | Persistent knowledge graph | `aim_create_entities`, `aim_search_nodes`, `aim_read_graph`       |
+| **context7**            | Library documentation      | `resolve-library-id`, `get-library-docs`                          |
+| **github**              | Repository operations      | `get_pull_request`, `search_issues`, `create_pull_request_review` |
+| **sequential-thinking** | Complex reasoning          | `sequentialthinking` for multi-step analysis                      |
+| **magic-ui**            | UI components              | Component implementations, animations, effects                    |
+| **puppeteer**           | Browser automation         | Screenshots, navigation, form filling                             |
+| **hass-mcp**            | Home Assistant             | Entity control, automation, dashboard                             |
+| **filesystem**          | Safe file operations       | Sandboxed access to Developer/, .config/, tmp/                    |
+| **obsidian**            | Obsidian vault             | Search notes, create docs, specs, ADRs                            |
 
 #### Agent ↔ MCP Mapping
 
-| Agent | MCPs Used | Use Case |
-|-------|-----------|----------|
-| orchestrator | memory, github, sequential-thinking, obsidian | Project knowledge, PR context, task breakdown, vault docs |
-| architect | memory, sequential-thinking, context7 | Store decisions, design patterns, research |
-| frontend-developer | context7, magic-ui | React docs, UI components |
-| backend-developer | context7 | API framework documentation |
-| code-reviewer | github, memory | PR files, comments, reviews, pattern checks |
-| test-engineer | puppeteer | Visual testing, E2E automation |
-| nix-specialist | context7 | Nix/home-manager documentation |
-| database-specialist | context7 | ORM/database documentation |
-| ui-ux-designer | magic-ui | UI components |
-| home-assistant-dev | hass-mcp, context7 | Entity queries, service calls, HA docs |
-| documentation-expert | obsidian, context7 | Generate and save docs to vault |
+| Agent                | MCPs Used                                     | Use Case                                                  |
+| -------------------- | --------------------------------------------- | --------------------------------------------------------- |
+| orchestrator         | memory, github, sequential-thinking, obsidian | Project knowledge, PR context, task breakdown, vault docs |
+| architect            | memory, sequential-thinking, context7         | Store decisions, design patterns, research                |
+| frontend-developer   | context7, magic-ui                            | React docs, UI components                                 |
+| backend-developer    | context7                                      | API framework documentation                               |
+| code-reviewer        | github, memory                                | PR files, comments, reviews, pattern checks               |
+| test-engineer        | puppeteer                                     | Visual testing, E2E automation                            |
+| nix-specialist       | context7                                      | Nix/home-manager documentation                            |
+| database-specialist  | context7                                      | ORM/database documentation                                |
+| ui-ux-designer       | magic-ui                                      | UI components                                             |
+| home-assistant-dev   | hass-mcp, context7                            | Entity queries, service calls, HA docs                    |
+| documentation-expert | obsidian, context7                            | Generate and save docs to vault                           |
 
 #### MCP Usage Examples
 
@@ -510,12 +510,12 @@ Claude maintains a knowledge graph across sessions using the `memory` MCP server
 
 Memory is organized into contexts for isolation and sharing:
 
-| Context | Purpose | Storage File |
-|---------|---------|--------------|
-| (default) | Personal conventions, preferences | `memory.jsonl` |
-| `[project]` | Project-specific knowledge | `memory-[project].jsonl` |
-| `work` | Cross-project work patterns | `memory-work.jsonl` |
-| `client-[name]` | Isolated client data | `memory-client-[name].jsonl` |
+| Context         | Purpose                           | Storage File                 |
+| --------------- | --------------------------------- | ---------------------------- |
+| (default)       | Personal conventions, preferences | `memory.jsonl`               |
+| `[project]`     | Project-specific knowledge        | `memory-[project].jsonl`     |
+| `work`          | Cross-project work patterns       | `memory-work.jsonl`          |
+| `client-[name]` | Isolated client data              | `memory-client-[name].jsonl` |
 
 #### Commands
 
@@ -534,14 +534,14 @@ Memory is organized into contexts for isolation and sharing:
 
 #### What Gets Stored
 
-| Entity Type | Context | Examples |
-|-------------|---------|----------|
-| `project` | project | Project name, tech stack, package manager |
-| `service` | project | Backend services, integrations |
-| `component` | project | UI components, modules |
-| `decision` | project | Architecture decisions (ADRs) |
-| `pattern` | default | Code conventions, naming patterns |
-| `preference` | default | Personal tool preferences |
+| Entity Type  | Context | Examples                                  |
+| ------------ | ------- | ----------------------------------------- |
+| `project`    | project | Project name, tech stack, package manager |
+| `service`    | project | Backend services, integrations            |
+| `component`  | project | UI components, modules                    |
+| `decision`   | project | Architecture decisions (ADRs)             |
+| `pattern`    | default | Code conventions, naming patterns         |
+| `preference` | default | Personal tool preferences                 |
 
 #### Memory Location
 
@@ -593,14 +593,14 @@ vault/
 
 #### Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/note [topic]` | Create note (daily, concept, learning) |
-| `/spec [feature]` | Generate technical specification |
-| `/doc api [file]` | Generate API documentation |
-| `/doc guide [topic]` | Generate step-by-step guide |
-| `/doc adr [decision]` | Generate Architecture Decision Record |
-| `/search-vault [query]` | Search vault content |
+| Command                 | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| `/note [topic]`         | Create note (daily, concept, learning) |
+| `/spec [feature]`       | Generate technical specification       |
+| `/doc api [file]`       | Generate API documentation             |
+| `/doc guide [topic]`    | Generate step-by-step guide            |
+| `/doc adr [decision]`   | Generate Architecture Decision Record  |
+| `/search-vault [query]` | Search vault content                   |
 
 #### Security
 
@@ -616,12 +616,12 @@ Run independent agent tasks in parallel by calling multiple Task tools in a sing
 
 **Default**: Use foreground tasks (no `run_in_background`). Multiple Task calls in one message run in parallel automatically.
 
-| Scenario | Mode | Reason |
-|----------|------|--------|
-| Frontend + Backend work | Parallel (foreground) | Multiple Task calls in single message |
-| Security audit | Background only if doing other work | Otherwise use foreground |
-| Schema → API → UI | Sequential | Each depends on previous |
-| Quick file lookup | Foreground | Fast, immediate result |
+| Scenario                | Mode                                | Reason                                |
+| ----------------------- | ----------------------------------- | ------------------------------------- |
+| Frontend + Backend work | Parallel (foreground)               | Multiple Task calls in single message |
+| Security audit          | Background only if doing other work | Otherwise use foreground              |
+| Schema → API → UI       | Sequential                          | Each depends on previous              |
+| Quick file lookup       | Foreground                          | Fast, immediate result                |
 
 **Avoid**: `run_in_background: true` unless you have specific work to do while waiting. Task IDs must be captured and used within the same response to avoid "No task found" errors.
 
@@ -667,52 +667,52 @@ All commands available as `/command` in Claude Code or `cc-command` from termina
 
 ### Code Quality & Review
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
-| `/review` | `cc-review` | Comprehensive code review of staged changes |
-| `/audit [target]` | `cc-audit` | Deep code audit (entire codebase, file, or function) |
-| `/perf` | `cc-perf` | Performance audit of codebase |
-| `/security` | `cc-security` | Security-focused audit (OWASP, secrets, auth) |
-| `/health` | `cc-health` | Project health assessment and scorecard |
-| `/deps` | `cc-deps` | Dependency audit (outdated, vulnerabilities, licenses) |
+| Command           | Shell Alias   | Description                                            |
+| ----------------- | ------------- | ------------------------------------------------------ |
+| `/review`         | `cc-review`   | Comprehensive code review of staged changes            |
+| `/audit [target]` | `cc-audit`    | Deep code audit (entire codebase, file, or function)   |
+| `/perf`           | `cc-perf`     | Performance audit of codebase                          |
+| `/security`       | `cc-security` | Security-focused audit (OWASP, secrets, auth)          |
+| `/health`         | `cc-health`   | Project health assessment and scorecard                |
+| `/deps`           | `cc-deps`     | Dependency audit (outdated, vulnerabilities, licenses) |
 
 ### Git Workflows
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
+| Command   | Shell Alias | Description                                             |
+| --------- | ----------- | ------------------------------------------------------- |
 | `/commit` | `cc-commit` | Generate conventional commit message for staged changes |
-| `/pr` | `cc-pr` | Generate PR title and description for current branch |
+| `/pr`     | `cc-pr`     | Generate PR title and description for current branch    |
 
 ### Context & Memory
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
-| `/prime [refresh]` | `cc-prime` | Prime Claude with comprehensive project context |
-| `/remember [query]` | `cc-remember` | Manage persistent memory (knowledge graph) |
+| Command             | Shell Alias   | Description                                     |
+| ------------------- | ------------- | ----------------------------------------------- |
+| `/prime [refresh]`  | `cc-prime`    | Prime Claude with comprehensive project context |
+| `/remember [query]` | `cc-remember` | Manage persistent memory (knowledge graph)      |
 
 ### Problem Solving (CEK Techniques)
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
-| `/fix [problem or issue#]` | `cc-fix` | Fix a problem using RIPER workflow |
-| `/why [problem]` | `cc-why` | Five Whys root cause analysis |
-| `/reflect [topic]` | `cc-reflect` | Self-refinement of previous response |
-| `/brainstorm [topic]` | `cc-brainstorm` | Generate diverse ideas using multiple perspectives |
+| Command                    | Shell Alias     | Description                                        |
+| -------------------------- | --------------- | -------------------------------------------------- |
+| `/fix [problem or issue#]` | `cc-fix`        | Fix a problem using RIPER workflow                 |
+| `/why [problem]`           | `cc-why`        | Five Whys root cause analysis                      |
+| `/reflect [topic]`         | `cc-reflect`    | Self-refinement of previous response               |
+| `/brainstorm [topic]`      | `cc-brainstorm` | Generate diverse ideas using multiple perspectives |
 
 ### Documentation & Explanation
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
-| `/explain [code]` | `cc-explain` | Explain code sections and document complex logic |
-| `/note [topic]` | `cc-note` | Create note in Obsidian vault |
-| `/spec [feature]` | `cc-spec` | Generate technical specification in vault |
-| `/doc [type] [topic]` | `cc-doc` | Generate documentation (API, guide, ADR) |
-| `/search-vault [query]` | `cc-search-vault` | Search Obsidian vault |
+| Command                 | Shell Alias       | Description                                      |
+| ----------------------- | ----------------- | ------------------------------------------------ |
+| `/explain [code]`       | `cc-explain`      | Explain code sections and document complex logic |
+| `/note [topic]`         | `cc-note`         | Create note in Obsidian vault                    |
+| `/spec [feature]`       | `cc-spec`         | Generate technical specification in vault        |
+| `/doc [type] [topic]`   | `cc-doc`          | Generate documentation (API, guide, ADR)         |
+| `/search-vault [query]` | `cc-search-vault` | Search Obsidian vault                            |
 
 ### Orchestration
 
-| Command | Shell Alias | Description |
-|---------|-------------|-------------|
+| Command               | Shell Alias      | Description                                    |
+| --------------------- | ---------------- | ---------------------------------------------- |
 | `/orchestrate [task]` | `cc-orchestrate` | Analyze task and delegate to specialist agents |
 
 ## Shell Integration

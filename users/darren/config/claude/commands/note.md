@@ -23,12 +23,12 @@ Create a note in your Obsidian vault. Notes are organized by type and automatica
 
 Based on the topic, categorize the note:
 
-| Type | Folder | Use For |
-|------|--------|---------|
-| `daily` | `claude/notes/daily/YYYY-MM-DD/` | Session notes, meeting notes |
-| `concept` | `claude/notes/concepts/` | Explaining concepts, patterns, mental models |
-| `learning` | `claude/notes/learnings/` | Insights, gotchas, best practices |
-| `reference` | `claude/notes/reference/` | Quick reference, cheatsheets |
+| Type        | Folder                           | Use For                                      |
+| ----------- | -------------------------------- | -------------------------------------------- |
+| `daily`     | `claude/notes/daily/YYYY-MM-DD/` | Session notes, meeting notes                 |
+| `concept`   | `claude/notes/concepts/`         | Explaining concepts, patterns, mental models |
+| `learning`  | `claude/notes/learnings/`        | Insights, gotchas, best practices            |
+| `reference` | `claude/notes/reference/`        | Quick reference, cheatsheets                 |
 
 ### 2. Search for Related Notes
 
@@ -53,19 +53,24 @@ related: []
 # Title
 
 ## Summary
+
 [Brief overview - 1-2 sentences]
 
 ## Details
+
 [Main content]
 
 ## Code Examples
+
 [If applicable]
 
 ## Related
+
 - [[Related Note 1]]
 - [[Related Note 2]]
 
 ## References
+
 - [External link](url)
 ```
 

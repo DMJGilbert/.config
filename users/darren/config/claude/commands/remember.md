@@ -24,12 +24,12 @@ Command: $ARGUMENTS
 
 Memory is organized into contexts:
 
-| Context | Purpose | Storage |
-|---------|---------|---------|
-| (default) | Personal conventions, preferences | `memory.jsonl` |
-| `[project]` | Project-specific knowledge | `memory-[project].jsonl` |
-| `work` | Cross-project work patterns | `memory-work.jsonl` |
-| `client-[name]` | Isolated client data | `memory-client-[name].jsonl` |
+| Context         | Purpose                           | Storage                      |
+| --------------- | --------------------------------- | ---------------------------- |
+| (default)       | Personal conventions, preferences | `memory.jsonl`               |
+| `[project]`     | Project-specific knowledge        | `memory-[project].jsonl`     |
+| `work`          | Cross-project work patterns       | `memory-work.jsonl`          |
+| `client-[name]` | Isolated client data              | `memory-client-[name].jsonl` |
 
 ## Usage
 
@@ -166,29 +166,29 @@ Removes entity (with confirmation) from the context where it exists.
 
 Suggested entity types for consistency:
 
-| Type | Use For |
-|------|---------|
-| `project` | The main project |
-| `service` | Backend services, APIs |
-| `component` | UI components, modules |
-| `directory` | Key directories |
-| `pattern` | Code patterns, conventions |
-| `decision` | Architecture decisions (ADRs) |
-| `config` | Configuration files/systems |
-| `integration` | External integrations |
-| `person` | Team members, stakeholders |
+| Type          | Use For                       |
+| ------------- | ----------------------------- |
+| `project`     | The main project              |
+| `service`     | Backend services, APIs        |
+| `component`   | UI components, modules        |
+| `directory`   | Key directories               |
+| `pattern`     | Code patterns, conventions    |
+| `decision`    | Architecture decisions (ADRs) |
+| `config`      | Configuration files/systems   |
+| `integration` | External integrations         |
+| `person`      | Team members, stakeholders    |
 
 ## Relation Types
 
-| Type | Use For |
-|------|---------|
-| `part_of` | Component belongs to larger system |
-| `uses` | Service A uses Service B |
-| `depends_on` | Hard dependency |
-| `affects` | Decision affects component |
-| `describes` | Pattern describes component |
-| `authenticates` | Auth relationship |
-| `stores_data_in` | Data storage relationship |
+| Type             | Use For                            |
+| ---------------- | ---------------------------------- |
+| `part_of`        | Component belongs to larger system |
+| `uses`           | Service A uses Service B           |
+| `depends_on`     | Hard dependency                    |
+| `affects`        | Decision affects component         |
+| `describes`      | Pattern describes component        |
+| `authenticates`  | Auth relationship                  |
+| `stores_data_in` | Data storage relationship          |
 
 ## Output Format
 
@@ -219,4 +219,4 @@ Memory is stored globally at `~/.local/share/claude-memory/`:
 - `memory.jsonl` - Default context (personal conventions)
 - `memory-[project].jsonl` - Project-specific contexts
 
-*Memory persists across sessions and is available in all projects.*
+_Memory persists across sessions and is available in all projects._

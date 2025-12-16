@@ -17,13 +17,13 @@ overlays/
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `hass-bubble-card` | Floating action buttons for Home Assistant |
-| `hass-catppuccin` | Catppuccin theme for Home Assistant |
-| `lovelace-auto-entities` | Automatically populate entities in cards |
-| `lovelace-layout-card` | Custom grid layouts for dashboards |
-| `lovelace-tabbed-card` | Tabbed container card |
+| Package                  | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `hass-bubble-card`       | Floating action buttons for Home Assistant |
+| `hass-catppuccin`        | Catppuccin theme for Home Assistant        |
+| `lovelace-auto-entities` | Automatically populate entities in cards   |
+| `lovelace-layout-card`   | Custom grid layouts for dashboards         |
+| `lovelace-tabbed-card`   | Tabbed container card                      |
 
 ## Adding a New Package
 

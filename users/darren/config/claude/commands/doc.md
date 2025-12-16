@@ -42,7 +42,7 @@ Generate documentation and save to your Obsidian vault. Supports API docs, guide
 
 **Template:**
 
-```markdown
+````markdown
 ---
 type: api-documentation
 created: YYYY-MM-DD
@@ -53,9 +53,11 @@ tags: [api, docs, module-name]
 # [Module] API
 
 ## Overview
+
 [Purpose of this API]
 
 ## Authentication
+
 [Auth requirements - Bearer token, API key, etc.]
 
 ## Endpoints
@@ -65,11 +67,13 @@ tags: [api, docs, module-name]
 **Description**: [What it does]
 
 **Request:**
+
 ```typescript
 interface RequestBody {
   // fields
 }
 ```
+````
 
 **Response:**
 
@@ -89,17 +93,17 @@ curl -X METHOD https://api.example.com/path \
 
 **Status Codes:**
 
-| Code | Description |
-|------|-------------|
-| 200 | Success |
-| 400 | Bad request |
-| 401 | Unauthorized |
+| Code | Description  |
+| ---- | ------------ |
+| 200  | Success      |
+| 400  | Bad request  |
+| 401  | Unauthorized |
 
 ## Error Handling
 
 [Common errors and solutions]
 
-```
+````
 
 **Save to:** `claude/docs/api/[module]-api.md`
 
@@ -138,7 +142,7 @@ audience: [developers|users|admins]
 
 ```bash
 # Commands to run
-```
+````
 
 ### Step 2: [Action]
 
@@ -166,7 +170,7 @@ How to verify it worked:
 - [[Related Guide]]
 - [[Advanced Topic]]
 
-```
+````
 
 **Save to:** `claude/docs/guides/[topic-slug].md`
 
@@ -226,7 +230,7 @@ accepted
 ## References
 - [[Related ADR]]
 - [External resource](url)
-```
+````
 
 **Save to:** `claude/docs/decisions/[NNNN]-[slug].md`
 

@@ -60,36 +60,46 @@ Optional argument: $ARGUMENTS (target base branch, defaults to main/master)
 
 ```markdown
 ## Summary
+
 [1-3 bullet points describing what this PR does]
 
 ## Changes
+
 [Categorized list of changes]
 
 ### Added
+
 - New feature X
 - New component Y
 
 ### Changed
+
 - Modified behavior of Z
 
 ### Fixed
+
 - Bug in A
 
 ### Removed
+
 - Deprecated B
 
 ## Test Plan
+
 - [ ] Unit tests pass
 - [ ] Manual testing completed
 - [ ] Edge cases verified
 
 ## Breaking Changes
+
 [List any breaking changes, or "None"]
 
 ## Related Issues
+
 [Link to related issues if identifiable from commits]
 
 ## Screenshots
+
 [If UI changes, note that screenshots should be added]
 ```
 

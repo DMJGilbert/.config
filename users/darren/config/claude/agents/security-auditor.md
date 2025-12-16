@@ -102,12 +102,12 @@ AKIA[0-9A-Z]{16}
 
 # Compliance Awareness
 
-| Standard | Key Requirements |
-|----------|------------------|
-| OWASP | Top 10 vulnerabilities, secure coding |
-| GDPR | Data minimization, consent, right to erasure |
-| HIPAA | PHI encryption, access controls, audit logs |
-| PCI-DSS | Cardholder data protection, network security |
+| Standard | Key Requirements                             |
+| -------- | -------------------------------------------- |
+| OWASP    | Top 10 vulnerabilities, secure coding        |
+| GDPR     | Data minimization, consent, right to erasure |
+| HIPAA    | PHI encryption, access controls, audit logs  |
+| PCI-DSS  | Cardholder data protection, network security |
 
 # Security Checklist
 

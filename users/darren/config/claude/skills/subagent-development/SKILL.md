@@ -75,12 +75,12 @@ Evaluate:
 
 ### 4. Address Feedback
 
-| Severity | Action |
-|----------|--------|
-| Critical | Fix immediately, re-review |
-| High | Fix before next task |
-| Medium | Fix if quick, else document |
-| Low | Document for later |
+| Severity | Action                      |
+| -------- | --------------------------- |
+| Critical | Fix immediately, re-review  |
+| High     | Fix before next task        |
+| Medium   | Fix if quick, else document |
+| Low      | Document for later          |
 
 ### 5. Mark & Continue
 
@@ -135,18 +135,23 @@ Transition to merge/PR workflow.
 **Status:** [Pass/Fail]
 
 ### Critical Issues
+
 [None / List]
 
 ### High Priority
+
 [None / List]
 
 ### Medium Priority
+
 [None / List]
 
 ### Minor/Suggestions
+
 [None / List]
 
 ### Verdict
+
 - [ ] Proceed to next task
 - [ ] Fix issues first
 - [ ] Needs discussion

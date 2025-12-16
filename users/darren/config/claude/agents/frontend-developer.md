@@ -16,8 +16,8 @@ tools:
   - mcp__github__get_issue
   - mcp__puppeteer__*
 skills:
-  - test-driven-development   # Write component tests before implementation
-  - systematic-debugging      # Debug UI issues with 4-phase methodology
+  - test-driven-development # Write component tests before implementation
+  - systematic-debugging # Debug UI issues with 4-phase methodology
 ---
 
 # Role Definition

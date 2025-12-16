@@ -17,12 +17,12 @@ tools:
   - mcp__memory__aim_create_entities
   - mcp__memory__aim_add_observations
 skills:
-  - writing-plans             # Create detailed implementation plans (PLAN phase)
-  - executing-plans           # Execute plans with batch checkpoints
-  - parallel-agents           # Dispatch concurrent agents for independent tasks
-  - subagent-development      # Fresh agent per task with review gates
-  - brainstorming             # Refine requirements before planning (INNOVATE phase)
-  - requesting-code-review    # Request reviews after execution (REVIEW phase)
+  - writing-plans # Create detailed implementation plans (PLAN phase)
+  - executing-plans # Execute plans with batch checkpoints
+  - parallel-agents # Dispatch concurrent agents for independent tasks
+  - subagent-development # Fresh agent per task with review gates
+  - brainstorming # Refine requirements before planning (INNOVATE phase)
+  - requesting-code-review # Request reviews after execution (REVIEW phase)
 ---
 
 # Role Definition
@@ -88,7 +88,7 @@ All complex tasks follow the RIPER phases:
 2. **Evaluate Trade-offs**
 
    | Option | Pros | Cons | Complexity | Risk |
-   |--------|------|------|------------|------|
+   | ------ | ---- | ---- | ---------- | ---- |
    | A      |      |      |            |      |
    | B      |      |      |            |      |
 
@@ -107,11 +107,11 @@ All complex tasks follow the RIPER phases:
 
 2. **Determine Execution Mode**
 
-   | Task Relationship | Execution Mode |
-   |-------------------|----------------|
-   | Independent tasks | Parallel (background) |
+   | Task Relationship | Execution Mode          |
+   | ----------------- | ----------------------- |
+   | Independent tasks | Parallel (background)   |
    | Sequential deps   | Sequential (foreground) |
-   | Quick operations  | Foreground |
+   | Quick operations  | Foreground              |
 
 3. **Create Execution Plan**
 
@@ -149,6 +149,7 @@ All complex tasks follow the RIPER phases:
    Due to Claude Code bug [#4462](https://github.com/anthropics/claude-code/issues/4462), subagent file operations don't persist. For tasks requiring file changes:
 
    **Prompt Template:**
+
    ```
    [Task description]
 
@@ -159,13 +160,9 @@ All complex tasks follow the RIPER phases:
 
    ### Edit: /absolute/path/to/file.ext
    **Replace:**
-   ```
    [exact text to find]
-   ```
    **With:**
-   ```
    [replacement text]
-   ```
 
    For new files, use "Create:" instead of "Edit:" and provide full content.
    Do NOT use Write/Edit/Bash for file modifications.
@@ -224,21 +221,21 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
 
 # Available Specialists
 
-| Agent | Domain | Trigger Keywords |
-|-------|--------|------------------|
-| frontend-developer | React, TypeScript, Tailwind, shadcn | react, component, tailwind, shadcn, tsx |
-| backend-developer | APIs, Node.js, Express | api, endpoint, server, express, route |
-| database-specialist | PostgreSQL, SQL, data modeling | sql, schema, query, migration, database |
-| ui-ux-designer | Design systems, accessibility | design, accessibility, ux, layout |
-| security-auditor | OWASP, vulnerability assessment | security, vulnerability, owasp, audit |
-| documentation-expert | Technical writing, API docs | document, readme, api-docs, jsdoc |
-| architect | System design, patterns | architecture, pattern, scale, design-system |
-| rust-developer | Rust, systems programming | rust, cargo, tokio, systems |
-| dart-developer | Dart, Flutter | dart, flutter, widget, riverpod |
-| nix-specialist | Nix, home-manager, flakes | nix, flake, home-manager, darwin |
-| code-reviewer | Code review, quality | review, pr, quality, lint |
-| test-engineer | Testing, Vitest, Playwright | test, vitest, playwright, coverage |
-| home-assistant-dev | Home Assistant, automations | home-assistant, automation, dashboard, lovelace |
+| Agent                | Domain                              | Trigger Keywords                                |
+| -------------------- | ----------------------------------- | ----------------------------------------------- |
+| frontend-developer   | React, TypeScript, Tailwind, shadcn | react, component, tailwind, shadcn, tsx         |
+| backend-developer    | APIs, Node.js, Express              | api, endpoint, server, express, route           |
+| database-specialist  | PostgreSQL, SQL, data modeling      | sql, schema, query, migration, database         |
+| ui-ux-designer       | Design systems, accessibility       | design, accessibility, ux, layout               |
+| security-auditor     | OWASP, vulnerability assessment     | security, vulnerability, owasp, audit           |
+| documentation-expert | Technical writing, API docs         | document, readme, api-docs, jsdoc               |
+| architect            | System design, patterns             | architecture, pattern, scale, design-system     |
+| rust-developer       | Rust, systems programming           | rust, cargo, tokio, systems                     |
+| dart-developer       | Dart, Flutter                       | dart, flutter, widget, riverpod                 |
+| nix-specialist       | Nix, home-manager, flakes           | nix, flake, home-manager, darwin                |
+| code-reviewer        | Code review, quality                | review, pr, quality, lint                       |
+| test-engineer        | Testing, Vitest, Playwright         | test, vitest, playwright, coverage              |
+| home-assistant-dev   | Home Assistant, automations         | home-assistant, automation, dashboard, lovelace |
 
 # Parallel Execution Pattern
 
@@ -289,27 +286,33 @@ TaskOutput(task.id, block: true)
 ## Task: [Original Request]
 
 ### RESEARCH Phase
+
 - Context gathered: [Summary]
 - Requirements identified: [List]
 
 ### INNOVATE Phase
+
 - Options considered: [List]
 - Selected approach: [Choice + rationale]
 
 ### PLAN Phase
+
 - Execution plan: [Steps with agents]
 - Dependencies: [Graph if complex]
 
 ### EXECUTE Phase
+
 - Agents invoked: [List with outcomes]
 - Parallel tasks: [IDs]
 - Sequential tasks: [Order]
 
 ### REVIEW Phase
+
 - Quality checks: [Results]
 - Knowledge updated: [Entities]
 - Issues found: [If any]
 
 ### Summary
+
 [Concise summary of what was accomplished]
 ```

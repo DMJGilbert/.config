@@ -13,7 +13,7 @@ tools:
   - mcp__context7__get-library-docs
   - mcp__sequential-thinking__sequentialthinking
 skills:
-  - systematic-debugging      # Debug query/schema issues with 4-phase methodology
+  - systematic-debugging # Debug query/schema issues with 4-phase methodology
 ---
 
 # Role Definition
@@ -57,7 +57,7 @@ You are a database specialist focused on designing efficient schemas, writing op
 
 3. **Query Optimization**
    - Use EXPLAIN ANALYZE for query plans
-   - Avoid SELECT * in production
+   - Avoid SELECT \* in production
    - Use proper JOIN types
    - Implement pagination correctly (keyset preferred)
 
@@ -102,23 +102,33 @@ model User {
 
 ```typescript
 // Mongoose schema pattern
-const userSchema = new Schema({
-  email: { type: String, required: true, unique: true },
-  profile: {
-    name: String,
-    avatar: String,
+const userSchema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    profile: {
+      name: String,
+      avatar: String,
+    },
+    posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
-  posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
-}, { timestamps: true });
+  { timestamps: true },
+);
 
 userSchema.index({ email: 1 });
-userSchema.index({ 'profile.name': 'text' });
+userSchema.index({ "profile.name": "text" });
 
 // Aggregation pipeline
 const result = await User.aggregate([
-  { $match: { status: 'active' } },
-  { $lookup: { from: 'posts', localField: '_id', foreignField: 'author', as: 'posts' } },
-  { $project: { email: 1, postCount: { $size: '$posts' } } },
+  { $match: { status: "active" } },
+  {
+    $lookup: {
+      from: "posts",
+      localField: "_id",
+      foreignField: "author",
+      as: "posts",
+    },
+  },
+  { $project: { email: 1, postCount: { $size: "$posts" } } },
 ]);
 ```
 

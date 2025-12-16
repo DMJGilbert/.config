@@ -87,44 +87,44 @@ Run appropriate commands for each detected ecosystem:
 #### Summary
 
 | Ecosystem | Total | Outdated | Vulnerable | Issues |
-|-----------|-------|----------|------------|--------|
-| npm | X | X | X | X |
-| cargo | X | X | X | X |
-| nix | X | X | X | X |
+| --------- | ----- | -------- | ---------- | ------ |
+| npm       | X     | X        | X          | X      |
+| cargo     | X     | X        | X          | X      |
+| nix       | X     | X        | X          | X      |
 
 #### Outdated Packages
 
 ##### Critical Updates (Security)
 
 | Package | Current | Latest | Severity |
-|---------|---------|--------|----------|
-| example | 1.0.0 | 2.0.0 | Critical |
+| ------- | ------- | ------ | -------- |
+| example | 1.0.0   | 2.0.0  | Critical |
 
 ##### Major Updates (Breaking)
 
-| Package | Current | Latest | Notes |
-|---------|---------|--------|-------|
-| example | 1.0.0 | 2.0.0 | [changelog link] |
+| Package | Current | Latest | Notes            |
+| ------- | ------- | ------ | ---------------- |
+| example | 1.0.0   | 2.0.0  | [changelog link] |
 
 ##### Minor/Patch Updates
 
 | Package | Current | Latest |
-|---------|---------|--------|
-| example | 1.0.0 | 1.1.0 |
+| ------- | ------- | ------ |
+| example | 1.0.0   | 1.1.0  |
 
 #### Security Vulnerabilities
 
-| Package | Severity | CVE | Description | Fix Version |
-|---------|----------|-----|-------------|-------------|
-| example | High | CVE-XXX | Description | 1.2.3 |
+| Package | Severity | CVE     | Description | Fix Version |
+| ------- | -------- | ------- | ----------- | ----------- |
+| example | High     | CVE-XXX | Description | 1.2.3       |
 
 #### License Report
 
-| License | Count | Packages |
-|---------|-------|----------|
-| MIT | X | pkg1, pkg2 |
-| Apache-2.0 | X | pkg3 |
-| GPL-3.0 | X | **pkg4** (review needed) |
+| License    | Count | Packages                 |
+| ---------- | ----- | ------------------------ |
+| MIT        | X     | pkg1, pkg2               |
+| Apache-2.0 | X     | pkg3                     |
+| GPL-3.0    | X     | **pkg4** (review needed) |
 
 #### Potentially Unused
 

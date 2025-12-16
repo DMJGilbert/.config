@@ -27,21 +27,21 @@ flake.nix
 
 ## Systems
 
-| Host | Platform | Description |
-|------|----------|-------------|
-| `ryukyu` | macOS (Apple Silicon) | Primary development machine |
-| `rubecula` | NixOS (Intel) | Home server running on MacBook Pro with T2 chip |
+| Host       | Platform              | Description                                     |
+| ---------- | --------------------- | ----------------------------------------------- |
+| `ryukyu`   | macOS (Apple Silicon) | Primary development machine                     |
+| `rubecula` | NixOS (Intel)         | Home server running on MacBook Pro with T2 chip |
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Rebuild macOS | `darwin-rebuild switch --flake .#ryukyu` |
-| Rebuild NixOS | `sudo nixos-rebuild switch --flake .#rubecula` |
-| Update inputs | `nix flake update` |
-| Check flake | `nix flake check` |
-| Format code | `alejandra .` |
-| Search packages | `nix search nixpkgs [name]` |
+| Task            | Command                                        |
+| --------------- | ---------------------------------------------- |
+| Rebuild macOS   | `darwin-rebuild switch --flake .#ryukyu`       |
+| Rebuild NixOS   | `sudo nixos-rebuild switch --flake .#rubecula` |
+| Update inputs   | `nix flake update`                             |
+| Check flake     | `nix flake check`                              |
+| Format code     | `alejandra .`                                  |
+| Search packages | `nix search nixpkgs [name]`                    |
 
 ## Structure
 
@@ -110,17 +110,17 @@ See module-specific documentation:
 
 Custom slash commands for Claude Code, available via shell functions that support arguments:
 
-| Function | Command | Description |
-|----------|---------|-------------|
-| `cc-prime` | `/prime` | Prime Claude with project context |
-| `cc-review` | `/review` | Code review of staged changes |
-| `cc-commit` | `/commit` | Generate conventional commit message |
-| `cc-pr` | `/pr` | Generate PR description |
-| `cc-perf` | `/perf` | Performance audit |
-| `cc-health` | `/health` | Project health assessment |
-| `cc-security` | `/security` | Security audit |
-| `cc-explain` | `/explain` | Explain code sections |
-| `cc-deps` | `/deps` | Dependency audit |
+| Function      | Command     | Description                          |
+| ------------- | ----------- | ------------------------------------ |
+| `cc-prime`    | `/prime`    | Prime Claude with project context    |
+| `cc-review`   | `/review`   | Code review of staged changes        |
+| `cc-commit`   | `/commit`   | Generate conventional commit message |
+| `cc-pr`       | `/pr`       | Generate PR description              |
+| `cc-perf`     | `/perf`     | Performance audit                    |
+| `cc-health`   | `/health`   | Project health assessment            |
+| `cc-security` | `/security` | Security audit                       |
+| `cc-explain`  | `/explain`  | Explain code sections                |
+| `cc-deps`     | `/deps`     | Dependency audit                     |
 
 All commands support arguments via `$ARGUMENTS`:
 

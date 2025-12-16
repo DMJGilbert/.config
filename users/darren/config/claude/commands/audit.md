@@ -230,9 +230,9 @@ Highlight well-written code patterns worth preserving or replicating.
 
 Ranked list of refactoring opportunities with effort/impact assessment:
 
-| Priority | Refactor | Location | Effort | Impact |
-|----------|----------|----------|--------|--------|
-| 1 | Description | file | Low/Med/High | Low/Med/High |
+| Priority | Refactor    | Location | Effort       | Impact       |
+| -------- | ----------- | -------- | ------------ | ------------ |
+| 1        | Description | file     | Low/Med/High | Low/Med/High |
 
 #### Next Steps
 

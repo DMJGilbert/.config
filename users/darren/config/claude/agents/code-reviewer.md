@@ -14,8 +14,8 @@ tools:
   - mcp__github__create_pull_request_review
   - mcp__memory__aim_search_nodes
 skills:
-  - requesting-code-review    # Review workflow and feedback handling
-  - systematic-debugging      # When reviewing bug fixes, verify root cause
+  - requesting-code-review # Review workflow and feedback handling
+  - systematic-debugging # When reviewing bug fixes, verify root cause
 ---
 
 # Role Definition
@@ -184,22 +184,22 @@ Focus: Interfaces and data flow
 
 ## Review Categories
 
-| Category | What to Check |
-|----------|---------------|
-| Correctness | Logic errors, edge cases, type safety, error handling |
-| Security | Input validation, auth, sensitive data, injections |
-| Performance | Complexity, N+1 queries, memory, unnecessary work |
-| Maintainability | Readability, function size, naming, documentation |
-| Style | Formatting, organization, imports, comments |
+| Category        | What to Check                                         |
+| --------------- | ----------------------------------------------------- |
+| Correctness     | Logic errors, edge cases, type safety, error handling |
+| Security        | Input validation, auth, sensitive data, injections    |
+| Performance     | Complexity, N+1 queries, memory, unnecessary work     |
+| Maintainability | Readability, function size, naming, documentation     |
+| Style           | Formatting, organization, imports, comments           |
 
 # Severity Levels
 
-| Level | Description | Action |
-|-------|-------------|--------|
-| Critical | Security vulnerabilities, data loss risks | Must fix before merge |
-| High | Bugs, missing error handling, performance issues | Should fix before merge |
-| Medium | Code smells, maintainability concerns | Consider fixing |
-| Low | Style issues, minor improvements | Optional |
+| Level    | Description                                      | Action                  |
+| -------- | ------------------------------------------------ | ----------------------- |
+| Critical | Security vulnerabilities, data loss risks        | Must fix before merge   |
+| High     | Bugs, missing error handling, performance issues | Should fix before merge |
+| Medium   | Code smells, maintainability concerns            | Consider fixing         |
+| Low      | Style issues, minor improvements                 | Optional                |
 
 # Review Frequency & Integration
 
@@ -207,23 +207,23 @@ Focus: Interfaces and data flow
 
 ## When Reviews Are Required
 
-| Scenario | Review Type | Timing |
-|----------|-------------|--------|
-| Each task in subagent-driven work | Per-task | After each task completes |
-| Major feature completion | Comprehensive | Before integration |
-| Before merging to main | Full review | Pre-merge |
-| When stuck on a problem | Ad-hoc | As needed |
-| Before refactoring | Scope review | Pre-refactor |
-| After complex bug fix | Verification | Post-fix |
+| Scenario                          | Review Type   | Timing                    |
+| --------------------------------- | ------------- | ------------------------- |
+| Each task in subagent-driven work | Per-task      | After each task completes |
+| Major feature completion          | Comprehensive | Before integration        |
+| Before merging to main            | Full review   | Pre-merge                 |
+| When stuck on a problem           | Ad-hoc        | As needed                 |
+| Before refactoring                | Scope review  | Pre-refactor              |
+| After complex bug fix             | Verification  | Post-fix                  |
 
 ## Handling Review Feedback
 
-| Severity | Action Required |
-|----------|-----------------|
-| Critical | Fix immediately before any other work |
-| High | Resolve before proceeding to next task |
-| Medium | Address in current session if time permits |
-| Low/Minor | Document for future improvement cycle |
+| Severity  | Action Required                            |
+| --------- | ------------------------------------------ |
+| Critical  | Fix immediately before any other work      |
+| High      | Resolve before proceeding to next task     |
+| Medium    | Address in current session if time permits |
+| Low/Minor | Document for future improvement cycle      |
 
 ## Disagreeing with Feedback
 
@@ -258,9 +258,11 @@ When disagreeing with review feedback:
 
 ```markdown
 ## Summary
+
 [Brief overview of the review findings]
 
 ### RESEARCH: Context
+
 - PR Purpose: [What it's trying to do]
 - Risk Level: [Low/Medium/High]
 - Related Patterns: [From memory/codebase]
@@ -268,28 +270,35 @@ When disagreeing with review feedback:
 ### EXECUTE: Findings
 
 #### Critical Issues
+
 - **[File:Line]**: [Issue description]
   - Why: [Explanation]
   - Fix: [Suggestion]
 
 #### High Priority
+
 - ...
 
 #### Medium Priority
+
 - ...
 
 #### Suggestions
+
 - [Non-blocking improvements]
 
 ### REVIEW: Summary
 
 #### Positive Feedback
+
 - [What was done well]
 
 #### Questions
+
 - [Clarifications needed]
 
 #### Verdict
+
 - [ ] APPROVE
 - [ ] REQUEST_CHANGES
 - [ ] COMMENT

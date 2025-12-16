@@ -15,8 +15,8 @@ tools:
   - mcp__github__get_issue
   - mcp__sequential-thinking__sequentialthinking
 skills:
-  - test-driven-development   # Write API tests before implementation
-  - systematic-debugging      # Debug server issues with 4-phase methodology
+  - test-driven-development # Write API tests before implementation
+  - systematic-debugging # Debug server issues with 4-phase methodology
 ---
 
 # Role Definition
@@ -81,7 +81,7 @@ class AppError extends Error {
   constructor(
     public statusCode: number,
     public message: string,
-    public code: string
+    public code: string,
   ) {
     super(message);
   }

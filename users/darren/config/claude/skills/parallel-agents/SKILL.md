@@ -37,12 +37,12 @@ Group C: UI component tests (4 failures)
 
 Each agent receives:
 
-| Field | Description |
-|-------|-------------|
-| Scope | Specific files/tests to focus on |
-| Goal | Clear success criteria |
-| Constraints | What NOT to change |
-| Output | Expected deliverable |
+| Field       | Description                      |
+| ----------- | -------------------------------- |
+| Scope       | Specific files/tests to focus on |
+| Goal        | Clear success criteria           |
+| Constraints | What NOT to change               |
+| Output      | Expected deliverable             |
 
 ### 3. Dispatch Concurrently
 
@@ -94,16 +94,19 @@ Fix all the tests
 **Scope:** [Files/tests to focus on]
 
 **Failures:**
+
 - [Test name]: [Error message]
 - [Test name]: [Error message]
 
 **Goal:** [What success looks like]
 
 **Constraints:**
+
 - Don't modify [files]
 - Preserve [behavior]
 
 **Output:**
+
 - Summary of root causes found
 - Changes made
 - Verification results
@@ -111,12 +114,12 @@ Fix all the tests
 
 ## Common Pitfalls
 
-| Mistake | Problem | Solution |
-|---------|---------|----------|
-| Vague scope | Agent changes wrong files | Specify exact paths |
-| Missing context | Agent can't diagnose | Include error messages |
-| No constraints | Conflicting changes | Define boundaries |
-| Unclear output | Can't verify success | Specify deliverables |
+| Mistake         | Problem                   | Solution               |
+| --------------- | ------------------------- | ---------------------- |
+| Vague scope     | Agent changes wrong files | Specify exact paths    |
+| Missing context | Agent can't diagnose      | Include error messages |
+| No constraints  | Conflicting changes       | Define boundaries      |
+| Unclear output  | Can't verify success      | Specify deliverables   |
 
 ## Benefits
 

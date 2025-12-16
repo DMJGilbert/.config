@@ -61,11 +61,11 @@ Tests written after code pass immediately, proving nothing about their validity.
 
 ## Common Rationalizations (ALL REJECTED)
 
-| Excuse | Why It's Wrong |
-|--------|----------------|
-| "Too simple to test" | Simple code still needs verification |
-| "I'll test after" | Tests-after pass immediately, proving nothing |
-| "Already manually tested" | Manual testing isn't repeatable or documented |
+| Excuse                               | Why It's Wrong                                 |
+| ------------------------------------ | ---------------------------------------------- |
+| "Too simple to test"                 | Simple code still needs verification           |
+| "I'll test after"                    | Tests-after pass immediately, proving nothing  |
+| "Already manually tested"            | Manual testing isn't repeatable or documented  |
 | "Deleting hours of work is wasteful" | Sunk cost fallacy - untested code is liability |
 
 ## When to Use TDD

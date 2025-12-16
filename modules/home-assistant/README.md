@@ -16,13 +16,13 @@ modules/home-assistant/
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `automations.nix` | Motion-activated lights, notifications, scene triggers |
-| `components.nix` | Integrations (Zigbee, Matter, etc.) and custom Lovelace cards |
-| `dashboard.nix` | Nix module that includes the YAML dashboard |
-| `dashboard.yaml` | Main Lovelace dashboard configuration |
-| `floorplan.svg` | SVG floorplan for interactive floor map |
+| File              | Purpose                                                       |
+| ----------------- | ------------------------------------------------------------- |
+| `automations.nix` | Motion-activated lights, notifications, scene triggers        |
+| `components.nix`  | Integrations (Zigbee, Matter, etc.) and custom Lovelace cards |
+| `dashboard.nix`   | Nix module that includes the YAML dashboard                   |
+| `dashboard.yaml`  | Main Lovelace dashboard configuration                         |
+| `floorplan.svg`   | SVG floorplan for interactive floor map                       |
 
 ## Adding Automations
 
@@ -90,13 +90,13 @@ Edit `dashboard.nix`. The dashboard uses Mushroom cards.
 
 Custom Lovelace cards are defined in `overlays/` and referenced in `components.nix`:
 
-| Card | Package | Description |
-|------|---------|-------------|
-| Bubble Card | `hass-bubble-card` | Floating action buttons |
-| Layout Card | `lovelace-layout-card` | Grid-based layouts |
-| Auto Entities | `lovelace-auto-entities` | Dynamic entity lists |
-| Tabbed Card | `lovelace-tabbed-card` | Tabbed card containers |
-| Catppuccin Theme | `hass-catppuccin` | Catppuccin color theme |
+| Card             | Package                  | Description             |
+| ---------------- | ------------------------ | ----------------------- |
+| Bubble Card      | `hass-bubble-card`       | Floating action buttons |
+| Layout Card      | `lovelace-layout-card`   | Grid-based layouts      |
+| Auto Entities    | `lovelace-auto-entities` | Dynamic entity lists    |
+| Tabbed Card      | `lovelace-tabbed-card`   | Tabbed card containers  |
+| Catppuccin Theme | `hass-catppuccin`        | Catppuccin color theme  |
 
 To add a new card, see [overlays/README.md](../../overlays/README.md).
 

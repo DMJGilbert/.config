@@ -61,12 +61,12 @@ For each issue identified:
 
 Categorize improvements:
 
-| Priority | Type | Description |
-|----------|------|-------------|
-| Critical | Must fix | Breaks functionality or security |
-| High | Should fix | Significant quality impact |
-| Medium | Could improve | Better but not essential |
-| Low | Nice to have | Minor enhancement |
+| Priority | Type          | Description                      |
+| -------- | ------------- | -------------------------------- |
+| Critical | Must fix      | Breaks functionality or security |
+| High     | Should fix    | Significant quality impact       |
+| Medium   | Could improve | Better but not essential         |
+| Low      | Nice to have  | Minor enhancement                |
 
 ### Phase 3: REFINE
 
@@ -102,24 +102,28 @@ mcp__memory__aim_add_observations([{
 ## Reflection on: [Topic]
 
 ### Critique
-| Lens | Finding | Severity |
-|------|---------|----------|
+
+| Lens        | Finding | Severity                   |
+| ----------- | ------- | -------------------------- |
 | Correctness | [Issue] | [Critical/High/Medium/Low] |
-| ... | ... | ... |
+| ...         | ...     | ...                        |
 
 ### Improvements
 
 #### [Improvement 1]
+
 **Current**: [What it is now]
 **Issue**: [Why it's problematic]
 **Refined**: [Better approach]
 **Rationale**: [Why this is better]
 
 ### Verification
+
 - [ ] [Verification question 1] → [Answer]
 - [ ] [Verification question 2] → [Answer]
 
 ### Insights to Remember
+
 - [Key learning for future]
 ```
 

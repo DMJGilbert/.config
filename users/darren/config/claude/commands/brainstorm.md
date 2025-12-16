@@ -74,10 +74,10 @@ mcp__memory__aim_search_nodes(query="[related topic]")
 
 Use structured comparison:
 
-| Idea | Complexity | Risk | Value | Novelty | Score |
-|------|------------|------|-------|---------|-------|
-| A    | Low/Med/High | Low/Med/High | Low/Med/High | Low/Med/High | /20 |
-| B    | ... | ... | ... | ... | /20 |
+| Idea | Complexity   | Risk         | Value        | Novelty      | Score |
+| ---- | ------------ | ------------ | ------------ | ------------ | ----- |
+| A    | Low/Med/High | Low/Med/High | Low/Med/High | Low/Med/High | /20   |
+| B    | ...          | ...          | ...          | ...          | /20   |
 
 Scoring:
 
@@ -96,15 +96,18 @@ For top 2-3 ideas, develop:
 **Concept**: [One-sentence description]
 
 **How it works**:
+
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
 
 **Pros**:
+
 - [Advantage 1]
 - [Advantage 2]
 
 **Cons**:
+
 - [Disadvantage 1]
 - [Disadvantage 2]
 
@@ -112,6 +115,7 @@ For top 2-3 ideas, develop:
 [High-level approach or pseudocode]
 
 **Open questions**:
+
 - [Question 1]
 - [Question 2]
 ```
@@ -136,38 +140,42 @@ Often the best solution combines elements from multiple ideas:
 ## Brainstorm: [Topic]
 
 ### Problem Understanding
+
 [Restate the problem to ensure alignment]
 
 ### Perspectives Explored
 
-| Perspective | Key Insight | Idea Generated |
-|-------------|-------------|----------------|
-| Pragmatist | [Insight] | [Idea] |
-| Perfectionist | [Insight] | [Idea] |
-| Skeptic | [Insight] | [Idea] |
-| Innovator | [Insight] | [Idea] |
-| User | [Insight] | [Idea] |
+| Perspective   | Key Insight | Idea Generated |
+| ------------- | ----------- | -------------- |
+| Pragmatist    | [Insight]   | [Idea]         |
+| Perfectionist | [Insight]   | [Idea]         |
+| Skeptic       | [Insight]   | [Idea]         |
+| Innovator     | [Insight]   | [Idea]         |
+| User          | [Insight]   | [Idea]         |
 
 ### Top Ideas Detailed
 
 #### Idea 1: [Name]
+
 [Full development...]
 
 #### Idea 2: [Name]
+
 [Full development...]
 
 #### Idea 3: [Name]
+
 [Full development...]
 
 ### Comparison Matrix
 
-| Criteria | Idea 1 | Idea 2 | Idea 3 |
-|----------|--------|--------|--------|
-| Complexity | | | |
-| Risk | | | |
-| Value | | | |
-| Time to implement | | | |
-| Maintainability | | | |
+| Criteria          | Idea 1 | Idea 2 | Idea 3 |
+| ----------------- | ------ | ------ | ------ |
+| Complexity        |        |        |        |
+| Risk              |        |        |        |
+| Value             |        |        |        |
+| Time to implement |        |        |        |
+| Maintainability   |        |        |        |
 
 ### Recommendation
 

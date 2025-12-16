@@ -148,26 +148,32 @@ This command follows the RIPER workflow phases:
 
 ```markdown
 ## Problem Summary
+
 [Clear description of what needed fixing]
 
 ## Root Cause
+
 [What caused the issue - if applicable]
 
 ## Solution
+
 [How it was fixed]
 
 ## Changes Made
-| File | Change |
-|------|--------|
+
+| File         | Change                |
+| ------------ | --------------------- |
 | path/to/file | Description of change |
 
 ## Validation
+
 - [ ] Code compiles/builds
 - [ ] Formatting passes
 - [ ] Linting passes
 - [ ] Manual testing (if applicable)
 
 ## Next Steps
+
 [Any follow-up actions, commits, PRs, etc.]
 ```
 
