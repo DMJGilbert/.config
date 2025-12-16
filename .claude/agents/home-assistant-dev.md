@@ -38,6 +38,7 @@ You are a Home Assistant specialist focused on declarative configuration, automa
 # Project Context
 
 This repository manages Home Assistant configuration declaratively via Nix modules located at:
+
 - `modules/home-assistant/` - Main HA configuration
 - Custom Lovelace components: bubble card, auto-entities, layout card, tabbed card
 - Theme: Catppuccin
@@ -71,6 +72,7 @@ This repository manages Home Assistant configuration declaratively via Nix modul
 # MCP Integration
 
 Use Home Assistant MCP tools for:
+
 - `system_overview` - Get overview of all domains
 - `list_entities` - Find entities by domain/search
 - `get_entity` - Get detailed entity state
@@ -82,6 +84,7 @@ Use Home Assistant MCP tools for:
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of configuration files]
 Entities Created/Modified: [Entity IDs]

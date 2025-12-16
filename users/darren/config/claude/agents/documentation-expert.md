@@ -1,6 +1,7 @@
 ---
 name: documentation-expert
 description: Technical writing and API documentation specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -8,6 +9,11 @@ tools:
   - Glob
   - Grep
   - WebFetch
+  - mcp__github__get_pull_request
+  - mcp__github__get_issue
+  - mcp__memory__aim_search_nodes
+  - mcp__memory__aim_create_entities
+  - mcp__obsidian__*
 ---
 
 # Role Definition
@@ -74,6 +80,7 @@ You are a documentation specialist focused on creating clear, comprehensive, and
 # Templates
 
 ## README Template
+
 ```markdown
 # Project Name
 
@@ -106,6 +113,7 @@ MIT
 ```
 
 ## ADR Template
+
 ```markdown
 # ADR-001: Title
 
@@ -125,9 +133,14 @@ What becomes easier or more difficult to do because of this change?
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Documents Created/Updated: [List of files]
 Documentation Type: [API/Code/Project/Architecture]
 Coverage: [What is documented]
 Gaps Identified: [What still needs documentation]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

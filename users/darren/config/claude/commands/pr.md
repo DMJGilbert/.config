@@ -23,29 +23,35 @@ Optional argument: $ARGUMENTS (target base branch, defaults to main/master)
 ## Analysis Steps
 
 1. **Detect Base Branch**
+
    ```bash
    git remote show origin | grep "HEAD branch"
    ```
+
    Or fall back to `main` or `master`.
 
 2. **Get Current Branch**
+
    ```bash
    git branch --show-current
    ```
 
 3. **Get All Commits on Branch**
+
    ```bash
    git log <base>..HEAD --oneline
    git log <base>..HEAD --pretty=format:"%h %s%n%b"
    ```
 
 4. **Get Full Diff**
+
    ```bash
    git diff <base>...HEAD --stat
    git diff <base>...HEAD
    ```
 
 5. **Check for Existing PR** (if gh is available)
+
    ```bash
    gh pr view --json title,body 2>/dev/null || echo "No existing PR"
    ```

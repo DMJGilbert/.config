@@ -48,6 +48,7 @@
           deadnix # Find dead code
           nil # Nix LSP
           stylua # Lua formatter
+          markdownlint-cli2 # Markdown linter
         ];
         shellHook = ''
           echo "Nix config development shell"
@@ -55,6 +56,7 @@
           echo "  statix check - lint nix files"
           echo "  deadnix .    - find dead code"
           echo "  stylua .     - format lua files"
+          echo "  markdownlint-cli2 '**/*.md' - lint markdown files"
         '';
       };
     });
@@ -73,6 +75,17 @@
       linting = pkgs.runCommand "check-linting" {} ''
         ${pkgs.statix}/bin/statix check ${inputs.self} || {
           echo "Fix linting issues above"
+          exit 1
+        }
+        touch $out
+      '';
+      markdown = pkgs.runCommand "check-markdown" {} ''
+        ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
+          --config ${./.markdownlint-cli2.yaml} \
+          $(${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f) \
+          2>&1 || {
+          echo ""
+          echo "Fix markdown issues with: markdownlint-cli2 --fix '**/*.md'"
           exit 1
         }
         touch $out

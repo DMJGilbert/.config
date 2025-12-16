@@ -1,5 +1,14 @@
 {
   "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-knowledge-graph",
+        "--memory-path",
+        "${HOME}/.local/share/claude-memory/"
+      ]
+    },
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
@@ -23,15 +32,13 @@
       "command": "npx",
       "args": ["-y", "@magicuidesign/mcp@latest"]
     },
-    "figma": {
-      "command": "/Users/darren/.claude/scripts/figma-mcp-wrapper.sh",
-      "args": []
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"],
+    "obsidian": {
+      "command": "uvx",
+      "args": ["mcp-obsidian"],
       "env": {
-        "MEMORY_FILE_PATH": "/Users/darren/.local/share/claude/memory.jsonl"
+        "OBSIDIAN_API_KEY": "${OBSIDIAN_API_KEY}",
+        "OBSIDIAN_HOST": "${OBSIDIAN_HOST}",
+        "OBSIDIAN_PORT": "${OBSIDIAN_PORT}"
       }
     }
   }

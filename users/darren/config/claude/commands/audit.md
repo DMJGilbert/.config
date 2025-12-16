@@ -33,12 +33,14 @@ Based on the argument provided, determine the audit scope:
 ### 1. Structural Analysis
 
 **Code Organization**
+
 - File/module structure and naming
 - Import organization and dependency graph
 - Separation of concerns
 - Layer boundaries (presentation, business, data)
 
 **Architecture Patterns**
+
 - Identify patterns in use (MVC, Repository, Factory, etc.)
 - Check for pattern consistency
 - Find anti-patterns (God objects, spaghetti code, circular dependencies)
@@ -46,6 +48,7 @@ Based on the argument provided, determine the audit scope:
 ### 2. Bug Risk Assessment
 
 **High-Risk Patterns**
+
 - Race conditions and concurrency issues
 - Null/undefined handling gaps
 - Off-by-one errors
@@ -54,12 +57,14 @@ Based on the argument provided, determine the audit scope:
 - Type coercion bugs
 
 **Edge Cases**
+
 - Empty collections/strings handling
 - Boundary conditions
 - Error propagation paths
 - Timeout and retry logic
 
 **State Management**
+
 - Mutable shared state
 - Side effects in unexpected places
 - State synchronization issues
@@ -67,6 +72,7 @@ Based on the argument provided, determine the audit scope:
 ### 3. Complexity Analysis
 
 **Metrics to Assess**
+
 - Cyclomatic complexity (flag >10)
 - Cognitive complexity
 - Nesting depth (flag >3)
@@ -75,6 +81,7 @@ Based on the argument provided, determine the audit scope:
 - File length (flag >400 lines)
 
 **Simplification Opportunities**
+
 - Extract method candidates
 - Guard clause opportunities
 - Early return patterns
@@ -84,6 +91,7 @@ Based on the argument provided, determine the audit scope:
 ### 4. Code Smells
 
 **Common Smells**
+
 - Long parameter lists
 - Feature envy (method using other class's data)
 - Data clumps (recurring groups of parameters)
@@ -97,18 +105,21 @@ Based on the argument provided, determine the audit scope:
 ### 5. Maintainability Assessment
 
 **Readability**
+
 - Naming clarity (variables, functions, classes)
 - Function/method purpose clarity
 - Complex logic explanation
 - Consistent formatting
 
 **Changeability**
+
 - Coupling assessment
 - Cohesion evaluation
 - Single Responsibility adherence
 - Open/Closed principle compliance
 
 **Testability**
+
 - Dependency injection usage
 - Pure functions identification
 - Side effect isolation
@@ -117,30 +128,35 @@ Based on the argument provided, determine the audit scope:
 ### 6. Language-Specific Checks
 
 **TypeScript/JavaScript**
+
 - Type safety (any usage, type assertions)
 - Async/await patterns
 - Error handling in promises
 - Module system usage
 
 **Nix**
+
 - Attribute set organization
 - Function purity
 - Override patterns
 - Module option structure
 
 **Rust**
+
 - Ownership patterns
 - Error handling (Result/Option)
 - Lifetime annotations
 - Unsafe usage
 
 **Swift**
+
 - Optionals handling
 - Value vs reference types
 - Protocol conformance
 - Memory management
 
 **Python**
+
 - Type hints usage
 - Exception handling
 - Context managers
@@ -151,11 +167,13 @@ Based on the argument provided, determine the audit scope:
 ### Audit Report: [Target]
 
 #### Executive Summary
+
 - **Scope**: What was audited
 - **Overall Health**: Healthy / Needs Attention / Critical Issues
 - **Key Findings**: 2-3 sentence summary
 
 #### Metrics Overview
+
 ```
 Files Analyzed:    X
 Total Lines:       X
@@ -164,42 +182,52 @@ Complexity Score:  X (Low/Medium/High)
 ```
 
 #### Critical Issues
+
 Issues that will likely cause bugs or failures:
 
 **[BUG-001] Issue Title**
+
 - **Location**: `file:line`
 - **Risk**: What can go wrong
 - **Evidence**: Code snippet or pattern found
 - **Recommendation**: Specific fix
 
 #### High Priority
+
 Significant issues affecting quality or maintainability:
 
 **[HIGH-001] Issue Title**
+
 - **Location**: `file:line`
 - **Issue**: What's wrong
 - **Impact**: How it affects the codebase
 - **Recommendation**: How to address
 
 #### Medium Priority
+
 Code quality concerns:
 
 **[MED-001] Issue Title**
+
 - **Location**: `file:line`
 - **Issue**: What could be improved
 - **Recommendation**: Suggested improvement
 
 #### Low Priority / Suggestions
+
 Minor improvements and style considerations:
 
 **[LOW-001] Issue Title**
+
 - **Location**: `file:line`
 - **Suggestion**: Optional improvement
 
 #### Positive Observations
+
 Highlight well-written code patterns worth preserving or replicating.
 
 #### Recommended Refactors
+
 Ranked list of refactoring opportunities with effort/impact assessment:
 
 | Priority | Refactor | Location | Effort | Impact |
@@ -207,6 +235,7 @@ Ranked list of refactoring opportunities with effort/impact assessment:
 | 1 | Description | file | Low/Med/High | Low/Med/High |
 
 #### Next Steps
+
 1. Immediate action items
 2. Short-term improvements
 3. Long-term considerations
