@@ -34,12 +34,14 @@ Generate documentation and save to your Obsidian vault. Supports API docs, guide
 ### 1. API Documentation (`/doc api [file]`)
 
 **Process:**
+
 1. Read the source file(s)
 2. Extract endpoints, types, schemas
 3. Generate request/response examples
 4. Document auth requirements
 
 **Template:**
+
 ```markdown
 ---
 type: api-documentation
@@ -70,6 +72,7 @@ interface RequestBody {
 ```
 
 **Response:**
+
 ```typescript
 interface Response {
   // fields
@@ -77,6 +80,7 @@ interface Response {
 ```
 
 **Example:**
+
 ```bash
 curl -X METHOD https://api.example.com/path \
   -H "Authorization: Bearer $TOKEN" \
@@ -84,6 +88,7 @@ curl -X METHOD https://api.example.com/path \
 ```
 
 **Status Codes:**
+
 | Code | Description |
 |------|-------------|
 | 200 | Success |
@@ -91,7 +96,9 @@ curl -X METHOD https://api.example.com/path \
 | 401 | Unauthorized |
 
 ## Error Handling
+
 [Common errors and solutions]
+
 ```
 
 **Save to:** `claude/docs/api/[module]-api.md`
@@ -134,24 +141,31 @@ audience: [developers|users|admins]
 ```
 
 ### Step 2: [Action]
+
 [Instructions with screenshots/examples]
 
 ## Verification
+
 How to verify it worked:
+
 1. Check X
 2. Verify Y
 
 ## Troubleshooting
 
 ### Problem: [Issue]
+
 **Solution**: [Fix]
 
 ### Problem: [Issue]
+
 **Solution**: [Fix]
 
 ## Next Steps
+
 - [[Related Guide]]
 - [[Advanced Topic]]
+
 ```
 
 **Save to:** `claude/docs/guides/[topic-slug].md`

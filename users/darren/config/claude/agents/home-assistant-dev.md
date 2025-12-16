@@ -77,6 +77,7 @@ modules/home-assistant/
    - Maintain uniform spacing and layout
 
 2. **Card Patterns**
+
    ```yaml
    # Bubble card pattern
    type: custom:bubble-card
@@ -90,6 +91,7 @@ modules/home-assistant/
    ```
 
 3. **Layout Patterns**
+
    ```yaml
    # Grid layout pattern
    type: custom:layout-card
@@ -102,6 +104,7 @@ modules/home-assistant/
 ## Automations
 
 1. **Structure**
+
    ```nix
    services.home-assistant.config.automation = [
      {
@@ -163,6 +166,7 @@ mcp__hass-mcp__get_history(entity_id="light.living_room", hours=24)
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of .nix/.yaml files]
 Entities Used: [List of entity_ids referenced]

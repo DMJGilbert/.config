@@ -33,6 +33,7 @@ Based on the topic, categorize the note:
 ### 2. Search for Related Notes
 
 Before creating, search for existing related content:
+
 ```
 mcp__obsidian__search-vault(query)
 ```
@@ -40,6 +41,7 @@ mcp__obsidian__search-vault(query)
 ### 3. Generate Note Content
 
 Structure:
+
 ```markdown
 ---
 type: [daily|concept|learning|reference]
@@ -70,11 +72,13 @@ related: []
 ### 4. Create Note
 
 Use obsidian MCP to create the note:
+
 ```
 mcp__obsidian__create-note(path, content)
 ```
 
 Path format: `claude/notes/[type]/[slug].md`
+
 - Use kebab-case for filenames
 - Include date prefix for daily notes: `YYYY-MM-DD-topic.md`
 
@@ -85,6 +89,7 @@ Link to any related notes found in step 2 using `[[note-name]]` syntax.
 ## Output
 
 After creating, display:
+
 ```
 Created: claude/notes/[type]/[filename].md
 

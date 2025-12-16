@@ -78,6 +78,7 @@ You are a frontend development specialist focused on building modern, accessible
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of changed files]
 Components Created/Updated: [Component names]

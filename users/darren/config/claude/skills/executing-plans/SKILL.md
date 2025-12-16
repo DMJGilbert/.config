@@ -29,6 +29,7 @@ Execute implementation plans systematically with quality gates between batches.
 Default batch size: **3 tasks**
 
 For each task in batch:
+
 1. Update status to `in_progress`
 2. Execute each step as written
 3. Run specified verifications
@@ -62,6 +63,7 @@ Ready for feedback.
 ### Step 5: Complete Development
 
 After all tasks finished and verified:
+
 1. Run full test suite
 2. Announce completion
 3. Transition to finishing workflow (merge/PR decision)

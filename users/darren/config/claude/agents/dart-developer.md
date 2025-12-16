@@ -117,6 +117,7 @@ class UserProfileCard extends ConsumerWidget {
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of .dart files]
 Dependencies Added: [pubspec.yaml changes]

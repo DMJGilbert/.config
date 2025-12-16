@@ -22,6 +22,7 @@ mcp__obsidian__search-vault(query)
 ### 2. Display Results
 
 For each result, show:
+
 - **Title** (from filename or first heading)
 - **Path** in vault
 - **Preview** (first few lines or matching excerpt)
@@ -56,6 +57,7 @@ Found [N] results
 ## Integration
 
 Use before creating new content to avoid duplicates:
+
 ```
 /search-vault authentication
 /spec User authentication  # Only if not found

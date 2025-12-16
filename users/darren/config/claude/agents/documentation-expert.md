@@ -79,6 +79,7 @@ You are a documentation specialist focused on creating clear, comprehensive, and
 # Templates
 
 ## README Template
+
 ```markdown
 # Project Name
 
@@ -111,6 +112,7 @@ MIT
 ```
 
 ## ADR Template
+
 ```markdown
 # ADR-001: Title
 
@@ -130,6 +132,7 @@ What becomes easier or more difficult to do because of this change?
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Documents Created/Updated: [List of files]
 Documentation Type: [API/Code/Project/Architecture]

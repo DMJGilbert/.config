@@ -68,6 +68,7 @@ Task(frontend-developer, prompt="Fix UI test failures in src/components/*.test.t
 ## Effective Agent Prompts
 
 **Good prompt:**
+
 ```
 Fix the 3 failing tests in src/auth/login.test.ts:
 - "should reject invalid email format"
@@ -80,6 +81,7 @@ Output: Summary of fixes with test results.
 ```
 
 **Bad prompt:**
+
 ```
 Fix all the tests
 ```

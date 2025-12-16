@@ -92,6 +92,7 @@ What data needs to be sent to the server?
 ### Explore Before Committing
 
 Don't jump to the first solution. Consider:
+
 - What's the simplest approach?
 - What's the ideal approach (no constraints)?
 - What could go wrong?

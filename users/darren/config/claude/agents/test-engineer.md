@@ -44,24 +44,28 @@ Any code written before its corresponding test must be deleted entirely—no exc
 ```
 
 ### RED Phase
+
 1. Write ONE minimal failing test demonstrating desired behavior
 2. Use clear naming that describes the behavior
 3. Test real code, not mocks (mock only external dependencies)
 4. Focus on ONE behavior per test
 
 ### Verify RED (CRITICAL)
+
 - Run tests and confirm test **fails** (not errors)
 - Failure should indicate missing feature
 - Error message should match expectations
 - If test passes immediately → DELETE IT (proves nothing)
 
 ### GREEN Phase
+
 1. Implement the **simplest** code that passes the test
 2. Avoid over-engineering
 3. Don't add features not requested
 4. Keep scope narrow
 
 ### REFACTOR Phase
+
 1. Clean up while ALL tests remain green
 2. Remove duplication (DRY)
 3. Improve naming
@@ -79,6 +83,7 @@ Any code written before its corresponding test must be deleted entirely—no exc
 ## When 3+ Test Fixes Fail
 
 **STOP.** This signals an architectural problem, not a fixable bug:
+
 1. Return to investigation phase
 2. Question whether the underlying pattern is sound
 3. Discuss with user before attempting more fixes
@@ -114,6 +119,7 @@ await waitFor(() => {
 ## Parallel Test Failures Strategy
 
 When facing 3+ independent test failures:
+
 1. Group failures by domain/subsystem
 2. Dispatch separate investigation per group
 3. Each investigation: identify root cause → fix → verify
@@ -244,6 +250,7 @@ export class LoginPage {
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Tests Created: [List of test files]
 Test Type: [Unit/Integration/E2E]

@@ -55,9 +55,11 @@ Target: $ARGUMENTS
 ### Code Explanation: `<file_path>`
 
 #### Overview
+
 [1-2 paragraph summary of what this code does and why it exists]
 
 #### Architecture Context
+
 ```
 [Where this fits in the system - could be a simple diagram]
 ```
@@ -65,41 +67,52 @@ Target: $ARGUMENTS
 #### Detailed Breakdown
 
 ##### Section 1: [Name/Purpose]
+
 **Lines X-Y**
+
 ```language
 [relevant code snippet]
 ```
+
 **Explanation**: [What this section does and why]
 
 ##### Section 2: [Name/Purpose]
+
 [Continue for each logical section]
 
 #### Key Concepts
 
 **Algorithm: [Name]**
+
 - Complexity: O(n)
 - How it works: [explanation]
 - Why it's used: [reasoning]
 
 **Pattern: [Name]**
+
 - What it is: [explanation]
 - Why it's used here: [reasoning]
 
 #### Data Flow
+
 ```
 Input -> [Step 1] -> [Step 2] -> Output
 ```
 
 #### Edge Cases Handled
+
 - Case 1: How it's handled
 - Case 2: How it's handled
 
 #### Potential Improvements
+
 [Optional suggestions for clarity or efficiency - NOT to be implemented, just noted]
 
 #### Related Files
+
 - `file1.ts` - [relationship]
 - `file2.ts` - [relationship]
 
 #### Suggested Documentation
+
 [Comments that could be added to improve code clarity - for reference only]

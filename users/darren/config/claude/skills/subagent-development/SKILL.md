@@ -114,12 +114,14 @@ Transition to merge/PR workflow.
 ## Critical Rules
 
 ### Never:
+
 - Skip code reviews between tasks
 - Proceed with unresolved Critical issues
 - Run multiple implementation subagents in parallel
 - Implement without plan task reference
 
 ### Always:
+
 - Fresh subagent for each task (clean context)
 - Review after each task (quality gate)
 - Fix Critical/High before continuing

@@ -24,21 +24,25 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Reflexion](https:/
 Analyze the previous output through multiple lenses:
 
 #### Correctness Lens
+
 - Is the logic sound?
 - Are there edge cases missed?
 - Does it actually solve the problem?
 
 #### Completeness Lens
+
 - Are all requirements addressed?
 - Is anything missing?
 - Are there unstated assumptions?
 
 #### Quality Lens
+
 - Is the code/solution maintainable?
 - Does it follow best practices?
 - Is it the simplest solution?
 
 #### Risk Lens
+
 - What could go wrong?
 - Are there security implications?
 - What are the failure modes?
@@ -56,6 +60,7 @@ For each issue identified:
 ```
 
 Categorize improvements:
+
 | Priority | Type | Description |
 |----------|------|-------------|
 | Critical | Must fix | Breaks functionality or security |
@@ -66,6 +71,7 @@ Categorize improvements:
 ### Phase 3: REFINE
 
 For each Critical/High improvement:
+
 1. State the current approach
 2. Explain why it's suboptimal
 3. Provide the improved version
@@ -74,6 +80,7 @@ For each Critical/High improvement:
 ### Phase 4: VERIFY
 
 Chain-of-Verification (CoVe):
+
 1. Generate verification questions for the refinement
 2. Answer each question independently
 3. If answers reveal issues, return to Phase 2
@@ -81,6 +88,7 @@ Chain-of-Verification (CoVe):
 ### Phase 5: MEMORIZE (Optional)
 
 If significant insights were gained:
+
 ```
 mcp__memory__aim_add_observations([{
   entityName: "conventions",

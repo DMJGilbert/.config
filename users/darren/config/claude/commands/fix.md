@@ -24,6 +24,7 @@ allowed-tools:
 Fix the specified problem: $ARGUMENTS
 
 **Input modes:**
+
 - **GitHub Issue**: If argument is a number (e.g., `123` or `#123`), fetch issue details as context
 - **Text Description**: If argument is text, treat it as the problem description
 - **No argument**: Prompt user to describe the problem
@@ -39,9 +40,11 @@ This command follows the RIPER workflow phases:
 1. **Understand the Problem**
 
    **If GitHub issue number provided:**
+
    ```
    mcp__github__get_issue(owner="DMJGilbert", repo=".config", issue_number=$1)
    ```
+
    Extract: title, description, labels, comments, expected vs actual behavior.
 
    **If text description provided:**
@@ -93,6 +96,7 @@ This command follows the RIPER workflow phases:
    - Identify risks and edge cases
 
 **Red Flags - STOP and Return to RESEARCH:**
+
 - Proposing fixes without understanding the issue
 - Attempting multiple simultaneous changes
 - Making assumptions without verification
@@ -107,6 +111,7 @@ This command follows the RIPER workflow phases:
    - Estimate scope
 
 7. **Create Branch** (if significant change)
+
    ```bash
    git checkout -b fix/short-description
    ```

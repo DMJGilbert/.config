@@ -25,6 +25,7 @@ Any code written before its corresponding test must be deleted entirely - no exc
 ### Verify RED (CRITICAL)
 
 Run tests and confirm:
+
 - Test **fails** (not errors)
 - Failure indicates missing feature
 - Error message matches expectations
@@ -53,6 +54,7 @@ Run tests and confirm:
 ## Why Tests-First Matters
 
 Tests written after code pass immediately, proving nothing about their validity. Tests-first:
+
 - Force discovery of edge cases before implementation
 - Provide systematic verification impossible with manual testing
 - Document expected behavior
@@ -84,6 +86,7 @@ Tests written after code pass immediately, proving nothing about their validity.
 ## When 3+ Test Fixes Fail
 
 **STOP.** This signals an architectural problem:
+
 1. Return to investigation phase
 2. Question whether the underlying pattern is sound
 3. Discuss with user before attempting more fixes

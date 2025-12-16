@@ -47,6 +47,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
    - Integration points
 
 3. **Context Documentation**
+
    ```markdown
    ## Research Findings
    - Current architecture: [Description]
@@ -65,6 +66,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
    - Consider multiple architectural styles
 
 2. **Trade-off Analysis**
+
    | Option | Pros | Cons | Complexity | Cost | Risk |
    |--------|------|------|------------|------|------|
    | A      |      |      |            |      |      |
@@ -93,6 +95,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
    - Risk mitigation
 
 3. **ADR Creation**
+
    ```markdown
    # ADR-XXX: [Title]
 
@@ -140,6 +143,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
    - Is it implementable by the team?
 
 2. **Knowledge Persistence**
+
    ```
    # Store architectural decision
    mcp__memory__aim_create_entities([{
@@ -161,21 +165,25 @@ Architecture decisions require disciplined analysis. Follow these phases:
 # Architecture Patterns
 
 ## 1. Layered Architecture
+
 - Presentation, Business, Data layers
 - Clear separation of concerns
 - Good for traditional applications
 
 ## 2. Microservices
+
 - Independent deployable services
 - Domain-driven boundaries
 - Requires mature DevOps
 
 ## 3. Event-Driven
+
 - Pub/sub messaging
 - CQRS and Event Sourcing
 - Good for distributed systems
 
 ## 4. Serverless
+
 - Function-as-a-Service
 - Pay-per-execution
 - Good for variable workloads

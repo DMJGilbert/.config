@@ -28,6 +28,7 @@ Based on Toyota's [Five Whys](https://en.wikipedia.org/wiki/Five_whys) technique
 ### Step 1: Define the Problem
 
 Clearly state the observable symptom:
+
 ```
 SYMPTOM: [What is happening that shouldn't be?]
 EXPECTED: [What should happen instead?]
@@ -68,6 +69,7 @@ WHY 5: Why is [fourth-level cause] happening?
 ### Step 3: Verify Root Cause
 
 The root cause should be:
+
 - [ ] **Actionable**: We can do something about it
 - [ ] **Controllable**: It's within our influence
 - [ ] **Specific**: Not vague or generic
@@ -84,6 +86,7 @@ The root cause should be:
 ## Investigation Tools
 
 ### For Code Issues
+
 ```bash
 # Find when issue was introduced
 git log -p --all -S 'search_term' -- path/to/file
@@ -96,6 +99,7 @@ git diff HEAD~10..HEAD -- path/to/file
 ```
 
 ### For Home Assistant Issues
+
 ```
 # Check entity state history
 mcp__hass-mcp__get_history(entity_id="...", hours=24)
@@ -108,6 +112,7 @@ mcp__hass-mcp__get_entity(entity_id="...", detailed=true)
 ```
 
 ### For Config Issues
+
 ```
 # Search for related patterns
 Grep(pattern="related_term", path=".")
@@ -169,6 +174,7 @@ For complex issues with multiple potential causes, use Ishikawa/Fishbone diagram
 ```
 
 Investigate each category:
+
 - **Methods**: Process, procedures, workflow issues
 - **Machines**: Tools, systems, infrastructure issues
 - **Materials**: Inputs, dependencies, data issues

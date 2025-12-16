@@ -124,6 +124,7 @@ const result = await User.aggregate([
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Tables Modified: [List of tables]
 Migrations Created: [Migration files]

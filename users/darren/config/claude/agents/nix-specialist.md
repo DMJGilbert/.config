@@ -88,6 +88,7 @@ pkgs.writeShellApplication {
 ```
 
 **Benefits of writeShellApplication:**
+
 - Automatic `set -euo pipefail` (strict mode)
 - ShellCheck validation at build time
 - Explicit runtime dependencies
@@ -96,6 +97,7 @@ pkgs.writeShellApplication {
 # Build Operations
 
 **When executing `nix build`:**
+
 - Always append `--print-out-paths` to display final path
 - **Never impose timeout restrictions** - let builds complete
 - Build is failed if it doesn't finish or lacks output path
@@ -181,6 +183,7 @@ home.file = {
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of .nix files]
 Flake Inputs: [Changes to inputs]

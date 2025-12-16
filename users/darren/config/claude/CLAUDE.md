@@ -3,6 +3,7 @@
 ## Git Workflow
 
 ### Conventional Commits
+
 All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```
@@ -14,6 +15,7 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
@@ -26,6 +28,7 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 - `build`: Build system or dependencies
 
 **Examples:**
+
 ```
 feat(auth): add OAuth2 login support
 fix(api): handle null response from external service
@@ -33,6 +36,7 @@ refactor(utils): extract date formatting to helper
 ```
 
 ### Branch Naming
+
 - `feat/short-description` - New features
 - `fix/issue-number-description` - Bug fixes
 - `refactor/description` - Refactoring
@@ -41,12 +45,14 @@ refactor(utils): extract date formatting to helper
 ## Code Review Standards
 
 ### Must Check
+
 1. **Security**: No hardcoded secrets, proper input validation, safe SQL queries
 2. **Performance**: No N+1 queries, efficient algorithms, proper caching
 3. **Tests**: Adequate coverage, edge cases handled
 4. **Architecture**: Follows existing patterns, no circular dependencies
 
 ### Severity Levels
+
 - **Critical**: Security vulnerabilities, data loss risks, breaking changes
 - **High**: Performance issues, missing error handling, test gaps
 - **Medium**: Code smells, maintainability concerns, documentation gaps
@@ -55,6 +61,7 @@ refactor(utils): extract date formatting to helper
 ## Code Style
 
 ### General
+
 - Prefer clarity over cleverness
 - Keep functions small and focused (single responsibility)
 - Use meaningful names (no abbreviations)
@@ -63,21 +70,25 @@ refactor(utils): extract date formatting to helper
 ### Language-Specific
 
 **Nix:**
+
 - Use `alejandra` for formatting
 - Prefer attribute sets over let bindings where possible
 - Use `lib.mkIf` for conditional configurations
 
 **TypeScript/JavaScript:**
+
 - Use `biome` or `prettier` for formatting
 - Prefer `const` over `let`
 - Use TypeScript strict mode
 
 **Swift:**
+
 - Use `swiftformat` for formatting
 - Follow Swift API Design Guidelines
 - Prefer value types over reference types
 
 **Rust:**
+
 - Use `rustfmt` for formatting
 - Handle all `Result` and `Option` types explicitly
 - Prefer iterators over manual loops
@@ -124,6 +135,7 @@ All complex tasks follow the RIPER phases for thorough, structured execution:
 | **REVIEW** | Quality assurance | Verify outputs, update knowledge graph, report |
 
 ### Anti-Patterns
+
 - **Never** skip RESEARCH phase
 - **Never** execute without a PLAN
 - **Always** REVIEW before completing
@@ -139,6 +151,7 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Reflexion](https:/
 **Command**: `/reflect [topic]`
 
 **Process**:
+
 1. **CRITIQUE** - Analyze through correctness, completeness, quality, risk lenses
 2. **IDENTIFY** - Prioritize improvements (Critical → High → Medium → Low)
 3. **REFINE** - Apply improvements with clear before/after
@@ -164,6 +177,7 @@ For each significant output:
 Based on [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) and [Multi-Agent Debate](https://arxiv.org/abs/2305.14325).
 
 **Specialized Perspectives**:
+
 | Perspective | Focus |
 |-------------|-------|
 | Bug Hunter | Logic errors, edge cases, race conditions |
@@ -182,6 +196,7 @@ Toyota's root cause analysis technique for drilling from symptoms to fundamental
 **Command**: `/why [problem]`
 
 **Process**:
+
 ```
 WHY 1: Why is [symptom] happening?
 ├── Because: [First-level cause]
@@ -192,6 +207,7 @@ WHY 5: ROOT CAUSE identified
 ```
 
 **Countermeasures**:
+
 - **Immediate**: Quick fix for symptom (temporary)
 - **Corrective**: Fix the root cause (permanent)
 - **Preventive**: Prevent similar issues (systemic)
@@ -203,6 +219,7 @@ Based on [Verbalized Sampling](https://arxiv.org/abs/2510.01171) - achieves **2-
 **Command**: `/brainstorm [topic]`
 
 **Perspectives Explored**:
+
 | Perspective | Question |
 |-------------|----------|
 | Pragmatist | What's the simplest solution that works? |
@@ -268,6 +285,7 @@ Extracted from battle-tested skills and integrated into agents.
 ```
 
 **When 3+ Fixes Fail → STOP**
+
 - This signals an **architectural problem**, not a fixable bug
 - Return to investigation, question the design
 - Discuss: "Refactor architecture vs. continue fixing symptoms?"
@@ -304,11 +322,13 @@ RED → GREEN → REFACTOR
 ### Git Workflow Best Practices
 
 **Worktrees for Parallel Development:**
+
 - Use `.worktrees/` or `worktrees/` directory
 - Verify in `.gitignore` before creating
 - Run tests to establish baseline
 
 **Finishing a Branch:**
+
 1. Verify all tests pass
 2. Choose: Merge locally / Create PR / Keep / Discard
 3. Clean up worktree if applicable
@@ -424,16 +444,19 @@ mcp__obsidian__create_note("claude/notes/...", content) # Create note
 Claude maintains a knowledge graph across sessions using the `memory` MCP server.
 
 #### Commands
+
 - `/prime` - Loads existing knowledge or creates new project context
 - `/prime refresh` - Force refresh knowledge graph
 - `/remember` - View/search/manage memory manually
 
 #### Automatic Memory
+
 - `/prime` checks knowledge graph first, skips analysis if context exists
 - Architect agent stores architectural decisions automatically
 - Orchestrator searches memory before delegating tasks
 
 #### What Gets Stored
+
 | Entity Type | Examples |
 |-------------|----------|
 | `project` | Project name, tech stack, package manager |
@@ -443,6 +466,7 @@ Claude maintains a knowledge graph across sessions using the `memory` MCP server
 | `pattern` | Code conventions, naming patterns |
 
 #### Memory Location
+
 Stored in `.aim/` directory (git-ignored). Persists across sessions.
 
 ### Obsidian Vault Integration
@@ -453,6 +477,7 @@ Claude auto-saves generated documentation to the Obsidian vault.
 > Update in `.mcp.json` filesystem server and relevant commands when forking.
 
 #### Vault Structure
+
 ```
 vault/
 └── claude/                    # Claude's workspace
@@ -473,11 +498,13 @@ vault/
 ```
 
 #### Auto-Save Behavior
+
 - Specs, docs, and notes are automatically saved to the vault
 - Uses `[[wikilinks]]` for cross-referencing related content
 - Frontmatter includes type, date, tags for organization
 
 #### Commands
+
 | Command | Purpose |
 |---------|---------|
 | `/note [topic]` | Create note (daily, concept, learning) |
@@ -488,6 +515,7 @@ vault/
 | `/search-vault [query]` | Search vault content |
 
 #### Security
+
 - Vault content is git-ignored in this repo (see `.gitignore`)
 - Use `git diff` to verify no vault content before committing
 - Vault is closed-source - never reference vault paths in issues/PRs
@@ -642,5 +670,6 @@ cc-prime refresh    # Force refresh context
 ### MCP Secrets
 
 Secrets are loaded from sops-nix decrypted files for the duration of Claude commands:
+
 - `GITHUB_PERSONAL_ACCESS_TOKEN`
 - `HASS_HOST` / `HASS_TOKEN`

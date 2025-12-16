@@ -30,23 +30,30 @@ Command: $ARGUMENTS
 ## Commands
 
 ### View Memory
+
 ```
 /remember
 ```
+
 Runs `aim_read_graph()` and displays all entities, relations, and observations in a readable format.
 
 ### Search Memory
+
 ```
 /remember search authentication
 /remember search "home assistant dashboard"
 ```
+
 Runs `aim_search_nodes(query)` to find relevant stored knowledge.
 
 ### Add Entity
+
 ```
 /remember add auth-service
 ```
+
 Interactive: Will ask for entity type and initial observations, then run:
+
 ```
 aim_create_entities([{
   "name": "auth-service",
@@ -56,10 +63,13 @@ aim_create_entities([{
 ```
 
 ### Add Observation
+
 ```
 /remember note auth-service "Added rate limiting to login endpoint"
 ```
+
 Adds observation to existing entity:
+
 ```
 aim_add_observations([{
   "entityName": "auth-service",
@@ -68,10 +78,13 @@ aim_add_observations([{
 ```
 
 ### Link Entities
+
 ```
 /remember link auth-service api-gateway "authenticates"
 ```
+
 Creates relation:
+
 ```
 aim_create_relations([{
   "from": "auth-service",
@@ -81,18 +94,23 @@ aim_create_relations([{
 ```
 
 ### Remove Entity
+
 ```
 /remember forget old-component
 ```
+
 Removes entity (with confirmation):
+
 ```
 aim_delete_entities(["old-component"])
 ```
 
 ### Clear All Memory
+
 ```
 /remember clear
 ```
+
 **Requires confirmation** - removes all entities, relations, and observations.
 
 ## Entity Types
@@ -128,15 +146,18 @@ Suggested entity types for consistency:
 ### Memory Contents
 
 **Entities:**
+
 - `project` (project): Nix configuration for macOS and NixOS
 - `home-assistant` (service): Smart home automation
 - `rubecula` (service): NixOS home server
 
 **Relations:**
+
 - home-assistant → rubecula (runs_on)
 - rubecula → project (part_of)
 
 **Recent Observations:**
+
 - [project] "Added floorplan dashboard views"
 - [home-assistant] "Using Catppuccin theme"
 

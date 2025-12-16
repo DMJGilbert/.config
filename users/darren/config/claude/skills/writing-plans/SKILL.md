@@ -65,6 +65,7 @@ Each task = single 2-5 minute action:
 ### Task Granularity
 
 Each step should be:
+
 - Single action (one file, one change)
 - Independently verifiable
 - Following TDD (test first)

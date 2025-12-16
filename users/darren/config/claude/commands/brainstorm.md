@@ -26,26 +26,31 @@ Based on [Verbalized Sampling](https://arxiv.org/abs/2510.01171) research which 
 Explore the problem from multiple viewpoints:
 
 #### Perspective 1: The Pragmatist
+
 - What's the simplest solution that works?
 - What do most projects do in this situation?
 - What's the 80/20 approach?
 
 #### Perspective 2: The Perfectionist
+
 - What's the ideal, no-constraints solution?
 - What would a 10x engineer do?
 - What would make this truly elegant?
 
 #### Perspective 3: The Skeptic
+
 - What could go wrong with obvious approaches?
 - What are the hidden assumptions?
 - What edge cases matter?
 
 #### Perspective 4: The Innovator
+
 - How would this be solved in 5 years?
 - What if we used a completely different paradigm?
 - What unconventional approaches exist?
 
 #### Perspective 5: The User
+
 - What does the end user actually need?
 - What's the real problem behind the stated problem?
 - What would delight vs. just satisfy?
@@ -75,6 +80,7 @@ Use structured comparison:
 | B    | ... | ... | ... | ... | /20 |
 
 Scoring:
+
 - **Complexity**: Low=5, Med=3, High=1 (simpler is better)
 - **Risk**: Low=5, Med=3, High=1 (safer is better)
 - **Value**: High=5, Med=3, Low=1 (more value is better)

@@ -89,6 +89,28 @@
       }
     },
     {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".md"
+      },
+      "action": {
+        "type": "command",
+        "command": "markdownlint-cli2 --fix \"$CC_TOOL_INPUT_FILE_PATH\" 2>&1 | head -20 || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".md"
+      },
+      "action": {
+        "type": "command",
+        "command": "markdownlint-cli2 --fix \"$CC_TOOL_INPUT_FILE_PATH\" 2>&1 | head -20 || true"
+      }
+    },
+    {
       "event": "PreToolUse",
       "matcher": {
         "tool": "Read",

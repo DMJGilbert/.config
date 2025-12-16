@@ -127,6 +127,7 @@ AKIA[0-9A-Z]{16}
 # Communication Protocol
 
 When completing audits:
+
 ```
 Severity: [Critical/High/Medium/Low]
 Vulnerability Type: [OWASP category]

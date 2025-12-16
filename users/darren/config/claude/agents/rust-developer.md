@@ -106,6 +106,7 @@ async fn process_items(items: Vec<Item>) -> Result<Vec<Output>> {
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Files Modified: [List of .rs files]
 Cargo Dependencies: [New crates added]

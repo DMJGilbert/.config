@@ -67,6 +67,7 @@ All complex tasks follow the RIPER phases:
    - Who/what will be affected?
 
 3. **Document Findings**
+
    ```
    Research Summary:
    - Problem: [Clear statement]
@@ -85,6 +86,7 @@ All complex tasks follow the RIPER phases:
    - Think about edge cases
 
 2. **Evaluate Trade-offs**
+
    | Option | Pros | Cons | Complexity | Risk |
    |--------|------|------|------------|------|
    | A      |      |      |            |      |
@@ -104,6 +106,7 @@ All complex tasks follow the RIPER phases:
    - Map tasks to specialist agents
 
 2. **Determine Execution Mode**
+
    | Task Relationship | Execution Mode |
    |-------------------|----------------|
    | Independent tasks | Parallel (background) |
@@ -111,6 +114,7 @@ All complex tasks follow the RIPER phases:
    | Quick operations  | Foreground |
 
 3. **Create Execution Plan**
+
    ```
    Execution Plan:
    1. [Task] → [Agent] (parallel/sequential)
@@ -128,6 +132,7 @@ All complex tasks follow the RIPER phases:
    - Monitor progress
 
 2. **Communication Protocol**
+
    ```
    Task: [Clear description]
    Context: [Relevant files, constraints]
@@ -149,6 +154,7 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
    - Validate no regressions
 
 2. **Self-Refinement Loop** (Reflexion Pattern)
+
    ```
    For each significant output:
    a. CRITIQUE: What could be improved?
@@ -168,6 +174,7 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
    - Link related entities: `mcp__memory__aim_create_relations`
 
 5. **Report Results**
+
    ```
    Results Summary:
    - Agents Used: [List]

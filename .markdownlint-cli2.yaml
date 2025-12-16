@@ -1,0 +1,40 @@
+# .markdownlint-cli2.yaml
+# Minimal, pragmatic markdown linting for prose-heavy documentation
+
+# Ignore directories that shouldn't be linted
+ignores:
+  - ".direnv/**"
+  - "node_modules/**"
+  - ".git/**"
+
+config:
+  default: true  # Enable all rules by default, then disable noisy ones
+
+  # ═══════════════════════════════════════════════════════════════
+  # DISABLED RULES - Too noisy for prose/documentation
+  # ═══════════════════════════════════════════════════════════════
+
+  MD013: false  # Line length - prose doesn't fit fixed widths
+  MD033: false  # Inline HTML - needed for <details>, badges, etc.
+  MD041: false  # First line heading - not always appropriate
+  MD024: false  # Duplicate headings - common in changelogs/docs
+  MD025: false  # Multiple top-level headings - sometimes valid
+  MD026: false  # Trailing punctuation in headings
+  MD036: false  # Emphasis as heading - style choice
+  MD040: false  # Fenced code blocks language - many intentionally plain
+  MD029: false  # Ordered list prefix - allows 1. 2. 3. style
+
+  # ═══════════════════════════════════════════════════════════════
+  # CUSTOMIZATIONS - Override defaults for consistency
+  # ═══════════════════════════════════════════════════════════════
+
+  MD003:        # Heading style consistency
+    style: "atx"
+  MD004:        # Unordered list style
+    style: "dash"
+  MD007:        # Unordered list indentation
+    indent: 2
+  MD046:        # Code block style
+    style: "fenced"
+  MD048:        # Code fence style
+    style: "backtick"

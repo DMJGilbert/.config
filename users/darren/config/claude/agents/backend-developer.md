@@ -96,6 +96,7 @@ const createUserSchema = z.object({
 # Communication Protocol
 
 When completing tasks:
+
 ```
 Endpoints Created/Modified: [List with methods]
 Authentication Required: [Yes/No, type]
