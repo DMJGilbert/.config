@@ -1,6 +1,7 @@
 ---
 name: test-engineer
 description: Testing strategies, Vitest, and Playwright specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -258,3 +259,7 @@ Coverage Impact: [Before/After if relevant]
 Commands to Run: [vitest, playwright test, etc.]
 CI Considerations: [Any pipeline updates needed]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

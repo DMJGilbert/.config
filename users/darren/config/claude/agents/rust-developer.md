@@ -1,6 +1,7 @@
 ---
 name: rust-developer
 description: Rust, systems programming, and performance specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -114,3 +115,7 @@ Unsafe Blocks: [Any unsafe code and justification]
 Performance Notes: [Optimization considerations]
 Testing Notes: [Tests added/modified]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

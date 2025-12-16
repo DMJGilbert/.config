@@ -41,6 +41,9 @@
         [[ ! -r /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN ]] && missing_secrets+=("GITHUB_PERSONAL_ACCESS_TOKEN")
         [[ ! -r /run/secrets/HASS_HOST ]] && missing_secrets+=("HASS_HOST")
         [[ ! -r /run/secrets/HASS_TOKEN ]] && missing_secrets+=("HASS_TOKEN")
+        [[ ! -r /run/secrets/OBSIDIAN_API_KEY ]] && missing_secrets+=("OBSIDIAN_API_KEY")
+        [[ ! -r /run/secrets/OBSIDIAN_HOST ]] && missing_secrets+=("OBSIDIAN_HOST")
+        [[ ! -r /run/secrets/OBSIDIAN_PORT ]] && missing_secrets+=("OBSIDIAN_PORT")
 
         if (( ''${#missing_secrets[@]} > 0 )); then
           echo "⚠️  Missing secrets: ''${missing_secrets[*]}" >&2
@@ -50,6 +53,9 @@
         GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
         HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
         HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
+        OBSIDIAN_API_KEY="$(cat /run/secrets/OBSIDIAN_API_KEY 2>/dev/null)" \
+        OBSIDIAN_HOST="$(cat /run/secrets/OBSIDIAN_HOST 2>/dev/null)" \
+        OBSIDIAN_PORT="$(cat /run/secrets/OBSIDIAN_PORT 2>/dev/null)" \
         claude "$@"
       }
 

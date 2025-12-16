@@ -5,6 +5,9 @@
 }:
 lib.mkIf pkgs.stdenv.isDarwin {
   home.file = {
+    # Global memory storage directory
+    ".local/share/claude-memory/.keep".text = "";
+
     # Project guidelines
     ".claude/CLAUDE.md".source = ./config/claude/CLAUDE.md;
 

@@ -2,18 +2,25 @@
   "mcpServers": {
     "memory": {
       "command": "npx",
-      "args": ["-y", "mcp-knowledge-graph", "--memory-path", "/Users/darren/Developer/config/.aim/"]
+      "args": [
+        "-y",
+        "mcp-knowledge-graph",
+        "--memory-path",
+        "/Users/darren/Developer/config/.aim/"
+      ]
     },
     "filesystem": {
+      "type": "stdio",
       "command": "npx",
       "args": [
         "-y",
-        "@anthropic-ai/mcp-server-filesystem",
+        "@modelcontextprotocol/server-filesystem",
         "/Users/darren/Developer/dmjgilbert/vault",
         "/Users/darren/Developer/config",
         "/Users/darren/.config",
         "/tmp"
-      ]
+      ],
+      "env": {}
     }
   }
 }

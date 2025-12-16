@@ -1,6 +1,7 @@
 ---
 name: architect
 description: System design, patterns, and architecture decisions using RIPER methodology
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -245,3 +246,7 @@ When completing architecture tasks:
 - Risks identified: [List]
 - Knowledge graph updated: [Entities/relations]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

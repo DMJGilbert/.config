@@ -372,6 +372,69 @@ For complex tasks, use specialist agents to handle domain-specific work efficien
 | Testing | test-engineer | test, vitest, playwright, coverage |
 | Home Assistant | home-assistant-dev | home-assistant, automation, dashboard, lovelace |
 
+### Agent Configuration
+
+Agents are defined in `.claude/agents/*.md` files with YAML frontmatter:
+
+```yaml
+---
+name: agent-name
+description: What this agent does
+permissionMode: acceptEdits  # Optional: controls file edit permissions
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+skills:
+  - test-driven-development
+---
+
+# Agent instructions in markdown...
+```
+
+#### Frontmatter Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Unique identifier (lowercase, hyphens) |
+| `description` | Yes | Natural language description of agent's purpose |
+| `tools` | No | List of tools agent can use. If omitted, inherits all from main thread |
+| `permissionMode` | No | Permission handling for subagent context |
+| `skills` | No | List of skills to auto-load |
+| `model` | No | Model to use (`sonnet`, `opus`, `haiku`, or `inherit`) |
+
+#### Permission Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `default` | Prompts for permission on first tool use | Read-only agents |
+| `acceptEdits` | Auto-accepts file edit permissions | Agents that modify files |
+| `plan` | Read-only, cannot modify files | Analysis/review agents |
+| `bypassPermissions` | Skips all prompts | Trusted automation only |
+
+**Note**: Agents with `Write`, `Edit`, or `Bash` tools should use `permissionMode: acceptEdits` to allow file modifications in subagent context. Without this, edits may not persist due to context isolation.
+
+#### Known Limitation: Subagent File Persistence
+
+> **WORKAROUND REQUIRED** - Track [GitHub #4462](https://github.com/anthropics/claude-code/issues/4462) for fix status.
+
+Due to a Claude Code bug, **subagent file operations don't persist** to the filesystem. Subagents report success, but files aren't created/modified.
+
+**Workaround - Return-and-Apply Pattern:**
+
+1. When delegating file tasks, instruct subagents to **return edits** instead of writing directly
+2. Subagent analyzes and returns edits (old_string → new_string format)
+3. Main thread applies changes using Edit tool (more efficient than whole files)
+
+**Example prompt addition for file tasks:**
+```
+Due to bug #4462, return edits instead of writing directly.
+Format: "Replace: [old text]" → "With: [new text]"
+```
+
+**Sunset**: Remove this workaround when [issue #4462](https://github.com/anthropics/claude-code/issues/4462) is fixed.
+
 ### MCP Integration
 
 Use MCP servers to extend Claude's capabilities with external tools and data sources.
@@ -443,31 +506,56 @@ mcp__obsidian__create_note("claude/notes/...", content) # Create note
 
 Claude maintains a knowledge graph across sessions using the `memory` MCP server.
 
+#### Memory Contexts
+
+Memory is organized into contexts for isolation and sharing:
+
+| Context | Purpose | Storage File |
+|---------|---------|--------------|
+| (default) | Personal conventions, preferences | `memory.jsonl` |
+| `[project]` | Project-specific knowledge | `memory-[project].jsonl` |
+| `work` | Cross-project work patterns | `memory-work.jsonl` |
+| `client-[name]` | Isolated client data | `memory-client-[name].jsonl` |
+
 #### Commands
 
-- `/prime` - Loads existing knowledge or creates new project context
+- `/prime` - Loads default + project contexts, merges for session
 - `/prime refresh` - Force refresh knowledge graph
-- `/remember` - View/search/manage memory manually
+- `/remember` - View/search/manage memory (both contexts)
+- `/remember --context=work` - View specific context
+- `/remember contexts` - List all available contexts
 
 #### Automatic Memory
 
-- `/prime` checks knowledge graph first, skips analysis if context exists
-- Architect agent stores architectural decisions automatically
-- Orchestrator searches memory before delegating tasks
+- `/prime` loads both default (conventions) and project-specific contexts
+- Project name auto-detected from git remote or directory name
+- Architect agent stores decisions in project context
+- Orchestrator searches both contexts before delegating
 
 #### What Gets Stored
 
-| Entity Type | Examples |
-|-------------|----------|
-| `project` | Project name, tech stack, package manager |
-| `service` | Backend services, integrations |
-| `component` | UI components, modules |
-| `decision` | Architecture decisions (ADRs) |
-| `pattern` | Code conventions, naming patterns |
+| Entity Type | Context | Examples |
+|-------------|---------|----------|
+| `project` | project | Project name, tech stack, package manager |
+| `service` | project | Backend services, integrations |
+| `component` | project | UI components, modules |
+| `decision` | project | Architecture decisions (ADRs) |
+| `pattern` | default | Code conventions, naming patterns |
+| `preference` | default | Personal tool preferences |
 
 #### Memory Location
 
-Stored in `.aim/` directory (git-ignored). Persists across sessions.
+Stored globally at `~/.local/share/claude-memory/`:
+
+```
+~/.local/share/claude-memory/
+├── memory.jsonl           # Default context (personal)
+├── memory-config.jsonl    # Project: config
+├── memory-myapp.jsonl     # Project: myapp
+└── memory-work.jsonl      # Work context
+```
+
+Available across all projects via `~/.mcp.json`.
 
 ### Obsidian Vault Integration
 
@@ -673,3 +761,4 @@ Secrets are loaded from sops-nix decrypted files for the duration of Claude comm
 
 - `GITHUB_PERSONAL_ACCESS_TOKEN`
 - `HASS_HOST` / `HASS_TOKEN`
+- `OBSIDIAN_API_KEY` / `OBSIDIAN_HOST` / `OBSIDIAN_PORT`

@@ -130,6 +130,7 @@ All complex tasks follow the RIPER phases:
    - Provide clear context to each agent
    - Use background execution for independent tasks
    - Monitor progress
+   - **For file tasks**: Use Return-and-Apply pattern (see below)
 
 2. **Communication Protocol**
 
@@ -140,7 +141,43 @@ All complex tasks follow the RIPER phases:
    Quality Criteria: [How to verify success]
    Run Mode: [Background/Foreground]
    Dependencies: [What this task depends on]
+   File Output Mode: [Direct (read-only) / Return-and-Apply (write)]
    ```
+
+3. **File Modification Tasks** (Return-and-Apply Pattern)
+
+   Due to Claude Code bug [#4462](https://github.com/anthropics/claude-code/issues/4462), subagent file operations don't persist. For tasks requiring file changes:
+
+   **Prompt Template:**
+   ```
+   [Task description]
+
+   IMPORTANT: Due to bug #4462, return file changes instead of writing directly.
+   Format your output as:
+
+   ## Changes to Apply
+
+   ### Edit: /absolute/path/to/file.ext
+   **Replace:**
+   ```
+   [exact text to find]
+   ```
+   **With:**
+   ```
+   [replacement text]
+   ```
+
+   For new files, use "Create:" instead of "Edit:" and provide full content.
+   Do NOT use Write/Edit/Bash for file modifications.
+   ```
+
+   **After receiving output:**
+   - Parse returned edits (old_string → new_string format)
+   - Apply using Edit tool (main thread) - more efficient than Write
+   - Ensure old_string is unique in file (include surrounding context if needed)
+   - For new files, use Write tool
+   - Verify changes persisted
+   - Run validation (lint, typecheck, tests)
 
 ## Phase 5: REVIEW
 
@@ -244,6 +281,7 @@ TaskOutput(task.id, block: true)
 3. **Missing REVIEW**: Every task needs quality verification
 4. **Ignoring Memory**: Always check knowledge graph first
 5. **Over-Parallelization**: Respect dependencies
+6. **Direct File Writes in Subagents**: Due to bug #4462, always use Return-and-Apply pattern for file modifications
 
 # Final Report Template
 

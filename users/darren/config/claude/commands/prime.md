@@ -8,11 +8,11 @@ allowed-tools:
   - Grep
   - Glob
   - Task
-  - mcp__memory__read_graph
-  - mcp__memory__search_nodes
-  - mcp__memory__create_entities
-  - mcp__memory__create_relations
-  - mcp__memory__add_observations
+  - mcp__memory__aim_read_graph
+  - mcp__memory__aim_search_nodes
+  - mcp__memory__aim_create_entities
+  - mcp__memory__aim_create_relations
+  - mcp__memory__aim_add_observations
 ---
 
 # Context Prime
@@ -30,31 +30,53 @@ If no argument provided, prime with full project context. You can specify:
 
 ## Priming Steps
 
-### 0. Check Knowledge Graph (First!)
+### 0. Detect Project Name
+
+```bash
+# Get project name from git remote or directory
+PROJECT=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null) || \
+PROJECT=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null) || \
+PROJECT=$(basename "$PWD")
+```
+
+### 1. Load Knowledge Graph (Two Contexts)
+
+**Load default context** (personal conventions, global patterns):
 
 ```
-mcp__memory__read_graph()
+aim_read_graph()  # No context = default
 ```
 
-**If knowledge graph has project entities:**
+**Load project context** (project-specific knowledge):
 
-- Load existing context from memory
-- Show "Loaded from memory" summary
-- Skip to Step 5 (Git Context) for recent changes only
-- Proceed to output
+```
+aim_read_graph(context="[PROJECT_NAME]")
+```
 
-**If knowledge graph is empty or `/prime refresh`:**
+**Merge behavior:**
+
+- Default context entities are universal (conventions, preferences)
+- Project context entities are project-specific (decisions, components)
+- If same entity exists in both, project context takes precedence
+
+**If both contexts empty or `/prime refresh`:**
 
 - Continue with full priming steps below
-- Store results in knowledge graph at the end
+- Store results in project context at the end
 
-### 1. Project Structure
+**If contexts have data:**
+
+- Load existing context from memory
+- Show "Loaded from memory" summary with context sources
+- Skip to Step 5 (Git Context) for recent changes only
+
+### 2. Project Structure
 
 ```bash
 tree -L 3 -I 'node_modules|.git|dist|build|target|__pycache__|.next' --dirsfirst 2>/dev/null || ls -la
 ```
 
-### 2. Identify Tech Stack
+### 3. Identify Tech Stack
 
 Look for and read relevant config files:
 
@@ -66,21 +88,21 @@ Look for and read relevant config files:
 - `Podfile` / `Package.swift` → iOS/Swift
 - `docker-compose.yml` / `Dockerfile` → Docker
 
-### 3. Read Key Documentation
+### 4. Read Key Documentation
 
 - `README.md` - Project overview
 - `CLAUDE.md` / `.claude/CLAUDE.md` - AI instructions
 - `CONTRIBUTING.md` - Contribution guidelines
 - `ARCHITECTURE.md` or `docs/architecture.md` - System design
 
-### 4. Understand Patterns
+### 5. Understand Patterns
 
 - Identify directory structure conventions
 - Note naming patterns (files, functions, components)
 - Find entry points (main.*, index.*, App.*)
 - Locate test patterns (*_test.*, *.spec.*, *.test.*)
 
-### 5. Git Context
+### 6. Git Context
 
 ```bash
 git log --oneline -10
@@ -88,55 +110,53 @@ git branch -a
 git remote -v
 ```
 
-### 6. Recent Activity
+### 7. Recent Activity
 
 ```bash
 git diff --stat HEAD~5..HEAD 2>/dev/null || echo "Limited git history"
 ```
 
-### 7. Store in Knowledge Graph (if new/refresh)
+### 8. Store in Knowledge Graph (if new/refresh)
 
-After gathering context, store in knowledge graph:
+After gathering context, store in **project context** (not default):
 
 ```
-# Create project entity
-create_entities([{
-  "name": "project",
-  "entityType": "project",
-  "observations": [
-    "Name: [project name]",
-    "Type: [Library/Application/CLI/Service]",
-    "Tech Stack: [languages, frameworks]",
-    "Package Manager: [npm/cargo/nix/etc]"
-  ]
-}])
+# Create project entity in PROJECT context
+aim_create_entities({
+  context: "[PROJECT_NAME]",
+  entities: [{
+    "name": "[PROJECT_NAME]",
+    "entityType": "project",
+    "observations": [
+      "Name: [project name]",
+      "Type: [Library/Application/CLI/Service]",
+      "Tech Stack: [languages, frameworks]",
+      "Package Manager: [npm/cargo/nix/etc]"
+    ]
+  }]
+})
 
 # Create entities for key directories/modules
-create_entities([
-  {"name": "src", "entityType": "directory", "observations": ["Source code directory", "Contains [description]"]},
-  {"name": "tests", "entityType": "directory", "observations": ["Test files", "Uses [test framework]"]},
-  # ... other key directories
-])
-
-# Create entities for key patterns/conventions
-create_entities([{
-  "name": "conventions",
-  "entityType": "patterns",
-  "observations": [
-    "Naming: [camelCase/snake_case]",
-    "Testing: [framework] in [location]",
-    "Config: [how managed]",
-    "Imports: [style]"
+aim_create_entities({
+  context: "[PROJECT_NAME]",
+  entities: [
+    {"name": "src", "entityType": "directory", "observations": ["Source code directory", "Contains [description]"]},
+    {"name": "tests", "entityType": "directory", "observations": ["Test files", "Uses [test framework]"]}
   ]
-}])
+})
 
-# Create relations
-create_relations([
-  {"from": "src", "to": "project", "relationType": "part_of"},
-  {"from": "tests", "to": "project", "relationType": "part_of"},
-  {"from": "conventions", "to": "project", "relationType": "describes"}
-])
+# Create relations in project context
+aim_create_relations({
+  context: "[PROJECT_NAME]",
+  relations: [
+    {"from": "src", "to": "[PROJECT_NAME]", "relationType": "part_of"},
+    {"from": "tests", "to": "[PROJECT_NAME]", "relationType": "part_of"}
+  ]
+})
 ```
+
+**Note**: Personal conventions go in the **default context** (no context parameter).
+Project-specific entities go in the **project context**.
 
 ## Output Format
 
@@ -144,7 +164,8 @@ create_relations([
 
 #### Source
 
-- **Memory**: Loaded from knowledge graph / Fresh analysis stored
+- **Default Context**: [count] entities (personal conventions)
+- **Project Context** (`[PROJECT_NAME]`): [count] entities / Fresh analysis stored
 
 #### Overview
 
@@ -196,3 +217,10 @@ create_relations([
 ### Ready to Assist
 
 [Brief statement of understanding and readiness to help with the project]
+
+## Memory Location
+
+Memory is stored globally at `~/.local/share/claude-memory/`:
+
+- `memory.jsonl` - Default context (personal conventions)
+- `memory-[project].jsonl` - Project-specific context

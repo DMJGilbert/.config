@@ -1,6 +1,7 @@
 ---
 name: home-assistant-dev
 description: Home Assistant configuration and automation specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -176,3 +177,7 @@ Automations: [Automation changes if any]
 Testing Notes: [How to verify the changes work]
 Rebuild Command: [sudo nixos-rebuild switch --flake .#rubecula]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

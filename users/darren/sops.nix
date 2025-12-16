@@ -21,6 +21,15 @@ _: {
       "HASS_TOKEN" = {
         owner = "darren";
       };
+      "OBSIDIAN_API_KEY" = {
+        owner = "darren";
+      };
+      "OBSIDIAN_HOST" = {
+        owner = "darren";
+      };
+      "OBSIDIAN_PORT" = {
+        owner = "darren";
+      };
     };
   };
 }

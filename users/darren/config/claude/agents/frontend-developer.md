@@ -1,6 +1,7 @@
 ---
 name: frontend-developer
 description: React, TypeScript, Tailwind CSS, and shadcn/ui specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -86,3 +87,7 @@ Dependencies Added: [New packages if any]
 Testing Notes: [How to verify changes]
 Accessibility Checklist: [WCAG items addressed]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

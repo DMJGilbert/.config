@@ -1,6 +1,7 @@
 ---
 name: backend-developer
 description: APIs, Node.js, Express, and server-side TypeScript specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -104,3 +105,7 @@ Validation Schemas: [Zod schemas added]
 Error Handling: [Error types handled]
 Testing Notes: [How to verify]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

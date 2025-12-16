@@ -1,6 +1,7 @@
 ---
 name: ui-ux-designer
 description: Design systems, accessibility, and user experience specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -98,3 +99,7 @@ Design Tokens Added: [New tokens]
 Accessibility Checklist: [WCAG items addressed]
 Responsive Considerations: [Breakpoint handling]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

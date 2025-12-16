@@ -1,6 +1,7 @@
 ---
 name: documentation-expert
 description: Technical writing and API documentation specialist
+permissionMode: acceptEdits
 tools:
   - Read
   - Write
@@ -139,3 +140,7 @@ Documentation Type: [API/Code/Project/Architecture]
 Coverage: [What is documented]
 Gaps Identified: [What still needs documentation]
 ```
+
+# Subagent File Limitation
+
+When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.
