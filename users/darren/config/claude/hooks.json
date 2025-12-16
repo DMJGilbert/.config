@@ -1,6 +1,94 @@
 {
   "hooks": [
     {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".nix"
+      },
+      "action": {
+        "type": "command",
+        "command": "alejandra --quiet \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".nix"
+      },
+      "action": {
+        "type": "command",
+        "command": "alejandra --quiet \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".lua"
+      },
+      "action": {
+        "type": "command",
+        "command": "stylua --verify \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".lua"
+      },
+      "action": {
+        "type": "command",
+        "command": "stylua --verify \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".yaml"
+      },
+      "action": {
+        "type": "command",
+        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".yml"
+      },
+      "action": {
+        "type": "command",
+        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".yaml"
+      },
+      "action": {
+        "type": "command",
+        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".yml"
+      },
+      "action": {
+        "type": "command",
+        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
+      }
+    },
+    {
       "event": "PreToolUse",
       "matcher": {
         "tool": "Read",
@@ -86,6 +174,47 @@
       "action": {
         "type": "systemMessage",
         "message": "Tip: Consider using database-specialist agent for SQL files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "home-assistant"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using home-assistant-dev agent for Home Assistant configurations"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "automations.nix"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using home-assistant-dev agent for Home Assistant automations"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "dashboard.yaml"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using home-assistant-dev agent for Lovelace dashboard files"
+      }
+    },
+    {
+      "event": "Stop",
+      "matcher": {},
+      "action": {
+        "type": "command",
+        "command": "printf '\\n📊 Session ended. Run statix check . && deadnix . to lint Nix files.\\n'"
       }
     }
   ]

@@ -9,6 +9,13 @@ tools:
   - Glob
   - Grep
   - mcp__context7__*
+  - mcp__github__get_pull_request
+  - mcp__github__get_pull_request_files
+  - mcp__github__get_issue
+  - mcp__sequential-thinking__sequentialthinking
+skills:
+  - test-driven-development   # Write API tests before implementation
+  - systematic-debugging      # Debug server issues with 4-phase methodology
 ---
 
 # Role Definition

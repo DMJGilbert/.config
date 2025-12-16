@@ -10,7 +10,13 @@ tools:
   - Grep
   - mcp__context7__*
   - mcp__magic-ui__*
-  - mcp__figma__*
+  - mcp__github__get_pull_request
+  - mcp__github__get_pull_request_files
+  - mcp__github__get_issue
+  - mcp__puppeteer__*
+skills:
+  - test-driven-development   # Write component tests before implementation
+  - systematic-debugging      # Debug UI issues with 4-phase methodology
 ---
 
 # Role Definition
@@ -26,7 +32,6 @@ You are a frontend development specialist focused on building modern, accessible
 - shadcn/ui component integration and customization
 - Performance optimization (code splitting, lazy loading, memoization)
 - Accessibility compliance (WCAG 2.1)
-- Design-to-code workflow with Figma
 - Magic UI components (layouts, motion, effects)
 
 # Technology Stack
@@ -69,7 +74,6 @@ You are a frontend development specialist focused on building modern, accessible
 
 - Use `context7` for up-to-date React/Next.js documentation
 - Use `magic-ui` for Magic UI components (layouts, motion, effects)
-- Use `figma` for design file access and asset export
 
 # Communication Protocol
 

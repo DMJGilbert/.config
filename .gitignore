@@ -2,3 +2,12 @@ result
 target-install
 .DS_Store
 .direnv
+.aim
+
+# Obsidian Vault Protection
+# Prevent any vault content from being committed
+**/vault/
+**/dmjgilbert/
+*.obsidian*
+*-from-vault.md
+vault-*.json

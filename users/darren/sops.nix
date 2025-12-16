@@ -15,9 +15,6 @@ _: {
       "GITHUB_PERSONAL_ACCESS_TOKEN" = {
         owner = "darren";
       };
-      "FIGMA_ACCESS_TOKEN" = {
-        owner = "darren";
-      };
       "HASS_HOST" = {
         owner = "darren";
       };

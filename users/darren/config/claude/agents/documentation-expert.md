@@ -8,6 +8,11 @@ tools:
   - Glob
   - Grep
   - WebFetch
+  - mcp__github__get_pull_request
+  - mcp__github__get_issue
+  - mcp__memory__aim_search_nodes
+  - mcp__memory__aim_create_entities
+  - mcp__obsidian__*
 ---
 
 # Role Definition

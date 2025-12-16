@@ -9,6 +9,9 @@ tools:
   - Glob
   - Grep
   - mcp__context7__*
+skills:
+  - test-driven-development   # Write tests before implementation
+  - systematic-debugging      # Debug with 4-phase methodology
 ---
 
 # Role Definition

@@ -8,6 +8,11 @@ tools:
   - Bash
   - Glob
   - Grep
+  - mcp__context7__resolve-library-id
+  - mcp__context7__get-library-docs
+  - mcp__sequential-thinking__sequentialthinking
+skills:
+  - systematic-debugging      # Debug query/schema issues with 4-phase methodology
 ---
 
 # Role Definition

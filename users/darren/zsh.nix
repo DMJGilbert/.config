@@ -37,8 +37,17 @@
       # Claude Code with MCP secrets (reads from sops-nix decrypted files)
       # Secrets only loaded for the duration of the claude command
       claude-mcp() {
+        local missing_secrets=()
+        [[ ! -r /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN ]] && missing_secrets+=("GITHUB_PERSONAL_ACCESS_TOKEN")
+        [[ ! -r /run/secrets/HASS_HOST ]] && missing_secrets+=("HASS_HOST")
+        [[ ! -r /run/secrets/HASS_TOKEN ]] && missing_secrets+=("HASS_TOKEN")
+
+        if (( ''${#missing_secrets[@]} > 0 )); then
+          echo "⚠️  Missing secrets: ''${missing_secrets[*]}" >&2
+          echo "   Some MCP servers may not work. Rebuild your config to decrypt secrets." >&2
+        fi
+
         GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
-        FIGMA_ACCESS_TOKEN="$(cat /run/secrets/FIGMA_ACCESS_TOKEN 2>/dev/null)" \
         HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
         HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
         claude "$@"
@@ -46,19 +55,44 @@
 
       # Claude Code workflows (functions for argument support)
       # Use claude-mcp for MCP server access, claude for basic usage
+      # Code quality and review
       cc-review() { claude-mcp "/review $*"; }
+      cc-audit() { claude-mcp "/audit $*"; }
+      cc-perf() { claude-mcp "/perf $*"; }
+      cc-security() { claude-mcp "/security $*"; }
+      cc-health() { claude-mcp "/health $*"; }
+      cc-deps() { claude-mcp "/deps $*"; }
+
+      # Git workflows
       cc-commit() { claude-mcp "/commit $*"; }
       cc-pr() { claude-mcp "/pr $*"; }
-      cc-perf() { claude-mcp "/perf $*"; }
-      cc-health() { claude-mcp "/health $*"; }
-      cc-security() { claude-mcp "/security $*"; }
-      cc-explain() { claude-mcp "/explain $*"; }
-      cc-deps() { claude-mcp "/deps $*"; }
+
+      # Context and memory
       cc-prime() { claude-mcp "/prime $*"; }
-      cc-audit() { claude-mcp "/audit $*"; }
+      cc-remember() { claude-mcp "/remember $*"; }
+
+      # Problem solving (CEK techniques)
+      cc-fix() { claude-mcp "/fix $*"; }
+      cc-why() { claude-mcp "/why $*"; }
+      cc-reflect() { claude-mcp "/reflect $*"; }
+      cc-brainstorm() { claude-mcp "/brainstorm $*"; }
+
+      # Documentation and explanation
+      cc-explain() { claude-mcp "/explain $*"; }
+
+      # Obsidian vault
+      cc-note() { claude-mcp "/note $*"; }
+      cc-spec() { claude-mcp "/spec $*"; }
+      cc-doc() { claude-mcp "/doc $*"; }
+      cc-search-vault() { claude-mcp "/search-vault $*"; }
+
+      # Orchestration
       cc-orchestrate() { claude-mcp "/orchestrate $*"; }
     '';
     shellAliases = {
+      # Claude Code (using 'ccode' to avoid conflict with C compiler 'cc')
+      ccode = "claude-mcp";
+
       # Navigation
       ".." = "cd ..";
       "..." = "cd ../..";

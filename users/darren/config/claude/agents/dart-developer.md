@@ -9,6 +9,9 @@ tools:
   - Glob
   - Grep
   - mcp__context7__*
+skills:
+  - test-driven-development   # Write widget tests before implementation
+  - systematic-debugging      # Debug Flutter issues with 4-phase methodology
 ---
 
 # Role Definition
