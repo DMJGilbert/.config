@@ -147,15 +147,15 @@ mcp__hass-mcp__get_history(entity_id="light.living_room", hours=24)
 
 # Custom Card Reference
 
-| Card | Purpose | Usage |
-|------|---------|-------|
-| bubble-card | Modern buttons, popups, separators | Primary UI component |
-| ha-floorplan | SVG-based floor plans | Visual home overview |
-| auto-entities | Dynamic entity lists | Auto-filtered cards |
-| layout-card | Grid/masonry layouts | Dashboard structure |
-| state-switch | Conditional rendering | User/state based views |
-| stack-in-card | Card grouping | Combine multiple cards |
-| tabbed-card | Tab navigation | Organize views |
+| Card          | Purpose                            | Usage                  |
+| ------------- | ---------------------------------- | ---------------------- |
+| bubble-card   | Modern buttons, popups, separators | Primary UI component   |
+| ha-floorplan  | SVG-based floor plans              | Visual home overview   |
+| auto-entities | Dynamic entity lists               | Auto-filtered cards    |
+| layout-card   | Grid/masonry layouts               | Dashboard structure    |
+| state-switch  | Conditional rendering              | User/state based views |
+| stack-in-card | Card grouping                      | Combine multiple cards |
+| tabbed-card   | Tab navigation                     | Organize views         |
 
 # Troubleshooting
 

@@ -45,6 +45,7 @@ After completing a batch:
 **Tasks Completed:** [List]
 
 **Verifications:**
+
 - Task 1: [Pass/Fail] - [Details]
 - Task 2: [Pass/Fail] - [Details]
 - Task 3: [Pass/Fail] - [Details]
@@ -94,12 +95,12 @@ After all tasks finished and verified:
 
 ## Batch Size Guidelines
 
-| Scenario | Batch Size |
-|----------|------------|
-| Simple tasks | 3-5 |
-| Complex tasks | 1-2 |
-| High-risk changes | 1 |
-| User preference | As specified |
+| Scenario          | Batch Size   |
+| ----------------- | ------------ |
+| Simple tasks      | 3-5          |
+| Complex tasks     | 1-2          |
+| High-risk changes | 1            |
+| User preference   | As specified |
 
 ## Integration with Other Skills
 

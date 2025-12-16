@@ -77,15 +77,15 @@ If no argument provided, run full health check. You can focus on specific areas:
 
 ### Project Health Scorecard
 
-| Category | Score | Status |
-|----------|-------|--------|
-| Dependencies | X/10 | emoji |
-| Code Quality | X/10 | emoji |
-| Documentation | X/10 | emoji |
-| Technical Debt | X/10 | emoji |
-| Git Health | X/10 | emoji |
-| Security | X/10 | emoji |
-| **Overall** | **X/10** | **emoji** |
+| Category       | Score    | Status    |
+| -------------- | -------- | --------- |
+| Dependencies   | X/10     | emoji     |
+| Code Quality   | X/10     | emoji     |
+| Documentation  | X/10     | emoji     |
+| Technical Debt | X/10     | emoji     |
+| Git Health     | X/10     | emoji     |
+| Security       | X/10     | emoji     |
+| **Overall**    | **X/10** | **emoji** |
 
 ### Detailed Findings
 

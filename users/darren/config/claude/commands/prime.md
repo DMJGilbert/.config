@@ -99,8 +99,8 @@ Look for and read relevant config files:
 
 - Identify directory structure conventions
 - Note naming patterns (files, functions, components)
-- Find entry points (main.*, index.*, App.*)
-- Locate test patterns (*_test.*, *.spec.*, *.test.*)
+- Find entry points (main._, index._, App.\*)
+- Locate test patterns (_\_test._, _.spec._, _.test._)
 
 ### 6. Git Context
 
@@ -182,11 +182,11 @@ Project-specific entities go in the **project context**.
 
 #### Key Files
 
-| File | Purpose |
-|------|---------|
+| File          | Purpose                 |
+| ------------- | ----------------------- |
 | `src/main.ts` | Application entry point |
-| `src/lib/` | Core library code |
-| ... | ... |
+| `src/lib/`    | Core library code       |
+| ...           | ...                     |
 
 #### Patterns & Conventions
 

@@ -37,12 +37,14 @@ Transform rough ideas into validated designs through structured Socratic dialogu
 
 ```markdown
 ## Option A: [Name] (Recommended)
+
 **Approach:** [Description]
 **Pros:** [Benefits]
 **Cons:** [Drawbacks]
 **Best when:** [Use case]
 
 ## Option B: [Name]
+
 **Approach:** [Description]
 **Pros:** [Benefits]
 **Cons:** [Drawbacks]
@@ -70,19 +72,21 @@ Transform rough ideas into validated designs through structured Socratic dialogu
 
 Ruthlessly eliminate speculative features:
 
-| Ask | If No → |
-|-----|---------|
-| Is this required for MVP? | Cut it |
-| Does the user need this now? | Defer it |
+| Ask                              | If No →       |
+| -------------------------------- | ------------- |
+| Is this required for MVP?        | Cut it        |
+| Does the user need this now?     | Defer it      |
 | Are we guessing at requirements? | Clarify first |
 
 ### One Question at a Time
 
 ```markdown
 # Bad
+
 What's the user flow? And what data do we need? Also, what about error handling?
 
 # Good
+
 What happens when a user clicks the submit button?
 [Wait for answer]
 What data needs to be sent to the server?
@@ -106,25 +110,32 @@ After validation, produce:
 # Design: [Feature Name]
 
 ## Goal
+
 [One sentence]
 
 ## Approach
+
 [2-3 paragraphs]
 
 ## Components
+
 - [Component 1]: [Purpose]
 - [Component 2]: [Purpose]
 
 ## Data Flow
+
 [Diagram or description]
 
 ## Error Handling
+
 [Strategy]
 
 ## Testing Plan
+
 [Approach]
 
 ## Open Questions
+
 [If any remain]
 ```
 

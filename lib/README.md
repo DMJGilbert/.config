@@ -4,10 +4,10 @@ Helper functions for creating system configurations.
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File           | Purpose                                     |
+| -------------- | ------------------------------------------- |
 | `mkdarwin.nix` | Creates nix-darwin configurations for macOS |
-| `mknixos.nix` | Creates NixOS configurations for Linux |
+| `mknixos.nix`  | Creates NixOS configurations for Linux      |
 
 ## mkdarwin.nix
 

@@ -77,11 +77,11 @@ The root cause should be:
 
 ### Step 4: Countermeasures
 
-| Type | Action | Prevents Recurrence? |
-|------|--------|---------------------|
-| Immediate | [Quick fix for symptom] | No (temporary) |
-| Corrective | [Fix the root cause] | Yes |
-| Preventive | [Prevent similar issues] | Yes (broader) |
+| Type       | Action                   | Prevents Recurrence? |
+| ---------- | ------------------------ | -------------------- |
+| Immediate  | [Quick fix for symptom]  | No (temporary)       |
+| Corrective | [Fix the root cause]     | Yes                  |
+| Preventive | [Prevent similar issues] | Yes (broader)        |
 
 ## Investigation Tools
 
@@ -127,29 +127,33 @@ Glob(pattern="**/*.nix")
 ## Root Cause Analysis: [Problem Title]
 
 ### Problem Statement
+
 - **Symptom**: [Observable issue]
 - **Expected**: [Correct behavior]
 - **Impact**: [What's affected]
 
 ### Five Whys Chain
 
-| Level | Question | Answer | Evidence |
-|-------|----------|--------|----------|
-| Why 1 | Why [symptom]? | [Cause 1] | [Evidence] |
-| Why 2 | Why [cause 1]? | [Cause 2] | [Evidence] |
-| Why 3 | Why [cause 2]? | [Cause 3] | [Evidence] |
-| Why 4 | Why [cause 3]? | [Cause 4] | [Evidence] |
+| Level | Question       | Answer         | Evidence   |
+| ----- | -------------- | -------------- | ---------- |
+| Why 1 | Why [symptom]? | [Cause 1]      | [Evidence] |
+| Why 2 | Why [cause 1]? | [Cause 2]      | [Evidence] |
+| Why 3 | Why [cause 2]? | [Cause 3]      | [Evidence] |
+| Why 4 | Why [cause 3]? | [Cause 4]      | [Evidence] |
 | Why 5 | Why [cause 4]? | **ROOT CAUSE** | [Evidence] |
 
 ### Root Cause
+
 **[Clear statement of the fundamental cause]**
 
 ### Countermeasures
+
 1. **Immediate**: [Action] - [Owner] - [Timeline]
 2. **Corrective**: [Action] - [Owner] - [Timeline]
 3. **Preventive**: [Action] - [Owner] - [Timeline]
 
 ### Lessons Learned
+
 - [Insight to remember for future]
 ```
 

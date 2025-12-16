@@ -17,9 +17,9 @@ tools:
   - mcp__memory__aim_search_nodes
   - mcp__memory__aim_add_observations
 skills:
-  - test-driven-development   # Enforce RED-GREEN-REFACTOR cycle
-  - systematic-debugging      # When tests fail, use 4-phase investigation
-  - parallel-agents           # When facing 3+ independent test failures
+  - test-driven-development # Enforce RED-GREEN-REFACTOR cycle
+  - systematic-debugging # When tests fail, use 4-phase investigation
+  - parallel-agents # When facing 3+ independent test failures
 ---
 
 # Role Definition
@@ -74,11 +74,11 @@ Any code written before its corresponding test must be deleted entirely—no exc
 
 ## Common TDD Rationalizations (ALL REJECTED)
 
-| Excuse | Why It's Wrong |
-|--------|----------------|
-| "Too simple to test" | Simple code still needs verification |
-| "I'll test after" | Tests-after pass immediately, proving nothing |
-| "Already manually tested" | Manual testing isn't repeatable or documented |
+| Excuse                               | Why It's Wrong                                 |
+| ------------------------------------ | ---------------------------------------------- |
+| "Too simple to test"                 | Simple code still needs verification           |
+| "I'll test after"                    | Tests-after pass immediately, proving nothing  |
+| "Already manually tested"            | Manual testing isn't repeatable or documented  |
 | "Deleting hours of work is wasteful" | Sunk cost fallacy - untested code is liability |
 
 ## When 3+ Test Fixes Fail
@@ -91,13 +91,13 @@ Any code written before its corresponding test must be deleted entirely—no exc
 
 ## Testing Anti-Patterns (AVOID)
 
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| Arbitrary timeouts | `sleep(5000)` is flaky and slow | Use condition-based waiting |
-| Mocking without understanding | Hides real bugs | Mock only external boundaries |
-| Test-only production code | `if (TEST_MODE)` pollutes codebase | Use dependency injection |
-| Testing implementation details | Brittle tests break on refactor | Test behavior, not internals |
-| Shared mutable state | Tests interfere with each other | Isolate each test completely |
+| Anti-Pattern                   | Problem                            | Solution                      |
+| ------------------------------ | ---------------------------------- | ----------------------------- |
+| Arbitrary timeouts             | `sleep(5000)` is flaky and slow    | Use condition-based waiting   |
+| Mocking without understanding  | Hides real bugs                    | Mock only external boundaries |
+| Test-only production code      | `if (TEST_MODE)` pollutes codebase | Use dependency injection      |
+| Testing implementation details | Brittle tests break on refactor    | Test behavior, not internals  |
+| Shared mutable state           | Tests interfere with each other    | Isolate each test completely  |
 
 ## Condition-Based Waiting (Not Timeouts)
 
@@ -105,16 +105,19 @@ Any code written before its corresponding test must be deleted entirely—no exc
 
 ```typescript
 // BAD: Arbitrary timeout
-await new Promise(r => setTimeout(r, 5000));
+await new Promise((r) => setTimeout(r, 5000));
 expect(element).toBeVisible();
 
 // GOOD: Condition-based waiting
 await expect(element).toBeVisible({ timeout: 5000 });
 
 // GOOD: Poll for condition
-await waitFor(() => {
-  expect(getData()).toHaveLength(3);
-}, { timeout: 5000 });
+await waitFor(
+  () => {
+    expect(getData()).toHaveLength(3);
+  },
+  { timeout: 5000 },
+);
 ```
 
 ## Parallel Test Failures Strategy
@@ -233,7 +236,7 @@ export class LoginPage {
   constructor(private page: Page) {}
 
   async goto() {
-    await this.page.goto('/login');
+    await this.page.goto("/login");
   }
 
   async login(email: string, password: string) {
@@ -243,7 +246,9 @@ export class LoginPage {
   }
 
   async expectError(message: string) {
-    await expect(this.page.locator('[data-testid="error"]')).toHaveText(message);
+    await expect(this.page.locator('[data-testid="error"]')).toHaveText(
+      message,
+    );
   }
 }
 ```

@@ -20,15 +20,15 @@ users/darren/
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `home-manager.nix` | Imports all modules, sets packages |
-| `darwin.nix` | macOS user settings (not Home Manager) |
-| `nixos.nix` | NixOS user settings (not Home Manager) |
-| `zsh.nix` | Shell aliases, plugins, environment |
-| `git.nix` | Git config, aliases, delta |
-| `nvim.nix` | Neovim plugins, LSP, keybindings |
-| `claude-code.nix` | Links Claude Code commands |
+| File               | Purpose                                |
+| ------------------ | -------------------------------------- |
+| `home-manager.nix` | Imports all modules, sets packages     |
+| `darwin.nix`       | macOS user settings (not Home Manager) |
+| `nixos.nix`        | NixOS user settings (not Home Manager) |
+| `zsh.nix`          | Shell aliases, plugins, environment    |
+| `git.nix`          | Git config, aliases, delta             |
+| `nvim.nix`         | Neovim plugins, LSP, keybindings       |
+| `claude-code.nix`  | Links Claude Code commands             |
 
 ## Adding Packages
 

@@ -9,14 +9,14 @@ Review early, review often - catch issues before they compound.
 
 ## When Reviews Are Required
 
-| Scenario | Timing |
-|----------|--------|
-| Each task in subagent-driven work | After each task |
-| Major feature completion | Before integration |
-| Before merging to main | Pre-merge |
-| When stuck on a problem | As needed |
-| Before refactoring | Pre-refactor |
-| After complex bug fix | Post-fix |
+| Scenario                          | Timing             |
+| --------------------------------- | ------------------ |
+| Each task in subagent-driven work | After each task    |
+| Major feature completion          | Before integration |
+| Before merging to main            | Pre-merge          |
+| When stuck on a problem           | As needed          |
+| Before refactoring                | Pre-refactor       |
+| After complex bug fix             | Post-fix           |
 
 ## How to Request Review
 
@@ -50,12 +50,12 @@ Review the changes in commits [base]..[head]
 
 ### 3. Process Feedback
 
-| Severity | Action Required |
-|----------|-----------------|
-| Critical | Fix immediately - blocks all other work |
-| High | Resolve before proceeding to next task |
-| Medium | Address in current session if time permits |
-| Low/Minor | Document for future improvement |
+| Severity  | Action Required                            |
+| --------- | ------------------------------------------ |
+| Critical  | Fix immediately - blocks all other work    |
+| High      | Resolve before proceeding to next task     |
+| Medium    | Address in current session if time permits |
+| Low/Minor | Document for future improvement            |
 
 ## Review Request Template
 
@@ -66,26 +66,32 @@ Review the changes in commits [base]..[head]
 **Branch:** [branch-name]
 
 ### Summary
+
 [1-2 sentences on what changed]
 
 ### Changes by File
-| File | Change Type | Description |
-|------|-------------|-------------|
+
+| File         | Change Type    | Description    |
+| ------------ | -------------- | -------------- |
 | path/to/file | Added/Modified | [What changed] |
 
 ### Requirements
+
 [Link to issue/spec or brief description]
 
 ### Testing Done
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ### Areas Needing Attention
+
 - [Specific concern 1]
 - [Specific concern 2]
 
 ### Questions for Reviewer
+
 - [Any specific questions]
 ```
 
@@ -111,18 +117,23 @@ Review the changes in commits [base]..[head]
 ## Review Response
 
 ### Critical Issues
+
 - **[File:Line]**: Fixed - [what was changed]
 
 ### High Priority
+
 - **[File:Line]**: Fixed - [what was changed]
 
 ### Disagreement: [Issue]
+
 I believe [current approach] is correct because:
+
 1. [Technical reason]
 2. [Evidence from codebase]
-However, open to discussion if I'm missing something.
+   However, open to discussion if I'm missing something.
 
 ### Deferred
+
 - **[Minor issue]**: Added to tech debt tracker for future
 ```
 

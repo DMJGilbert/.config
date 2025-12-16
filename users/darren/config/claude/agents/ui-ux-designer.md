@@ -75,7 +75,7 @@ You are a UI/UX design specialist focused on creating accessible, user-centered 
   --space-4: 1rem;
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
   --text-sm: 0.875rem;
   --text-base: 1rem;
 

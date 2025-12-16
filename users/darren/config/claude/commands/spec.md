@@ -63,7 +63,7 @@ Generate and evaluate:
 
 Use this template:
 
-```markdown
+````markdown
 ---
 type: specification
 status: draft
@@ -76,22 +76,27 @@ issue: [GitHub issue URL if applicable]
 # [Feature Name] Specification
 
 ## Overview
+
 [1-2 paragraphs: what this feature does, why it's needed, who benefits]
 
 ## Goals
+
 - [ ] Measurable goal 1
 - [ ] Measurable goal 2
 
 ## Non-Goals
+
 - Explicit non-goal 1 (what this spec does NOT cover)
 
 ## Requirements
 
 ### Functional Requirements
+
 1. **FR1**: [Description]
 2. **FR2**: [Description]
 
 ### Non-Functional Requirements
+
 1. **NFR1 - Performance**: [metric/target]
 2. **NFR2 - Security**: [requirement]
 3. **NFR3 - Scalability**: [target]
@@ -99,20 +104,23 @@ issue: [GitHub issue URL if applicable]
 ## Technical Design
 
 ### Architecture
+
 [System diagram description, component interaction]
 
 ### Data Models
+
 ```typescript
 interface Example {
   // Schema definition
 }
 ```
+````
 
 ### API Design
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| /api/example | POST | Creates example |
+| Endpoint     | Method | Description     |
+| ------------ | ------ | --------------- |
+| /api/example | POST   | Creates example |
 
 ## Implementation Plan
 
@@ -128,11 +136,11 @@ interface Example {
 
 ## Testing Strategy
 
-| Type | Approach | Coverage Target |
-|------|----------|-----------------|
-| Unit | [Framework] | Core logic |
-| Integration | [Approach] | API endpoints |
-| E2E | [Tool] | Critical paths |
+| Type        | Approach    | Coverage Target |
+| ----------- | ----------- | --------------- |
+| Unit        | [Framework] | Core logic      |
+| Integration | [Approach]  | API endpoints   |
+| E2E         | [Tool]      | Critical paths  |
 
 ## Security Considerations
 
@@ -164,7 +172,7 @@ Determine category:
 Create spec:
 ```
 
-mcp__obsidian__create-note("claude/specs/[category]/[feature-slug]-spec.md", content)
+mcp**obsidian**create-note("claude/specs/[category]/[feature-slug]-spec.md", content)
 
 ```
 
@@ -173,10 +181,10 @@ mcp__obsidian__create-note("claude/specs/[category]/[feature-slug]-spec.md", con
 Store key decisions:
 ```
 
-mcp__memory__aim_create_entities([{
-  name: "[feature]-spec",
-  entityType: "specification",
-  observations: ["Status: draft", "Key decisions: ..."]
+mcp**memory**aim_create_entities([{
+name: "[feature]-spec",
+entityType: "specification",
+observations: ["Status: draft", "Key decisions: ..."]
 }])
 
 ```
@@ -204,3 +212,4 @@ Related:
 ## Auto-Save Behavior
 
 Specs are auto-saved to the vault immediately after generation.
+```

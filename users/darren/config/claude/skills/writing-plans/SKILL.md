@@ -32,6 +32,7 @@ Save all plans to: `docs/plans/YYYY-MM-DD-<feature-name>.md`
 **Tech Stack:** [Relevant technologies]
 
 **Files Affected:**
+
 - `path/to/file1.ts` - [what changes]
 - `path/to/file2.ts` - [what changes]
 ```
@@ -46,10 +47,12 @@ Each task = single 2-5 minute action:
 **Action:** Create | Modify | Test
 
 **Files:**
+
 - Create: `src/components/Button.tsx`
 - Test: `src/components/Button.test.tsx`
 
 **Steps:**
+
 1. Write failing test for [behavior]
 2. Verify test fails with expected error
 3. Implement minimal code to pass
@@ -57,6 +60,7 @@ Each task = single 2-5 minute action:
 5. Commit: `test(button): add click handler test`
 
 **Verification:**
+
 - [ ] Test fails initially
 - [ ] Test passes after implementation
 - [ ] No other tests broken
@@ -99,6 +103,7 @@ Offer execution options:
 **Tech Stack:** React, TypeScript, Tailwind CSS
 
 **Files Affected:**
+
 - `src/components/Avatar.tsx` - new component
 - `src/components/Avatar.test.tsx` - tests
 - `src/components/index.ts` - export
@@ -109,11 +114,13 @@ Offer execution options:
 **Files:** `src/components/Avatar.test.tsx`
 
 **Steps:**
+
 1. Create test file with describe block
 2. Write failing test: renders initials when no image
 3. Verify test fails (component doesn't exist)
 
 **Verification:**
+
 - [ ] Test file created
 - [ ] Test fails with "Cannot find module"
 
@@ -123,11 +130,13 @@ Offer execution options:
 **Files:** `src/components/Avatar.tsx`
 
 **Steps:**
+
 1. Create component that renders initials
 2. Accept `name` prop, extract initials
 3. Verify test from Task 1 passes
 
 **Verification:**
+
 - [ ] Component renders
 - [ ] Test passes
 - [ ] Initials display correctly

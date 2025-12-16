@@ -174,12 +174,12 @@ home.file = {
 
 # Darwin vs NixOS Differences
 
-| Feature | nix-darwin | NixOS |
-|---------|------------|-------|
-| Init System | launchd | systemd |
-| Services | services.* | systemd.services.* |
-| Window Manager | services.yabai | services.xserver |
-| Package Manager | Coexists with Homebrew | Primary |
+| Feature         | nix-darwin             | NixOS               |
+| --------------- | ---------------------- | ------------------- |
+| Init System     | launchd                | systemd             |
+| Services        | services.\*            | systemd.services.\* |
+| Window Manager  | services.yabai         | services.xserver    |
+| Package Manager | Coexists with Homebrew | Primary             |
 
 # Communication Protocol
 

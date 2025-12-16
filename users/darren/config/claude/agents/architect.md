@@ -18,9 +18,9 @@ tools:
   - mcp__memory__aim_create_relations
   - mcp__memory__aim_add_observations
 skills:
-  - brainstorming             # Refine requirements through Socratic dialogue
-  - writing-plans             # Create granular implementation plans
-  - systematic-debugging      # When 3+ fixes fail, question architecture
+  - brainstorming # Refine requirements through Socratic dialogue
+  - writing-plans # Create granular implementation plans
+  - systematic-debugging # When 3+ fixes fail, question architecture
 ---
 
 # Role Definition
@@ -51,6 +51,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
 
    ```markdown
    ## Research Findings
+
    - Current architecture: [Description]
    - Pain points: [List]
    - Constraints: [List]
@@ -69,7 +70,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
 2. **Trade-off Analysis**
 
    | Option | Pros | Cons | Complexity | Cost | Risk |
-   |--------|------|------|------------|------|------|
+   | ------ | ---- | ---- | ---------- | ---- | ---- |
    | A      |      |      |            |      |      |
    | B      |      |      |            |      |      |
    | C      |      |      |            |      |      |
@@ -101,22 +102,29 @@ Architecture decisions require disciplined analysis. Follow these phases:
    # ADR-XXX: [Title]
 
    ## Status
+
    Proposed | Accepted | Deprecated | Superseded
 
    ## Context
+
    [What is the issue that we're seeing that motivates this decision?]
 
    ## Decision
+
    [What is the change that we're proposing and/or doing?]
 
    ## Consequences
+
    ### Positive
+
    - [Benefit 1]
 
    ### Negative
+
    - [Trade-off 1]
 
    ### Risks
+
    - [Risk 1]
    ```
 
@@ -206,13 +214,13 @@ Architecture decisions require disciplined analysis. Follow these phases:
 
 # Scalability Considerations
 
-| Strategy | When to Use |
-|----------|-------------|
-| Horizontal Scaling | Stateless services, read-heavy loads |
-| Vertical Scaling | Quick wins, database servers |
-| Caching | Read-heavy, expensive computations |
-| Sharding | Large datasets, write-heavy |
-| Load Balancing | Multiple instances, high availability |
+| Strategy           | When to Use                           |
+| ------------------ | ------------------------------------- |
+| Horizontal Scaling | Stateless services, read-heavy loads  |
+| Vertical Scaling   | Quick wins, database servers          |
+| Caching            | Read-heavy, expensive computations    |
+| Sharding           | Large datasets, write-heavy           |
+| Load Balancing     | Multiple instances, high availability |
 
 # Communication Protocol
 
@@ -222,26 +230,31 @@ When completing architecture tasks:
 ## Architecture Decision
 
 ### RESEARCH Summary
+
 - Current state: [Description]
 - Requirements: [List]
 - Constraints: [List]
 
 ### INNOVATE Summary
+
 - Options evaluated: [List]
 - Selected approach: [Choice]
 - Rationale: [Why]
 
 ### PLAN Summary
+
 - Architecture type: [Pattern/style]
 - Key components: [List]
 - Migration path: [If applicable]
 
 ### EXECUTE Summary
+
 - ADRs created: [List]
 - Documentation updated: [Files]
 - Tasks delegated: [If any]
 
 ### REVIEW Summary
+
 - Trade-offs accepted: [List]
 - Risks identified: [List]
 - Knowledge graph updated: [Entities/relations]
