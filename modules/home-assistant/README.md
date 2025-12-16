@@ -108,58 +108,58 @@ The dashboard follows a modern, clean design with consistent styling and respons
 
 #### Color Palette
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Primary Orange | `#E85D04` | Page title, accents |
-| Text Dark | `#333333` | Primary text on light backgrounds |
-| Chip Background | `rgba(255,255,255,0.95)` | Status chip backgrounds |
-| Card Shadow | `rgba(0,0,0,0.1)` | Subtle card elevation |
-| Chip Shadow | `rgba(0,0,0,0.15)` | Chip elevation |
-| Amber | `amber` | Lights chip icon |
-| Blue | `blue` | Media chip icon |
-| Green | `green` | Motion chip icon |
+| Color           | Hex                      | Usage                             |
+| --------------- | ------------------------ | --------------------------------- |
+| Primary Orange  | `#E85D04`                | Page title, accents               |
+| Text Dark       | `#333333`                | Primary text on light backgrounds |
+| Chip Background | `rgba(255,255,255,0.95)` | Status chip backgrounds           |
+| Card Shadow     | `rgba(0,0,0,0.1)`        | Subtle card elevation             |
+| Chip Shadow     | `rgba(0,0,0,0.15)`       | Chip elevation                    |
+| Amber           | `amber`                  | Lights chip icon                  |
+| Blue            | `blue`                   | Media chip icon                   |
+| Green           | `green`                  | Motion chip icon                  |
 
 #### Typography
 
-| Element | Font | Size | Weight |
-|---------|------|------|--------|
-| Page Title | Helvetica Neue | 30px | 500 |
-| Card Title | System | 1.25rem | 500 |
-| Body Text | System | 14px | 400 |
-| Chip Text | System | 14px | 500 |
+| Element    | Font           | Size    | Weight |
+| ---------- | -------------- | ------- | ------ |
+| Page Title | Helvetica Neue | 30px    | 500    |
+| Card Title | System         | 1.25rem | 500    |
+| Body Text  | System         | 14px    | 400    |
+| Chip Text  | System         | 14px    | 500    |
 
 #### Spacing & Layout
 
-| Property | Value |
-|----------|-------|
-| Card Border Radius | `24px` |
-| Chip Border Radius | `24px` |
-| Card Margin | `16px` (phone), `0` (tablet+) |
-| Card Padding | `16px-24px` |
-| Content Gap | `8px` |
+| Property           | Value                         |
+| ------------------ | ----------------------------- |
+| Card Border Radius | `24px`                        |
+| Chip Border Radius | `24px`                        |
+| Card Margin        | `16px` (phone), `0` (tablet+) |
+| Card Padding       | `16px-24px`                   |
+| Content Gap        | `8px`                         |
 
 #### Responsive Breakpoints
 
-| Breakpoint | Max Width | Hero Height |
-|------------|-----------|-------------|
-| Phone (default) | 600px | 200px |
-| Tablet (768px+) | 800px | 240px |
-| Desktop (1200px+) | 1200px | 280px |
+| Breakpoint        | Max Width | Hero Height |
+| ----------------- | --------- | ----------- |
+| Phone (default)   | 600px     | 200px       |
+| Tablet (768px+)   | 800px     | 240px       |
+| Desktop (1200px+) | 1200px    | 280px       |
 
 ### Required Custom Cards
 
 The dashboard requires these custom cards (installed via Nix overlays):
 
-| Card | Package | Purpose |
-|------|---------|---------|
-| `button-card` | `button-card` | Custom styled buttons and title |
-| `mushroom` | `mushroom` | Status chips with conditional visibility |
-| `stack-in-card` | `lovelace-stack-in-card` | Combine hero image with chips overlay |
-| `card-mod` | `card-mod` | Custom CSS styling and media queries |
-| `auto-entities` | `lovelace-auto-entities` | Dynamic entity lists in popups |
-| `bubble-card` | `hass-bubble-card` | Slide-up popup cards |
-| `layout-card` | `lovelace-layout-card` | Responsive grid layout |
-| `tabbed-card` | `lovelace-tabbed-card` | Tabbed card containers |
+| Card            | Package                  | Purpose                                  |
+| --------------- | ------------------------ | ---------------------------------------- |
+| `button-card`   | `button-card`            | Custom styled buttons and title          |
+| `mushroom`      | `mushroom`               | Status chips with conditional visibility |
+| `stack-in-card` | `lovelace-stack-in-card` | Combine hero image with chips overlay    |
+| `card-mod`      | `card-mod`               | Custom CSS styling and media queries     |
+| `auto-entities` | `lovelace-auto-entities` | Dynamic entity lists in popups           |
+| `bubble-card`   | `hass-bubble-card`       | Slide-up popup cards                     |
+| `layout-card`   | `lovelace-layout-card`   | Responsive grid layout                   |
+| `tabbed-card`   | `lovelace-tabbed-card`   | Tabbed card containers                   |
 
 ---
 
@@ -186,6 +186,7 @@ layout:
 ```
 
 **Behavior:**
+
 - Single column layout at all breakpoints
 - Content centered with `margin: 0 auto`
 - Max width scales up on larger screens
@@ -335,6 +336,7 @@ A hero image card with overlaid title and status chips. The title is positioned 
 ```
 
 **Design Decisions:**
+
 - Title integrated into hero image to save vertical space
 - Dark gradient overlay (40% top, 20-10% middle, 30% bottom) ensures title readability
 - Orange (#E85D04) title text maintains brand consistency with darker text-shadow for contrast
@@ -365,6 +367,7 @@ By default, `stack-in-card` adds `row-gap: 8px` between child cards via `hui-ver
 ```
 
 **How it works:**
+
 - `hui-vertical-stack-card $:` pierces into the shadow DOM of the internal vertical stack component
 - `#root` is the container element that applies the default `row-gap`
 - `.` targets the host element for regular ha-card styling
@@ -437,6 +440,7 @@ A tabbed navigation section allowing users to switch between different content a
 ```
 
 **Design Decisions:**
+
 - Uses `custom:tabbed-card` for tab navigation
 - Orange (`#E85D04`) active tab indicator to match brand color
 - Secondary text color for inactive tabs
@@ -444,12 +448,13 @@ A tabbed navigation section allowing users to switch between different content a
 - Each tab contains a `vertical-stack` for flexible content
 
 **Tab Contents (Planned):**
-| Tab | Content |
-|-----|---------|
-| Rooms | Room cards with thumbnails, status indicators |
-| Peoples | Person presence tracking, device trackers |
-| Calendar | Calendar events, schedules |
-| Other | Miscellaneous controls, settings |
+
+| Tab      | Content                                       |
+| -------- | --------------------------------------------- |
+| Rooms    | Room cards with thumbnails, status indicators |
+| Peoples  | Person presence tracking, device trackers     |
+| Calendar | Calendar events, schedules                    |
+| Other    | Miscellaneous controls, settings              |
 
 ---
 
@@ -507,14 +512,14 @@ room_card:
 
 #### Variables
 
-| Variable | Type | Required | Description | Example |
-|----------|------|----------|-------------|---------|
-| `room_name` | string | Yes | Display name | `"Living Room"` |
-| `room_icon` | string | No | Fallback MDI icon | `"mdi:sofa"` |
-| `room_image` | string | No | Unsplash/image URL | `"https://images.unsplash.com/..."` |
-| `light_entity` | entity_id | Yes | Light group | `"group.living_room_lights"` |
-| `motion_entity` | entity_id | No | Motion sensor | `"binary_sensor.living_room_motion"` |
-| `media_entity` | entity_id | No | Media player | `"media_player.living_room_tv"` |
+| Variable        | Type      | Required | Description        | Example                              |
+| --------------- | --------- | -------- | ------------------ | ------------------------------------ |
+| `room_name`     | string    | Yes      | Display name       | `"Living Room"`                      |
+| `room_icon`     | string    | No       | Fallback MDI icon  | `"mdi:sofa"`                         |
+| `room_image`    | string    | No       | Unsplash/image URL | `"https://images.unsplash.com/..."`  |
+| `light_entity`  | entity_id | Yes      | Light group        | `"group.living_room_lights"`         |
+| `motion_entity` | entity_id | No       | Motion sensor      | `"binary_sensor.living_room_motion"` |
+| `media_entity`  | entity_id | No       | Media player       | `"media_player.living_room_tv"`      |
 
 #### Usage Example
 
@@ -532,23 +537,23 @@ room_card:
 
 #### Configured Rooms
 
-| Room | Icon | Image | Light Group | Motion Sensor | Media Player |
-|------|------|-------|-------------|---------------|--------------|
-| Living Room | mdi:sofa | Unsplash interior | group.living_room_lights | living_room_motion_sensor_occupancy | living_room_tv |
-| Bedroom | mdi:bed | Unsplash bedroom | group.bedroom_lights | bedroom_motion_sensor_occupancy | apple_tv |
-| Kitchen | mdi:silverware-fork-knife | Unsplash kitchen | group.kitchen_lights | - | - |
-| Bathroom | mdi:shower | Unsplash bathroom | group.bathroom_lights | motion_sensor_motion | - |
-| Hallway | mdi:door | Unsplash hallway | group.hallway_lights | hallway_motion_sensor_occupancy | - |
-| Robynne's Room | mdi:teddy-bear | Unsplash nursery | group.robynne_lights | aarlo_motion_nursery | yoto_player |
+| Room           | Icon                      | Image             | Light Group              | Motion Sensor                       | Media Player   |
+| -------------- | ------------------------- | ----------------- | ------------------------ | ----------------------------------- | -------------- |
+| Living Room    | mdi:sofa                  | Unsplash interior | group.living_room_lights | living_room_motion_sensor_occupancy | living_room_tv |
+| Bedroom        | mdi:bed                   | Unsplash bedroom  | group.bedroom_lights     | bedroom_motion_sensor_occupancy     | apple_tv       |
+| Kitchen        | mdi:silverware-fork-knife | Unsplash kitchen  | group.kitchen_lights     | -                                   | -              |
+| Bathroom       | mdi:shower                | Unsplash bathroom | group.bathroom_lights    | motion_sensor_motion                | -              |
+| Hallway        | mdi:door                  | Unsplash hallway  | group.hallway_lights     | hallway_motion_sensor_occupancy     | -              |
+| Robynne's Room | mdi:teddy-bear            | Unsplash nursery  | group.robynne_lights     | aarlo_motion_nursery                | yoto_player    |
 
 #### Motion Status Display
 
-| Sensor State | Display | Color |
-|--------------|---------|-------|
-| `on` | "Motion detected" | Green (#4CAF50) |
-| `off` | "Clear - Xm ago" | Secondary text |
-| `unavailable` | "Sensor unavailable" | Secondary text |
-| `null` | "No motion sensor" | Secondary text |
+| Sensor State  | Display              | Color           |
+| ------------- | -------------------- | --------------- |
+| `on`          | "Motion detected"    | Green (#4CAF50) |
+| `off`         | "Clear - Xm ago"     | Secondary text  |
+| `unavailable` | "Sensor unavailable" | Secondary text  |
+| `null`        | "No motion sensor"   | Secondary text  |
 
 Time format: `Xs ago`, `Xm ago`, `Xh ago`, `Xd ago`
 
@@ -556,27 +561,27 @@ Time format: `Xs ago`, `Xm ago`, `Xh ago`, `Xd ago`
 
 Icons appear in order: **TV first, then lightbulb**
 
-| Icon | Entity State | Color |
-|------|--------------|-------|
-| mdi:television | playing/on | Dark (#1a1a1a) |
-| mdi:television | off | Light (#d1d1d1) |
-| mdi:lightbulb | on | Dark (#1a1a1a) |
-| mdi:lightbulb | off | Light (#d1d1d1) |
+| Icon           | Entity State | Color           |
+| -------------- | ------------ | --------------- |
+| mdi:television | playing/on   | Dark (#1a1a1a)  |
+| mdi:television | off          | Light (#d1d1d1) |
+| mdi:lightbulb  | on           | Dark (#1a1a1a)  |
+| mdi:lightbulb  | off          | Light (#d1d1d1) |
 
 #### Design Specifications
 
-| Property | Value |
-|----------|-------|
-| Card height | 80px |
-| Border radius | 50px (pill shape) |
-| Image size | 80px circular |
-| Shadow | 0 2px 8px rgba(0,0,0,0.12) |
-| Dark mode background | #1c1c1e |
-| Light mode background | #ffffff |
-| Room name font | 16px, weight 600 |
-| Status font | 13px, secondary color |
-| Icon size | 28px |
-| Icon spacing | 16px between icons |
+| Property              | Value                      |
+| --------------------- | -------------------------- |
+| Card height           | 80px                       |
+| Border radius         | 50px (pill shape)          |
+| Image size            | 80px circular              |
+| Shadow                | 0 2px 8px rgba(0,0,0,0.12) |
+| Dark mode background  | #1c1c1e                    |
+| Light mode background | #ffffff                    |
+| Room name font        | 16px, weight 600           |
+| Status font           | 13px, secondary color      |
+| Icon size             | 28px                       |
+| Icon spacing          | 16px between icons         |
 
 #### Tap Action
 
@@ -614,13 +619,15 @@ Each chip opens a slide-up popup showing active entities.
 ```
 
 **Popup Hashes:**
-| Chip | Hash | Filter |
-|------|------|--------|
-| Lights | `#lights-popup` | `domain: light, state: "on"` |
-| Media | `#media-popup` | `domain: media_player, state: playing` |
+
+| Chip   | Hash            | Filter                                                               |
+| ------ | --------------- | -------------------------------------------------------------------- |
+| Lights | `#lights-popup` | `domain: light, state: "on"`                                         |
+| Media  | `#media-popup`  | `domain: media_player, state: playing`                               |
 | Motion | `#motion-popup` | `domain: binary_sensor, device_class: motion/occupancy, state: "on"` |
 
 **How it works:**
+
 1. Chip tap action navigates to hash (e.g., `#lights-popup`)
 2. Bubble-card listens for hash and slides up popup
 3. `auto-entities` dynamically lists matching entities
@@ -659,21 +666,23 @@ Displays current weather with dynamic icon in format: `[icon] **Condition** (hum
 **Entity:** `weather.forecast_home`
 
 **Output Examples:**
+
 - `☁️ **Cloudy** (82% humidity, 11.3°C)`
 - `⛅ **Partly Cloudy** (65% humidity, 18.5°C)`
 - `☀️ **Sunny** (45% humidity, 24.0°C)`
 
 **Weather Icon Mapping:**
-| Condition | Icon |
-|-----------|------|
-| sunny | mdi:weather-sunny |
-| cloudy | mdi:weather-cloudy |
+
+| Condition    | Icon                      |
+| ------------ | ------------------------- |
+| sunny        | mdi:weather-sunny         |
+| cloudy       | mdi:weather-cloudy        |
 | partlycloudy | mdi:weather-partly-cloudy |
-| rainy | mdi:weather-rainy |
-| pouring | mdi:weather-pouring |
-| snowy | mdi:weather-snowy |
-| fog | mdi:weather-fog |
-| lightning | mdi:weather-lightning |
+| rainy        | mdi:weather-rainy         |
+| pouring      | mdi:weather-pouring       |
+| snowy        | mdi:weather-snowy         |
+| fog          | mdi:weather-fog           |
+| lightning    | mdi:weather-lightning     |
 
 #### Calendar Line
 
@@ -682,18 +691,21 @@ Shows the next upcoming event with countdown in format: `📅 **Event**: X days 
 **Icon:** `mdi:calendar`
 
 **Data Sources:**
+
 - `calendar.family`
 - `calendar.events`
 - `calendar.calendar`
 - `calendar.home`
 
 **Output Examples:**
+
 - `📅 **Ballet**: 2 days 4 hours`
 - `📅 **Work holiday**: Now`
 - `📅 **Doctor appointment**: 1 day`
 - `📅 No upcoming events`
 
 **Countdown Logic:**
+
 - Scans all calendars to find earliest event
 - Shows "Now" for current/past events
 - Shows hours only if less than 1 day
@@ -706,17 +718,20 @@ Displays next fixture in format: `⚽ **HomeTeam v AwayTeam**: Day HH:MM`
 **Icon:** `mdi:soccer`
 
 **Data Sources:**
+
 - `sensor.liverpool` (Premier League)
 - `sensor.liverpool_cl` (Champions League)
 - `sensor.liverpool_fa` (FA Cup)
 - `sensor.liverpool_lc` (League Cup)
 
 **Output Examples:**
+
 - `⚽ **Liverpool v Tottenham Hotspur**: Saturday 17:30` (home game)
 - `⚽ **Manchester City v Liverpool**: Sunday 16:30` (away game)
 - `⚽ No upcoming fixtures`
 
 **Features:**
+
 - Combines all competition sensors to find next match
 - Always uses "v" format with home team first
 - Shows full opponent name
@@ -773,6 +788,7 @@ Displays next fixture in format: `⚽ **HomeTeam v AwayTeam**: Day HH:MM`
 ```
 
 **Design Decisions:**
+
 - Info lines grouped with hero image in single `stack-in-card`
 - Shared container with 24px rounded corners and drop shadow
 - Card background: `var(--card-background-color, #fff)`
@@ -820,6 +836,7 @@ template:
 ```
 
 **Entity IDs:**
+
 - `sensor.total_turned_on_lights_count_template`
 - `sensor.total_media_players_playing_template`
 - `sensor.total_active_motion_sensors_count_template`
