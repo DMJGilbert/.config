@@ -70,6 +70,7 @@ flake.nix
 ```
 
 See module-specific documentation:
+
 - [lib/README.md](./lib/README.md) - System builder functions
 - [modules/home-assistant/README.md](./modules/home-assistant/README.md) - Home Assistant module
 - [overlays/README.md](./overlays/README.md) - Custom packages

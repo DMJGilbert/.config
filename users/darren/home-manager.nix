@@ -38,6 +38,7 @@
         direnv
         nix-direnv
         stylua
+        uv # Python package manager (provides uvx)
 
         # nodejs
         nodejs_22

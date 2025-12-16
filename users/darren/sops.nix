@@ -15,13 +15,19 @@ _: {
       "GITHUB_PERSONAL_ACCESS_TOKEN" = {
         owner = "darren";
       };
-      "FIGMA_ACCESS_TOKEN" = {
-        owner = "darren";
-      };
       "HASS_HOST" = {
         owner = "darren";
       };
       "HASS_TOKEN" = {
+        owner = "darren";
+      };
+      "OBSIDIAN_API_KEY" = {
+        owner = "darren";
+      };
+      "OBSIDIAN_HOST" = {
+        owner = "darren";
+      };
+      "OBSIDIAN_PORT" = {
         owner = "darren";
       };
     };

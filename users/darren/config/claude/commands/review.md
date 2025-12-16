@@ -58,18 +58,23 @@ If no argument provided, review staged changes (`git diff --cached`).
 Group findings by severity:
 
 ### Critical
+
 Issues that must be fixed before merging (security vulnerabilities, data loss risks)
 
 ### High
+
 Significant issues that should be addressed (performance problems, missing error handling)
 
 ### Medium
+
 Code quality concerns (code smells, maintainability issues)
 
 ### Low
+
 Minor suggestions and style improvements
 
 For each finding, provide:
+
 - **File:Line** - Location of the issue
 - **Issue** - Clear description of the problem
 - **Suggestion** - How to fix it

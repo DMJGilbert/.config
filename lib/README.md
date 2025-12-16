@@ -24,6 +24,7 @@ darwinConfigurations.hostname = mkDarwin "hostname" {
 ```
 
 **What it loads:**
+
 - `machines/[hostname].nix` - System configuration
 - `users/[user]/darwin.nix` - User system settings
 - `users/[user]/sops.nix` - Secrets configuration
@@ -48,6 +49,7 @@ nixosConfigurations.hostname = mkNixos "hostname" {
 ```
 
 **What it loads:**
+
 - `hardware/[hostname].nix` - Hardware configuration
 - `machines/[hostname].nix` - System configuration
 - `users/[user]/nixos.nix` - User system settings

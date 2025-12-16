@@ -6,6 +6,7 @@ Analyze the following task and determine which specialist agent(s) should handle
 Consider the domain, complexity, and required expertise.
 
 ## Task
+
 $ARGUMENTS
 
 ## Available Specialist Agents
@@ -35,6 +36,7 @@ $ARGUMENTS
 ## Response Format
 
 Provide:
+
 1. **Recommended Agent(s)**: Which specialists to use and why
 2. **Execution Order**: Sequential steps or parallel tasks
 3. **Context to Provide**: What each agent needs to know

@@ -19,6 +19,7 @@ Optional argument: $ARGUMENTS (hint for commit type or scope, e.g., "feat" or "a
 ## Analysis Steps
 
 1. **Check Staged Changes**
+
    ```bash
    git status
    git diff --cached --stat
@@ -26,6 +27,7 @@ Optional argument: $ARGUMENTS (hint for commit type or scope, e.g., "feat" or "a
    ```
 
 2. **Review Recent Commits** (for style consistency)
+
    ```bash
    git log --oneline -10
    ```
@@ -49,6 +51,7 @@ Follow Conventional Commits specification:
 ```
 
 ### Types
+
 - `feat`: New feature (correlates with MINOR in semver)
 - `fix`: Bug fix (correlates with PATCH in semver)
 - `docs`: Documentation only changes
@@ -61,6 +64,7 @@ Follow Conventional Commits specification:
 - `build`: Build system or external dependency changes
 
 ### Rules
+
 - Subject line max 50 characters
 - Use imperative mood ("add" not "added" or "adds")
 - Don't end subject with period
