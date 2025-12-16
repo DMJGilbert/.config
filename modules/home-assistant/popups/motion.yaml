@@ -1,0 +1,26 @@
+# Motion Popup
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    hash: "#motion-popup"
+    name: Active Motion
+    icon: mdi:run
+    styles: |
+      .bubble-pop-up-container {
+        background: var(--card-background-color);
+      }
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Motion Detected
+    filter:
+      include:
+        - domain: binary_sensor
+          device_class: motion
+          state: "on"
+        - domain: binary_sensor
+          device_class: occupancy
+          state: "on"
+    sort:
+      method: friendly_name

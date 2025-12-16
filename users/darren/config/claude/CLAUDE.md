@@ -448,7 +448,6 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 | ----------------------- | -------------------------- | ----------------------------------------------------------------- |
 | **memory**              | Persistent knowledge graph | `aim_create_entities`, `aim_search_nodes`, `aim_read_graph`       |
 | **context7**            | Library documentation      | `resolve-library-id`, `get-library-docs`                          |
-| **github**              | Repository operations      | `get_pull_request`, `search_issues`, `create_pull_request_review` |
 | **sequential-thinking** | Complex reasoning          | `sequentialthinking` for multi-step analysis                      |
 | **magic-ui**            | UI components              | Component implementations, animations, effects                    |
 | **puppeteer**           | Browser automation         | Screenshots, navigation, form filling                             |
@@ -460,11 +459,11 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 | Agent                | MCPs Used                                     | Use Case                                                  |
 | -------------------- | --------------------------------------------- | --------------------------------------------------------- |
-| orchestrator         | memory, github, sequential-thinking, obsidian | Project knowledge, PR context, task breakdown, vault docs |
+| orchestrator         | memory, sequential-thinking, obsidian         | Project knowledge, task breakdown, vault docs             |
 | architect            | memory, sequential-thinking, context7         | Store decisions, design patterns, research                |
 | frontend-developer   | context7, magic-ui                            | React docs, UI components                                 |
 | backend-developer    | context7                                      | API framework documentation                               |
-| code-reviewer        | github, memory                                | PR files, comments, reviews, pattern checks               |
+| code-reviewer        | memory                                        | Pattern checks, codebase knowledge                        |
 | test-engineer        | puppeteer                                     | Visual testing, E2E automation                            |
 | nix-specialist       | context7                                      | Nix/home-manager documentation                            |
 | database-specialist  | context7                                      | ORM/database documentation                                |
@@ -485,9 +484,9 @@ mcp__memory__aim_add_observations([{entityName, contents}])
 mcp__context7__resolve-library-id("react")
 mcp__context7__get-library-docs("/vercel/next.js", topic="routing")
 
-# Get PR context before review
-mcp__github__get_pull_request(owner, repo, pr_number)
-mcp__github__get_pull_request_files(owner, repo, pr_number)
+# Get PR context before review (via gh CLI)
+gh pr view 123 --json title,body,state,files,comments
+gh issue view 456 --json title,body,state,labels
 
 # Complex multi-step planning
 mcp__sequential-thinking__sequentialthinking(thought="...", thoughtNumber=1, totalThoughts=5)

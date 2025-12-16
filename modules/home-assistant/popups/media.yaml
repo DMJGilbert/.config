@@ -1,0 +1,22 @@
+# Media Popup
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    hash: "#media-popup"
+    name: Active Media
+    icon: mdi:television
+    styles: |
+      .bubble-pop-up-container {
+        background: var(--card-background-color);
+      }
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Media Playing
+    filter:
+      include:
+        - domain: media_player
+          state: playing
+    sort:
+      method: friendly_name

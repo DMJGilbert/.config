@@ -1,0 +1,22 @@
+# Lights Popup
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    hash: "#lights-popup"
+    name: Active Lights
+    icon: mdi:lightbulb
+    styles: |
+      .bubble-pop-up-container {
+        background: var(--card-background-color);
+      }
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Lights On
+    filter:
+      include:
+        - domain: light
+          state: "on"
+    sort:
+      method: friendly_name

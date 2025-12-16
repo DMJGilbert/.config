@@ -1,0 +1,504 @@
+# ==================== HALLWAY VIEW ====================
+title: Hallway
+path: room-hallway
+icon: mdi:door
+panel: true
+
+cards:
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr
+      margin: 0 auto
+    card_mod:
+      style: |
+        :host {
+          max-width: 600px !important;
+          margin: 0 auto !important;
+          display: block !important;
+        }
+        @media (min-width: 768px) {
+          :host { max-width: 800px !important; }
+        }
+        @media (min-width: 1200px) {
+          :host { max-width: 1200px !important; }
+        }
+    cards:
+      # -------------------- Hero Card --------------------
+      - type: custom:stack-in-card
+        mode: vertical
+        card_mod:
+          style:
+            hui-vertical-stack-card $: |
+              #root { row-gap: 0px !important; }
+            .: |
+              :host { row-gap: 0px; }
+              ha-card {
+                border-radius: 24px;
+                margin: 16px 16px 16px 16px;
+                box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+                overflow: hidden;
+                background: var(--card-background-color, #fff);
+              }
+              @media (min-width: 768px) {
+                ha-card { margin: 16px 0 16px 0; }
+              }
+        cards:
+          - type: custom:button-card
+            template: room_hero
+            variables:
+              room_name: Hallway
+            card_mod:
+              style: |
+                ha-card {
+                  height: 200px !important;
+                  border-radius: 0;
+                  box-shadow: none;
+                  margin-bottom: 8px;
+                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=600&fit=crop") !important;
+                  background-size: cover !important;
+                  background-position: center !important;
+                }
+                @media (min-width: 768px) {
+                  ha-card { height: 240px !important; }
+                }
+                @media (min-width: 1200px) {
+                  ha-card { height: 280px !important; }
+                }
+
+          - type: custom:mushroom-chips-card
+            alignment: center
+            card_mod:
+              style: |
+                ha-card {
+                  --chip-background: rgba(255,255,255,0.95);
+                  --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                  --chip-border-radius: 24px;
+                  --chip-padding: 0 12px;
+                  --chip-height: 36px;
+                  background: transparent;
+                  margin-top: -50px;
+                  position: relative;
+                  z-index: 1;
+                }
+            chips:
+              - type: template
+                entity: group.hallway_lights
+                icon: mdi:lightbulb
+                icon_color: "{{ 'amber' if is_state('group.hallway_lights', 'on') else 'grey' }}"
+                content: "{{ expand('group.hallway_lights') | selectattr('state', 'eq', 'on') | list | count }}"
+
+      # -------------------- Tabbed Section --------------------
+      - type: custom:state-switch
+        entity: hash
+        default: tab-lights
+        card_mod:
+          style: |
+            ha-card {
+              margin: 0 16px 16px 16px;
+              border-radius: 24px;
+              box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+              overflow: hidden;
+              background: var(--card-background-color, #fff);
+            }
+            @media (min-width: 768px) {
+              ha-card { margin: 0 0 16px 0; }
+            }
+        states:
+          # ==================== LIGHTS TAB ====================
+          "tab-lights":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: &tab_container_style
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Lights
+                    tap_action: &tap_lights
+                      action: navigate
+                      navigation_path: "#tab-lights"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Media
+                    tap_action: &tap_media
+                      action: navigate
+                      navigation_path: "#tab-media"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Climate
+                    tap_action: &tap_climate
+                      action: navigate
+                      navigation_path: "#tab-climate"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: &tap_other
+                      action: navigate
+                      navigation_path: "#tab-other"
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: &tab_content_style
+                  style: |
+                    ha-card {
+                      padding: 12px 16px 8px 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
+                cards:
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - group: group.hallway_lights
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:lightbulb
+                              item_entity: this.entity_id
+                              show_toggle: true
+                      exclude:
+                        - entity_id: "*coordinator*"
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: true
+                    card_param: cards
+
+          # ==================== MEDIA TAB ====================
+          "tab-media":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Lights
+                    tap_action: *tap_lights
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Media
+                    tap_action: *tap_media
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Climate
+                    tap_action: *tap_climate
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: *tap_other
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: media_player
+                          entity_id: "*hallway*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:speaker
+                              item_entity: this.entity_id
+                              show_toggle: false
+                      exclude:
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: true
+                    card_param: cards
+
+          # ==================== CLIMATE TAB ====================
+          "tab-climate":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Lights
+                    tap_action: *tap_lights
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Media
+                    tap_action: *tap_media
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Climate
+                    tap_action: *tap_climate
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: *tap_other
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: climate
+                          entity_id: "*hallway*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:thermostat
+                              item_entity: this.entity_id
+                              show_toggle: false
+                        - domain: fan
+                          entity_id: "*hallway*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:fan
+                              item_entity: this.entity_id
+                              show_toggle: true
+                      exclude:
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: true
+                    card_param: cards
+
+                  # Section: Sensors
+                  - type: custom:button-card
+                    template: transparent
+                    name: Sensors
+                    styles:
+                      card:
+                        - padding: 16px 0 4px 0
+                      name:
+                        - font-size: 14px
+                        - font-weight: 600
+                        - color: var(--secondary-text-color)
+                        - text-transform: uppercase
+                        - letter-spacing: 0.5px
+                        - justify-self: start
+                    tap_action:
+                      action: none
+
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: sensor
+                          entity_id: "*hallway*temperature*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_icon: mdi:thermometer
+                              sensor_entity: this.entity_id
+                        - domain: sensor
+                          entity_id: "*hallway*humidity*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_icon: mdi:water-percent
+                              sensor_entity: this.entity_id
+                      exclude:
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: false
+                    card_param: cards
+
+          # ==================== OTHER TAB ====================
+          "tab-other":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Lights
+                    tap_action: *tap_lights
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Media
+                    tap_action: *tap_media
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Climate
+                    tap_action: *tap_climate
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Other
+                    tap_action: *tap_other
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  # Section: Motion Activity
+                  - type: custom:button-card
+                    template: transparent
+                    name: Motion Activity
+                    styles:
+                      card:
+                        - padding: 8px 0 4px 0
+                      name:
+                        - font-size: 14px
+                        - font-weight: 600
+                        - color: var(--secondary-text-color)
+                        - text-transform: uppercase
+                        - letter-spacing: 0.5px
+                        - justify-self: start
+                    tap_action:
+                      action: none
+
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: binary_sensor
+                          entity_id: "*hallway*motion*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:motion-sensor
+                              item_entity: this.entity_id
+                              show_toggle: false
+                        - domain: binary_sensor
+                          entity_id: "*hallway*occupancy*"
+                          options:
+                            type: custom:button-card
+                            template: room_item_card
+                            entity: this.entity_id
+                            variables:
+                              item_icon: mdi:motion-sensor
+                              item_entity: this.entity_id
+                              show_toggle: false
+                      exclude:
+                        - state: unavailable
+                    sort:
+                      method: friendly_name
+                    show_empty: false
+                    card_param: cards
+
+                  # Section: Sensors
+                  - type: custom:button-card
+                    template: transparent
+                    name: Sensors
+                    styles:
+                      card:
+                        - padding: 16px 0 4px 0
+                      name:
+                        - font-size: 14px
+                        - font-weight: 600
+                        - color: var(--secondary-text-color)
+                        - text-transform: uppercase
+                        - letter-spacing: 0.5px
+                        - justify-self: start
+                    tap_action:
+                      action: none
+
+                  - type: custom:auto-entities
+                    card:
+                      type: custom:stack-in-card
+                      mode: vertical
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: transparent !important;
+                            box-shadow: none !important;
+                          }
+                    filter:
+                      include:
+                        - domain: sensor
+                          entity_id: "*hallway*illuminance*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_name: Illuminance
+                              sensor_icon: mdi:brightness-6
+                              sensor_entity: this.entity_id
+                        - domain: sensor
+                          entity_id: "*hallway*battery*"
+                          options:
+                            type: custom:button-card
+                            template: room_sensor_card
+                            entity: this.entity_id
+                            variables:
+                              sensor_icon: mdi:battery
+                              sensor_entity: this.entity_id
+                      exclude:
+                        - state: unavailable
+                        - entity_id: "*signal*"
+                    sort:
+                      method: friendly_name
+                    show_empty: false
+                    card_param: cards

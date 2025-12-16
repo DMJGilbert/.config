@@ -214,6 +214,10 @@ in {
         pkgs.lovelace-auto-entities
         pkgs.lovelace-tabbed-card
         pkgs.lovelace-layout-card
+        pkgs.lovelace-stack-in-card
+        pkgs.lovelace-state-switch
+        pkgs.modern-circular-gauge
+        pkgs.ha-floorplan
         mini-graph-card
         multiple-entity-row
         decluttering-card
@@ -277,6 +281,10 @@ in {
               type = "module";
             }
             {
+              url = "/local/nixos-lovelace-modules/state-switch.js";
+              type = "module";
+            }
+            {
               url = "/local/nixos-lovelace-modules/auto-entities.js";
               type = "module";
             }
@@ -318,6 +326,18 @@ in {
             }
             {
               url = "/local/nixos-lovelace-modules/layout-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/stack-in-card.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/modern-circular-gauge.js";
+              type = "module";
+            }
+            {
+              url = "/local/nixos-lovelace-modules/floorplan.js";
               type = "module";
             }
           ];

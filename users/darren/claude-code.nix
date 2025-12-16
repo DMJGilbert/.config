@@ -4,6 +4,11 @@
   ...
 }:
 lib.mkIf pkgs.stdenv.isDarwin {
+  # Ensure memory storage directory exists for MCP knowledge graph
+  home.activation.createClaudeMemoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.local/share/claude
+  '';
+
   home.file = {
     # Global memory storage directory
     ".local/share/claude-memory/.keep".text = "";

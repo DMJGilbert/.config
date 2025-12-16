@@ -1,0 +1,1159 @@
+title: Fleming Place
+
+# ==================== BUTTON-CARD TEMPLATES ====================
+button_card_templates:
+  # Base transparent card (no background, shadow, or border)
+  transparent:
+    styles:
+      card:
+        - background: transparent
+        - box-shadow: none
+        - border: none
+        - border-radius: 0
+
+  # Page header title
+  page_header:
+    template: transparent
+    show_icon: false
+    show_state: false
+    styles:
+      card:
+        - padding: 20px 16px 12px 16px
+      name:
+        - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+        - font-size: 30px
+        - font-weight: 500
+        - color: "#E85D04"
+        - justify-self: start
+        - text-align: left
+        - width: 100%
+        - letter-spacing: -0.5px
+
+  # Info line styling (weather, calendar, etc.)
+  info_lines:
+    template: transparent
+    show_name: false
+    show_state: false
+    show_icon: false
+    styles:
+      card:
+        - padding: 8px 16px 16px 16px
+        - margin-top: 0px
+      grid:
+        - grid-template-columns: 1fr
+        - gap: 6px
+
+  # Tab button base styling
+  tab_button:
+    template: transparent
+    show_icon: false
+    show_state: false
+    styles:
+      card:
+        - padding: 8px 0
+      name:
+        - font-size: 15px
+
+  # Active tab button
+  tab_button_active:
+    template: tab_button
+    styles:
+      name:
+        - font-weight: 500
+        - color: "#E85D04"
+        - border-bottom: 2px solid #E85D04
+        - padding-bottom: 6px
+
+  # Inactive tab button
+  tab_button_inactive:
+    template: tab_button
+    styles:
+      name:
+        - color: var(--secondary-text-color)
+
+  # Room card template for rooms tab
+  # Variables: room_name, room_icon, room_image, light_entity, motion_entity, media_entity, room_path
+  room_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"room_image room_info device_icons"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        room_image:
+          - justify-self: start
+          - align-self: center
+        room_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        device_icons:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      room_image: |
+        [[[
+          const image = variables.room_image || '';
+          const icon = variables.room_icon || 'mdi:home';
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      room_info: |
+        [[[
+          const roomName = variables.room_name || 'Room';
+          const motionEntity = variables.motion_entity;
+
+          let statusText = 'No motion sensor';
+          let statusColor = 'var(--secondary-text-color)';
+
+          if (motionEntity && states[motionEntity]) {
+            const motionState = states[motionEntity];
+            if (motionState.state === 'unavailable') {
+              statusText = 'Sensor unavailable';
+            } else if (motionState.state === 'on') {
+              statusText = 'Motion detected';
+              statusColor = '#4CAF50';
+            } else {
+              const lastChanged = new Date(motionState.last_changed);
+              const now = new Date();
+              const diffMs = now - lastChanged;
+              const diffSecs = Math.floor(diffMs / 1000);
+              const diffMins = Math.floor(diffSecs / 60);
+              const diffHours = Math.floor(diffMins / 60);
+              const diffDays = Math.floor(diffHours / 24);
+
+              if (diffDays > 0) {
+                statusText = 'Clear - ' + diffDays + 'd ago';
+              } else if (diffHours > 0) {
+                statusText = 'Clear - ' + diffHours + 'h ago';
+              } else if (diffMins > 0) {
+                statusText = 'Clear - ' + diffMins + 'm ago';
+              } else {
+                statusText = 'Clear - ' + diffSecs + 's ago';
+              }
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${roomName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${statusColor};
+              line-height: 1.4;
+              text-align: left;
+            ">${statusText}</span>
+          </div>`;
+        ]]]
+      device_icons: |
+        [[[
+          const lightEntity = variables.light_entity;
+          const mediaEntity = variables.media_entity;
+
+          let lightOn = false;
+          let mediaOn = false;
+          let hasLight = !!lightEntity;
+          let hasMedia = !!mediaEntity;
+
+          if (lightEntity && states[lightEntity]) {
+            lightOn = states[lightEntity].state === 'on';
+          }
+          if (mediaEntity && states[mediaEntity]) {
+            const mediaState = states[mediaEntity].state;
+            mediaOn = mediaState === 'playing' || mediaState === 'on';
+          }
+
+          const lightColor = lightOn ? '#1a1a1a' : '#d1d1d1';
+          const mediaColor = mediaOn ? '#1a1a1a' : '#d1d1d1';
+
+          let icons = '';
+
+          if (hasMedia) {
+            icons += `<ha-icon icon="mdi:television" style="
+              --mdc-icon-size: 28px;
+              color: ${mediaColor};
+              margin-right: 16px;
+            "></ha-icon>`;
+          }
+
+          if (hasLight) {
+            icons += `<ha-icon icon="mdi:lightbulb" style="
+              --mdc-icon-size: 28px;
+              color: ${lightColor};
+            "></ha-icon>`;
+          }
+
+          return `<div style="display: flex; align-items: center;">${icons}</div>`;
+        ]]]
+    tap_action:
+      action: '[[[ return variables.room_path ? "navigate" : "more-info"; ]]]'
+      navigation_path: '[[[ return variables.room_path || ""; ]]]'
+      entity: '[[[ return variables.light_entity; ]]]'
+
+  # Person card template for peoples tab
+  # Variables: person_name, person_entity, battery_entity, steps_entity
+  person_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"person_image person_info battery_info"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        person_image:
+          - justify-self: start
+          - align-self: center
+        person_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        battery_info:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      person_image: |
+        [[[
+          const personEntity = variables.person_entity;
+          let imageUrl = '';
+
+          if (personEntity && states[personEntity] && states[personEntity].attributes.entity_picture) {
+            imageUrl = states[personEntity].attributes.entity_picture;
+          }
+
+          if (imageUrl) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${imageUrl}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="mdi:account" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      person_info: |
+        [[[
+          const personName = variables.person_name || 'Person';
+          const personEntity = variables.person_entity;
+
+          let locationText = 'Unknown';
+          let locationColor = 'var(--secondary-text-color)';
+
+          if (personEntity && states[personEntity]) {
+            const state = states[personEntity].state;
+            if (state === 'unavailable' || state === 'unknown') {
+              locationText = 'Unavailable';
+              locationColor = '#d1d1d1';
+            } else if (state === 'home') {
+              locationText = 'Home';
+              locationColor = '#4CAF50';
+            } else if (state === 'not_home') {
+              locationText = 'Away';
+            } else {
+              // It's a zone name
+              locationText = state.split('_').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+              ).join(' ');
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${personName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${locationColor};
+              line-height: 1.4;
+              text-align: left;
+            ">${locationText}</span>
+          </div>`;
+        ]]]
+      battery_info: |
+        [[[
+          const batteryEntity = variables.battery_entity;
+          const stepsEntity = variables.steps_entity;
+          let lines = [];
+
+          // Steps info
+          if (stepsEntity && states[stepsEntity]) {
+            const steps = states[stepsEntity].state;
+            if (steps !== 'unavailable' && steps !== 'unknown') {
+              const stepsNum = parseInt(steps);
+              const formatted = !isNaN(stepsNum) ? stepsNum.toLocaleString() : steps;
+              lines.push(`<span style="
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                color: #d1d1d1;
+              "><ha-icon icon="mdi:shoe-print" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${formatted}</span>`);
+            }
+          }
+
+          // Battery info
+          if (batteryEntity && states[batteryEntity]) {
+            const batteryLevel = states[batteryEntity].state;
+            if (batteryLevel !== 'unavailable' && batteryLevel !== 'unknown') {
+              const batteryNum = parseInt(batteryLevel);
+              let batteryColor = '#d1d1d1';
+              if (!isNaN(batteryNum)) {
+                if (batteryNum <= 20) {
+                  batteryColor = '#f44336';
+                } else if (batteryNum <= 50) {
+                  batteryColor = '#ff9800';
+                }
+              }
+              lines.push(`<span style="
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                color: ${batteryColor};
+              "><ha-icon icon="mdi:battery" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${batteryLevel}%</span>`);
+            }
+          }
+
+          if (lines.length === 0) return '';
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            ${lines.join('')}
+          </div>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.person_entity; ]]]'
+
+  # Info card template for other tab (System, Car, Tank, etc.)
+  # Variables: card_name, card_icon, card_image, status_entity, status_template, info_entity, info_template
+  info_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"card_image card_info extra_info"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        card_image:
+          - justify-self: start
+          - align-self: center
+        card_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        extra_info:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      card_image: |
+        [[[
+          const image = variables.card_image || '';
+          const icon = variables.card_icon || 'mdi:information';
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      card_info: |
+        [[[
+          const cardName = variables.card_name || 'Info';
+          const statusEntity = variables.status_entity;
+          const statusTemplate = variables.status_template;
+
+          let statusText = '';
+          let statusColor = 'var(--secondary-text-color)';
+
+          if (statusTemplate) {
+            // Use custom template
+            try {
+              statusText = eval('`' + statusTemplate + '`');
+            } catch (e) {
+              statusText = 'Error';
+            }
+          } else if (statusEntity && states[statusEntity]) {
+            statusText = states[statusEntity].state;
+            const unit = states[statusEntity].attributes.unit_of_measurement || '';
+            if (unit) statusText += ' ' + unit;
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${cardName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${statusColor};
+              line-height: 1.4;
+              text-align: left;
+            ">${statusText}</span>
+          </div>`;
+        ]]]
+      extra_info: |
+        [[[
+          const infoEntity = variables.info_entity;
+          const infoTemplate = variables.info_template;
+
+          let infoText = '';
+
+          if (infoTemplate) {
+            try {
+              infoText = eval('`' + infoTemplate + '`');
+            } catch (e) {
+              infoText = '';
+            }
+          } else if (infoEntity && states[infoEntity]) {
+            infoText = states[infoEntity].state;
+            const unit = states[infoEntity].attributes.unit_of_measurement || '';
+            if (unit) infoText += ' ' + unit;
+          }
+
+          if (!infoText) return '';
+
+          return `<span style="
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #d1d1d1;
+          ">${infoText}</span>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.status_entity || variables.info_entity; ]]]'
+
+  # Calendar card template for calendar tab
+  # Variables: calendar_entity, calendar_name, calendar_icon, calendar_image
+  calendar_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px 0 0
+        - margin-bottom: 12px
+        - height: 80px
+      grid:
+        - grid-template-areas: '"cal_image cal_info cal_date"'
+        - grid-template-columns: 80px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        cal_image:
+          - justify-self: start
+          - align-self: center
+        cal_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 16px
+          - text-align: left
+        cal_date:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      cal_image: |
+        [[[
+          const image = variables.calendar_image || '';
+          const icon = variables.calendar_icon || 'mdi:calendar';
+
+          if (image) {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <img src="${image}" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              " />
+            </div>`;
+          } else {
+            return `<div style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
+            ">
+              <ha-icon icon="${icon}" style="
+                --mdc-icon-size: 36px;
+                color: #8a8178;
+              "></ha-icon>
+            </div>`;
+          }
+        ]]]
+      cal_info: |
+        [[[
+          const calEntity = variables.calendar_entity;
+          const calName = variables.calendar_name || 'Calendar';
+
+          let eventName = 'No upcoming events';
+          let eventColor = 'var(--secondary-text-color)';
+
+          if (calEntity && states[calEntity]) {
+            const calState = states[calEntity];
+            if (calState.state === 'on' && calState.attributes.message) {
+              eventName = calState.attributes.message;
+              eventColor = '#E85D04';
+            } else if (calState.attributes.message) {
+              eventName = calState.attributes.message;
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+              text-align: left;
+            ">${calName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${eventColor};
+              line-height: 1.4;
+              text-align: left;
+              max-width: 180px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            ">${eventName}</span>
+          </div>`;
+        ]]]
+      cal_date: |
+        [[[
+          const calEntity = variables.calendar_entity;
+
+          if (!calEntity || !states[calEntity]) {
+            return '';
+          }
+
+          const calState = states[calEntity];
+          const startTime = calState.attributes.start_time;
+          const allDay = calState.attributes.all_day;
+
+          if (!startTime && !calState.attributes.message) {
+            return '';
+          }
+
+          if (!startTime) {
+            return '';
+          }
+
+          const startDate = new Date(startTime);
+          const now = new Date();
+          const isToday = startDate.toDateString() === now.toDateString();
+          const tomorrow = new Date(now);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const isTomorrow = startDate.toDateString() === tomorrow.toDateString();
+
+          let dateText = '';
+          let timeText = '';
+
+          if (isToday) {
+            dateText = 'Today';
+          } else if (isTomorrow) {
+            dateText = 'Tomorrow';
+          } else {
+            const options = { month: 'short', day: 'numeric' };
+            dateText = startDate.toLocaleDateString('en-GB', options);
+          }
+
+          if (!allDay) {
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+            timeText = startDate.toLocaleTimeString('en-GB', timeOptions);
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-end;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              font-weight: 500;
+              color: var(--secondary-text-color);
+            ">${dateText}</span>
+            ${timeText ? `<span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 12px;
+              color: #d1d1d1;
+            ">${timeText}</span>` : ''}
+          </div>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.calendar_entity; ]]]'
+
+  # Room view hero section with back button
+  # Variables: room_name, room_image
+  room_hero:
+    show_icon: false
+    show_name: false
+    show_state: false
+    styles:
+      card:
+        - background: transparent
+        - box-shadow: none
+        - border: none
+        - border-radius: 0
+        - height: 100%
+      grid:
+        - grid-template-areas: '"title back_btn"'
+        - grid-template-columns: 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: start
+        - padding: 24px
+      custom_fields:
+        title:
+          - justify-self: start
+          - align-self: start
+        back_btn:
+          - justify-self: end
+          - align-self: start
+    custom_fields:
+      title: |
+        [[[
+          const roomName = variables.room_name || 'Room';
+          return `<span style="
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 36px;
+            font-weight: 500;
+            color: #E85D04;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.5px;
+          ">${roomName}</span>`;
+        ]]]
+      back_btn: |
+        [[[
+          return `<div style="
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+          ">
+            <ha-icon icon="mdi:home" style="
+              --mdc-icon-size: 24px;
+              color: #1a1a1a;
+            "></ha-icon>
+          </div>`;
+        ]]]
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-home/home
+
+  # Room item card for simple entity display in tabs
+  # Variables: item_name, item_icon, item_entity, show_toggle
+  room_item_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px
+        - margin-bottom: 12px
+        - height: 72px
+      grid:
+        - grid-template-areas: '"item_icon item_info item_control"'
+        - grid-template-columns: 56px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        item_icon:
+          - justify-self: start
+          - align-self: center
+        item_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 12px
+          - text-align: left
+        item_control:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      item_icon: |
+        [[[
+          const itemIcon = variables.item_icon || 'mdi:help-circle';
+          const itemEntity = variables.item_entity;
+          let isOn = false;
+          let isUnavailable = false;
+          let iconColor = '#8a8178';
+
+          if (itemEntity && states[itemEntity]) {
+            const st = states[itemEntity].state;
+            isUnavailable = st === 'unavailable' || st === 'unknown';
+            isOn = st === 'on' || st === 'playing' || st === 'home';
+            iconColor = isUnavailable ? '#d1d1d1' : (isOn ? '#E85D04' : '#8a8178');
+          }
+
+          return `<div style="
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: ${isOn ? 'rgba(232, 93, 4, 0.1)' : 'linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%)'};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <ha-icon icon="${itemIcon}" style="
+              --mdc-icon-size: 28px;
+              color: ${iconColor};
+            "></ha-icon>
+          </div>`;
+        ]]]
+      item_info: |
+        [[[
+          const itemEntity = variables.item_entity;
+          const itemName = variables.item_name || (itemEntity && states[itemEntity]?.attributes?.friendly_name) || (itemEntity ? itemEntity.split('.')[1].replace(/_/g, ' ') : 'Item');
+
+          let stateText = 'Unknown';
+          let stateColor = 'var(--secondary-text-color)';
+
+          if (itemEntity && states[itemEntity]) {
+            const entState = states[itemEntity];
+            const st = entState.state;
+            const domain = itemEntity.split('.')[0];
+
+            // Handle unavailable/unknown states first
+            if (st === 'unavailable') {
+              stateText = 'Unavailable';
+              stateColor = '#d1d1d1';
+            } else if (st === 'unknown') {
+              stateText = 'Unknown';
+              stateColor = '#d1d1d1';
+            } else if (domain === 'light') {
+              if (st === 'on') {
+                const brightness = entState.attributes.brightness;
+                if (brightness) {
+                  stateText = Math.round((brightness / 255) * 100) + '%';
+                } else {
+                  stateText = 'On';
+                }
+                stateColor = '#4CAF50';
+              } else if (st === 'off') {
+                stateText = 'Off';
+              } else {
+                stateText = st.charAt(0).toUpperCase() + st.slice(1);
+              }
+            } else if (domain === 'media_player') {
+              if (st === 'playing') {
+                const title = entState.attributes.media_title || 'Playing';
+                stateText = title.length > 25 ? title.substring(0, 25) + '...' : title;
+                stateColor = '#4CAF50';
+              } else if (st === 'paused') {
+                stateText = 'Paused';
+                stateColor = '#ff9800';
+              } else if (st === 'idle') {
+                stateText = 'Idle';
+              } else {
+                stateText = st.charAt(0).toUpperCase() + st.slice(1);
+              }
+            } else if (domain === 'climate' || domain === 'fan') {
+              if (st === 'off') {
+                stateText = 'Off';
+              } else {
+                const temp = entState.attributes.current_temperature;
+                if (temp) {
+                  stateText = st.charAt(0).toUpperCase() + st.slice(1) + ' - ' + temp + '°C';
+                } else {
+                  stateText = st.charAt(0).toUpperCase() + st.slice(1);
+                }
+                stateColor = '#4CAF50';
+              }
+            } else if (domain === 'binary_sensor') {
+              if (st === 'on') {
+                stateText = 'Detected';
+                stateColor = '#4CAF50';
+              } else {
+                const lastChanged = new Date(entState.last_changed);
+                const now = new Date();
+                const diffMs = now - lastChanged;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMins / 60);
+                if (diffHours > 0) {
+                  stateText = 'Clear - ' + diffHours + 'h ago';
+                } else if (diffMins > 0) {
+                  stateText = 'Clear - ' + diffMins + 'm ago';
+                } else {
+                  stateText = 'Clear';
+                }
+              }
+            } else if (domain === 'sensor') {
+              const unit = entState.attributes.unit_of_measurement || '';
+              stateText = st + (unit ? ' ' + unit : '');
+            } else {
+              stateText = st.charAt(0).toUpperCase() + st.slice(1);
+            }
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+            ">${itemName}</span>
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: ${stateColor};
+              line-height: 1.4;
+            ">${stateText}</span>
+          </div>`;
+        ]]]
+      item_control: |
+        [[[
+          const showToggle = variables.show_toggle;
+          const itemEntity = variables.item_entity;
+
+          if (!showToggle || !itemEntity) return '';
+
+          const domain = itemEntity.split('.')[0];
+          if (domain !== 'light' && domain !== 'switch' && domain !== 'fan') return '';
+
+          const isOn = states[itemEntity]?.state === 'on';
+
+          return `<div style="
+            width: 52px;
+            height: 32px;
+            border-radius: 16px;
+            background: ${isOn ? '#E85D04' : '#e0e0e0'};
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+          ">
+            <div style="
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: white;
+              position: absolute;
+              top: 2px;
+              left: ${isOn ? '22px' : '2px'};
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+              transition: left 0.2s;
+            "></div>
+          </div>`;
+        ]]]
+    tap_action:
+      action: toggle
+      entity: '[[[ return variables.item_entity; ]]]'
+    hold_action:
+      action: more-info
+      entity: '[[[ return variables.item_entity; ]]]'
+
+  # Room sensor card for displaying sensor values
+  # Variables: sensor_name, sensor_icon, sensor_entity, sensor_secondary_entity
+  room_sensor_card:
+    show_icon: false
+    show_name: false
+    show_state: false
+    card_mod:
+      style: |
+        ha-card {
+          background: #ffffff !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+        :host-context(html.darkmode) ha-card,
+        :host-context(html[data-theme="dark"]) ha-card {
+          background: #1c1c1e !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+    styles:
+      card:
+        - padding: 0 20px
+        - margin-bottom: 12px
+        - height: 72px
+      grid:
+        - grid-template-areas: '"sensor_icon sensor_info sensor_value"'
+        - grid-template-columns: 56px 1fr auto
+        - grid-template-rows: 1fr
+        - align-items: center
+      custom_fields:
+        sensor_icon:
+          - justify-self: start
+          - align-self: center
+        sensor_info:
+          - justify-self: start
+          - align-self: center
+          - padding-left: 12px
+          - text-align: left
+        sensor_value:
+          - justify-self: end
+          - align-self: center
+    custom_fields:
+      sensor_icon: |
+        [[[
+          const sensorIcon = variables.sensor_icon || 'mdi:eye';
+          return `<div style="
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <ha-icon icon="${sensorIcon}" style="
+              --mdc-icon-size: 28px;
+              color: #8a8178;
+            "></ha-icon>
+          </div>`;
+        ]]]
+      sensor_info: |
+        [[[
+          const sensorEntity = variables.sensor_entity;
+          const sensorName = variables.sensor_name || (sensorEntity && states[sensorEntity]?.attributes?.friendly_name) || (sensorEntity ? sensorEntity.split('.')[1].replace(/_/g, ' ') : 'Sensor');
+          const secEntity = variables.sensor_secondary_entity;
+          const isUnavailable = sensorEntity && states[sensorEntity] && (states[sensorEntity].state === 'unavailable' || states[sensorEntity].state === 'unknown');
+
+          let secondaryText = '';
+
+          if (isUnavailable) {
+            secondaryText = 'Unavailable';
+          } else if (secEntity && states[secEntity]) {
+            const st = states[secEntity].state;
+            const unit = states[secEntity].attributes.unit_of_measurement || '';
+            secondaryText = (st === 'unavailable' || st === 'unknown') ? 'Unavailable' : (st + (unit ? ' ' + unit : ''));
+          }
+
+          return `<div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--primary-text-color);
+              line-height: 1.3;
+            ">${sensorName}</span>
+            ${secondaryText ? `<span style="
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              font-size: 13px;
+              color: var(--secondary-text-color);
+              line-height: 1.4;
+            ">${secondaryText}</span>` : ''}
+          </div>`;
+        ]]]
+      sensor_value: |
+        [[[
+          const sensorEntity = variables.sensor_entity;
+
+          if (!sensorEntity || !states[sensorEntity]) return '';
+
+          const st = states[sensorEntity].state;
+          const unit = states[sensorEntity].attributes.unit_of_measurement || '';
+          const isUnavailable = st === 'unavailable' || st === 'unknown';
+
+          return `<span style="
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: ${isUnavailable ? '#d1d1d1' : 'var(--primary-text-color)'};
+          ">${isUnavailable ? '—' : (st + (unit ? ' ' + unit : ''))}</span>`;
+        ]]]
+    tap_action:
+      action: more-info
+      entity: '[[[ return variables.sensor_entity; ]]]'
+
+# ==================== VIEWS ====================
+views:
+  - !include /var/lib/hass/views/home.yaml
+  - !include /var/lib/hass/views/room-living-room.yaml
+  - !include /var/lib/hass/views/room-bedroom.yaml
+  - !include /var/lib/hass/views/room-kitchen.yaml
+  - !include /var/lib/hass/views/room-bathroom.yaml
+  - !include /var/lib/hass/views/room-hallway.yaml
+  - !include /var/lib/hass/views/room-robynne.yaml

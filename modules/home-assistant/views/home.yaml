@@ -1,0 +1,507 @@
+# ==================== HOME VIEW ====================
+title: Home
+path: home
+icon: mdi:home
+panel: true
+
+cards:
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr
+      margin: 0 auto
+    card_mod:
+      style: |
+        :host {
+          max-width: 600px !important;
+          margin: 0 auto !important;
+          display: block !important;
+        }
+        @media (min-width: 768px) {
+          :host { max-width: 800px !important; }
+        }
+        @media (min-width: 1200px) {
+          :host { max-width: 1200px !important; }
+        }
+    cards:
+      # -------------------- Hero Card with Title Overlay --------------------
+      - type: custom:stack-in-card
+        mode: vertical
+        card_mod:
+          style:
+            hui-vertical-stack-card $: |
+              #root { row-gap: 0px !important; }
+            .: |
+              :host { row-gap: 0px; }
+              ha-card {
+                border-radius: 24px;
+                margin: 16px 16px 16px 16px;
+                box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+                overflow: hidden;
+                background: var(--card-background-color, #fff);
+              }
+              @media (min-width: 768px) {
+                ha-card { margin: 16px 0 16px 0; }
+              }
+        cards:
+          # Hero Image with Dark Overlay and Title
+          - type: custom:button-card
+            name: Fleming Place
+            show_icon: false
+            show_state: false
+            tap_action:
+              action: none
+            card_mod:
+              style: |
+                ha-card {
+                  height: 200px !important;
+                  border-radius: 0;
+                  box-shadow: none;
+                  margin-bottom: 8px;
+                  background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop") !important;
+                  background-size: cover !important;
+                  background-position: center !important;
+                }
+                @media (min-width: 768px) {
+                  ha-card { height: 240px !important; }
+                }
+                @media (min-width: 1200px) {
+                  ha-card { height: 280px !important; }
+                }
+            styles:
+              card:
+                - height: 100%
+                - border-radius: 0
+              name:
+                - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                - font-size: 36px
+                - font-weight: 500
+                - color: "#E85D04"
+                - text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5)
+                - position: absolute
+                - top: 24px
+                - left: 24px
+                - letter-spacing: -0.5px
+
+          # Status Chips
+          - type: custom:mushroom-chips-card
+            alignment: center
+            card_mod:
+              style: |
+                ha-card {
+                  --chip-background: rgba(255,255,255,0.95);
+                  --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                  --chip-border-radius: 24px;
+                  --chip-padding: 0 12px;
+                  --chip-height: 36px;
+                  background: transparent;
+                  margin-top: -50px;
+                  position: relative;
+                  z-index: 1;
+                }
+            chips:
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_turned_on_lights_count_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_turned_on_lights_count_template
+                  icon: mdi:lightbulb
+                  icon_color: amber
+                  content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#lights-popup"
+
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_media_players_playing_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_media_players_playing_template
+                  icon: mdi:television
+                  icon_color: blue
+                  content: "{{ states('sensor.total_media_players_playing_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#media-popup"
+
+              - type: conditional
+                conditions:
+                  - entity: sensor.total_active_motion_sensors_count_template
+                    state_not: "0"
+                chip:
+                  type: template
+                  entity: sensor.total_active_motion_sensors_count_template
+                  icon: mdi:run
+                  icon_color: green
+                  content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#motion-popup"
+
+          # Info Lines
+          - type: custom:button-card
+            template: info_lines
+            entity: weather.forecast_home
+            triggers_update:
+              - weather.forecast_home
+              - calendar.family
+              - calendar.events
+              - calendar.calendar
+              - calendar.home
+              - sensor.liverpool
+              - sensor.liverpool_cl
+              - sensor.liverpool_fa
+              - sensor.liverpool_lc
+            styles:
+              grid:
+                - grid-template-areas: '"weather" "calendar" "liverpool"'
+                - grid-template-rows: auto auto auto
+              custom_fields: &info_line_style
+                weather:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+                calendar:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+                liverpool:
+                  - font-size: 14px
+                  - color: var(--secondary-text-color)
+                  - text-align: left
+            custom_fields:
+              weather: !include /var/lib/hass/templates/weather_info.yaml
+              calendar: !include /var/lib/hass/templates/calendar_info.yaml
+              liverpool: !include /var/lib/hass/templates/liverpool_info.yaml
+            tap_action:
+              action: none
+
+      # -------------------- Tabbed Section --------------------
+      - type: custom:state-switch
+        entity: hash
+        default: tab-rooms
+        card_mod:
+          style: |
+            ha-card {
+              margin: 0 16px 16px 16px;
+              border-radius: 24px;
+              box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+              overflow: hidden;
+              background: var(--card-background-color, #fff);
+            }
+            @media (min-width: 768px) {
+              ha-card { margin: 0 0 16px 0; }
+            }
+        states:
+          "tab-rooms":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: &tab_container_style
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Rooms
+                    tap_action: &tap_rooms
+                      action: navigate
+                      navigation_path: "#tab-rooms"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Peoples
+                    tap_action: &tap_peoples
+                      action: navigate
+                      navigation_path: "#tab-peoples"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Calendar
+                    tap_action: &tap_calendar
+                      action: navigate
+                      navigation_path: "#tab-calendar"
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: &tap_other
+                      action: navigate
+                      navigation_path: "#tab-other"
+              # Room cards container
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: &tab_content_style
+                  style: |
+                    ha-card {
+                      padding: 12px 16px 8px 16px;
+                      background: transparent;
+                      box-shadow: none;
+                    }
+                cards:
+                  # Living Room
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Living Room
+                      room_icon: mdi:sofa
+                      room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop"
+                      light_entity: group.living_room_lights
+                      motion_entity: binary_sensor.living_room_motion_sensor_occupancy
+                      media_entity: media_player.living_room_tv
+                      room_path: /lovelace-home/room-living-room
+
+                  # Bedroom
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Bedroom
+                      room_icon: mdi:bed
+                      room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
+                      light_entity: group.bedroom_lights
+                      motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
+                      media_entity: media_player.apple_tv
+                      room_path: /lovelace-home/room-bedroom
+
+                  # Kitchen
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Kitchen
+                      room_icon: mdi:silverware-fork-knife
+                      room_image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop"
+                      light_entity: group.kitchen_lights
+                      motion_entity: null
+                      media_entity: null
+                      room_path: /lovelace-home/room-kitchen
+
+                  # Bathroom
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Bathroom
+                      room_icon: mdi:shower
+                      room_image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=200&h=200&fit=crop"
+                      light_entity: group.bathroom_lights
+                      motion_entity: binary_sensor.motion_sensor_motion
+                      media_entity: null
+                      room_path: /lovelace-home/room-bathroom
+
+                  # Hallway
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Hallway
+                      room_icon: mdi:door
+                      room_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
+                      light_entity: group.hallway_lights
+                      motion_entity: binary_sensor.hallway_motion_sensor_occupancy
+                      media_entity: null
+                      room_path: /lovelace-home/room-hallway
+
+                  # Robynne's Room
+                  - type: custom:button-card
+                    template: room_card
+                    variables:
+                      room_name: Robynne's Room
+                      room_icon: mdi:teddy-bear
+                      room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
+                      light_entity: group.robynne_lights
+                      motion_entity: binary_sensor.aarlo_motion_nursery
+                      media_entity: media_player.yoto_player
+                      room_path: /lovelace-home/room-robynne
+
+          "tab-peoples":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Rooms
+                    tap_action: *tap_rooms
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Peoples
+                    tap_action: *tap_peoples
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Calendar
+                    tap_action: *tap_calendar
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: *tap_other
+              # Person cards container
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  # Darren
+                  - type: custom:button-card
+                    template: person_card
+                    entity: person.darren_gilbert
+                    triggers_update:
+                      - person.darren_gilbert
+                      - sensor.hatchling_battery_level
+                      - sensor.hatchling_steps
+                    variables:
+                      person_name: Darren
+                      person_entity: person.darren_gilbert
+                      battery_entity: sensor.hatchling_battery_level
+                      steps_entity: sensor.hatchling_steps
+
+                  # Lorraine
+                  - type: custom:button-card
+                    template: person_card
+                    entity: person.lorraine
+                    triggers_update:
+                      - person.lorraine
+                      - sensor.lorraines_iphone_battery_level
+                      - sensor.lorraines_iphone_steps
+                    variables:
+                      person_name: Lorraine
+                      person_entity: person.lorraine
+                      battery_entity: sensor.lorraines_iphone_battery_level
+                      steps_entity: sensor.lorraines_iphone_steps
+
+          "tab-calendar":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Rooms
+                    tap_action: *tap_rooms
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Peoples
+                    tap_action: *tap_peoples
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Calendar
+                    tap_action: *tap_calendar
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Other
+                    tap_action: *tap_other
+              # Calendar cards container
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  # Family Calendar
+                  - type: custom:button-card
+                    template: calendar_card
+                    entity: calendar.family
+                    triggers_update:
+                      - calendar.family
+                    variables:
+                      calendar_entity: calendar.family
+                      calendar_name: Family
+                      calendar_icon: mdi:account-group
+                      calendar_image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop"
+
+          "tab-other":
+            type: custom:stack-in-card
+            mode: vertical
+            card_mod: *tab_container_style
+            cards:
+              - type: horizontal-stack
+                card_mod: *tab_container_style
+                cards:
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Rooms
+                    tap_action: *tap_rooms
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Peoples
+                    tap_action: *tap_peoples
+                  - type: custom:button-card
+                    template: tab_button_inactive
+                    name: Calendar
+                    tap_action: *tap_calendar
+                  - type: custom:button-card
+                    template: tab_button_active
+                    name: Other
+                    tap_action: *tap_other
+              # Other cards container
+              - type: custom:stack-in-card
+                mode: vertical
+                card_mod: *tab_content_style
+                cards:
+                  # System
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.system_monitor_load_1m
+                    triggers_update:
+                      - sensor.system_monitor_load_1m
+                      - sensor.system_monitor_disk_free
+                      - sensor.system_monitor_last_boot
+                    variables:
+                      card_name: System
+                      card_icon: mdi:server
+                      card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1m']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; })()}"
+                      info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; })()}"
+
+                  # Car
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.fordpass_wf02xxerk2la80437_fuel
+                    triggers_update:
+                      - sensor.fordpass_wf02xxerk2la80437_fuel
+                      - sensor.fordpass_wf02xxerk2la80437_doorstatus
+                    variables:
+                      card_name: Car
+                      card_icon: mdi:car
+                      card_image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state; return (door === 'unavailable' || door === 'unknown' || !door) ? 'Unavailable' : 'Doors: ' + door; })()}"
+                      info_template: "${(() => { const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state; return (fuel === 'unavailable' || fuel === 'unknown' || !fuel) ? '' : 'Fuel: ' + fuel + '%'; })()}"
+
+                  # Tank
+                  - type: custom:button-card
+                    template: info_card
+                    entity: sensor.current_temperature
+                    triggers_update:
+                      - sensor.current_temperature
+                      - sensor.ph_value
+                    variables:
+                      card_name: Tank
+                      card_icon: mdi:fishbowl
+                      card_image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const temp = states['sensor.current_temperature']?.state; return (temp === 'unavailable' || temp === 'unknown' || !temp) ? 'Unavailable' : temp + '°C'; })()}"
+                      info_template: "${(() => { const ph = states['sensor.ph_value']?.state; return (ph === 'unavailable' || ph === 'unknown' || !ph) ? '' : 'pH: ' + ph; })()}"
+
+                  # RoboVac
+                  - type: custom:button-card
+                    template: info_card
+                    entity: vacuum.robovac
+                    triggers_update:
+                      - vacuum.robovac
+                      - sensor.robovac_battery
+                    variables:
+                      card_name: RoboVac
+                      card_icon: mdi:robot-vacuum
+                      card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
+                      status_template: "${(() => { const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); })()}"
+                      info_template: "${(() => { const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; })()}"
+
+      # -------------------- Popups --------------------
+      - !include /var/lib/hass/popups/lights.yaml
+      - !include /var/lib/hass/popups/media.yaml
+      - !include /var/lib/hass/popups/motion.yaml

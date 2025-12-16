@@ -1,0 +1,30 @@
+|
+  [[[
+    const weather = entity;
+    if (!weather) return '<ha-icon icon="mdi:weather-cloudy" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon>Weather unavailable';
+
+    const condition = weather.state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const temp = weather.attributes.temperature;
+    const humidity = weather.attributes.humidity || 0;
+
+    const iconMap = {
+      'clear-night': 'mdi:weather-night',
+      'cloudy': 'mdi:weather-cloudy',
+      'fog': 'mdi:weather-fog',
+      'hail': 'mdi:weather-hail',
+      'lightning': 'mdi:weather-lightning',
+      'lightning-rainy': 'mdi:weather-lightning-rainy',
+      'partlycloudy': 'mdi:weather-partly-cloudy',
+      'pouring': 'mdi:weather-pouring',
+      'rainy': 'mdi:weather-rainy',
+      'snowy': 'mdi:weather-snowy',
+      'snowy-rainy': 'mdi:weather-snowy-rainy',
+      'sunny': 'mdi:weather-sunny',
+      'windy': 'mdi:weather-windy',
+      'windy-variant': 'mdi:weather-windy-variant',
+      'exceptional': 'mdi:alert-circle-outline'
+    };
+    const icon = iconMap[weather.state] || 'mdi:weather-cloudy';
+
+    return `<ha-icon icon="${icon}" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon><b>${condition}</b> (${humidity}% humidity, ${temp}°C)`;
+  ]]]

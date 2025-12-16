@@ -1,0 +1,42 @@
+|
+  [[[
+    const calendars = ['calendar.family', 'calendar.events', 'calendar.calendar', 'calendar.home'];
+    let nextEvent = null;
+    let nextTime = null;
+
+    for (const cal of calendars) {
+      const calEntity = states[cal];
+      if (calEntity && calEntity.attributes.message) {
+        const startStr = calEntity.attributes.start_time;
+        if (startStr) {
+          const startTime = new Date(startStr);
+          if (!nextTime || startTime < nextTime) {
+            nextTime = startTime;
+            nextEvent = calEntity.attributes.message;
+          }
+        }
+      }
+    }
+
+    const icon = '<ha-icon icon="mdi:calendar" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon>';
+
+    if (!nextEvent) return icon + 'No upcoming events';
+
+    const now = new Date();
+    const diffMs = nextTime - now;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    let timeStr;
+    if (diffMs < 0) {
+      timeStr = 'Now';
+    } else if (diffDays === 0) {
+      timeStr = diffHours === 0 ? 'Now' : `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    } else if (diffDays === 1) {
+      timeStr = diffHours > 0 ? `1 day ${diffHours} hour${diffHours !== 1 ? 's' : ''}` : '1 day';
+    } else {
+      timeStr = diffHours > 0 ? `${diffDays} days ${diffHours} hour${diffHours !== 1 ? 's' : ''}` : `${diffDays} days`;
+    }
+
+    return `${icon}<b>${nextEvent}</b>: ${timeStr}`;
+  ]]]
