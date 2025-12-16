@@ -10,9 +10,6 @@ tools:
   - Glob
   - Grep
   - mcp__puppeteer__*
-  - mcp__github__get_pull_request
-  - mcp__github__get_pull_request_files
-  - mcp__github__get_issue
   - mcp__sequential-thinking__sequentialthinking
   - mcp__memory__aim_search_nodes
   - mcp__memory__aim_add_observations

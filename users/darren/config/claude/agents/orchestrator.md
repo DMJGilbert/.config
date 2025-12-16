@@ -6,12 +6,8 @@ tools:
   - Glob
   - Grep
   - Task
+  - Bash
   - mcp__sequential-thinking__sequentialthinking
-  - mcp__github__get_issue
-  - mcp__github__get_pull_request
-  - mcp__github__get_pull_request_files
-  - mcp__github__search_issues
-  - mcp__github__list_pull_requests
   - mcp__memory__aim_read_graph
   - mcp__memory__aim_search_nodes
   - mcp__memory__aim_create_entities
@@ -58,7 +54,7 @@ All complex tasks follow the RIPER phases:
    - Search knowledge graph: `mcp__memory__aim_search_nodes(query="relevant_topic")`
    - Load project context: `mcp__memory__aim_read_graph()`
    - Read relevant files with `Read`, `Glob`, `Grep`
-   - For PR/Issue context: `mcp__github__get_issue` or `mcp__github__get_pull_request`
+   - For PR/Issue context: `gh issue view N --json title,body,state` or `gh pr view N --json title,body,state,files`
 
 2. **Understand Requirements**
    - What is the actual problem/goal?

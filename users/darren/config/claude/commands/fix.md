@@ -10,11 +10,6 @@ allowed-tools:
   - Glob
   - Grep
   - Task
-  - mcp__github__get_issue
-  - mcp__github__list_issues
-  - mcp__github__search_issues
-  - mcp__github__create_branch
-  - mcp__github__create_pull_request
   - mcp__sequential-thinking__sequentialthinking
   - mcp__memory__search_nodes
 ---
@@ -41,8 +36,8 @@ This command follows the RIPER workflow phases:
 
    **If GitHub issue number provided:**
 
-   ```
-   mcp__github__get_issue(owner="DMJGilbert", repo=".config", issue_number=$1)
+   ```bash
+   gh issue view $1 --json title,body,state,labels,comments
    ```
 
    Extract: title, description, labels, comments, expected vs actual behavior.

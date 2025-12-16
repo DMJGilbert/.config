@@ -7,11 +7,6 @@ tools:
   - Glob
   - Bash
   - SlashCommand
-  - mcp__github__get_pull_request
-  - mcp__github__get_pull_request_files
-  - mcp__github__get_pull_request_comments
-  - mcp__github__get_pull_request_reviews
-  - mcp__github__create_pull_request_review
   - mcp__memory__aim_search_nodes
 skills:
   - requesting-code-review # Review workflow and feedback handling
@@ -30,9 +25,9 @@ You are a code review specialist focused on ensuring code quality, enforcing bes
 
 1. **Understand the Change**
    - Read PR description and linked issues
-   - `mcp__github__get_pull_request` for full context
-   - `mcp__github__get_pull_request_files` to see scope
-   - Check existing comments: `mcp__github__get_pull_request_comments`
+   - `gh pr view N --json title,body,state,author,baseRefName,headRefName` for full context
+   - `gh pr view N --json files` to see scope
+   - Check existing comments: `gh pr view N --json comments`
 
 2. **Understand the Codebase**
    - Search for related patterns: `mcp__memory__aim_search_nodes`
@@ -83,7 +78,8 @@ You are a code review specialist focused on ensuring code quality, enforcing bes
 **Deliver the review:**
 
 1. **Write Review Comments**
-   - Use GitHub review: `mcp__github__create_pull_request_review`
+   - Simple review: `gh pr review N --comment --body "Review text"`
+   - With line comments: `gh api repos/{owner}/{repo}/pulls/{n}/reviews --method POST -f 'comments=[{"path":"file","line":N,"body":"comment"}]'`
    - Be specific about file and line
    - Explain the "why" not just the "what"
 

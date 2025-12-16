@@ -7,7 +7,6 @@ allowed-tools:
   - mcp__obsidian__search-vault
   - mcp__obsidian__create-directory
   - mcp__memory__*
-  - mcp__github__*
   - mcp__sequential-thinking__*
   - Read
   - Grep
@@ -28,8 +27,8 @@ Generate a comprehensive technical specification and save to your Obsidian vault
 
 **If GitHub issue number provided:**
 
-```
-mcp__github__get_issue(owner, repo, issue_number)
+```bash
+gh issue view {issue_number} --json title,body,state,labels,comments
 ```
 
 **Search existing context:**

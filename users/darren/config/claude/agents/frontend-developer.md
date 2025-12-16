@@ -11,9 +11,6 @@ tools:
   - Grep
   - mcp__context7__*
   - mcp__magic-ui__*
-  - mcp__github__get_pull_request
-  - mcp__github__get_pull_request_files
-  - mcp__github__get_issue
   - mcp__puppeteer__*
 skills:
   - test-driven-development # Write component tests before implementation

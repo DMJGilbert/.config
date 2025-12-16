@@ -8,9 +8,6 @@ tools:
   - Bash
   - WebSearch
   - SlashCommand
-  - mcp__github__get_pull_request
-  - mcp__github__get_pull_request_files
-  - mcp__github__search_issues
   - mcp__memory__aim_search_nodes
   - mcp__memory__aim_create_entities
   - mcp__memory__aim_add_observations
