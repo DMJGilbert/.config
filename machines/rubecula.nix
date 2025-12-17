@@ -9,7 +9,12 @@
     ./shared.nix
   ];
 
-  # Enable services via feature-flag modules
+  # Enable hardware and services via feature-flag modules
+  local.hardware = {
+    laptop.enable = true;
+    intelGraphics.enable = true;
+  };
+
   local.services = {
     homeAssistant = {
       enable = true;
@@ -49,37 +54,10 @@
     efi.efiSysMountPoint = "/boot/efi";
   };
 
-  # Intel MacBook Pro hardware support
-  hardware = {
-    cpu.intel.updateMicrocode = true;
-
-    graphics = {
-      enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver # VAAPI for Broadwell+ Intel GPUs
-        intel-vaapi-driver # VAAPI for older Intel GPUs
-        libva-vdpau-driver
-        libvdpau-va-gl
-      ];
-    };
-
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-    };
-  };
-
-  # Zram swap for better performance than disk swap
-  zramSwap = {
+  # Machine-specific hardware (Bluetooth)
+  hardware.bluetooth = {
     enable = true;
-    algorithm = "zstd";
-    memoryPercent = 50;
-  };
-
-  # Power management
-  powerManagement = {
-    enable = true;
-    powertop.enable = true;
+    powerOnBoot = true;
   };
 
   networking = {
@@ -129,40 +107,11 @@
   # ACME is now configured via local.services.nginx.acme
 
   services = {
-    # Intel MacBook thermal management
-    thermald.enable = true;
-
-    # Power management for laptop
-    auto-cpufreq = {
-      enable = true;
-      settings = {
-        charger = {
-          governor = "performance";
-          turbo = "auto";
-        };
-        battery = {
-          governor = "powersave";
-          turbo = "auto";
-        };
-      };
-    };
-
-    # SSD TRIM for longevity
-    fstrim.enable = true;
-
-    # Prevent system freeze under memory pressure
-    earlyoom = {
-      enable = true;
-      freeMemThreshold = 5;
-      freeSwapThreshold = 10;
-    };
-
-    logind.settings.Login.HandleLidSwitch = "ignore";
-
     # Enable the OpenSSH daemon.
     openssh.enable = true;
 
-    # Tailscale, AdGuard Home, and nginx are now configured via local.services.*
+    # Laptop power, thermal, and memory management now via local.hardware.laptop
+    # Tailscale, AdGuard Home, and nginx now via local.services.*
 
     # ollama = {
     #   enable = true;
