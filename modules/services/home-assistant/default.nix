@@ -89,6 +89,14 @@ in
     options.local.services.homeAssistant = {
       enable = lib.mkEnableOption "Home Assistant home automation";
 
+      matterServer = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable Matter server for Thread/Matter device support";
+        };
+      };
+
       dashboard = {
         enable = lib.mkEnableOption "YAML-mode Lovelace dashboard";
       };
@@ -114,6 +122,9 @@ in
         "L+ /var/lib/hass/popups - - - - ${popupsDir}"
       ];
 
+      # Enable Matter server when configured (for Thread/Matter devices)
+      local.services.matterServer.enable = cfg.matterServer.enable;
+
       services = {
         # Zigbee USB dongle configuration
         udev.extraRules = ''
@@ -124,12 +135,6 @@ in
 
         # Disable services that interfere with USB serial devices
         brltty.enable = false;
-
-        # Matter server for Thread/Matter devices
-        matter-server = {
-          enable = true;
-          port = 5580;
-        };
 
         home-assistant = {
           enable = true;

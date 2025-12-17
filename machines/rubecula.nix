@@ -9,10 +9,30 @@
     ./shared.nix
   ];
 
-  # Enable Home Assistant via the feature-flag module
-  local.services.homeAssistant = {
-    enable = true;
-    dashboard.enable = true;
+  # Enable services via feature-flag modules
+  local.services = {
+    homeAssistant = {
+      enable = true;
+      dashboard.enable = true;
+    };
+    tailscale.enable = true;
+    adguardHome.enable = true;
+    nginx = {
+      enable = true;
+      acme = {
+        acceptTerms = true;
+        email = "dmjgilbert@gmail.com";
+      };
+      virtualHosts."home.gilberts.one" = {
+        forceSSL = true;
+        enableACME = true;
+        extraConfig = ''
+          proxy_buffering off;
+        '';
+        proxyPass = "http://127.0.0.1:8123";
+        proxyWebsockets = true;
+      };
+    };
   };
 
   nix = {
@@ -106,8 +126,7 @@
 
   virtualisation.docker.enable = true;
 
-  security.acme.acceptTerms = true;
-  security.acme.defaults.email = "dmjgilbert@gmail.com";
+  # ACME is now configured via local.services.nginx.acme
 
   services = {
     # Intel MacBook thermal management
@@ -143,28 +162,7 @@
     # Enable the OpenSSH daemon.
     openssh.enable = true;
 
-    tailscale.enable = true;
-
-    adguardhome = {
-      enable = true;
-      mutableSettings = true;
-    };
-
-    nginx = {
-      enable = true;
-      recommendedProxySettings = true;
-      virtualHosts."home.gilberts.one" = {
-        forceSSL = true;
-        enableACME = true;
-        extraConfig = ''
-          proxy_buffering off;
-        '';
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:8123";
-          proxyWebsockets = true;
-        };
-      };
-    };
+    # Tailscale, AdGuard Home, and nginx are now configured via local.services.*
 
     # ollama = {
     #   enable = true;
