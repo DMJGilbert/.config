@@ -9,43 +9,45 @@
     ./shared.nix
   ];
 
-  # Enable hardware and services via feature-flag modules
-  local.hardware = {
-    laptop.enable = true;
-    intelGraphics.enable = true;
+  # Enable hardware, features, and services via feature-flag modules
+  local = {
+    hardware = {
+      laptop.enable = true;
+      intelGraphics.enable = true;
+    };
+
+    features = {
+      docker.enable = true;
+      ccache.enable = true;
+    };
+
+    services = {
+      homeAssistant = {
+        enable = true;
+        dashboard.enable = true;
+      };
+      tailscale.enable = true;
+      adguardHome.enable = true;
+      nginx = {
+        enable = true;
+        acme = {
+          acceptTerms = true;
+          email = "dmjgilbert@gmail.com";
+        };
+        virtualHosts."home.gilberts.one" = {
+          forceSSL = true;
+          enableACME = true;
+          extraConfig = ''
+            proxy_buffering off;
+          '';
+          proxyPass = "http://127.0.0.1:8123";
+          proxyWebsockets = true;
+        };
+      };
+    };
   };
 
-  local.services = {
-    homeAssistant = {
-      enable = true;
-      dashboard.enable = true;
-    };
-    tailscale.enable = true;
-    adguardHome.enable = true;
-    nginx = {
-      enable = true;
-      acme = {
-        acceptTerms = true;
-        email = "dmjgilbert@gmail.com";
-      };
-      virtualHosts."home.gilberts.one" = {
-        forceSSL = true;
-        enableACME = true;
-        extraConfig = ''
-          proxy_buffering off;
-        '';
-        proxyPass = "http://127.0.0.1:8123";
-        proxyWebsockets = true;
-      };
-    };
-  };
-
-  nix = {
-    settings = {
-      # Enable ccache in sandbox builds
-      extra-sandbox-paths = [config.programs.ccache.cacheDir];
-    };
-  };
+  # ccache sandbox paths now configured via local.features.ccache
 
   # Use the systemd-boot EFI boot loader.
   boot.loader = {
@@ -89,11 +91,8 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  programs = {
-    git.enable = true;
-    # Enable ccache for faster rebuilds
-    ccache.enable = true;
-  };
+  programs.git.enable = true;
+  # ccache now via local.features.ccache
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -102,9 +101,8 @@
 
   environment.systemPackages = with pkgs; [vim unzip gcc];
 
-  virtualisation.docker.enable = true;
-
-  # ACME is now configured via local.services.nginx.acme
+  # Docker now via local.features.docker
+  # ACME now via local.services.nginx.acme
 
   services = {
     # Enable the OpenSSH daemon.
