@@ -19,6 +19,7 @@ darwin.lib.darwinSystem rec {
     # Encrypted secrets management
     sops-nix.darwinModules.sops
 
+    ../modules
     (../machines + "/${name}.nix")
     (../users + "/${user}/darwin.nix")
     (../users + "/${user}/sops.nix")
