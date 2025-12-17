@@ -4,6 +4,9 @@
 in {
   imports = [./shared.nix];
 
+  # Enable cross-platform services via feature-flag modules
+  local.services.tailscale.enable = true;
+
   security.pam.services.sudo_local.touchIdAuth = true;
 
   # Fonts managed through nix-darwin
