@@ -569,8 +569,11 @@ in [
     description = "Increase living/dining room brightness on clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_1";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_1";
+        };
       }
     ];
     action = [
@@ -581,11 +584,12 @@ in [
           "light.dining_room_light_3"
         ];
         data = {
-          brightness_step_pct = 10;
+          # Scale brightness by number of scroll clicks (5% per click)
+          brightness_step_pct = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # Button 1 Rotate CCW - Decrease brightness
@@ -594,8 +598,11 @@ in [
     description = "Decrease living/dining room brightness on counter-clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_2";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_2";
+        };
       }
     ];
     action = [
@@ -606,11 +613,12 @@ in [
           "light.dining_room_light_3"
         ];
         data = {
-          brightness_step_pct = -10;
+          # Scale brightness by number of scroll clicks (5% per click)
+          brightness_step_pct = "{{ -1 * trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # =============================================================================
@@ -648,8 +656,11 @@ in [
     description = "Increase sofa light brightness on clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_4";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_4";
+        };
       }
     ];
     action = [
@@ -657,11 +668,12 @@ in [
         action = "light.turn_on";
         target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
         data = {
-          brightness_step_pct = 10;
+          # Scale brightness by number of scroll clicks (5% per click)
+          brightness_step_pct = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # Button 2 Rotate CCW - Decrease brightness
@@ -670,8 +682,11 @@ in [
     description = "Decrease sofa light brightness on counter-clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_5";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_5";
+        };
       }
     ];
     action = [
@@ -679,11 +694,12 @@ in [
         action = "light.turn_on";
         target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
         data = {
-          brightness_step_pct = -10;
+          # Scale brightness by number of scroll clicks (5% per click)
+          brightness_step_pct = "{{ -1 * trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # =============================================================================
@@ -790,41 +806,63 @@ in [
   }
 
   # Button 3 Rotate CW - Volume Up
+  # Controls Apple TV volume on HDMI1, LG TV volume otherwise
   {
     alias = "BILRESA Button 3 - Volume Up";
-    description = "Increase LG TV volume on clockwise rotation";
+    description = "Increase volume on clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_7";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_7";
+        };
       }
     ];
     action = [
       {
-        action = "media_player.volume_up";
-        target.entity_id = "media_player.lg_webos_smart_tv";
+        repeat = {
+          count = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
+          sequence = [
+            {
+              action = "media_player.volume_up";
+              target.entity_id = "{{ 'media_player.living_room_tv' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'media_player.lg_webos_smart_tv' }}";
+            }
+          ];
+        };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # Button 3 Rotate CCW - Volume Down
+  # Controls Apple TV volume on HDMI1, LG TV volume otherwise
   {
     alias = "BILRESA Button 3 - Volume Down";
-    description = "Decrease LG TV volume on counter-clockwise rotation";
+    description = "Decrease volume on counter-clockwise rotation";
     trigger = [
       {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_8";
+        platform = "event";
+        event_type = "state_changed";
+        event_data = {
+          entity_id = "event.bilresa_scroll_wheel_button_8";
+        };
       }
     ];
     action = [
       {
-        action = "media_player.volume_down";
-        target.entity_id = "media_player.lg_webos_smart_tv";
+        repeat = {
+          count = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
+          sequence = [
+            {
+              action = "media_player.volume_down";
+              target.entity_id = "{{ 'media_player.living_room_tv' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'media_player.lg_webos_smart_tv' }}";
+            }
+          ];
+        };
       }
     ];
-    mode = "restart";
+    mode = "single";
   }
 
   # Humidity Extractor - toggle extractor when humidity is high
