@@ -81,6 +81,47 @@ in [
     };
   }
 
+  # Front door entry light - turns on when door opens, off 5 min after close
+  {
+    alias = "Front door hallway lights";
+    description = "Turn on hallway lights when front door opens, off after 5 min";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "binary_sensor.myggbett_door_window_sensor_door";
+        to = "on";
+      }
+    ];
+    action = [
+      {
+        action = "light.turn_on";
+        target.area_id = ["hallway"];
+        data = {
+          brightness_pct = 50;
+        };
+      }
+      {
+        alias = "Wait for door to close";
+        wait_for_trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.myggbett_door_window_sensor_door";
+            to = "off";
+          }
+        ];
+      }
+      {
+        alias = "Wait 5 minutes";
+        delay = 300;
+      }
+      {
+        action = "light.turn_off";
+        target.area_id = ["hallway"];
+      }
+    ];
+    mode = "restart";
+  }
+
   # Motion-activated lighting automations
   (mkMotionLightAutomation {
     alias = "Hallway lights";
