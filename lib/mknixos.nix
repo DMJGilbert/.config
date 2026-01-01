@@ -11,6 +11,13 @@ name: {
 nixpkgs.lib.nixosSystem rec {
   inherit system;
 
+  # Pass currentSystem via specialArgs so it's available at module definition time
+  # (without causing infinite recursion like _module.args would)
+  specialArgs = {
+    currentSystemName = name;
+    currentSystem = system;
+  };
+
   modules =
     [
       # Apply our overlays. Overlays are keyed by system type so we have
@@ -18,6 +25,7 @@ nixpkgs.lib.nixosSystem rec {
       # the overlays are available globally.
       {nixpkgs.overlays = overlays;}
 
+      ../modules
       (../hardware + "/${name}.nix")
       (../machines + "/${name}.nix")
       (../users + "/${user}/nixos.nix")
@@ -27,15 +35,6 @@ nixpkgs.lib.nixosSystem rec {
           useGlobalPkgs = true;
           useUserPackages = true;
           users.${user} = import ../users/${user}/home-manager.nix;
-        };
-      }
-
-      # We expose some extra arguments so that our modules can parameterize
-      # better based on these values.
-      {
-        config._module.args = {
-          currentSystemName = name;
-          currentSystem = system;
         };
       }
     ]
