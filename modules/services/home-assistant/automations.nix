@@ -447,7 +447,7 @@ in [
           "light.tv_light"
           "light.living_room_light"
           "light.dining_room_light_3"
-          "light.sofa_light_switch"
+          "light.kajplats_e27_ws_g95_clear_806lm"
           "light.hallway"
           "light.doorway"
           "light.kitchen_microwave"
@@ -529,6 +529,302 @@ in [
         transition_time = 3;
       };
     };
+  }
+
+  # =============================================================================
+  # BILRESA Living Room Control - Button 1 (Living/Dining Lights)
+  # =============================================================================
+
+  # Button 1 Press - Toggle living room and dining room lights
+  {
+    alias = "BILRESA Button 1 - Toggle Lights";
+    description = "Toggle living room and dining room lights on button 1 press";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_3";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
+      }
+    ];
+    action = [
+      {
+        action = "light.toggle";
+        target.entity_id = [
+          "light.living_room_light"
+          "light.dining_room_light_3"
+        ];
+      }
+    ];
+    mode = "single";
+  }
+
+  # Button 1 Rotate CW - Increase brightness
+  {
+    alias = "BILRESA Button 1 - Brightness Up";
+    description = "Increase living/dining room brightness on clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_1";
+      }
+    ];
+    action = [
+      {
+        action = "light.turn_on";
+        target.entity_id = [
+          "light.living_room_light"
+          "light.dining_room_light_3"
+        ];
+        data = {
+          brightness_step_pct = 10;
+        };
+      }
+    ];
+    mode = "restart";
+  }
+
+  # Button 1 Rotate CCW - Decrease brightness
+  {
+    alias = "BILRESA Button 1 - Brightness Down";
+    description = "Decrease living/dining room brightness on counter-clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_2";
+      }
+    ];
+    action = [
+      {
+        action = "light.turn_on";
+        target.entity_id = [
+          "light.living_room_light"
+          "light.dining_room_light_3"
+        ];
+        data = {
+          brightness_step_pct = -10;
+        };
+      }
+    ];
+    mode = "restart";
+  }
+
+  # =============================================================================
+  # BILRESA Living Room Control - Button 2 (Sofa Light)
+  # =============================================================================
+
+  # Button 2 Press - Toggle sofa light
+  {
+    alias = "BILRESA Button 2 - Toggle Sofa Light";
+    description = "Toggle sofa light on button 2 press";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_6";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
+      }
+    ];
+    action = [
+      {
+        action = "light.toggle";
+        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+      }
+    ];
+    mode = "single";
+  }
+
+  # Button 2 Rotate CW - Increase brightness
+  {
+    alias = "BILRESA Button 2 - Sofa Brightness Up";
+    description = "Increase sofa light brightness on clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_4";
+      }
+    ];
+    action = [
+      {
+        action = "light.turn_on";
+        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+        data = {
+          brightness_step_pct = 10;
+        };
+      }
+    ];
+    mode = "restart";
+  }
+
+  # Button 2 Rotate CCW - Decrease brightness
+  {
+    alias = "BILRESA Button 2 - Sofa Brightness Down";
+    description = "Decrease sofa light brightness on counter-clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_5";
+      }
+    ];
+    action = [
+      {
+        action = "light.turn_on";
+        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+        data = {
+          brightness_step_pct = -10;
+        };
+      }
+    ];
+    mode = "restart";
+  }
+
+  # =============================================================================
+  # BILRESA Living Room Control - Button 3 (TV Control)
+  # =============================================================================
+
+  # Button 3 Single Press - Play/Pause Apple TV
+  {
+    alias = "BILRESA Button 3 - TV Play/Pause";
+    description = "Play/pause Living Room TV on single press";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_9";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
+      }
+    ];
+    action = [
+      {
+        action = "media_player.media_play_pause";
+        target.entity_id = "media_player.living_room_tv";
+      }
+    ];
+    mode = "single";
+  }
+
+  # Button 3 Double Press - Toggle HDMI1/HDMI2 on LG TV
+  {
+    alias = "BILRESA Button 3 - Switch HDMI";
+    description = "Toggle between HDMI1 and HDMI2 on double press";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_9";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_2' }}";
+      }
+    ];
+    action = [
+      {
+        action = "media_player.select_source";
+        target.entity_id = "media_player.lg_webos_smart_tv";
+        data = {
+          source = "{{ 'HDMI2' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'HDMI1' }}";
+        };
+      }
+    ];
+    mode = "single";
+  }
+
+  # Button 3 Long Press - Toggle LG TV Power
+  {
+    alias = "BILRESA Button 3 - TV Power";
+    description = "Toggle LG TV power on long press";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_9";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == 'long_release' }}";
+      }
+    ];
+    action = [
+      {
+        choose = [
+          {
+            conditions = [
+              {
+                condition = "state";
+                entity_id = "media_player.lg_webos_smart_tv";
+                state = "off";
+              }
+            ];
+            sequence = [
+              {
+                action = "media_player.turn_on";
+                target.entity_id = "media_player.lg_webos_smart_tv";
+              }
+            ];
+          }
+        ];
+        default = [
+          {
+            action = "media_player.turn_off";
+            target.entity_id = "media_player.lg_webos_smart_tv";
+          }
+        ];
+      }
+    ];
+    mode = "single";
+  }
+
+  # Button 3 Rotate CW - Volume Up
+  {
+    alias = "BILRESA Button 3 - Volume Up";
+    description = "Increase LG TV volume on clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_7";
+      }
+    ];
+    action = [
+      {
+        action = "media_player.volume_up";
+        target.entity_id = "media_player.lg_webos_smart_tv";
+      }
+    ];
+    mode = "restart";
+  }
+
+  # Button 3 Rotate CCW - Volume Down
+  {
+    alias = "BILRESA Button 3 - Volume Down";
+    description = "Decrease LG TV volume on counter-clockwise rotation";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_8";
+      }
+    ];
+    action = [
+      {
+        action = "media_player.volume_down";
+        target.entity_id = "media_player.lg_webos_smart_tv";
+      }
+    ];
+    mode = "restart";
   }
 
   # Humidity Extractor - toggle extractor when humidity is high
