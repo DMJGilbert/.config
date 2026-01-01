@@ -81,7 +81,7 @@ in
         recommendedProxySettings = true;
 
         virtualHosts =
-          lib.mapAttrs (name: vhost: {
+          lib.mapAttrs (_name: vhost: {
             inherit (vhost) forceSSL enableACME extraConfig;
             locations."/" = lib.mkIf (vhost.proxyPass != null) {
               inherit (vhost) proxyPass proxyWebsockets;

@@ -1,4 +1,4 @@
-{lib, ...}: {
+{...}: {
   imports = [
     ./adguard-home.nix
     ./home-assistant
