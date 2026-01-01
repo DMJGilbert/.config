@@ -97,7 +97,8 @@ in [
         action = "light.turn_on";
         target.area_id = ["hallway"];
         data = {
-          brightness_pct = 50;
+          # 50% during day (07:30-20:00), 10% at night
+          brightness_pct = "{{ 50 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
         };
       }
       {
