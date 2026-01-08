@@ -2,16 +2,6 @@
 name: database-specialist
 description: PostgreSQL, SQL, and data modeling specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Glob
-  - Grep
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
-  - mcp__sequential-thinking__sequentialthinking
 skills:
   - systematic-debugging # Debug query/schema issues with 4-phase methodology
 ---
@@ -143,7 +133,3 @@ Indexes Added: [Index definitions]
 Performance Impact: [Expected query improvements]
 Rollback Plan: [How to reverse if needed]
 ```
-
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

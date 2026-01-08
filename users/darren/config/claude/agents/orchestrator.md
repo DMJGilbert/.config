@@ -1,17 +1,7 @@
 ---
 name: orchestrator
 description: Analyze complex tasks and delegate to specialist agents using RIPER workflow
-tools:
-  - Read
-  - Glob
-  - Grep
-  - Task
-  - Bash
-  - mcp__sequential-thinking__sequentialthinking
-  - mcp__memory__aim_read_graph
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_add_observations
+permissionMode: acceptEdits
 skills:
   - writing-plans # Create detailed implementation plans (PLAN phase)
   - executing-plans # Execute plans with batch checkpoints
@@ -51,8 +41,8 @@ All complex tasks follow the RIPER phases:
 **Purpose**: Deep understanding before any action
 
 1. **Gather Context**
-   - Search knowledge graph: `mcp__memory__aim_search_nodes(query="relevant_topic")`
-   - Load project context: `mcp__memory__aim_read_graph()`
+   - Search knowledge graph: `mcp__memory__aim_memory_search(query="relevant_topic")`
+   - Load project context: `mcp__memory__aim_memory_read_all()`
    - Read relevant files with `Read`, `Glob`, `Grep`
    - For PR/Issue context: `gh issue view N --json title,body,state` or `gh pr view N --json title,body,state,files`
 
@@ -80,6 +70,12 @@ All complex tasks follow the RIPER phases:
    - Use `mcp__sequential-thinking__sequentialthinking` for complex problems
    - Consider multiple approaches
    - Think about edge cases
+   - **For architecture decisions**, trigger ultrathink:
+
+     ```
+     ultrathink: Evaluate these approaches considering
+     maintainability, performance, security, and complexity.
+     ```
 
 2. **Evaluate Trade-offs**
 
@@ -91,6 +87,7 @@ All complex tasks follow the RIPER phases:
 3. **Select Approach**
    - Choose based on context and constraints
    - Document reasoning for future reference
+   - See `skills/ultrathink-trigger/SKILL.md` for complexity indicators
 
 ## Phase 3: PLAN
 
@@ -126,7 +123,6 @@ All complex tasks follow the RIPER phases:
    - Provide clear context to each agent
    - Use background execution for independent tasks
    - Monitor progress
-   - **For file tasks**: Use Return-and-Apply pattern (see below)
 
 2. **Communication Protocol**
 
@@ -137,40 +133,7 @@ All complex tasks follow the RIPER phases:
    Quality Criteria: [How to verify success]
    Run Mode: [Background/Foreground]
    Dependencies: [What this task depends on]
-   File Output Mode: [Direct (read-only) / Return-and-Apply (write)]
    ```
-
-3. **File Modification Tasks** (Return-and-Apply Pattern)
-
-   Due to Claude Code bug [#4462](https://github.com/anthropics/claude-code/issues/4462), subagent file operations don't persist. For tasks requiring file changes:
-
-   **Prompt Template:**
-
-   ```
-   [Task description]
-
-   IMPORTANT: Due to bug #4462, return file changes instead of writing directly.
-   Format your output as:
-
-   ## Changes to Apply
-
-   ### Edit: /absolute/path/to/file.ext
-   **Replace:**
-   [exact text to find]
-   **With:**
-   [replacement text]
-
-   For new files, use "Create:" instead of "Edit:" and provide full content.
-   Do NOT use Write/Edit/Bash for file modifications.
-   ```
-
-   **After receiving output:**
-   - Parse returned edits (old_string → new_string format)
-   - Apply using Edit tool (main thread) - more efficient than Write
-   - Ensure old_string is unique in file (include surrounding context if needed)
-   - For new files, use Write tool
-   - Verify changes persisted
-   - Run validation (lint, typecheck, tests)
 
 ## Phase 5: REVIEW
 
@@ -199,9 +162,9 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
    - If issues found, return to EXECUTE phase
 
 4. **Update Knowledge Graph** (Agentic Context Engineering)
-   - Store important decisions: `mcp__memory__aim_create_entities`
-   - Add learnings: `mcp__memory__aim_add_observations`
-   - Link related entities: `mcp__memory__aim_create_relations`
+   - Store important decisions: `mcp__memory__aim_memory_store`
+   - Add learnings: `mcp__memory__aim_memory_add_facts`
+   - Link related entities: `mcp__memory__aim_memory_link`
 
 5. **Report Results**
 
@@ -232,6 +195,36 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
 | code-reviewer        | Code review, quality                | review, pr, quality, lint                       |
 | test-engineer        | Testing, Vitest, Playwright         | test, vitest, playwright, coverage              |
 | home-assistant-dev   | Home Assistant, automations         | home-assistant, automation, dashboard, lovelace |
+
+# Model Tiering Strategy
+
+Select the appropriate model tier based on task complexity to optimize cost and quality:
+
+| Model   | Phase/Task                              | Rationale                                  |
+| ------- | --------------------------------------- | ------------------------------------------ |
+| `haiku` | RESEARCH: File enumeration, searches    | Fast exploration, low cost                 |
+| `haiku` | Documentation generation                | Straightforward content creation           |
+| `sonnet`| PLAN: Task breakdown, dependency mapping| Moderate complexity, good balance          |
+| `sonnet`| EXECUTE: Most implementation tasks      | Code changes, bug fixes                    |
+| `opus`  | INNOVATE: Architecture decisions        | Deep analysis required                     |
+| `opus`  | REVIEW: Quality-critical assessment     | Thorough verification                      |
+| `opus`  | Security and code review                | High-stakes analysis                       |
+
+**Phase-Based Tiering:**
+
+```
+RESEARCH phase  → haiku (exploration) or sonnet (analysis)
+INNOVATE phase  → sonnet or opus (for architecture)
+PLAN phase      → sonnet
+EXECUTE phase   → agent-specific (see agent model field)
+REVIEW phase    → opus (for quality-critical review)
+```
+
+**When delegating to agents:**
+
+- Agents with `model: opus` (architect, code-reviewer, security-auditor) are auto-escalated
+- Agents with `model: haiku` (documentation-expert) are cost-optimized
+- All other agents default to `sonnet`
 
 # Parallel Execution Pattern
 
@@ -274,7 +267,6 @@ TaskOutput(task.id, block: true)
 3. **Missing REVIEW**: Every task needs quality verification
 4. **Ignoring Memory**: Always check knowledge graph first
 5. **Over-Parallelization**: Respect dependencies
-6. **Direct File Writes in Subagents**: Due to bug #4462, always use Return-and-Apply pattern for file modifications
 
 # Final Report Template
 

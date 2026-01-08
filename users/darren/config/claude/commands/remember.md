@@ -2,16 +2,16 @@
 description: Manage persistent memory (knowledge graph)
 allowed-tools:
   - Bash(git:*)
-  - mcp__memory__aim_read_graph
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_open_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_create_relations
-  - mcp__memory__aim_add_observations
-  - mcp__memory__aim_delete_entities
-  - mcp__memory__aim_delete_relations
-  - mcp__memory__aim_delete_observations
-  - mcp__memory__aim_list_databases
+  - mcp__memory__aim_memory_read_all
+  - mcp__memory__aim_memory_search
+  - mcp__memory__aim_memory_get
+  - mcp__memory__aim_memory_store
+  - mcp__memory__aim_memory_link
+  - mcp__memory__aim_memory_add_facts
+  - mcp__memory__aim_memory_forget
+  - mcp__memory__aim_memory_unlink
+  - mcp__memory__aim_memory_remove_facts
+  - mcp__memory__aim_memory_list_stores
 ---
 
 # Memory Management
@@ -52,8 +52,8 @@ Memory is organized into contexts:
 ```
 
 1. Detect project name from git
-2. Load default context: `aim_read_graph()`
-3. Load project context: `aim_read_graph(context="[project]")`
+2. Load default context: `aim_memory_read_all()`
+3. Load project context: `aim_memory_read_all(context="[project]")`
 4. Display merged view with context indicators
 
 ### View Specific Context
@@ -71,7 +71,7 @@ Load only the specified context.
 /remember contexts
 ```
 
-Runs `aim_list_databases()` to show all available contexts.
+Runs `aim_memory_list_stores()` to show all available contexts.
 
 ### Search Memory
 
@@ -83,8 +83,8 @@ Runs `aim_list_databases()` to show all available contexts.
 Searches across default + project contexts:
 
 ```
-aim_search_nodes(query)  # default
-aim_search_nodes(query, context="[project]")  # project
+aim_memory_search(query)  # default
+aim_memory_search(query, context="[project]")  # project
 ```
 
 ### Add Entity
@@ -98,7 +98,7 @@ Without `--global`: adds to project context.
 With `--global`: adds to default context.
 
 ```
-aim_create_entities({
+aim_memory_store({
   context: "[project]",  # or omit for default
   entities: [{
     "name": "auth-service",
@@ -117,7 +117,7 @@ aim_create_entities({
 Searches for entity in project context first, then default:
 
 ```
-aim_add_observations({
+aim_memory_add_facts({
   context: "[where entity was found]",
   observations: [{
     "entityName": "auth-service",
@@ -135,7 +135,7 @@ aim_add_observations({
 Creates relation in same context as entities:
 
 ```
-aim_create_relations({
+aim_memory_link({
   context: "[project]",
   relations: [{
     "from": "auth-service",

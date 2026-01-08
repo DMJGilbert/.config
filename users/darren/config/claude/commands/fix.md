@@ -11,7 +11,7 @@ allowed-tools:
   - Grep
   - Task
   - mcp__sequential-thinking__sequentialthinking
-  - mcp__memory__search_nodes
+  - mcp__memory__aim_memory_search
 ---
 
 # Fix Problem
@@ -63,7 +63,7 @@ This command follows the RIPER workflow phases:
 
 4. **Gather Context**
    - Search codebase for related files (`Grep`, `Glob`)
-   - Check knowledge graph: `mcp__memory__search_nodes`
+   - Check knowledge graph: `mcp__memory__aim_memory_search`
    - Read relevant files to understand current implementation
    - Identify affected components and dependencies
 
@@ -177,6 +177,17 @@ This command follows the RIPER workflow phases:
 - If problem is unclear: Ask clarifying questions before proceeding
 - If fix requires breaking changes: Warn user and get confirmation
 - If multiple solutions exist: Present options and let user choose
+
+## When 2+ Fix Attempts Fail
+
+**Trigger ultrathink mode** for deeper analysis:
+
+```
+ultrathink: What are all the possible root causes?
+What assumptions am I making? What haven't I checked yet?
+```
+
+See `skills/ultrathink-trigger/SKILL.md` for complexity indicators.
 
 ## When 3+ Fix Attempts Fail
 

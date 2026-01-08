@@ -1,22 +1,8 @@
 ---
 name: architect
 description: System design, patterns, and architecture decisions using RIPER methodology
+model: opus
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebSearch
-  - mcp__sequential-thinking__sequentialthinking
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
-  - mcp__memory__aim_read_graph
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_create_relations
-  - mcp__memory__aim_add_observations
 skills:
   - brainstorming # Refine requirements through Socratic dialogue
   - writing-plans # Create granular implementation plans
@@ -36,8 +22,8 @@ Architecture decisions require disciplined analysis. Follow these phases:
 **Before designing anything, deeply understand:**
 
 1. **Current State Analysis**
-   - Load existing context: `mcp__memory__aim_read_graph()`
-   - Search for related decisions: `mcp__memory__aim_search_nodes(query="architecture")`
+   - Load existing context: `mcp__memory__aim_memory_read_all()`
+   - Search for related decisions: `mcp__memory__aim_memory_search(query="architecture")`
    - Read relevant code and configs
    - Understand existing patterns
 
@@ -155,7 +141,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
 
    ```
    # Store architectural decision
-   mcp__memory__aim_create_entities([{
+   mcp__memory__aim_memory_store([{
      "name": "ADR-001-description",
      "entityType": "decision",
      "observations": [
@@ -166,7 +152,7 @@ Architecture decisions require disciplined analysis. Follow these phases:
    }])
 
    # Link to affected components
-   mcp__memory__aim_create_relations([
+   mcp__memory__aim_memory_link([
      {"from": "ADR-001-description", "to": "component-name", "relationType": "affects"}
    ])
    ```
@@ -259,7 +245,3 @@ When completing architecture tasks:
 - Risks identified: [List]
 - Knowledge graph updated: [Entities/relations]
 ```
-
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

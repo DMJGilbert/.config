@@ -8,11 +8,11 @@ allowed-tools:
   - Grep
   - Glob
   - Task
-  - mcp__memory__aim_read_graph
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_create_relations
-  - mcp__memory__aim_add_observations
+  - mcp__memory__aim_memory_read_all
+  - mcp__memory__aim_memory_search
+  - mcp__memory__aim_memory_store
+  - mcp__memory__aim_memory_link
+  - mcp__memory__aim_memory_add_facts
 ---
 
 # Context Prime
@@ -44,13 +44,13 @@ PROJECT=$(basename "$PWD")
 **Load default context** (personal conventions, global patterns):
 
 ```
-aim_read_graph()  # No context = default
+aim_memory_read_all()  # No context = default
 ```
 
 **Load project context** (project-specific knowledge):
 
 ```
-aim_read_graph(context="[PROJECT_NAME]")
+aim_memory_read_all(context="[PROJECT_NAME]")
 ```
 
 **Merge behavior:**
@@ -122,7 +122,7 @@ After gathering context, store in **project context** (not default):
 
 ```
 # Create project entity in PROJECT context
-aim_create_entities({
+aim_memory_store({
   context: "[PROJECT_NAME]",
   entities: [{
     "name": "[PROJECT_NAME]",
@@ -137,7 +137,7 @@ aim_create_entities({
 })
 
 # Create entities for key directories/modules
-aim_create_entities({
+aim_memory_store({
   context: "[PROJECT_NAME]",
   entities: [
     {"name": "src", "entityType": "directory", "observations": ["Source code directory", "Contains [description]"]},
@@ -146,7 +146,7 @@ aim_create_entities({
 })
 
 # Create relations in project context
-aim_create_relations({
+aim_memory_link({
   context: "[PROJECT_NAME]",
   relations: [
     {"from": "src", "to": "[PROJECT_NAME]", "relationType": "part_of"},

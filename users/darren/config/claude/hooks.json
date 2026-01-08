@@ -26,6 +26,28 @@
       "event": "PostToolUse",
       "matcher": {
         "tool": "Write",
+        "inputContains": ".nix"
+      },
+      "action": {
+        "type": "command",
+        "command": "nix-instantiate --parse \"$CC_TOOL_INPUT_FILE_PATH\" >/dev/null 2>&1 || echo '⚠️ Nix syntax error in '\"$CC_TOOL_INPUT_FILE_PATH\""
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".nix"
+      },
+      "action": {
+        "type": "command",
+        "command": "nix-instantiate --parse \"$CC_TOOL_INPUT_FILE_PATH\" >/dev/null 2>&1 || echo '⚠️ Nix syntax error in '\"$CC_TOOL_INPUT_FILE_PATH\""
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
         "inputContains": ".lua"
       },
       "action": {
@@ -119,6 +141,160 @@
       "action": {
         "type": "systemMessage",
         "message": "Tip: Consider using frontend-developer agent for React/TSX files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".jsx"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using frontend-developer agent for React/JSX files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".css"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using ui-ux-designer agent for CSS styling files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".scss"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using ui-ux-designer agent for SCSS styling files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "tailwind.config"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using ui-ux-designer agent for Tailwind configuration"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "Dockerfile"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using backend-developer agent for Docker configurations"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "docker-compose"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using backend-developer agent for Docker Compose files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "README.md"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using documentation-expert agent for README files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "docs/"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using documentation-expert agent for documentation files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": ".env"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using security-auditor agent for environment/secrets files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "package.json"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using frontend-developer agent for package.json configuration"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "Cargo.toml"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using rust-developer agent for Cargo configuration"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "pubspec.yaml"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using dart-developer agent for pubspec configuration"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "flake.lock"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using nix-specialist agent for Nix flake lock files"
+      }
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool": "Read",
+        "inputContains": "migration"
+      },
+      "action": {
+        "type": "systemMessage",
+        "message": "Tip: Consider using database-specialist agent for database migrations"
       }
     },
     {
@@ -236,7 +412,7 @@
       "matcher": {},
       "action": {
         "type": "command",
-        "command": "printf '\\n📊 Session ended. Run statix check . && deadnix . to lint Nix files.\\n'"
+        "command": "~/.claude/scripts/stop-hook.sh"
       }
     }
   ]

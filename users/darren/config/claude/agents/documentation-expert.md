@@ -1,18 +1,10 @@
 ---
 name: documentation-expert
 description: Technical writing and API documentation specialist
+model: haiku
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - WebFetch
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__obsidian__*
+skills:
+  - brainstorming
 ---
 
 # Role Definition
@@ -143,7 +135,3 @@ Documentation Type: [API/Code/Project/Architecture]
 Coverage: [What is documented]
 Gaps Identified: [What still needs documentation]
 ```
-
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

@@ -39,5 +39,11 @@ lib.mkIf pkgs.stdenv.isDarwin {
       source = ./config/claude/skills;
       recursive = true;
     };
+
+    # Scripts (hooks and automation)
+    ".claude/scripts" = {
+      source = ./config/claude/scripts;
+      recursive = true;
+    };
   };
 }

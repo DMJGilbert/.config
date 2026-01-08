@@ -1,18 +1,10 @@
 ---
 name: security-auditor
 description: OWASP, vulnerability assessment, and secure coding specialist
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
-  - WebSearch
-  - SlashCommand
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_add_observations
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
+model: opus
+permissionMode: plan
+skills:
+  - systematic-debugging
 ---
 
 # Role Definition

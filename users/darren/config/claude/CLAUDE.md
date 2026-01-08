@@ -218,6 +218,13 @@ Based on [Verbalized Sampling](https://arxiv.org/abs/2510.01171) - achieves **2-
 
 **Command**: `/brainstorm [topic]`
 
+**Flags**:
+
+- `--deep` - Force ultrathinking for thorough analysis
+- `--quick` - Suppress auto-detect, fast brainstorm only
+
+**Auto-Ultrathink**: Complex topics (architecture, trade-offs, security, multi-domain) auto-trigger ultrathinking for EVALUATE and SYNTHESIZE phases.
+
 **Perspectives Explored**:
 
 | Perspective   | Question                                   |
@@ -238,13 +245,13 @@ Based on [Agentic Context Engineering](https://arxiv.org/abs/2510.04618) - **10.
 
 ```
 # Store learnings after significant work
-mcp__memory__aim_add_observations([{
+mcp__memory__aim_memory_add_facts([{
   entityName: "conventions",
   contents: ["Learned: [insight from this session]"]
 }])
 
 # Create new entities for decisions
-mcp__memory__aim_create_entities([{
+mcp__memory__aim_memory_store([{
   name: "decision_name",
   entityType: "decision",
   observations: ["Context", "Choice made", "Rationale"]
@@ -381,11 +388,6 @@ Agents are defined in `.claude/agents/*.md` files with YAML frontmatter:
 name: agent-name
 description: What this agent does
 permissionMode: acceptEdits # Optional: controls file edit permissions
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
 skills:
   - test-driven-development
 ---
@@ -398,10 +400,11 @@ skills:
 | ---------------- | -------- | ---------------------------------------------------------------------- |
 | `name`           | Yes      | Unique identifier (lowercase, hyphens)                                 |
 | `description`    | Yes      | Natural language description of agent's purpose                        |
-| `tools`          | No       | List of tools agent can use. If omitted, inherits all from main thread |
 | `permissionMode` | No       | Permission handling for subagent context                               |
 | `skills`         | No       | List of skills to auto-load                                            |
 | `model`          | No       | Model to use (`sonnet`, `opus`, `haiku`, or `inherit`)                 |
+
+> **Note**: Do NOT include a `tools:` field in agent frontmatter. Explicit tool lists cause sandboxed execution where file operations don't persist. Omit the field to inherit all tools from the main thread.
 
 #### Permission Modes
 
@@ -412,28 +415,35 @@ skills:
 | `plan`              | Read-only, cannot modify files           | Analysis/review agents   |
 | `bypassPermissions` | Skips all prompts                        | Trusted automation only  |
 
-**Note**: Agents with `Write`, `Edit`, or `Bash` tools should use `permissionMode: acceptEdits` to allow file modifications in subagent context. Without this, edits may not persist due to context isolation.
+**Note**: Agents that modify files should use `permissionMode: acceptEdits` to allow file modifications in subagent context.
 
-#### Known Limitation: Subagent File Persistence
+#### Model Strategy
 
-> **WORKAROUND REQUIRED** - Track [GitHub #4462](https://github.com/anthropics/claude-code/issues/4462) for fix status.
+Use different models based on task complexity to optimize cost and quality:
 
-Due to a Claude Code bug, **subagent file operations don't persist** to the filesystem. Subagents report success, but files aren't created/modified.
+| Model   | Use Case                                | Agents                                     |
+| ------- | --------------------------------------- | ------------------------------------------ |
+| `haiku` | Fast exploration, simple lookups        | documentation-expert, Explore agent        |
+| `sonnet`| Implementation, moderate complexity     | Most agents (default)                      |
+| `opus`  | Architecture, security, deep analysis   | code-reviewer, security-auditor, architect |
 
-**Workaround - Return-and-Apply Pattern:**
+**Guidelines**:
 
-1. When delegating file tasks, instruct subagents to **return edits** instead of writing directly
-2. Subagent analyzes and returns edits (old_string → new_string format)
-3. Main thread applies changes using Edit tool (more efficient than whole files)
+- **haiku**: File enumeration, simple searches, doc generation, quick lookups
+- **sonnet**: Code implementation, bug fixes, moderate analysis (default for most tasks)
+- **opus**: Security audits, architecture decisions, complex debugging, code reviews
 
-**Example prompt addition for file tasks:**
+**Orchestrator Tiering**:
+
+The orchestrator automatically selects model tier based on task classification:
 
 ```
-Due to bug #4462, return edits instead of writing directly.
-Format: "Replace: [old text]" → "With: [new text]"
+RESEARCH phase  → haiku (exploration) or sonnet (analysis)
+INNOVATE phase  → sonnet or opus (for architecture)
+PLAN phase      → sonnet
+EXECUTE phase   → agent-specific (see agent model field)
+REVIEW phase    → opus (for quality-critical review)
 ```
-
-**Sunset**: Remove this workaround when [issue #4462](https://github.com/anthropics/claude-code/issues/4462) is fixed.
 
 ### MCP Integration
 
@@ -446,8 +456,8 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 | MCP Server              | Purpose                    | Key Tools                                                         |
 | ----------------------- | -------------------------- | ----------------------------------------------------------------- |
-| **memory**              | Persistent knowledge graph | `aim_create_entities`, `aim_search_nodes`, `aim_read_graph`       |
-| **context7**            | Library documentation      | `resolve-library-id`, `get-library-docs`                          |
+| **memory**              | Persistent knowledge graph | `aim_memory_store`, `aim_memory_search`, `aim_memory_read_all`    |
+| **context7**            | Library documentation      | `resolve-library-id`, `query-docs`                                |
 | **sequential-thinking** | Complex reasoning          | `sequentialthinking` for multi-step analysis                      |
 | **magic-ui**            | UI components              | Component implementations, animations, effects                    |
 | **puppeteer**           | Browser automation         | Screenshots, navigation, form filling                             |
@@ -475,14 +485,14 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 ```
 # Knowledge Graph Memory
-mcp__memory__aim_read_graph()                       # Load all stored knowledge
-mcp__memory__aim_search_nodes("authentication")     # Search for relevant context
-mcp__memory__aim_create_entities([{name, entityType, observations}])
-mcp__memory__aim_add_observations([{entityName, contents}])
+mcp__memory__aim_memory_read_all()                  # Load all stored knowledge
+mcp__memory__aim_memory_search("authentication")   # Search for relevant context
+mcp__memory__aim_memory_store([{name, entityType, observations}])
+mcp__memory__aim_memory_add_facts([{entityName, contents}])
 
 # Fetch library documentation
 mcp__context7__resolve-library-id("react")
-mcp__context7__get-library-docs("/vercel/next.js", topic="routing")
+mcp__context7__query-docs("/vercel/next.js", query="routing")
 
 # Get PR context before review (via gh CLI)
 gh pr view 123 --json title,body,state,files,comments
@@ -496,9 +506,9 @@ mcp__hass-mcp__list_entities(domain="light")
 mcp__hass-mcp__entity_action(entity_id="light.living_room", action="on")
 
 # Obsidian vault operations
-mcp__obsidian__search("authentication")              # Search vault notes
-mcp__obsidian__read_file("claude/specs/auth-spec.md") # Read a note
-mcp__obsidian__create_note("claude/notes/...", content) # Create note
+mcp__obsidian__obsidian_simple_search("authentication")    # Search vault notes
+mcp__obsidian__obsidian_get_file_contents("claude/specs/auth-spec.md") # Read a note
+mcp__obsidian__obsidian_append_content("claude/notes/...", content)    # Append to note
 ```
 
 ### Persistent Memory
@@ -556,6 +566,36 @@ Stored globally at `~/.local/share/claude-memory/`:
 
 Available across all projects via `~/.mcp.json`.
 
+#### Context Phase Management
+
+Manage context efficiently across RIPER phases to prevent token bloat:
+
+| Phase     | Context Strategy                                           |
+| --------- | ---------------------------------------------------------- |
+| RESEARCH  | Load minimal context, expand as needed                     |
+| INNOVATE  | Summarize research findings, focus on options              |
+| PLAN      | Condense to actionable items, drop exploration artifacts   |
+| EXECUTE   | Pass only relevant context to agents                       |
+| REVIEW    | Summarize outcomes, store learnings, drop implementation   |
+
+**Best Practices:**
+
+1. **Start lean**: Use `/prime fast` for quick context load
+2. **Expand selectively**: Read files only when directly relevant
+3. **Summarize early**: After RESEARCH, summarize findings before INNOVATE
+4. **Delegate context**: Pass only essential context to subagents
+5. **Prune artifacts**: Don't carry exploration code into EXECUTE
+6. **Store learnings**: After REVIEW, persist insights to memory graph
+
+**Context Signals:**
+
+```
+"Context is growing large" → Summarize before continuing
+"Multiple agents involved"  → Create focused prompts per agent
+"Repeated file reads"       → Summarize once, reference summary
+"Session > 30 min"          → Consider /prime refresh
+```
+
 ### Obsidian Vault Integration
 
 Claude auto-saves generated documentation to the Obsidian vault.
@@ -611,6 +651,19 @@ vault/
 
 Run independent agent tasks in parallel by calling multiple Task tools in a single message. Use `run_in_background: true` sparingly.
 
+#### Background Bash Commands
+
+Press **Ctrl+B** to move a running Bash command to the background. This is useful for:
+
+- Long-running builds (webpack, make, cargo build)
+- Package installations (npm install, yarn)
+- Development servers (npm run dev)
+- Test suites (pytest, jest)
+
+The command runs asynchronously and output can be retrieved later. Use `/tasks` to list background tasks.
+
+**Note**: In tmux, press Ctrl+B twice (tmux uses it as prefix key).
+
 #### When to Use Background Tasks
 
 **Default**: Use foreground tasks (no `run_in_background`). Multiple Task calls in one message run in parallel automatically.
@@ -660,6 +713,62 @@ User: "Add a new user profile page with authentication"
 5. Delegates to code-reviewer → Reviews final implementation
 ```
 
+### Agent Pipeline Patterns
+
+Common multi-agent patterns for complex tasks:
+
+#### Full-Stack Feature Pipeline
+
+```
+architect → database-specialist → backend-developer → frontend-developer → test-engineer → code-reviewer
+```
+
+Use when: Building new features that span the entire stack.
+
+#### Security Review Pipeline
+
+```
+security-auditor → code-reviewer → documentation-expert
+```
+
+Use when: Pre-release security validation with documentation.
+
+#### Refactoring Pipeline
+
+```
+code-reviewer (analysis) → architect (design) → [domain-agent] (implement) → test-engineer → code-reviewer (verify)
+```
+
+Use when: Large-scale refactoring requiring design review.
+
+#### Documentation Pipeline
+
+```
+[domain-agent] (implement) → documentation-expert → code-reviewer
+```
+
+Use when: New features that need documentation.
+
+#### Parallel Independence Pattern
+
+```
+┌─ frontend-developer ─┐
+│                      │
+Task → database-specialist → code-reviewer
+│                      │
+└─ backend-developer ──┘
+```
+
+Use when: Frontend and backend can be developed independently after schema.
+
+#### Review Gate Pattern
+
+```
+agent1 → code-reviewer → agent2 → code-reviewer → agent3 → code-reviewer
+```
+
+Use when: High-stakes changes requiring verification between steps.
+
 ## Slash Commands Reference
 
 All commands available as `/command` in Claude Code or `cc-command` from terminal.
@@ -696,7 +805,7 @@ All commands available as `/command` in Claude Code or `cc-command` from termina
 | `/fix [problem or issue#]` | `cc-fix`        | Fix a problem using RIPER workflow                 |
 | `/why [problem]`           | `cc-why`        | Five Whys root cause analysis                      |
 | `/reflect [topic]`         | `cc-reflect`    | Self-refinement of previous response               |
-| `/brainstorm [topic]`      | `cc-brainstorm` | Generate diverse ideas using multiple perspectives |
+| `/brainstorm [topic] [--deep\|--quick]` | `cc-brainstorm` | Generate diverse ideas (auto-ultrathink on complex topics) |
 
 ### Documentation & Explanation
 
@@ -713,6 +822,36 @@ All commands available as `/command` in Claude Code or `cc-command` from termina
 | Command               | Shell Alias      | Description                                    |
 | --------------------- | ---------------- | ---------------------------------------------- |
 | `/orchestrate [task]` | `cc-orchestrate` | Analyze task and delegate to specialist agents |
+
+### Autonomous Iteration (Ralph)
+
+| Command               | Shell Alias        | Description                               |
+| --------------------- | ------------------ | ----------------------------------------- |
+| `/ralph-loop [task]`  | `cc-ralph-loop`    | Start autonomous iteration loop           |
+| `/ralph-status`       | `cc-ralph-status`  | Check current iteration and loop state    |
+| `/cancel-ralph`       | `cc-cancel-ralph`  | Stop active loop immediately              |
+
+### Session Analysis
+
+| Command                 | Shell Alias        | Description                               |
+| ----------------------- | ------------------ | ----------------------------------------- |
+| `/retrospective [days]` | `cc-retrospective` | Analyze session patterns and insights     |
+
+**Ralph Loop** enables autonomous iteration for batch tasks:
+
+```bash
+# Start loop with default 10 iterations
+/ralph-loop "refactor auth module"
+
+# Limit iterations
+/ralph-loop "fix all linting errors" --max-iterations 5
+
+# Compose with other commands
+/ralph-loop "/fix issue #42"
+```
+
+**Cost Warning**: Ralph loops consume significant tokens. A 10-iteration loop
+on a large codebase can cost $20-50+ in API credits.
 
 ## Shell Integration
 

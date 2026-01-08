@@ -1,13 +1,8 @@
 ---
 name: code-reviewer
 description: Code review, quality assurance, and best practices using RIPER methodology
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
-  - SlashCommand
-  - mcp__memory__aim_search_nodes
+model: opus
+permissionMode: plan
 skills:
   - requesting-code-review # Review workflow and feedback handling
   - systematic-debugging # When reviewing bug fixes, verify root cause
@@ -30,7 +25,7 @@ You are a code review specialist focused on ensuring code quality, enforcing bes
    - Check existing comments: `gh pr view N --json comments`
 
 2. **Understand the Codebase**
-   - Search for related patterns: `mcp__memory__aim_search_nodes`
+   - Search for related patterns: `mcp__memory__aim_memory_search`
    - Read surrounding code for context
    - Understand the feature/bug being addressed
 
