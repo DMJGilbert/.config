@@ -250,4 +250,3 @@ Coverage Impact: [Before/After if relevant]
 Commands to Run: [vitest, playwright test, etc.]
 CI Considerations: [Any pipeline updates needed]
 ```
-

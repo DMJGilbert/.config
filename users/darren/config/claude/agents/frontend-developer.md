@@ -74,4 +74,3 @@ Dependencies Added: [New packages if any]
 Testing Notes: [How to verify changes]
 Accessibility Checklist: [WCAG items addressed]
 ```
-

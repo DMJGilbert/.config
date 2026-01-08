@@ -219,6 +219,7 @@ Based on [Verbalized Sampling](https://arxiv.org/abs/2510.01171) - achieves **2-
 **Command**: `/brainstorm [topic]`
 
 **Flags**:
+
 - `--deep` - Force ultrathinking for thorough analysis
 - `--quick` - Suppress auto-detect, fast brainstorm only
 
@@ -244,13 +245,13 @@ Based on [Agentic Context Engineering](https://arxiv.org/abs/2510.04618) - **10.
 
 ```
 # Store learnings after significant work
-mcp__memory__aim_add_observations([{
+mcp__memory__aim_memory_add_facts([{
   entityName: "conventions",
   contents: ["Learned: [insight from this session]"]
 }])
 
 # Create new entities for decisions
-mcp__memory__aim_create_entities([{
+mcp__memory__aim_memory_store([{
   name: "decision_name",
   entityType: "decision",
   observations: ["Context", "Choice made", "Rationale"]
@@ -455,8 +456,8 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 | MCP Server              | Purpose                    | Key Tools                                                         |
 | ----------------------- | -------------------------- | ----------------------------------------------------------------- |
-| **memory**              | Persistent knowledge graph | `aim_create_entities`, `aim_search_nodes`, `aim_read_graph`       |
-| **context7**            | Library documentation      | `resolve-library-id`, `get-library-docs`                          |
+| **memory**              | Persistent knowledge graph | `aim_memory_store`, `aim_memory_search`, `aim_memory_read_all`    |
+| **context7**            | Library documentation      | `resolve-library-id`, `query-docs`                                |
 | **sequential-thinking** | Complex reasoning          | `sequentialthinking` for multi-step analysis                      |
 | **magic-ui**            | UI components              | Component implementations, animations, effects                    |
 | **puppeteer**           | Browser automation         | Screenshots, navigation, form filling                             |
@@ -484,14 +485,14 @@ Use MCP servers to extend Claude's capabilities with external tools and data sou
 
 ```
 # Knowledge Graph Memory
-mcp__memory__aim_read_graph()                       # Load all stored knowledge
-mcp__memory__aim_search_nodes("authentication")     # Search for relevant context
-mcp__memory__aim_create_entities([{name, entityType, observations}])
-mcp__memory__aim_add_observations([{entityName, contents}])
+mcp__memory__aim_memory_read_all()                  # Load all stored knowledge
+mcp__memory__aim_memory_search("authentication")   # Search for relevant context
+mcp__memory__aim_memory_store([{name, entityType, observations}])
+mcp__memory__aim_memory_add_facts([{entityName, contents}])
 
 # Fetch library documentation
 mcp__context7__resolve-library-id("react")
-mcp__context7__get-library-docs("/vercel/next.js", topic="routing")
+mcp__context7__query-docs("/vercel/next.js", query="routing")
 
 # Get PR context before review (via gh CLI)
 gh pr view 123 --json title,body,state,files,comments
@@ -505,9 +506,9 @@ mcp__hass-mcp__list_entities(domain="light")
 mcp__hass-mcp__entity_action(entity_id="light.living_room", action="on")
 
 # Obsidian vault operations
-mcp__obsidian__search("authentication")              # Search vault notes
-mcp__obsidian__read_file("claude/specs/auth-spec.md") # Read a note
-mcp__obsidian__create_note("claude/notes/...", content) # Create note
+mcp__obsidian__obsidian_simple_search("authentication")    # Search vault notes
+mcp__obsidian__obsidian_get_file_contents("claude/specs/auth-spec.md") # Read a note
+mcp__obsidian__obsidian_append_content("claude/notes/...", content)    # Append to note
 ```
 
 ### Persistent Memory

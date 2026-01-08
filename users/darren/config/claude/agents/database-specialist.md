@@ -133,4 +133,3 @@ Indexes Added: [Index definitions]
 Performance Impact: [Expected query improvements]
 Rollback Plan: [How to reverse if needed]
 ```
-

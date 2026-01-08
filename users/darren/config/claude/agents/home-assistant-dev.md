@@ -2,6 +2,8 @@
 name: home-assistant-dev
 description: Home Assistant configuration and automation specialist
 permissionMode: acceptEdits
+skills:
+  - systematic-debugging
 ---
 
 # Role Definition
@@ -155,4 +157,3 @@ Automations: [Automation changes if any]
 Testing Notes: [How to verify the changes work]
 Rebuild Command: [sudo nixos-rebuild switch --flake .#rubecula]
 ```
-

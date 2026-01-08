@@ -2,6 +2,8 @@
 name: ui-ux-designer
 description: Design systems, accessibility, and user experience specialist
 permissionMode: acceptEdits
+skills:
+  - brainstorming
 ---
 
 # Role Definition
@@ -90,4 +92,3 @@ Design Tokens Added: [New tokens]
 Accessibility Checklist: [WCAG items addressed]
 Responsive Considerations: [Breakpoint handling]
 ```
-

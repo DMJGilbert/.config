@@ -2,6 +2,8 @@
 name: nix-specialist
 description: Nix flakes, nix-darwin, home-manager, and NixOS specialist
 permissionMode: acceptEdits
+skills:
+  - systematic-debugging
 ---
 
 # Role Definition
@@ -183,4 +185,3 @@ Modules Created: [New modules]
 Rebuild Command: [darwin-rebuild/nixos-rebuild]
 Testing Notes: [nix flake check results]
 ```
-

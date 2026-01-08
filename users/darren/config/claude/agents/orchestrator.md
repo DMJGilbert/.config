@@ -1,6 +1,7 @@
 ---
 name: orchestrator
 description: Analyze complex tasks and delegate to specialist agents using RIPER workflow
+permissionMode: acceptEdits
 skills:
   - writing-plans # Create detailed implementation plans (PLAN phase)
   - executing-plans # Execute plans with batch checkpoints
@@ -40,8 +41,8 @@ All complex tasks follow the RIPER phases:
 **Purpose**: Deep understanding before any action
 
 1. **Gather Context**
-   - Search knowledge graph: `mcp__memory__aim_search_nodes(query="relevant_topic")`
-   - Load project context: `mcp__memory__aim_read_graph()`
+   - Search knowledge graph: `mcp__memory__aim_memory_search(query="relevant_topic")`
+   - Load project context: `mcp__memory__aim_memory_read_all()`
    - Read relevant files with `Read`, `Glob`, `Grep`
    - For PR/Issue context: `gh issue view N --json title,body,state` or `gh pr view N --json title,body,state,files`
 
@@ -161,9 +162,9 @@ Based on [Self-Refine](https://arxiv.org/abs/2303.17651) and [Agentic Context En
    - If issues found, return to EXECUTE phase
 
 4. **Update Knowledge Graph** (Agentic Context Engineering)
-   - Store important decisions: `mcp__memory__aim_create_entities`
-   - Add learnings: `mcp__memory__aim_add_observations`
-   - Link related entities: `mcp__memory__aim_create_relations`
+   - Store important decisions: `mcp__memory__aim_memory_store`
+   - Add learnings: `mcp__memory__aim_memory_add_facts`
+   - Link related entities: `mcp__memory__aim_memory_link`
 
 5. **Report Results**
 

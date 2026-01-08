@@ -11,7 +11,7 @@ allowed-tools:
   - Grep
   - Task
   - mcp__sequential-thinking__sequentialthinking
-  - mcp__memory__search_nodes
+  - mcp__memory__aim_memory_search
 ---
 
 # Fix Problem
@@ -63,7 +63,7 @@ This command follows the RIPER workflow phases:
 
 4. **Gather Context**
    - Search codebase for related files (`Grep`, `Glob`)
-   - Check knowledge graph: `mcp__memory__search_nodes`
+   - Check knowledge graph: `mcp__memory__aim_memory_search`
    - Read relevant files to understand current implementation
    - Identify affected components and dependencies
 

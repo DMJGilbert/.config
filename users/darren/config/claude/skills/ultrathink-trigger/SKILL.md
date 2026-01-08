@@ -55,6 +55,7 @@ edge cases, maintainability, and long-term implications.
 ```
 
 Flags:
+
 - `--deep` - Force ultrathink regardless of complexity
 - `--quick` - Suppress auto-detect, stay fast
 

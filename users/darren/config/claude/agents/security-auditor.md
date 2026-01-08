@@ -2,6 +2,9 @@
 name: security-auditor
 description: OWASP, vulnerability assessment, and secure coding specialist
 model: opus
+permissionMode: plan
+skills:
+  - systematic-debugging
 ---
 
 # Role Definition

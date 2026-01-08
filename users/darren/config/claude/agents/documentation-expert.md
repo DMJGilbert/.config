@@ -3,6 +3,8 @@ name: documentation-expert
 description: Technical writing and API documentation specialist
 model: haiku
 permissionMode: acceptEdits
+skills:
+  - brainstorming
 ---
 
 # Role Definition
@@ -133,4 +135,3 @@ Documentation Type: [API/Code/Project/Architecture]
 Coverage: [What is documented]
 Gaps Identified: [What still needs documentation]
 ```
-
