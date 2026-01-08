@@ -1,13 +1,7 @@
 ---
 name: code-reviewer
 description: Code review, quality assurance, and best practices using RIPER methodology
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
-  - SlashCommand
-  - mcp__memory__aim_search_nodes
+model: opus
 skills:
   - requesting-code-review # Review workflow and feedback handling
   - systematic-debugging # When reviewing bug fixes, verify root cause

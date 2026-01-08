@@ -178,6 +178,17 @@ This command follows the RIPER workflow phases:
 - If fix requires breaking changes: Warn user and get confirmation
 - If multiple solutions exist: Present options and let user choose
 
+## When 2+ Fix Attempts Fail
+
+**Trigger ultrathink mode** for deeper analysis:
+
+```
+ultrathink: What are all the possible root causes?
+What assumptions am I making? What haven't I checked yet?
+```
+
+See `skills/ultrathink-trigger/SKILL.md` for complexity indicators.
+
 ## When 3+ Fix Attempts Fail
 
 **STOP.** This signals an architectural problem, not a fixable bug:

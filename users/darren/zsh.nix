@@ -94,6 +94,33 @@
 
       # Orchestration
       cc-orchestrate() { claude-mcp "/orchestrate $*"; }
+
+      # Autonomous iteration (Ralph)
+      cc-ralph-loop() { claude-mcp "/ralph-loop $*"; }
+      cc-ralph-status() { claude-mcp "/ralph-status $*"; }
+      cc-cancel-ralph() { claude-mcp "/cancel-ralph $*"; }
+
+      # Session retrospectives
+      cc-retrospective() { claude-mcp "/retrospective $*"; }
+
+      # Domain presets (pre-configured sessions for common workflows)
+      # Usage: ccode-nix "fix the flake" or just ccode-nix for interactive
+      # Uses --append-system-prompt to preserve Claude Code defaults while adding focus
+      ccode-nix() {
+        claude-mcp --append-system-prompt "Focus: Nix, flakes, home-manager, nix-darwin. Use nix-specialist agent for implementation. Run alejandra after edits." "$@"
+      }
+      ccode-frontend() {
+        claude-mcp --append-system-prompt "Focus: React, TypeScript, Tailwind, shadcn/ui. Use frontend-developer agent for implementation. Use ui-ux-designer for styling." "$@"
+      }
+      ccode-backend() {
+        claude-mcp --append-system-prompt "Focus: APIs, Node.js, Express, databases. Use backend-developer agent for implementation. Use database-specialist for SQL/schema work." "$@"
+      }
+      ccode-audit() {
+        claude-mcp --append-system-prompt "Focus: Code quality and security. Run /security, /audit, /review commands. Use code-reviewer and security-auditor agents." "$@"
+      }
+      ccode-ha() {
+        claude-mcp --append-system-prompt "Focus: Home Assistant automations, dashboards, integrations. Use home-assistant-dev agent. Query entities before making changes." "$@"
+      }
     '';
     shellAliases = {
       # Claude Code (using 'ccode' to avoid conflict with C compiler 'cc')

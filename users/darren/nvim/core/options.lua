@@ -84,12 +84,12 @@ vim.o.cmdheight = 0
 -- Wrap lines when moving left and right
 vim.cmd("set whichwrap+=<,>,[,],h,l")
 
--- Setup treesitter for code folding
+-- Setup treesitter for code folding (using Neovim's built-in foldexpr)
 vim.o.foldcolumn = "1"
 vim.o.foldenable = true
 vim.o.foldmethod = "expr"
-vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.foldlevel = 10 -- Start with folds open (0 = all closed)
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldlevel = 99 -- Start with all folds open
 --
 vim.cmd("set foldtext=getline(v:foldstart).'...'.trim(getline(v:foldend))")
 vim.opt.fillchars = { fold = " " }

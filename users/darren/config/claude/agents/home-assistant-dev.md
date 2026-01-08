@@ -2,28 +2,6 @@
 name: home-assistant-dev
 description: Home Assistant configuration and automation specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - mcp__hass-mcp__system_overview
-  - mcp__hass-mcp__list_entities
-  - mcp__hass-mcp__get_entity
-  - mcp__hass-mcp__search_entities_tool
-  - mcp__hass-mcp__domain_summary_tool
-  - mcp__hass-mcp__get_history
-  - mcp__hass-mcp__list_automations
-  - mcp__hass-mcp__entity_action
-  - mcp__hass-mcp__call_service_tool
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
-  - mcp__sequential-thinking__sequentialthinking
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_add_observations
 ---
 
 # Role Definition
@@ -178,6 +156,3 @@ Testing Notes: [How to verify the changes work]
 Rebuild Command: [sudo nixos-rebuild switch --flake .#rubecula]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

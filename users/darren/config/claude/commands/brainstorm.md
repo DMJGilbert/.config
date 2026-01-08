@@ -7,13 +7,55 @@ allowed-tools:
   - WebSearch
   - mcp__sequential-thinking__sequentialthinking
   - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
-  - mcp__memory__aim_search_nodes
+  - mcp__context7__query-docs
+  - mcp__memory__aim_memory_search
 ---
 
 # Brainstorm
 
 Generate diverse ideas for: $ARGUMENTS
+
+## Flags
+
+- `--deep` - Force ultrathinking for thorough analysis (overrides auto-detect)
+- `--quick` - Suppress auto-detect, use fast brainstorming only
+
+## Complexity Detection (Auto-Ultrathink)
+
+Before starting, evaluate topic complexity. **If total weight >= 5, auto-trigger ultrathink**.
+
+| Signal | Weight | Pattern Examples |
+|--------|--------|------------------|
+| Architecture decision | +4 | "architecture", "design pattern", "structure" |
+| Trade-off analysis | +3 | "vs", "or", "compare", "should I", "trade-off" |
+| Multi-domain scope | +3 | "frontend + backend", "full-stack", "end-to-end" |
+| Security implications | +3 | "auth", "security", "permissions", "secrets" |
+| Performance concerns | +2 | "performance", "scale", "optimize", "cache" |
+| Breaking changes | +3 | "migration", "breaking", "deprecate", "replace" |
+| Multi-step implementation | +2 | "workflow", "pipeline", "integration" |
+| Technology choice | +2 | "which library", "what framework", "tool selection" |
+
+### Decision Logic
+
+```
+IF --deep flag present:
+  → Use ultrathink for EVALUATE and SYNTHESIZE phases
+ELSE IF --quick flag present:
+  → Skip complexity check, use standard brainstorm
+ELSE:
+  → Calculate complexity weight from topic
+  → IF weight >= 5: auto-trigger ultrathink
+  → ELSE: standard brainstorm
+```
+
+### Ultrathink Integration
+
+When ultrathinking is triggered (auto or forced), prefix EVALUATE and SYNTHESIZE phases with:
+
+```
+ultrathink: Deeply analyze these options considering trade-offs,
+edge cases, maintainability, and long-term implications.
+```
 
 ## Verbalized Sampling Technique
 
@@ -64,20 +106,22 @@ For each promising direction:
 WebSearch(query="[approach] best practices")
 
 # Check library documentation
-mcp__context7__get-library-docs(...)
+mcp__context7__query-docs(...)
 
 # Look for patterns in codebase
-mcp__memory__aim_search_nodes(query="[related topic]")
+mcp__memory__aim_memory_search(query="[related topic]")
 ```
 
 ### Phase 3: EVALUATE - Compare Options
 
+**If ultrathink triggered**: Prefix with "ultrathink: Deeply evaluate..."
+
 Use structured comparison:
 
-| Idea | Complexity   | Risk         | Value        | Novelty      | Score |
-| ---- | ------------ | ------------ | ------------ | ------------ | ----- |
-| A    | Low/Med/High | Low/Med/High | Low/Med/High | Low/Med/High | /20   |
-| B    | ...          | ...          | ...          | ...          | /20   |
+| Idea | Complexity | Risk | Value | Novelty | Score |
+|------|------------|------|-------|---------|-------|
+| A | Low/Med/High | Low/Med/High | Low/Med/High | Low/Med/High | /20 |
+| B | ... | ... | ... | ... | /20 |
 
 Scoring:
 
@@ -122,6 +166,8 @@ For top 2-3 ideas, develop:
 
 ### Phase 5: SYNTHESIZE - Combine and Recommend
 
+**If ultrathink triggered**: Prefix with "ultrathink: Synthesize the best approach..."
+
 Often the best solution combines elements from multiple ideas:
 
 ```markdown
@@ -139,19 +185,21 @@ Often the best solution combines elements from multiple ideas:
 ```markdown
 ## Brainstorm: [Topic]
 
+**Mode**: [Standard | Ultrathink (auto-detected) | Ultrathink (--deep)]
+
 ### Problem Understanding
 
 [Restate the problem to ensure alignment]
 
 ### Perspectives Explored
 
-| Perspective   | Key Insight | Idea Generated |
-| ------------- | ----------- | -------------- |
-| Pragmatist    | [Insight]   | [Idea]         |
-| Perfectionist | [Insight]   | [Idea]         |
-| Skeptic       | [Insight]   | [Idea]         |
-| Innovator     | [Insight]   | [Idea]         |
-| User          | [Insight]   | [Idea]         |
+| Perspective | Key Insight | Idea Generated |
+|-------------|-------------|----------------|
+| Pragmatist | [Insight] | [Idea] |
+| Perfectionist | [Insight] | [Idea] |
+| Skeptic | [Insight] | [Idea] |
+| Innovator | [Insight] | [Idea] |
+| User | [Insight] | [Idea] |
 
 ### Top Ideas Detailed
 
@@ -169,13 +217,13 @@ Often the best solution combines elements from multiple ideas:
 
 ### Comparison Matrix
 
-| Criteria          | Idea 1 | Idea 2 | Idea 3 |
-| ----------------- | ------ | ------ | ------ |
-| Complexity        |        |        |        |
-| Risk              |        |        |        |
-| Value             |        |        |        |
-| Time to implement |        |        |        |
-| Maintainability   |        |        |        |
+| Criteria | Idea 1 | Idea 2 | Idea 3 |
+|----------|--------|--------|--------|
+| Complexity | | | |
+| Risk | | | |
+| Value | | | |
+| Time to implement | | | |
+| Maintainability | | | |
 
 ### Recommendation
 

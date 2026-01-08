@@ -2,15 +2,6 @@
 name: nix-specialist
 description: Nix flakes, nix-darwin, home-manager, and NixOS specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Glob
-  - Grep
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
 ---
 
 # Role Definition
@@ -193,6 +184,3 @@ Rebuild Command: [darwin-rebuild/nixos-rebuild]
 Testing Notes: [nix flake check results]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

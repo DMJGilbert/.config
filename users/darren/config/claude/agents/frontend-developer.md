@@ -2,16 +2,6 @@
 name: frontend-developer
 description: React, TypeScript, Tailwind CSS, and shadcn/ui specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Glob
-  - Grep
-  - mcp__context7__*
-  - mcp__magic-ui__*
-  - mcp__puppeteer__*
 skills:
   - test-driven-development # Write component tests before implementation
   - systematic-debugging # Debug UI issues with 4-phase methodology
@@ -85,6 +75,3 @@ Testing Notes: [How to verify changes]
 Accessibility Checklist: [WCAG items addressed]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

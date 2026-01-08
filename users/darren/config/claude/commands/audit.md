@@ -239,3 +239,38 @@ Ranked list of refactoring opportunities with effort/impact assessment:
 1. Immediate action items
 2. Short-term improvements
 3. Long-term considerations
+
+## Execution Patterns
+
+For comprehensive audits, dispatch specialist agents in parallel:
+
+### Full Codebase Audit (Parallel)
+
+Launch multiple agents in a **single message** for automatic parallel execution:
+
+```
+Task(code-reviewer, prompt="Structural audit: patterns, architecture, code smells, maintainability")
+Task(security-auditor, prompt="Security audit: vulnerabilities, injection risks, auth gaps, secrets")
+Task(test-engineer, prompt="Testability audit: coverage gaps, mock boundaries, side effect isolation")
+# Claude waits for all to complete, then merges findings
+```
+
+### Targeted Audit by Scope
+
+| Scope Type      | Primary Agent        | Secondary (Parallel)                |
+| --------------- | -------------------- | ----------------------------------- |
+| Single file     | code-reviewer        | security-auditor (if auth/data)     |
+| API endpoints   | backend-developer    | security-auditor                    |
+| UI components   | frontend-developer   | ui-ux-designer                      |
+| Database layer  | database-specialist  | security-auditor                    |
+| Full codebase   | code-reviewer        | security-auditor + test-engineer    |
+
+### Merging Parallel Results
+
+After parallel agents complete:
+
+1. Collect all specialist findings
+2. Deduplicate overlapping issues
+3. Assign unified severity (Critical > High > Medium > Low)
+4. Order by impact and effort
+5. Generate consolidated report with cross-references

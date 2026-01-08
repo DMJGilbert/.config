@@ -2,15 +2,6 @@
 name: backend-developer
 description: APIs, Node.js, Express, and server-side TypeScript specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Glob
-  - Grep
-  - mcp__context7__*
-  - mcp__sequential-thinking__sequentialthinking
 skills:
   - test-driven-development # Write API tests before implementation
   - systematic-debugging # Debug server issues with 4-phase methodology
@@ -103,6 +94,3 @@ Error Handling: [Error types handled]
 Testing Notes: [How to verify]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

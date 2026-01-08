@@ -127,3 +127,52 @@ Fix all the tests
 - Each agent maintains narrow focus
 - Minimizes cross-agent interference
 - Solves multiple problems concurrently
+
+## Background Execution
+
+For long-running tasks where you need to continue working, use `run_in_background: true`.
+
+### Pattern: Background + Foreground
+
+```
+# Long-running audit in background
+audit_task = Task(security-auditor,
+  prompt="Full security audit",
+  run_in_background: true)
+
+# Continue with implementation work
+Task(frontend-developer, prompt="Build login form")
+
+# Later, get audit results
+TaskOutput(audit_task.id, block: true)
+```
+
+### Pattern: Multiple Background Tasks
+
+```
+# Launch multiple background tasks
+task1 = Task(test-engineer, prompt="...", run_in_background: true)
+task2 = Task(code-reviewer, prompt="...", run_in_background: true)
+
+# Do other work...
+
+# Collect all results
+result1 = TaskOutput(task1.id, block: true)
+result2 = TaskOutput(task2.id, block: true)
+```
+
+### When to Use Background vs Foreground
+
+| Scenario                   | Mode                      | Why                          |
+| -------------------------- | ------------------------- | ---------------------------- |
+| Quick tasks (< 1 min)      | Foreground                | Simpler, immediate results   |
+| Long audit/analysis        | Background                | Continue working             |
+| Multiple independent tasks | Foreground (parallel)     | Auto-waits for all           |
+| Security + Implementation  | Background + Foreground   | Overlap work                 |
+
+### Important Notes
+
+- Task IDs are only valid within the same response
+- Always use `block: true` when retrieving results with TaskOutput
+- Prefer foreground parallel (single message, multiple Tasks) when possible
+- Background tasks should be collected before the response ends

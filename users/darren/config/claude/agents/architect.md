@@ -1,22 +1,8 @@
 ---
 name: architect
 description: System design, patterns, and architecture decisions using RIPER methodology
+model: opus
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebSearch
-  - mcp__sequential-thinking__sequentialthinking
-  - mcp__context7__resolve-library-id
-  - mcp__context7__get-library-docs
-  - mcp__memory__aim_read_graph
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_create_entities
-  - mcp__memory__aim_create_relations
-  - mcp__memory__aim_add_observations
 skills:
   - brainstorming # Refine requirements through Socratic dialogue
   - writing-plans # Create granular implementation plans
@@ -260,6 +246,3 @@ When completing architecture tasks:
 - Knowledge graph updated: [Entities/relations]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.

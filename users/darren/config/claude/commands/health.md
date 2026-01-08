@@ -134,3 +134,42 @@ If no argument provided, run full health check. You can focus on specific areas:
 1. [Critical] Item description
 2. [High] Item description
 3. [Medium] Item description
+
+## Execution Patterns
+
+For comprehensive health checks, dispatch specialist agents in parallel:
+
+### Full Health Check (Parallel)
+
+Launch multiple agents in a **single message** for automatic parallel execution:
+
+```
+Task(security-auditor, prompt="Security health check: scan for secrets, vulnerabilities, auth patterns")
+Task(test-engineer, prompt="Test health check: assess coverage, quality, flakiness indicators")
+Task(documentation-expert, prompt="Docs health check: README, API docs, CHANGELOG completeness")
+Task(code-reviewer, prompt="Code quality check: linting, TODOs, dead code, complexity")
+# Claude waits for all to complete, then synthesizes scorecard
+```
+
+### Focused Checks
+
+For focused areas, use appropriate specialist:
+
+| Focus Area   | Agent                | Scope                           |
+| ------------ | -------------------- | ------------------------------- |
+| dependencies | nix-specialist       | Nix flakes, lock file health    |
+| tests        | test-engineer        | Coverage, patterns, reliability |
+| docs         | documentation-expert | README, API docs, comments      |
+| git          | (direct analysis)    | Commit patterns, branches       |
+| debt         | code-reviewer        | TODOs, complexity, smells       |
+| security     | security-auditor     | Secrets, vulns, auth            |
+
+### Synthesizing Results
+
+After parallel agents complete:
+
+1. Collect all specialist findings
+2. Normalize scores to 1-10 scale
+3. Generate unified scorecard
+4. Merge action items by priority
+5. Deduplicate overlapping recommendations

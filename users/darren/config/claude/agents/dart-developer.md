@@ -2,14 +2,6 @@
 name: dart-developer
 description: Dart, Flutter, and cross-platform development specialist
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Glob
-  - Grep
-  - mcp__context7__*
 skills:
   - test-driven-development # Write widget tests before implementation
   - systematic-debugging # Debug Flutter issues with 4-phase methodology
@@ -127,6 +119,3 @@ Platform Considerations: [iOS/Android specifics]
 Testing Notes: [Tests added/modified]
 ```
 
-# Subagent File Limitation
-
-When invoked via Task tool, file operations may not persist due to [bug #4462](https://github.com/anthropics/claude-code/issues/4462). If changes aren't appearing, return edits in your response for the main thread to apply.
