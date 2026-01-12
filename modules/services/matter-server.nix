@@ -25,9 +25,32 @@ in
   }
   // lib.optionalAttrs isLinux {
     config = lib.mkIf cfg.enable {
+      # Avahi is required for mDNS discovery of Matter/Thread devices
+      services.avahi = {
+        enable = true;
+        nssmdns4 = true;
+        publish = {
+          enable = true;
+          addresses = true;
+        };
+      };
+
+      # Open mDNS port for device discovery
+      networking.firewall.allowedUDPPorts = [5353];
+
       services.matter-server = {
         enable = true;
         inherit (cfg) port;
+      };
+
+      # Auto-restart on failure and ensure Avahi starts first
+      systemd.services.matter-server = {
+        after = ["avahi-daemon.service"];
+        requires = ["avahi-daemon.service"];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = "30s";
+        };
       };
     };
   }
