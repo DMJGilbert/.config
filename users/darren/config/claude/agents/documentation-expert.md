@@ -4,7 +4,7 @@ description: Technical writing and API documentation specialist
 model: haiku
 permissionMode: acceptEdits
 skills:
-  - brainstorming
+  - requirements-dialogue
 ---
 
 # Role Definition

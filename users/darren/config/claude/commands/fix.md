@@ -1,5 +1,7 @@
 ---
 description: Fix a problem (text description or GitHub issue number)
+skills:
+  - systematic-debugging
 allowed-tools:
   - Bash(git:*)
   - Bash(gh:*)
@@ -20,124 +22,65 @@ Fix the specified problem: $ARGUMENTS
 
 **Input modes:**
 
-- **GitHub Issue**: If argument is a number (e.g., `123` or `#123`), fetch issue details as context
-- **Text Description**: If argument is text, treat it as the problem description
+- **GitHub Issue**: If argument is a number (e.g., `123` or `#123`), fetch issue details
+- **Text Description**: If argument is text, treat as problem description
 - **No argument**: Prompt user to describe the problem
 
 ## RIPER Workflow
 
-This command follows the RIPER workflow phases:
+This command follows the RIPER workflow phases, using the `systematic-debugging` skill for root cause investigation.
 
-### Phase 1: RESEARCH (Root Cause Investigation)
+### Phase 1: RESEARCH
 
-**Core Principle: ALWAYS find root cause before attempting fixes. Symptom fixes are failure.**
+**Gather context and understand the problem.**
 
-1. **Understand the Problem**
-
-   **If GitHub issue number provided:**
+1. **If GitHub issue provided:**
 
    ```bash
    gh issue view $1 --json title,body,state,labels,comments
    ```
 
-   Extract: title, description, labels, comments, expected vs actual behavior.
+2. **Apply systematic-debugging skill (4 phases):**
+   - Root Cause Investigation
+   - Pattern Analysis
+   - Hypothesis Testing
+   - Implementation approach
 
-   **If text description provided:**
-   Parse the description to understand:
-   - What is broken or needs to change?
-   - What is the expected behavior?
-   - Any error messages or symptoms?
-
-2. **Root Cause Investigation (MANDATORY)**
-   - **Read error messages thoroughly** - Don't skip warnings or stack traces
-   - **Reproduce consistently** - Verify you can trigger the issue reliably
-   - **Check recent changes** - Examine git diffs, dependencies, config changes
-   - **Trace data flow** - Backward trace from error to find where bad values originate
-   - **Add instrumentation** - In multi-component systems, add logging at boundaries
-
-3. **Pattern Analysis**
-   - Locate similar working code in the codebase
-   - Read reference implementations completely (not skimmed)
-   - List every difference between working and broken code
-   - Understand all dependencies and assumptions
-
-4. **Gather Context**
-   - Search codebase for related files (`Grep`, `Glob`)
+3. **Gather additional context:**
+   - Search codebase: `Grep`, `Glob`
    - Check knowledge graph: `mcp__memory__aim_memory_search`
-   - Read relevant files to understand current implementation
-   - Identify affected components and dependencies
+   - Read relevant files
 
-5. **Document Understanding**
-   - Summarize the problem clearly
-   - State the **root cause**, not just symptoms
-   - Note any ambiguities to clarify with user
+### Phase 2: INNOVATE
 
-### Phase 2: INNOVATE (Hypothesis & Testing)
+**Form and test hypotheses.**
 
-6. **Form Hypothesis**
-   - State your hypothesis clearly with specific reasoning
-   - "I believe X is failing because Y, evidenced by Z"
-   - Use `mcp__sequential-thinking__sequentialthinking` for complex problems
-
-7. **Analyze Solutions**
-   - Consider multiple approaches
-   - Evaluate trade-offs (complexity, performance, maintainability)
-   - Test hypothesis with smallest possible change
-   - **Change only ONE variable at a time**
-
-8. **Select Approach**
-   - Choose the most appropriate solution
-   - Document the reasoning
-   - Identify risks and edge cases
-
-**Red Flags - STOP and Return to RESEARCH:**
-
-- Proposing fixes without understanding the issue
-- Attempting multiple simultaneous changes
-- Making assumptions without verification
-- "Quick fixes" before investigation
+1. State hypothesis: "I believe X is failing because Y, evidenced by Z"
+2. Use `mcp__sequential-thinking__sequentialthinking` for complex problems
+3. Evaluate trade-offs (complexity, performance, maintainability)
+4. **Change only ONE variable at a time**
 
 ### Phase 3: PLAN
 
-6. **Create Implementation Plan**
-   - List files to be modified
-   - Define the order of changes
-   - Identify tests or validation needed
-   - Estimate scope
-
-7. **Create Branch** (if significant change)
-
-   ```bash
-   git checkout -b fix/short-description
-   ```
+1. List files to be modified
+2. Define order of changes
+3. Identify tests/validation needed
+4. Create branch if significant: `git checkout -b fix/short-description`
 
 ### Phase 4: EXECUTE
 
-8. **Implement Fix**
-   - Make the necessary code changes
-   - Follow existing code patterns and style
-   - Use appropriate specialist agents if needed:
-     - `nix-specialist` for Nix files
-     - `home-assistant-dev` for HA configs
-     - `test-engineer` for adding tests
-
-9. **Validate Changes**
-   - Run `nix flake check` for Nix changes
-   - Run `alejandra --check .` for formatting
-   - Run `statix check .` for linting
-   - Test the fix manually if applicable
+1. Make code changes following existing patterns
+2. Use specialist agents if needed:
+   - `nix-specialist` for Nix files
+   - `home-assistant-dev` for HA configs
+   - `test-engineer` for adding tests
+3. Validate: `nix flake check`, `alejandra --check .`, `statix check .`
 
 ### Phase 5: REVIEW
 
-10. **Self-Review**
-    - Check all changes with `git diff`
-    - Verify no unintended changes
-    - Ensure code quality standards are met
-
-11. **Report Results**
-    - Summarize what was changed
-    - Explain how the fix works
-    - Note any follow-up actions needed
+1. Self-review with `git diff`
+2. Verify no unintended changes
+3. Report results
 
 ## Output Format
 
@@ -148,7 +91,7 @@ This command follows the RIPER workflow phases:
 
 ## Root Cause
 
-[What caused the issue - if applicable]
+[What caused the issue]
 
 ## Solution
 
@@ -172,31 +115,19 @@ This command follows the RIPER workflow phases:
 [Any follow-up actions, commits, PRs, etc.]
 ```
 
-## Error Handling
+## Escalation Rules
 
-- If problem is unclear: Ask clarifying questions before proceeding
-- If fix requires breaking changes: Warn user and get confirmation
-- If multiple solutions exist: Present options and let user choose
+### When 2+ Fix Attempts Fail
 
-## When 2+ Fix Attempts Fail
-
-**Trigger ultrathink mode** for deeper analysis:
+**Trigger ultrathink mode:**
 
 ```
 ultrathink: What are all the possible root causes?
 What assumptions am I making? What haven't I checked yet?
 ```
 
-See `skills/ultrathink-trigger/SKILL.md` for complexity indicators.
+### When 3+ Fix Attempts Fail
 
-## When 3+ Fix Attempts Fail
+**STOP.** This signals an architectural problem, not a fixable bug.
 
-**STOP.** This signals an architectural problem, not a fixable bug:
-
-1. Do not attempt another fix
-2. Return to Phase 1 (RESEARCH)
-3. Question whether the underlying pattern/design is sound
-4. Discuss with user: "Should we refactor architecture vs. continue fixing symptoms?"
-5. Consider dispatching architect agent for design review
-
-**Random fixes waste time and create new bugs. Quick patches mask underlying issues.**
+See `systematic-debugging` skill for detailed escalation process.

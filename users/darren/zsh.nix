@@ -77,6 +77,9 @@
       cc-prime() { claude-mcp "/prime $*"; }
       cc-remember() { claude-mcp "/remember $*"; }
 
+      # Development workflow
+      cc-dev() { claude-mcp "/dev $*"; }
+
       # Problem solving (CEK techniques)
       cc-fix() { claude-mcp "/fix $*"; }
       cc-why() { claude-mcp "/why $*"; }

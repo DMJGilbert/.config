@@ -273,7 +273,7 @@ mcp__memory__aim_memory_store([{
 
 ## Development Best Practices
 
-Extracted from battle-tested skills and integrated into agents.
+Use `/dev [task]` as the unified entry point with built-in quality gates and complexity routing (TRIVIAL → SIMPLE → MEDIUM → COMPLEX).
 
 ### Systematic Debugging (in /fix command)
 
@@ -325,6 +325,37 @@ RED → GREEN → REFACTOR
 | Major feature            | Before integration |
 | Pre-merge                | Full review        |
 | Stuck/blocked            | Ad-hoc             |
+
+### Independent Reviewer Pattern (Multi-Agent Consensus)
+
+**Critical**: Avoid the self-review trap. An agent reviewing its own work has the same blind spots.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Session 1: IMPLEMENTATION                                      │
+│  ├─ Agent implements feature                                    │
+│  └─ Agent summarizes changes (git diff, PR description)         │
+│                                                                 │
+│  Session 2: ISOLATED REVIEW (fresh agent)                       │
+│  ├─ Reviewer has NO chat history from Session 1                 │
+│  ├─ Reviewer reads only: code, diffs, PR description            │
+│  └─ Reviewer validates against project checklist                │
+│                                                                 │
+│  Session 3: INCORPORATION                                       │
+│  └─ Implementation agent addresses feedback                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Invoke independent review:**
+```bash
+# New session (cleanest)
+claude "/review"
+
+# Or Task tool with isolated prompt (no implementation reasoning)
+Task(code-reviewer, prompt="Review changes. Context: [PR description only]")
+```
+
+See `review-workflow` skill for detailed multi-agent consensus flow.
 
 ### Git Workflow Best Practices
 
@@ -773,130 +804,17 @@ Use when: High-stakes changes requiring verification between steps.
 
 All commands available as `/command` in Claude Code or `cc-command` from terminal.
 
-### Code Quality & Review
-
-| Command           | Shell Alias   | Description                                            |
-| ----------------- | ------------- | ------------------------------------------------------ |
-| `/review`         | `cc-review`   | Comprehensive code review of staged changes            |
-| `/audit [target]` | `cc-audit`    | Deep code audit (entire codebase, file, or function)   |
-| `/perf`           | `cc-perf`     | Performance audit of codebase                          |
-| `/security`       | `cc-security` | Security-focused audit (OWASP, secrets, auth)          |
-| `/health`         | `cc-health`   | Project health assessment and scorecard                |
-| `/deps`           | `cc-deps`     | Dependency audit (outdated, vulnerabilities, licenses) |
-
-### Git Workflows
-
-| Command   | Shell Alias | Description                                             |
-| --------- | ----------- | ------------------------------------------------------- |
-| `/commit` | `cc-commit` | Generate conventional commit message for staged changes |
-| `/pr`     | `cc-pr`     | Generate PR title and description for current branch    |
-
-### Context & Memory
-
-| Command             | Shell Alias   | Description                                     |
-| ------------------- | ------------- | ----------------------------------------------- |
-| `/prime [refresh]`  | `cc-prime`    | Prime Claude with comprehensive project context |
-| `/remember [query]` | `cc-remember` | Manage persistent memory (knowledge graph)      |
-
-### Problem Solving (CEK Techniques)
-
-| Command                    | Shell Alias     | Description                                        |
-| -------------------------- | --------------- | -------------------------------------------------- |
-| `/fix [problem or issue#]` | `cc-fix`        | Fix a problem using RIPER workflow                 |
-| `/why [problem]`           | `cc-why`        | Five Whys root cause analysis                      |
-| `/reflect [topic]`         | `cc-reflect`    | Self-refinement of previous response               |
-| `/brainstorm [topic] [--deep\|--quick]` | `cc-brainstorm` | Generate diverse ideas (auto-ultrathink on complex topics) |
-
-### Documentation & Explanation
-
-| Command                 | Shell Alias       | Description                                      |
-| ----------------------- | ----------------- | ------------------------------------------------ |
-| `/explain [code]`       | `cc-explain`      | Explain code sections and document complex logic |
-| `/note [topic]`         | `cc-note`         | Create note in Obsidian vault                    |
-| `/spec [feature]`       | `cc-spec`         | Generate technical specification in vault        |
-| `/doc [type] [topic]`   | `cc-doc`          | Generate documentation (API, guide, ADR)         |
-| `/search-vault [query]` | `cc-search-vault` | Search Obsidian vault                            |
-
-### Orchestration
-
-| Command               | Shell Alias      | Description                                    |
-| --------------------- | ---------------- | ---------------------------------------------- |
-| `/orchestrate [task]` | `cc-orchestrate` | Analyze task and delegate to specialist agents |
-
-### Autonomous Iteration (Ralph)
-
-| Command               | Shell Alias        | Description                               |
-| --------------------- | ------------------ | ----------------------------------------- |
-| `/ralph-loop [task]`  | `cc-ralph-loop`    | Start autonomous iteration loop           |
-| `/ralph-status`       | `cc-ralph-status`  | Check current iteration and loop state    |
-| `/cancel-ralph`       | `cc-cancel-ralph`  | Stop active loop immediately              |
-
-### Session Analysis
-
-| Command                 | Shell Alias        | Description                               |
-| ----------------------- | ------------------ | ----------------------------------------- |
-| `/retrospective [days]` | `cc-retrospective` | Analyze session patterns and insights     |
-
-**Ralph Loop** enables autonomous iteration for batch tasks:
-
-```bash
-# Start loop with default 10 iterations
-/ralph-loop "refactor auth module"
-
-# Limit iterations
-/ralph-loop "fix all linting errors" --max-iterations 5
-
-# Compose with other commands
-/ralph-loop "/fix issue #42"
-```
-
-**Cost Warning**: Ralph loops consume significant tokens. A 10-iteration loop
-on a large codebase can cost $20-50+ in API credits.
+**Code Quality**: `/review`, `/audit`, `/perf`, `/security`, `/health`, `/deps`
+**Git**: `/commit`, `/pr`
+**Context**: `/prime`, `/remember`
+**Development**: `/dev [task]`
+**Problem Solving**: `/fix`, `/why`, `/reflect`, `/brainstorm`
+**Documentation**: `/explain`, `/note`, `/spec`, `/doc`, `/search-vault`
+**Orchestration**: `/orchestrate`
+**Ralph Loop**: `/ralph-loop`, `/ralph-status`, `/cancel-ralph`
+**Analysis**: `/retrospective`
 
 ## Shell Integration
 
-### Claude Code Aliases
-
-The `ccode` alias runs Claude Code with MCP server secrets automatically loaded:
-
-```bash
-ccode           # Start interactive Claude Code session
-ccode "prompt"  # Run with initial prompt
-cc-fix "bug"    # Run /fix command directly
-```
-
-Note: `ccode` is used instead of `cc` to avoid conflict with the C compiler.
-
-### Command Functions
-
-All slash commands have corresponding shell functions:
-
-```bash
-# Code quality
-cc-review           # Review staged changes
-cc-audit file.ts    # Audit specific file
-cc-security         # Security audit
-
-# Git workflows
-cc-commit           # Generate commit message
-cc-pr               # Generate PR description
-
-# Problem solving
-cc-fix "error X"    # Fix from description
-cc-fix 123          # Fix GitHub issue #123
-cc-why "failure"    # Root cause analysis
-cc-reflect          # Improve last response
-cc-brainstorm "X"   # Generate ideas
-
-# Context
-cc-prime            # Load project context
-cc-prime refresh    # Force refresh context
-```
-
-### MCP Secrets
-
-Secrets are loaded from sops-nix decrypted files for the duration of Claude commands:
-
-- `GITHUB_PERSONAL_ACCESS_TOKEN`
-- `HASS_HOST` / `HASS_TOKEN`
-- `OBSIDIAN_API_KEY` / `OBSIDIAN_HOST` / `OBSIDIAN_PORT`
+Use `ccode` alias (not `cc`) to run Claude Code with MCP secrets auto-loaded.
+All slash commands have `cc-*` shell functions (e.g., `cc-fix`, `cc-commit`).

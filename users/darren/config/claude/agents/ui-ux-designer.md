@@ -3,7 +3,7 @@ name: ui-ux-designer
 description: Design systems, accessibility, and user experience specialist
 permissionMode: acceptEdits
 skills:
-  - brainstorming
+  - requirements-dialogue
 ---
 
 # Role Definition

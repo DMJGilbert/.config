@@ -1,9 +1,9 @@
 ---
-name: brainstorming
-description: Transform rough ideas into detailed designs through structured dialogue. Use before implementation to refine requirements.
+name: requirements-dialogue
+description: Transform rough ideas into detailed designs through structured Socratic dialogue. Use before implementation to refine requirements.
 ---
 
-# Brainstorming & Design Refinement
+# Requirements Dialogue & Design Refinement
 
 Transform rough ideas into validated designs through structured Socratic dialogue before any implementation begins.
 
@@ -53,6 +53,41 @@ Transform rough ideas into validated designs through structured Socratic dialogu
 
 4. Discuss conversationally, not prescriptively
 5. Be open to hybrid approaches
+
+### Constraint Questions (Mandatory)
+
+Before finalizing any approach, ask these questions:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│               CONSTRAINT QUESTIONS                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. FAILURE MODES                                               │
+│     "What are 3 ways this approach could fail?"                 │
+│                                                                 │
+│  2. HIDDEN ASSUMPTIONS                                          │
+│     "What am I assuming that might not be true?"                │
+│                                                                 │
+│  3. SIMPLIFICATION                                              │
+│     "If I had half the time, what would I cut?"                 │
+│                                                                 │
+│  4. SKEPTIC'S VIEW                                              │
+│     "What would a skeptic say about this approach?"             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Self-Check Before Moving On
+
+```
+□ Explored at least 2 different approaches
+□ Identified failure modes for chosen approach
+□ Can explain why rejected approaches were rejected
+□ Scope is clearly bounded (know what's OUT)
+
+Any unchecked? → Spend 2 more minutes on that area
+```
 
 ### Phase 3: Design Presentation
 

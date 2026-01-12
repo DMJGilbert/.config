@@ -78,6 +78,48 @@ Each step should be:
 **Too big:** "Implement authentication system"
 **Right size:** "Write failing test for login validation"
 
+## Pre-Mortem Analysis (Required)
+
+Before finalizing plan, complete this analysis:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    PLAN PRE-MORTEM                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. RISKIEST ASSUMPTION                                         │
+│     "Which step am I least confident about?"                    │
+│     → This becomes POC candidate if uncertain                   │
+│                                                                 │
+│  2. DEPENDENCY CHECK                                            │
+│     "What external factors could block this?"                   │
+│     → API availability, permissions, data format                │
+│                                                                 │
+│  3. ROLLBACK STRATEGY                                           │
+│     "If this fails mid-way, how do I undo?"                     │
+│     → Branch strategy, migration rollback                       │
+│                                                                 │
+│  4. SUCCESS CRITERIA                                            │
+│     "How will I know this is done and correct?"                 │
+│     → Must be testable, not "looks good"                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**If riskiest assumption is unclear → trigger POC skill before implementation**
+
+### Self-Check Before Execution
+
+```
+□ Each step has clear success criteria
+□ Riskiest assumption is identified
+□ Dependencies between steps are explicit
+□ Know how to verify the final result
+
+Riskiest assumption unclear? → Need POC
+Steps have circular deps? → Reorder plan
+```
+
 ## Design Principles
 
 - **DRY** - Don't Repeat Yourself

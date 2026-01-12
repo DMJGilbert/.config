@@ -37,7 +37,42 @@ $ARGUMENTS
 1. **Identify Domains**: What technical areas does this task touch?
 2. **Assess Complexity**: Is this a single-agent or multi-agent task?
 3. **Check Dependencies**: What order should agents work in?
-4. **Plan Execution**: Sequential or parallel execution?
+4. **Select Execution Pattern**: Use decision tree below
+
+## Execution Pattern Selection
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              EXECUTION PATTERN DECISION TREE                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Q1: Are tasks independent (no shared state/files)?            │
+│      │                                                          │
+│      ├─ YES → Q2: How many tasks?                              │
+│      │         ├─ 3+ tasks → parallel-agents skill             │
+│      │         └─ 1-2 tasks → Direct parallel (single message) │
+│      │                                                          │
+│      └─ NO → Sequential execution required                     │
+│               │                                                 │
+│               └─ Q3: How many tasks?                           │
+│                   ├─ 1-2 → Direct sequential                   │
+│                   ├─ 3-5 → executing-plans (batch of 3)        │
+│                   └─ 5+  → subagent-development (per-task)     │
+│                                                                 │
+│  Q4: Is this high-stakes (production, security, architecture)? │
+│      │                                                          │
+│      ├─ YES → subagent-development (review after each task)   │
+│      └─ NO  → executing-plans (batch review)                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+| Pattern | Skill | When to Use |
+|---------|-------|-------------|
+| **Parallel** | `parallel-agents` | 3+ independent tasks, no shared files |
+| **Batch Sequential** | `executing-plans` | 3-5 dependent tasks, moderate risk |
+| **Per-Task Review** | `subagent-development` | High-stakes, 5+ tasks, need quality gates |
+| **Direct** | None needed | 1-2 simple tasks |
 
 ## Response Format
 

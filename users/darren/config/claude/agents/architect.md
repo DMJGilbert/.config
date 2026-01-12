@@ -4,7 +4,7 @@ description: System design, patterns, and architecture decisions using RIPER met
 model: opus
 permissionMode: acceptEdits
 skills:
-  - brainstorming # Refine requirements through Socratic dialogue
+  - requirements-dialogue # Refine requirements through Socratic dialogue
   - writing-plans # Create granular implementation plans
   - systematic-debugging # When 3+ fixes fail, question architecture
 ---

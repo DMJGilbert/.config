@@ -7,8 +7,8 @@ skills:
   - executing-plans # Execute plans with batch checkpoints
   - parallel-agents # Dispatch concurrent agents for independent tasks
   - subagent-development # Fresh agent per task with review gates
-  - brainstorming # Refine requirements before planning (INNOVATE phase)
-  - requesting-code-review # Request reviews after execution (REVIEW phase)
+  - requirements-dialogue # Refine requirements before planning (INNOVATE phase)
+  - review-workflow # Request reviews after execution (REVIEW phase)
 ---
 
 # Role Definition
