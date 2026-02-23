@@ -1,89 +1,66 @@
----
-description: Generate conventional commit message for staged changes
-allowed-tools:
-  - Bash(git status:*)
-  - Bash(git diff:*)
-  - Bash(git log:*)
-  - Bash(git show:*)
-  - Read
-  - Grep
-  - Glob
----
+# Commit
 
-# Generate Commit Message
+Generate a conventional commit message for staged changes.
 
-Analyze staged changes and generate a conventional commit message. This command is **read-only** - it will NOT execute `git commit`.
+## Process
 
-Optional argument: $ARGUMENTS (hint for commit type or scope, e.g., "feat" or "auth module")
-
-## Analysis Steps
-
-1. **Check Staged Changes**
-
+1. **Check staged changes**:
    ```bash
-   git status
    git diff --cached --stat
+   ```
+   If nothing staged, inform user and exit.
+
+2. **Get diff details**:
+   ```bash
    git diff --cached
    ```
 
-2. **Review Recent Commits** (for style consistency)
-
+3. **Check recent commit style**:
    ```bash
-   git log --oneline -10
+   git log --oneline -5
    ```
 
-3. **Analyze the Changes**
-   - What files are modified?
-   - What is the nature of the change? (new feature, bug fix, refactor, etc.)
-   - What is the scope? (component, module, feature area)
-   - Are there breaking changes?
+4. **Analyze changes** and determine:
+   - **Type**: feat, fix, refactor, docs, style, test, chore, ci, build, perf
+   - **Scope**: Component/module affected (optional)
+   - **Description**: Concise summary of what changed
 
-## Commit Message Format
+5. **Generate commit message**:
+   ```
+   <type>(<scope>): <description>
 
-Follow Conventional Commits specification:
+   [optional body explaining why]
 
-```
-<type>(<scope>): <description>
+   Co-Authored-By: Claude <noreply@anthropic.com>
+   ```
 
-[optional body]
+6. **Present for approval**:
+   Show the proposed message and ask user to confirm.
 
-[optional footer(s)]
-```
+7. **Execute commit**:
+   ```bash
+   git commit -m "<message>"
+   ```
 
-### Types
+## Conventional Commit Types
 
-- `feat`: New feature (correlates with MINOR in semver)
-- `fix`: Bug fix (correlates with PATCH in semver)
-- `docs`: Documentation only changes
-- `style`: Changes that don't affect code meaning (whitespace, formatting)
-- `refactor`: Code change that neither fixes a bug nor adds a feature
-- `perf`: Performance improvement
-- `test`: Adding or correcting tests
-- `chore`: Maintenance tasks, dependency updates
-- `ci`: CI/CD configuration changes
-- `build`: Build system or external dependency changes
+| Type | When to use |
+|------|-------------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `refactor` | Code change that neither fixes nor adds |
+| `docs` | Documentation only |
+| `style` | Formatting, no code change |
+| `test` | Adding/updating tests |
+| `chore` | Maintenance tasks |
+| `ci` | CI/CD changes |
+| `build` | Build system or dependencies |
+| `perf` | Performance improvement |
 
-### Rules
+## Rules
 
-- Subject line max 50 characters
-- Use imperative mood ("add" not "added" or "adds")
+- Keep subject line under 72 characters
+- Use imperative mood ("add" not "added")
 - Don't end subject with period
-- Body wraps at 72 characters
-- Explain what and why, not how
-
-## Output
-
-Provide the commit message in a code block ready to copy:
-
-```
-feat(scope): short description
-
-Longer explanation of the change if needed.
-Explain the motivation and contrast with previous behavior.
-
-BREAKING CHANGE: description (if applicable)
-```
-
-Also provide 2-3 alternative messages if the changes could be categorized differently.
-
-**Remember**: Do NOT run `git commit`. Only provide the message for the user to use.
+- Separate subject from body with blank line
+- Body explains "why" not "what"

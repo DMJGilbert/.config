@@ -18,6 +18,7 @@
         tree-sitter
         luarocks
         nil
+        nixd
         alejandra
         shellcheck
         shfmt
@@ -28,6 +29,8 @@
         lua-language-server
         nodePackages.vscode-langservers-extracted
         nodePackages.typescript-language-server
+        nodePackages.yaml-language-server
+        nodePackages.bash-language-server
         nodePackages.prettier
         nodePackages.eslint_d
         nodePackages."@tailwindcss/language-server"

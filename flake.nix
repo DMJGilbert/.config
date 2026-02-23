@@ -2,11 +2,9 @@
   description = "DMJGilbert Home Manager & NixOS configurations";
   nixConfig = {
     extra-substituters = [
-      "https://cache.soopy.moe"
       "https://iofq.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "cache.soopy.moe-1:0RZVsQeR+GOh0VQI9rvnHz55nVXkFardDqfm4+afjPo="
       "iofq.cachix.org-1:54GHlWCnp/MZ+kXBcXMhfF1aoMJsyAMBvUlqEMXLuOE="
     ];
   };

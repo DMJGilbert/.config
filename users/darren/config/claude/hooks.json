@@ -1,6 +1,14 @@
 {
   "hooks": [
     {
+      "event": "SessionStart",
+      "matcher": {},
+      "action": {
+        "type": "command",
+        "command": "echo '{\"systemMessage\": \"Branch: '$(git branch --show-current 2>/dev/null || echo none)' | Last commit: '$(git log --oneline -1 2>/dev/null || echo none)'\"}'"
+      }
+    },
+    {
       "event": "PostToolUse",
       "matcher": {
         "tool": "Write",
@@ -26,385 +34,176 @@
       "event": "PostToolUse",
       "matcher": {
         "tool": "Write",
-        "inputContains": ".nix"
-      },
-      "action": {
-        "type": "command",
-        "command": "nix-instantiate --parse \"$CC_TOOL_INPUT_FILE_PATH\" >/dev/null 2>&1 || echo '⚠️ Nix syntax error in '\"$CC_TOOL_INPUT_FILE_PATH\""
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".nix"
-      },
-      "action": {
-        "type": "command",
-        "command": "nix-instantiate --parse \"$CC_TOOL_INPUT_FILE_PATH\" >/dev/null 2>&1 || echo '⚠️ Nix syntax error in '\"$CC_TOOL_INPUT_FILE_PATH\""
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".lua"
-      },
-      "action": {
-        "type": "command",
-        "command": "stylua --verify \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".lua"
-      },
-      "action": {
-        "type": "command",
-        "command": "stylua --verify \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".yaml"
-      },
-      "action": {
-        "type": "command",
-        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".yml"
-      },
-      "action": {
-        "type": "command",
-        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".yaml"
-      },
-      "action": {
-        "type": "command",
-        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".yml"
-      },
-      "action": {
-        "type": "command",
-        "command": "yamllint -d relaxed \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null | head -10 || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".md"
-      },
-      "action": {
-        "type": "command",
-        "command": "markdownlint-cli2 --fix \"$CC_TOOL_INPUT_FILE_PATH\" 2>&1 | head -20 || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".md"
-      },
-      "action": {
-        "type": "command",
-        "command": "markdownlint-cli2 --fix \"$CC_TOOL_INPUT_FILE_PATH\" 2>&1 | head -20 || true"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".tsx"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using frontend-developer agent for React/TSX files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".jsx"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using frontend-developer agent for React/JSX files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".css"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using ui-ux-designer agent for CSS styling files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".scss"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using ui-ux-designer agent for SCSS styling files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "tailwind.config"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using ui-ux-designer agent for Tailwind configuration"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "Dockerfile"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using backend-developer agent for Docker configurations"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "docker-compose"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using backend-developer agent for Docker Compose files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "README.md"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using documentation-expert agent for README files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "docs/"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using documentation-expert agent for documentation files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".env"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using security-auditor agent for environment/secrets files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "package.json"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using frontend-developer agent for package.json configuration"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "Cargo.toml"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using rust-developer agent for Cargo configuration"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "pubspec.yaml"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using dart-developer agent for pubspec configuration"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "flake.lock"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using nix-specialist agent for Nix flake lock files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "migration"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using database-specialist agent for database migrations"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".nix"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using nix-specialist agent for Nix configuration files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
         "inputContains": ".rs"
       },
       "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using rust-developer agent for Rust files"
+        "type": "command",
+        "command": "rustfmt \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
       }
     },
     {
-      "event": "PreToolUse",
+      "event": "PostToolUse",
       "matcher": {
-        "tool": "Read",
+        "tool": "Edit",
+        "inputContains": ".rs"
+      },
+      "action": {
+        "type": "command",
+        "command": "rustfmt \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".ts"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".ts"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".tsx"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".tsx"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".js"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".js"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".jsx"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".jsx"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".css"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".css"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
+        "inputContains": ".html"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Edit",
+        "inputContains": ".html"
+      },
+      "action": {
+        "type": "command",
+        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool": "Write",
         "inputContains": ".dart"
       },
       "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using dart-developer agent for Dart/Flutter files"
+        "type": "command",
+        "command": "dart format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
       }
     },
     {
-      "event": "PreToolUse",
+      "event": "PostToolUse",
       "matcher": {
-        "tool": "Read",
-        "inputContains": ".test."
+        "tool": "Edit",
+        "inputContains": ".dart"
       },
       "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using test-engineer agent for test files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".spec."
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using test-engineer agent for test files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "schema.prisma"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using database-specialist agent for Prisma schema files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": ".sql"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using database-specialist agent for SQL files"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "home-assistant"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using home-assistant-dev agent for Home Assistant configurations"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "automations.nix"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using home-assistant-dev agent for Home Assistant automations"
-      }
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool": "Read",
-        "inputContains": "dashboard.yaml"
-      },
-      "action": {
-        "type": "systemMessage",
-        "message": "Tip: Consider using home-assistant-dev agent for Lovelace dashboard files"
+        "type": "command",
+        "command": "dart format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
       }
     },
     {
@@ -412,7 +211,7 @@
       "matcher": {},
       "action": {
         "type": "command",
-        "command": "~/.claude/scripts/stop-hook.sh"
+        "command": "~/.claude/scripts/quality-gate.sh"
       }
     }
   ]

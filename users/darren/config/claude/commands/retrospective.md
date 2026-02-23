@@ -1,110 +1,58 @@
 ---
-description: Analyze session patterns and generate workflow insights
-allowed-tools:
-  - Read
-  - Bash
-  - mcp__memory__aim_search_nodes
-  - mcp__memory__aim_add_observations
-  - mcp__obsidian__obsidian_append_content
+name: retrospective
+description: Review session for learnings and update agent memories
 ---
 
-# Retrospective
+# Retrospective Command
 
-Analyze Claude Code session history and generate workflow insights.
+Review the current session and update relevant agent memories.
 
-## Session Log Location
+## Process
 
-Sessions are logged to: `~/.local/share/claude-retrospectives/sessions.jsonl`
+1. **Analyze session**:
+   - What agents were used?
+   - What patterns emerged?
+   - What issues were encountered?
+   - What solutions worked?
 
-Each entry contains:
+2. **Identify learnings**:
+   - New patterns discovered
+   - Anti-patterns to avoid
+   - Project-specific conventions
+   - Reusable solutions
 
-- `date`: ISO timestamp
-- `project`: Project name (from git root)
-- `files_changed`: Number of files modified
-- `domains`: File extensions touched (e.g., "nix,md,ts")
+3. **Update memories**:
+   - Read relevant agent MEMORY.md files from `~/.claude/agent-memory/{agent}/MEMORY.md`
+   - Add new learnings to appropriate sections
+   - Remove outdated information
+   - Keep memories concise (under 200 lines)
 
-## Analysis Process
+4. **Store decisions**:
+   - Use AIM memory for key decisions
+   - Link related entities
+   - Tag with project context
 
-### 1. Load Session Data
+## Output
 
-```bash
-# Read recent sessions (last 30 days by default)
-cat ~/.local/share/claude-retrospectives/sessions.jsonl | tail -100
-```
-
-### 2. Identify Patterns
-
-Analyze the session data to find:
-
-- **Most active projects**: Which projects have the most sessions?
-- **Common domains**: Which file types are modified most often?
-- **Session frequency**: Daily/weekly patterns
-- **Multi-domain sessions**: How often do sessions span multiple domains?
-
-### 3. Generate Insights
-
-Based on patterns, generate actionable insights:
-
-| Pattern               | Insight                              | Action                          |
-| --------------------- | ------------------------------------ | ------------------------------- |
-| Frequent Nix work     | Consider ccode-nix preset            | Suggest preset usage            |
-| Multi-domain sessions | Orchestrator usage recommended       | Suggest /orchestrate            |
-| Repeated file types   | Hook coverage check                  | Verify PreToolUse hints active  |
-| Same project daily    | Consider persistent memory           | Suggest /prime for this project |
-
-### 4. Store Learnings
-
-After analysis, persist valuable insights to memory:
+Present summary:
 
 ```
-mcp__memory__aim_add_observations([{
-  entityName: "workflow_patterns",
-  contents: ["[Date]: [Insight from retrospective]"]
-}])
-```
-
-### 5. Optional: Create Note
-
-If significant patterns found, create a note in the vault:
-
-```
-Path: claude/notes/learnings/retrospective-[date].md
-```
-
-## Output Format
-
-```markdown
 ## Session Retrospective
 
-**Period**: [Date range analyzed]
-**Sessions**: [Count]
+### Learnings
+- [Learning 1]
+- [Learning 2]
 
-### Project Activity
+### Memory Updates
+- {agent}/MEMORY.md: [what was added]
 
-| Project | Sessions | Primary Domains |
-| ------- | -------- | --------------- |
-| ...     | ...      | ...             |
-
-### Domain Patterns
-
-| Domain | Sessions | Often With      |
-| ------ | -------- | --------------- |
-| ...    | ...      | ...             |
-
-### Insights
-
-1. **[Pattern]**: [Insight and recommended action]
-2. ...
-
-### Recommendations
-
-- [ ] [Actionable suggestion based on patterns]
-- ...
+### Decisions Stored
+- [Decision entities created]
 ```
 
-## Arguments
+## When to Run
 
-- No arguments: Analyze last 30 days
-- `--days N`: Analyze last N days
-- `--project NAME`: Filter to specific project
-- `--save`: Save insights to Obsidian vault
+- After complex task completion
+- When a pattern is discovered across multiple files
+- When a solution to a recurring problem is found
+- User requests: `/retrospective`

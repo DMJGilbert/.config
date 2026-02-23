@@ -17,14 +17,6 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
-    "puppeteer": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
-    },
-    "magic-ui": {
-      "command": "npx",
-      "args": ["-y", "@magicuidesign/mcp@latest"]
-    },
     "obsidian": {
       "command": "uvx",
       "args": ["mcp-obsidian"],
