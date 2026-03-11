@@ -79,8 +79,8 @@ in
           # Custom Lovelace modules
           customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
             pkgs.hass-catppuccin
-            pkgs.hass-bubble-card
-            pkgs.lovelace-auto-entities
+            bubble-card
+            auto-entities
             pkgs.lovelace-tabbed-card
             pkgs.lovelace-layout-card
             pkgs.lovelace-stack-in-card

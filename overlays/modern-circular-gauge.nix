@@ -5,11 +5,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "modern-circular-gauge";
-  version = "0.13.1";
+  version = "0.13.3";
 
   src = fetchurl {
     url = "https://github.com/selvalt7/modern-circular-gauge/releases/download/v${version}/modern-circular-gauge.js";
-    hash = "sha256-BU5j/o9tBBD7JjIYvlZZPVV0OGNq5t5hyDblf3dTGIY=";
+    hash = "sha256-IjjHzhd+sbUEBEaknqXNwELqxd7IUlhN0hQxwcCZ/ew=";
   };
 
   dontUnpack = true;

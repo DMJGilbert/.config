@@ -5,13 +5,13 @@
 }:
 buildNpmPackage rec {
   pname = "lovelace-tabbed-card";
-  version = "v0.3.2";
+  version = "v0.3.3";
 
   src = fetchFromGitHub {
     owner = "kinghat";
     repo = "tabbed-card";
     rev = version;
-    hash = "sha256-Es8YHACUvbBIay1BzElBTtxdxdD7Hs1RrjGgm2C6BUU=";
+    hash = "sha256-bXlOLMiQOfVLSZcR6v9VZvzirlQStBilJh7SHNvdfhY=";
   };
 
   npmDepsHash = "sha256-R+HhIghy15q8SM4NtwNMK5xw7tKNQsKZAYU7ygQErjE=";

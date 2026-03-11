@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: RESEARCH and INNOVATE phases - explore codebase, gather context, brainstorm approaches, bootstrap agent memories
-model: sonnet
+model: opus
 permissionMode: plan
 tools:
   - Read

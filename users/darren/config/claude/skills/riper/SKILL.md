@@ -16,8 +16,9 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 ### 1. RESEARCH
 
-**Agent**: researcher (sonnet)
+**Agent**: researcher (opus)
 **Purpose**: Deep understanding before solutions
+**Reasoning effort**: High (`ultrathink`) for COMPLEX tasks
 
 **Actions**:
 - Read relevant code files
@@ -34,8 +35,9 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 ### 2. INNOVATE
 
-**Agent**: researcher (sonnet)
+**Agent**: researcher (opus)
 **Purpose**: Generate multiple approaches
+**Reasoning effort**: High (`ultrathink`) for COMPLEX tasks
 
 **Actions**:
 - Brainstorm 2-4 distinct solutions
@@ -99,9 +101,10 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Batch checkpoint protocol**:
 1. Complete up to 3 tasks from the plan
 2. Run verification (tests, build, checks) for the batch
-3. Present: what was done, verification output, any issues
-4. Say "Ready for feedback" and wait for user response
-5. Adjust based on feedback, then continue to next batch
+3. Run `/simplify` on changed code to catch reuse, quality, and efficiency issues
+4. Present: what was done, verification output, simplify findings, any issues
+5. Say "Ready for feedback" and wait for user response
+6. Adjust based on feedback, then continue to next batch
 
 **Stop immediately when**:
 - A task fails verification and the fix isn't obvious
@@ -179,7 +182,7 @@ When review findings require fixes:
 When plan specifies team execution:
 
 ### Setup
-1. Lead spawns teammates via delegate mode
+1. Lead spawns teammates via delegate mode with `isolation: "worktree"`
 2. Assign file ownership per teammate (no overlaps)
 3. Define dependency waves in plan
 

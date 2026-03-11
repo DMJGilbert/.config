@@ -4,9 +4,6 @@
 in {
   imports = [./shared.nix];
 
-  # Ollama preview (0.14.3-rc3) for latest model support
-  environment.systemPackages = [pkgs.ollama-preview];
-
   # Enable cross-platform services via feature-flag modules
   local.services.tailscale.enable = true;
 

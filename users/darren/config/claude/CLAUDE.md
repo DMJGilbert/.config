@@ -28,6 +28,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 | `/commit` | Generate conventional commit for staged changes |
 | `/review` | Code review (staged default, `--branch` for full branch) |
 | `/fix [problem]` | Problem-solving with RIPER workflow |
+| `/simplify` | Review changed code for reuse, quality, and efficiency |
 | `/retrospective` | Review session for learnings, update agent memories |
 
 ## Conventions
@@ -89,7 +90,7 @@ When domain agents receive findings from review agents:
 | Lead/orchestrator | Opus | Coordination complexity, multi-agent reasoning |
 | Review agents | Opus | Judgment quality, security/bug detection accuracy |
 | Domain agents | Sonnet | Code generation quality, cost-effective for execution |
-| Researcher | Sonnet | Reasoning depth + breadth, research quality |
+| Researcher | Opus | Reasoning depth + breadth, research quality |
 | Planner | Sonnet | Structured planning, spec writing |
 | Swarm teammates | Sonnet | Parallel cost control, code generation |
 
@@ -130,6 +131,7 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 **Team conventions**:
 - 3 teammates is the sweet spot; more adds coordination overhead
 - Use delegate mode (`Shift+Tab`) to keep lead coordinating, not implementing
+- Use `isolation: "worktree"` for teammates to prevent cross-contamination
 - Assign file ownership per teammate to avoid overwrites
 - Size tasks at 5-6 per teammate
 - Use Opus for lead, Sonnet for teammates
@@ -181,7 +183,19 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 
 ## Memory Strategy
 
+### Memory Systems
+
+| System | Location | Purpose |
+|--------|----------|---------|
+| Auto-memory | `~/.claude/projects/.../memory/MEMORY.md` | Session context, auto-saved by Claude Code |
+| Agent memory | Obsidian `claude/memory/{agent}/MEMORY.md` | Persistent patterns per agent role |
+| AIM graph | Project-scoped memory graph | Decisions, entity relationships |
+
 ### When to Store
+
+**Auto-memory** (managed automatically):
+- Claude Code saves useful session context here
+- Use `/memory` to view and manage
 
 **Agent Memory** (Obsidian vault `claude/memory/{agent}/MEMORY.md`):
 - Persistent patterns confirmed across 2+ interactions
@@ -206,6 +220,17 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 - Pattern superseded by new approach
 - Project structure changed significantly
 - Information duplicates what's already in CLAUDE.md
+
+## Reasoning Effort
+
+Three tiers available with Opus 4.6 (`alwaysThinkingEnabled: true` in settings):
+
+| Tier | Trigger | Use When |
+|------|---------|----------|
+| Medium | Always-on baseline | All turns (default) |
+| High | `ultrathink` keyword in prompt | RESEARCH/INNOVATE on COMPLEX tasks, architectural decisions, security review |
+
+**Rule**: Use `ultrathink` for RESEARCH/INNOVATE phases on COMPLEX tasks. Medium suffices for EXECUTE and PLAN.
 
 ## Build Commands
 

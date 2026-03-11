@@ -62,6 +62,7 @@ Present plan and wait for user confirmation.
 - Implement according to plan
 - Run sequentially if multiple languages
 - Run tests after each task
+- Run `/simplify` on changed code at each batch checkpoint
 
 **REVIEW** (3 reviewers in parallel):
 - Security review

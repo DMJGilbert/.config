@@ -132,7 +132,7 @@
       }
     ];
 
-    extraLuaConfig =
+    initLua =
       builtins.readFile ./core/options.lua
       + builtins.readFile ./core/mappings.lua
       + builtins.readFile ./core/auto.lua;

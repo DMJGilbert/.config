@@ -7,23 +7,30 @@ Package overlays for custom builds not available in nixpkgs.
 ```
 overlays/
 ├── pkgs.nix                    # Main overlay (imports all packages)
-├── hass-bubble-card.nix        # Home Assistant Bubble Card
+├── ha-floorplan.nix            # Floorplan for HA
 ├── hass-catppuccin.nix         # Catppuccin theme for HA
-├── lovelace-auto-entities.nix  # Auto-entities card
 ├── lovelace-layout-card.nix    # Layout card
+├── lovelace-stack-in-card.nix  # Stack-in-card
+├── lovelace-state-switch.nix   # State switch card
 ├── lovelace-tabbed-card.nix    # Tabbed card
+├── modern-circular-gauge.nix   # Circular gauge card
 └── README.md
 ```
 
 ## Packages
 
-| Package                  | Description                                |
-| ------------------------ | ------------------------------------------ |
-| `hass-bubble-card`       | Floating action buttons for Home Assistant |
-| `hass-catppuccin`        | Catppuccin theme for Home Assistant        |
-| `lovelace-auto-entities` | Automatically populate entities in cards   |
-| `lovelace-layout-card`   | Custom grid layouts for dashboards         |
-| `lovelace-tabbed-card`   | Tabbed container card                      |
+| Package                  | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `ha-floorplan`           | SVG floor plans for Home Assistant                 |
+| `hass-catppuccin`        | Catppuccin theme for Home Assistant                |
+| `lovelace-layout-card`   | Custom grid layouts for dashboards                 |
+| `lovelace-stack-in-card` | Group cards into one with no borders               |
+| `lovelace-state-switch`  | Dynamically replace cards depending on state       |
+| `lovelace-tabbed-card`   | Tabbed container card                              |
+| `modern-circular-gauge`  | Modern circular gauge card                         |
+
+Packages available in nixpkgs (use `home-assistant-custom-lovelace-modules.*`):
+`bubble-card`, `auto-entities`
 
 ## Adding a New Package
 
@@ -79,8 +86,8 @@ nix build .#package-name
 
 ```bash
 # Build specific package
-nix build .#hass-bubble-card
+nix build .#lovelace-tabbed-card
 
 # Check package exists in config
-nix eval .#nixosConfigurations.rubecula.pkgs.hass-bubble-card
+nix eval .#nixosConfigurations.rubecula.pkgs.lovelace-tabbed-card
 ```
