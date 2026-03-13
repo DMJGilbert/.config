@@ -70,6 +70,7 @@
         22 # SSH
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
+        21063 # HomeKit Accessory Protocol (HAP)
       ];
       allowedUDPPorts = [
         53 # DNS (AdGuard Home)
