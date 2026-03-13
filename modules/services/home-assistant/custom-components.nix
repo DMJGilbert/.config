@@ -19,20 +19,6 @@
       pkgs.python3Packages.pycryptodome
     ];
   })
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "amosyuen";
-    domain = "tplink_deco";
-    version = "3.7.0";
-    src = pkgs.fetchFromGitHub {
-      owner = "amosyuen";
-      repo = "ha-tplink-deco";
-      rev = "v${version}";
-      sha256 = "sha256-D0IuB0tbHW/KlYpwug01g0vq+Kpigm8urbpbxpFCUN0=";
-    };
-    propagatedBuildInputs = [
-      pkgs.python3Packages.pycryptodome
-    ];
-  })
   (pkgs.buildHomeAssistantComponent {
     owner = "maximoei";
     domain = "robovac";
@@ -45,37 +31,6 @@
     };
     propagatedBuildInputs = [
       pkgs.python3Packages.pycryptodome
-    ];
-  })
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "AlexandrErohin";
-    domain = "tplink_router";
-    version = "2.14.1";
-    src = pkgs.fetchFromGitHub {
-      owner = "AlexandrErohin";
-      repo = "home-assistant-tplink-router";
-      rev = "v${version}";
-      sha256 = "sha256-5lcyg/WjgXZ/abL50CT0FFpcvozSYIa79Vj/cYQe+aU=";
-    };
-    propagatedBuildInputs = [
-      pkgs.python3Packages.pycryptodome
-      (
-        pkgs.python3.pkgs.buildPythonPackage rec {
-          pname = "tplinkrouterc6u";
-          version = "5.12.1";
-          pyproject = true;
-          src = pkgs.fetchPypi {
-            inherit pname version;
-            hash = "sha256-xcr7W1X2nSZQT1/dz4aMxEr+27d5JFdsBGsCCdxki6U=";
-          };
-          propagatedBuildInputs = with pkgs.python3Packages; [
-            setuptools
-            pycryptodome
-            requests
-            macaddress
-          ];
-        }
-      )
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {

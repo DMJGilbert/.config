@@ -82,7 +82,7 @@
 
   programs.git.enable = true;
 
-  environment.systemPackages = with pkgs; [vim unzip gcc];
+  environment.systemPackages = with pkgs; [vim unzip gcc nmap];
 
   services = {
     # Enable the OpenSSH daemon.

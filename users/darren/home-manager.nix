@@ -93,6 +93,7 @@
       nix-direnv.enable = true;
     };
     eza.enable = true;
+    ripgrep.enable = true;
     fzf = {
       enable = true;
       enableZshIntegration = true;
