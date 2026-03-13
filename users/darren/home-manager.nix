@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./nvim
     ./aerospace.nix
@@ -38,8 +42,6 @@
         # development
         pkgconf
         cmake
-        direnv
-        nix-direnv
         stylua
         uv # Python package manager (provides uvx)
 
@@ -62,7 +64,6 @@
         dust # Better du
         duf # Better df
         procs # Better ps
-        delta # Better git diffs
 
         # Secrets management
         age # Encryption tool for sops
@@ -72,7 +73,6 @@
         # tools
         zoom-us
         slack
-        # obsidian
         openconnect
 
         tuist
@@ -83,7 +83,6 @@
         jankyborders
         cocoapods
       ]);
-    file = {};
   };
 
   manual.manpages.enable = false;
@@ -120,11 +119,10 @@
     };
     wezterm = {
       enable = true;
-      # install wezterm via homebrew on macOS to avoid compilation, dummy package here.
       package =
         if pkgs.stdenv.isLinux
         then pkgs.wezterm
-        else pkgs.hello;
+        else pkgs.emptyDirectory;
       enableBashIntegration = pkgs.stdenv.isLinux;
       enableZshIntegration = pkgs.stdenv.isLinux;
       extraConfig = ''
@@ -194,9 +192,9 @@
       settings = {
         simplified_ui = true;
         pane_frames = false;
-        theme = "catppucin-latte";
+        theme = "catppuccin-latte";
         default_layout = "compact";
-        themes.catppucin-latte = {
+        themes.catppuccin-latte = {
           fg = [198 208 245];
           bg = [98 104 128];
           black = [41 44 60];

@@ -78,7 +78,6 @@ in
 
           # Custom Lovelace modules
           customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-            pkgs.hass-catppuccin
             bubble-card
             auto-entities
             pkgs.lovelace-tabbed-card
@@ -146,9 +145,7 @@ in
           # Main Home Assistant configuration
           config = {
             default_config = {};
-            logger = {
-              logs = {};
-            };
+            logger = {};
             homeassistant = {
               name = "Home";
               country = "GB";
@@ -160,7 +157,7 @@ in
               allowlist_external_dirs = ["/etc"];
             };
             http = {
-              server_host = "0.0.0.0";
+              server_host = "127.0.0.1";
               server_port = 8123;
               use_x_forwarded_for = true;
               trusted_proxies = ["127.0.0.1"];
@@ -357,7 +354,7 @@ in
                 ];
               };
             };
-            scene = [];
+            scene = {};
             input_boolean = {
               party_mode = {
                 name = "Party Mode";

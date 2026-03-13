@@ -8,7 +8,7 @@ name: {
   sops-nix,
   ...
 }:
-darwin.lib.darwinSystem rec {
+darwin.lib.darwinSystem {
   inherit system;
 
   # Pass currentSystem via specialArgs so it's available at module definition time

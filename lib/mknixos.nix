@@ -5,10 +5,11 @@ name: {
   system,
   user,
   overlays,
+  sops-nix,
   extraModules ? [],
   ...
 }:
-nixpkgs.lib.nixosSystem rec {
+nixpkgs.lib.nixosSystem {
   inherit system;
 
   # Pass currentSystem via specialArgs so it's available at module definition time
@@ -25,10 +26,14 @@ nixpkgs.lib.nixosSystem rec {
       # the overlays are available globally.
       {nixpkgs.overlays = overlays;}
 
+      # Encrypted secrets management
+      sops-nix.nixosModules.sops
+
       ../modules
       (../hardware + "/${name}.nix")
       (../machines + "/${name}.nix")
       (../users + "/${user}/nixos.nix")
+      (../users + "/${user}/sops.nix")
       home-manager.nixosModules.home-manager
       {
         home-manager = {

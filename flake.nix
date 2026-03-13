@@ -88,9 +88,11 @@
         touch $out
       '';
       markdown = pkgs.runCommand "check-markdown" {} ''
-        ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
+        ${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f \
+          -not -path '*/.git/*' -print0 | \
+          ${pkgs.findutils}/bin/xargs -0 \
+          ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
           --config ${./.markdownlint-cli2.yaml} \
-          $(${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f) \
           2>&1 || {
           echo ""
           echo "Fix markdown issues with: markdownlint-cli2 --fix '**/*.md'"
@@ -106,7 +108,7 @@
       user = "darren";
     };
     nixosConfigurations.rubecula = mkNixos "rubecula" {
-      inherit hardware nixpkgs home-manager overlays;
+      inherit hardware nixpkgs home-manager overlays sops-nix;
       system = "x86_64-linux";
       user = "darren";
       extraModules = [

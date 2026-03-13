@@ -16,7 +16,7 @@
       sha256 = "sha256-QqJIPyITFYGD8OkbRTh//F0PWY9BFyhBbJaNtSIQ9tA=";
     };
     propagatedBuildInputs = [
-      pkgs.python313Packages.pycryptodome
+      pkgs.python3Packages.pycryptodome
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {
@@ -30,7 +30,7 @@
       sha256 = "sha256-D0IuB0tbHW/KlYpwug01g0vq+Kpigm8urbpbxpFCUN0=";
     };
     propagatedBuildInputs = [
-      pkgs.python313Packages.pycryptodome
+      pkgs.python3Packages.pycryptodome
     ];
   })
   (pkgs.buildHomeAssistantComponent {
@@ -44,7 +44,7 @@
       sha256 = "sha256-xUha26YiSKY+5aRmZviHFqyPLUqOdN6/L/Ikcpe/YH0=";
     };
     propagatedBuildInputs = [
-      pkgs.python313Packages.pycryptodome
+      pkgs.python3Packages.pycryptodome
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {
@@ -58,9 +58,9 @@
       sha256 = "sha256-5lcyg/WjgXZ/abL50CT0FFpcvozSYIa79Vj/cYQe+aU=";
     };
     propagatedBuildInputs = [
-      pkgs.python313Packages.pycryptodome
+      pkgs.python3Packages.pycryptodome
       (
-        pkgs.python313.pkgs.buildPythonPackage rec {
+        pkgs.python3.pkgs.buildPythonPackage rec {
           pname = "tplinkrouterc6u";
           version = "5.12.1";
           pyproject = true;
@@ -68,7 +68,7 @@
             inherit pname version;
             hash = "sha256-xcr7W1X2nSZQT1/dz4aMxEr+27d5JFdsBGsCCdxki6U=";
           };
-          propagatedBuildInputs = with pkgs.python313Packages; [
+          propagatedBuildInputs = with pkgs.python3Packages; [
             setuptools
             pycryptodome
             requests
@@ -88,7 +88,7 @@
       rev = "v${version}";
       sha256 = "sha256-L1LqH9QMasVCZdsnHpKdxYGpsc/2vaIPAbiYc6vVshM=";
     };
-    propagatedBuildInputs = with pkgs.python313Packages; [
+    propagatedBuildInputs = with pkgs.python3Packages; [
       pydantic
     ];
   })
@@ -113,7 +113,7 @@
       rev = "v${version}";
       sha256 = "sha256-UCWsprFkoEtBnoiemegmqPMawJ1/j0bpWaz4qNVTt9k=";
     };
-    propagatedBuildInputs = with pkgs.python313Packages; [
+    propagatedBuildInputs = with pkgs.python3Packages; [
       arrow
       aiofiles
     ];
@@ -140,10 +140,10 @@
       sha256 = "sha256-M5M/kNUzplv+PuVQAWy0wdw4XXgho67zcvmW9QAXxTk=";
     };
     propagatedBuildInputs = [
-      pkgs.python313Packages.unidecode
-      pkgs.python313Packages.aiofiles
+      pkgs.python3Packages.unidecode
+      pkgs.python3Packages.aiofiles
       (
-        pkgs.python313.pkgs.buildPythonPackage rec {
+        pkgs.python3.pkgs.buildPythonPackage rec {
           pname = "pyaarlo";
           version = "0.8.0.17";
           pyproject = true;
@@ -151,7 +151,7 @@
             inherit pname version;
             hash = "sha256-a7/MnUfzatdNY4RolJd2EsEucDwVoFIXnsYOGtJSGZU=";
           };
-          propagatedBuildInputs = with pkgs.python313Packages; [
+          propagatedBuildInputs = with pkgs.python3Packages; [
             setuptools
             requests
             click

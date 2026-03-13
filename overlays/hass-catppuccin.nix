@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   fetchFromGitHub,
 }:
@@ -17,4 +18,10 @@ stdenv.mkDerivation rec {
     mkdir -p $out
     cp themes/catppuccin.yaml $out/${pname}.yaml
   '';
+
+  meta = with lib; {
+    description = "Catppuccin theme for Home Assistant";
+    homepage = "https://github.com/catppuccin/home-assistant";
+    license = licenses.mit;
+  };
 }

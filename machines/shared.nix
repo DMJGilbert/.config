@@ -8,7 +8,6 @@
       # Parallel build optimization
       cores = 0; # Use all available cores
       max-jobs = "auto"; # Auto-detect number of parallel jobs
-      # Enable ccache in sandbox builds
       substituters = [
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
@@ -28,36 +27,17 @@
       !include /etc/nix/access-tokens
     '';
   };
-  nixpkgs.config = {
-    allowUnfree = true;
-    permittedInsecurePackages = [
-      "electron-25.9.0"
-    ];
-  };
+  nixpkgs.config.allowUnfree = true;
 
   programs.zsh.enable = true;
   environment = {
     shells = with pkgs; [bashInteractive zsh];
     systemPackages = with pkgs; [
       lazygit
-      ripgrep
-      fzf
-      fd
-      bat
-      eza
-
-      # python312Packages.getmac
-      # python312Packages.aiohomekit
-      # python312Packages.aiowebostv
     ];
     variables = {
       EDITOR = "nvim";
       TERMINAL = "wezterm";
-      BROWSER = "librewolf";
     };
-  };
-
-  fonts = {
-    packages = with pkgs; [nerd-fonts.sauce-code-pro];
   };
 }

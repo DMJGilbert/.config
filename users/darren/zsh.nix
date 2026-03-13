@@ -37,29 +37,39 @@
       bindkey "^[[A" up-line-or-beginning-search # Up
       bindkey "^[[B" down-line-or-beginning-search # Down
 
-      # Claude Code with MCP secrets (reads from sops-nix decrypted files)
-      # Secrets only loaded for the duration of the claude command
-      claude-mcp() {
+      # Shared helper: check and warn about missing sops secrets
+      _claude_secrets_env() {
+        local secret_names=(
+          GITHUB_PERSONAL_ACCESS_TOKEN
+          HASS_HOST HASS_TOKEN
+          OBSIDIAN_API_KEY OBSIDIAN_HOST OBSIDIAN_PORT
+        )
         local missing_secrets=()
-        [[ ! -r /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN ]] && missing_secrets+=("GITHUB_PERSONAL_ACCESS_TOKEN")
-        [[ ! -r /run/secrets/HASS_HOST ]] && missing_secrets+=("HASS_HOST")
-        [[ ! -r /run/secrets/HASS_TOKEN ]] && missing_secrets+=("HASS_TOKEN")
-        [[ ! -r /run/secrets/OBSIDIAN_API_KEY ]] && missing_secrets+=("OBSIDIAN_API_KEY")
-        [[ ! -r /run/secrets/OBSIDIAN_HOST ]] && missing_secrets+=("OBSIDIAN_HOST")
-        [[ ! -r /run/secrets/OBSIDIAN_PORT ]] && missing_secrets+=("OBSIDIAN_PORT")
-
+        for s in "''${secret_names[@]}"; do
+          [[ ! -r /run/secrets/$s ]] && missing_secrets+=("$s")
+        done
         if (( ''${#missing_secrets[@]} > 0 )); then
           echo "⚠️  Missing secrets: ''${missing_secrets[*]}" >&2
           echo "   Some MCP servers may not work. Rebuild your config to decrypt secrets." >&2
         fi
+      }
 
-        GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
-        HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
-        HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
-        OBSIDIAN_API_KEY="$(cat /run/secrets/OBSIDIAN_API_KEY 2>/dev/null)" \
-        OBSIDIAN_HOST="$(cat /run/secrets/OBSIDIAN_HOST 2>/dev/null)" \
-        OBSIDIAN_PORT="$(cat /run/secrets/OBSIDIAN_PORT 2>/dev/null)" \
-        claude "$@"
+      _claude_secrets_export() {
+        export GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)"
+        export HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)"
+        export HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)"
+        export OBSIDIAN_API_KEY="$(cat /run/secrets/OBSIDIAN_API_KEY 2>/dev/null)"
+        export OBSIDIAN_HOST="$(cat /run/secrets/OBSIDIAN_HOST 2>/dev/null)"
+        export OBSIDIAN_PORT="$(cat /run/secrets/OBSIDIAN_PORT 2>/dev/null)"
+      }
+
+      # Claude Code with MCP secrets (reads from sops-nix decrypted files)
+      claude-mcp() {
+        _claude_secrets_env
+        (
+          _claude_secrets_export
+          claude "$@"
+        )
       }
 
       # Claude Code with local Ollama backend + MCP secrets
@@ -71,35 +81,19 @@
           return 1
         fi
 
-        # Remind user to specify model if not provided
         if [[ ! " $* " =~ " --model " ]] && [[ ! " $* " =~ " -m " ]]; then
           echo "💡 Tip: Specify a model with --model <name> (e.g., --model qwen3:32b)" >&2
           echo "   Available models: ollama list" >&2
         fi
 
-        local missing_secrets=()
-        [[ ! -r /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN ]] && missing_secrets+=("GITHUB_PERSONAL_ACCESS_TOKEN")
-        [[ ! -r /run/secrets/HASS_HOST ]] && missing_secrets+=("HASS_HOST")
-        [[ ! -r /run/secrets/HASS_TOKEN ]] && missing_secrets+=("HASS_TOKEN")
-        [[ ! -r /run/secrets/OBSIDIAN_API_KEY ]] && missing_secrets+=("OBSIDIAN_API_KEY")
-        [[ ! -r /run/secrets/OBSIDIAN_HOST ]] && missing_secrets+=("OBSIDIAN_HOST")
-        [[ ! -r /run/secrets/OBSIDIAN_PORT ]] && missing_secrets+=("OBSIDIAN_PORT")
-
-        if (( ''${#missing_secrets[@]} > 0 )); then
-          echo "⚠️  Missing secrets: ''${missing_secrets[*]}" >&2
-          echo "   Some MCP servers may not work. Rebuild your config to decrypt secrets." >&2
-        fi
-
-        ANTHROPIC_BASE_URL="http://localhost:11434" \
-        ANTHROPIC_API_KEY="ollama" \
-        ANTHROPIC_AUTH_TOKEN="ollama" \
-        GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)" \
-        HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)" \
-        HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)" \
-        OBSIDIAN_API_KEY="$(cat /run/secrets/OBSIDIAN_API_KEY 2>/dev/null)" \
-        OBSIDIAN_HOST="$(cat /run/secrets/OBSIDIAN_HOST 2>/dev/null)" \
-        OBSIDIAN_PORT="$(cat /run/secrets/OBSIDIAN_PORT 2>/dev/null)" \
-        claude "$@"
+        _claude_secrets_env
+        (
+          _claude_secrets_export
+          export ANTHROPIC_BASE_URL="http://localhost:11434"
+          export ANTHROPIC_API_KEY="ollama"
+          export ANTHROPIC_AUTH_TOKEN="ollama"
+          claude "$@"
+        )
       }
     '';
     shellAliases = {
