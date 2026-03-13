@@ -193,9 +193,9 @@
       settings = {
         simplified_ui = true;
         pane_frames = false;
-        theme = "catppuccin-latte";
+        theme = "catppuccin-frappe";
         default_layout = "compact";
-        themes.catppuccin-latte = {
+        themes.catppuccin-frappe = {
           fg = [198 208 245];
           bg = [98 104 128];
           black = [41 44 60];
@@ -208,6 +208,7 @@
           white = [198 208 245];
           orange = [239 159 118];
         };
+        show_startup_tips = false;
         ui.pane_frames.hide_session_name = true;
       };
     };
