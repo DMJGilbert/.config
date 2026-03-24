@@ -12,11 +12,13 @@ Code review for staged changes or full branch.
 ### 1. Get Changes
 
 **Staged (default)**:
+
 ```bash
 git diff --cached
 ```
 
 **Branch** (with `--branch` flag):
+
 ```bash
 # Find merge base
 BASE=$(git merge-base main HEAD)

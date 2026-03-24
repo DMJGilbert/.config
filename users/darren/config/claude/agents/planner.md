@@ -90,6 +90,7 @@ During PLAN phase:
 3. **Link entities**: Components affected, dependencies involved, related past decisions
 
 **Decision entity format**:
+
 ```json
 {
   "entityName": "decision-{short-name}",

@@ -12,6 +12,7 @@ Problem-solving with RIPER workflow.
 ### 1. Parse Input
 
 If input starts with `#`, fetch GitHub issue:
+
 ```bash
 gh issue view [number] --json title,body,labels
 ```
@@ -20,11 +21,11 @@ gh issue view [number] --json title,body,labels
 
 Invoke `complexity-gate` skill to assess:
 
-| Level | Criteria | Action |
-|-------|----------|--------|
-| TRIVIAL | Single file, obvious fix | Direct fix |
-| SIMPLE | 1-2 files, clear solution | Direct fix |
-| MEDIUM | 3+ files, some complexity | Strict RIPER |
+| Level   | Criteria                         | Action       |
+| ------- | -------------------------------- | ------------ |
+| TRIVIAL | Single file, obvious fix         | Direct fix   |
+| SIMPLE  | 1-2 files, clear solution        | Direct fix   |
+| MEDIUM  | 3+ files, some complexity        | Strict RIPER |
 | COMPLEX | Architecture, security, breaking | Strict RIPER |
 
 ### 3a. Direct Fix (TRIVIAL/SIMPLE)
@@ -37,6 +38,7 @@ Invoke `complexity-gate` skill to assess:
 ### 3b. Strict RIPER (MEDIUM/COMPLEX)
 
 **RESEARCH** (researcher agent):
+
 - Investigate the problem systematically
 - Reproduce the issue with documented steps
 - Trace data flow backward from symptom to root cause
@@ -46,10 +48,12 @@ Invoke `complexity-gate` skill to assess:
 **Circuit breaker**: If 3+ fix attempts fail, STOP. The problem is likely architectural, not a simple bug. Return to RESEARCH and question assumptions.
 
 **INNOVATE** (researcher agent):
+
 - Brainstorm 2-4 approaches
 - Evaluate trade-offs
 
 **PLAN** (planner agent):
+
 - Select approach
 - Create implementation spec
 - Define tasks and tests
@@ -59,12 +63,14 @@ Invoke `complexity-gate` skill to assess:
 Present plan and wait for user confirmation.
 
 **EXECUTE** (domain agents):
+
 - Implement according to plan
 - Run sequentially if multiple languages
 - Run tests after each task
 - Run `/simplify` on changed code at each batch checkpoint
 
 **REVIEW** (3 reviewers in parallel):
+
 - Security review
 - Bug hunt
 - Quality review
@@ -73,11 +79,13 @@ Present plan and wait for user confirmation.
 ### 4. Complete
 
 **Verify before claiming done** (see Verification Gate):
+
 1. Run the test/command that proves the fix works
 2. Show the output as evidence
 3. Only then present summary
 
 Present summary:
+
 - What was fixed (with root cause)
 - Files changed
 - Test output proving the fix

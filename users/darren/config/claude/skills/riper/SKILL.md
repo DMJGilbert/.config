@@ -21,6 +21,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Reasoning effort**: High (`ultrathink`) for COMPLEX tasks
 
 **Actions**:
+
 - Read relevant code files
 - Use LSP for navigation (go-to-definition, find-references)
 - Search for related patterns
@@ -40,6 +41,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Reasoning effort**: High (`ultrathink`) for COMPLEX tasks
 
 **Actions**:
+
 - Brainstorm 2-4 distinct solutions
 - For each, identify pros/cons/risks
 - Consider trade-offs
@@ -56,6 +58,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Purpose**: Create implementation specification
 
 **Actions**:
+
 - Review research and options
 - Select best approach (or combine)
 - Break down into tasks
@@ -75,6 +78,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Purpose**: User confirms plan before execution
 
 **Present**:
+
 - Summary of approach
 - Task list
 - Files affected
@@ -92,6 +96,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Purpose**: Implement the plan
 
 **Actions**:
+
 - Execute in batches of 3 tasks
 - After each batch: verify results, present status, pause for feedback
 - Use appropriate domain agent per file type
@@ -99,6 +104,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 - Sequential execution for multi-language
 
 **Batch checkpoint protocol**:
+
 1. Complete up to 3 tasks from the plan
 2. Run verification (tests, build, checks) for the batch
 3. Run `/simplify` on changed code to catch reuse, quality, and efficiency issues
@@ -107,28 +113,30 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 6. Adjust based on feedback, then continue to next batch
 
 **Stop immediately when**:
+
 - A task fails verification and the fix isn't obvious
 - A dependency is missing or unclear
 - The plan doesn't match the actual codebase state
 - 3+ fix attempts fail on the same issue (circuit breaker)
 
 **Agent selection**:
-| Extension | Agent |
-|-----------|-------|
-| .nix | nix |
-| .rs | rust |
-| .ts, .tsx | frontend |
-| .js (node) | backend |
-| .html, .css | ui |
-| .dart | dart |
-| .yaml (HA) | hass |
+
+| Extension   | Agent    |
+| ----------- | -------- |
+| .nix        | nix      |
+| .rs         | rust     |
+| .ts, .tsx   | frontend |
+| .js (node)  | backend  |
+| .html, .css | ui       |
+| .dart       | dart     |
+| .yaml (HA)  | hass     |
 
 **Execution mode** (determined in PLAN phase):
 
-| Mode | Use When | Pattern |
-|------|----------|---------|
-| Subagent (default) | Single-layer, same file type, sequential, <3 files | Domain agents called sequentially by lead |
-| Team | Cross-layer (3+ languages), 3+ independent file sets, competing approaches | Parallel teammates with file ownership |
+| Mode               | Use When                                                                   | Pattern                                          |
+| ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------ |
+| Subagent (default) | Single-layer, same file type, sequential, <3 files                         | Domain agents called sequentially by lead        |
+| Team               | Cross-layer (3+ languages), 3+ independent file sets, competing approaches | Parallel teammates with file ownership           |
 
 **Rule**: Follow the plan, don't improvise
 
@@ -140,12 +148,14 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Purpose**: Validate implementation
 
 **Actions**:
+
 - Run all 3 reviewers in parallel
 - Each focuses on their specialty
 - Aggregate findings by severity
 - Present unified report
 
 **Output**:
+
 - Critical/High/Medium/Low issues
 - Overall assessment
 - Ready to merge or needs fixes
@@ -153,6 +163,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 ### Processing Review Findings
 
 When review findings require fixes:
+
 1. Read all findings before acting
 2. Verify each suggestion against actual code (reviewers can be wrong)
 3. Fix one issue at a time, test between each
@@ -182,17 +193,20 @@ When review findings require fixes:
 When plan specifies team execution:
 
 ### Setup
+
 1. Lead spawns teammates via delegate mode with `isolation: "worktree"`
 2. Assign file ownership per teammate (no overlaps)
 3. Define dependency waves in plan
 
 ### Execution
+
 1. **Wave-by-wave**: All teammates in wave 1 execute in parallel → wait → wave 2
 2. **No overlapping writes**: Shared read access, exclusive write ownership
 3. **Report to lead**: Teammates flag completion and blockers
 4. **Lead coordinates**: Resolves conflicts, manages dependencies, makes trade-offs
 
 ### Completion
+
 - All teammates report findings
 - Lead aggregates changes
 - REVIEW phase examines full changeset

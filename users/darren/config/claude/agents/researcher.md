@@ -38,6 +38,7 @@ Your goal is to deeply understand the problem before any solutions are proposed.
 ### Output
 
 Provide a summary including:
+
 - Problem understanding
 - Relevant files identified
 - Existing patterns found
@@ -71,6 +72,7 @@ Present options with trade-offs for the planner to evaluate.
 ## Memory Workflow
 
 During RESEARCH phase:
+
 1. Query AIM memory for related decisions
 2. Review agent memory files for patterns
 3. Search for prior context

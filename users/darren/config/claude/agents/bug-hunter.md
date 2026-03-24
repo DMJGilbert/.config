@@ -19,6 +19,7 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 ## Focus Areas
 
 ### Logic Errors
+
 - Incorrect conditions
 - Wrong operator usage
 - Off-by-one errors
@@ -26,6 +27,7 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 - Missing return statements
 
 ### Edge Cases
+
 - Empty inputs
 - Null/undefined values
 - Boundary conditions
@@ -33,24 +35,28 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 - Unicode and special characters
 
 ### Race Conditions
+
 - Concurrent access issues
 - Async timing problems
 - State mutations during iteration
 - Resource contention
 
 ### Error Handling
+
 - Unhandled exceptions
 - Silent failures
 - Error swallowing
 - Missing error propagation
 
 ### Type Issues
+
 - Type coercion bugs
 - Incorrect type assumptions
 - Missing type guards
 - Unsafe type assertions
 
 ### State Management
+
 - Stale state references
 - Mutation of shared state
 - Incorrect state transitions

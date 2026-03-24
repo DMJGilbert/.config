@@ -19,6 +19,7 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 ## Focus Areas
 
 ### Performance
+
 - Algorithm complexity (Big O)
 - N+1 query patterns
 - Unnecessary iterations
@@ -28,6 +29,7 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 - Large bundle sizes
 
 ### Maintainability
+
 - Function length (>30 lines)
 - Cyclomatic complexity
 - Deep nesting
@@ -36,6 +38,7 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 - Missing documentation for complex logic
 
 ### Code Smells
+
 - Dead code
 - Commented-out code
 - Magic numbers/strings
@@ -44,6 +47,7 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 - Inappropriate intimacy
 
 ### Test Coverage
+
 - Missing test cases
 - Untested edge cases
 - Missing error path tests
@@ -51,6 +55,7 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 - Missing integration tests
 
 ### Architecture
+
 - Circular dependencies
 - Layer violations
 - Inconsistent patterns

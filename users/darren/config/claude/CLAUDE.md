@@ -8,28 +8,29 @@ All complex tasks follow strict RIPER phases:
 RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 ```
 
-| Phase | Agent | Purpose |
-|-------|-------|---------|
-| RESEARCH | researcher (subagent) | Explore codebase, gather context |
-| INNOVATE | researcher (subagent) | Brainstorm approaches |
-| PLAN | planner (subagent) | Create spec, define tasks |
-| EXECUTE | domain agents (subagent) | Single-layer: sequential subagents |
-| EXECUTE | agent team (swarm) | Cross-layer: parallel teammates with file ownership |
-| REVIEW | 3 reviewers (subagent) | Security, bugs, quality (parallel) |
+| Phase    | Agent                    | Purpose                                             |
+| -------- | ------------------------ | --------------------------------------------------- |
+| RESEARCH | researcher (subagent)    | Explore codebase, gather context                    |
+| INNOVATE | researcher (subagent)    | Brainstorm approaches                               |
+| PLAN     | planner (subagent)       | Create spec, define tasks                           |
+| EXECUTE  | domain agents (subagent) | Single-layer: sequential subagents                  |
+| EXECUTE  | agent team (swarm)       | Cross-layer: parallel teammates with file ownership |
+| REVIEW   | 3 reviewers (subagent)   | Security, bugs, quality (parallel)                  |
 
 **Complexity routing**: `complexity-gate` skill assesses tasks:
+
 - TRIVIAL/SIMPLE → Direct action
 - MEDIUM/COMPLEX → Strict RIPER with plan approval
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/commit` | Generate conventional commit for staged changes |
-| `/review` | Code review (staged default, `--branch` for full branch) |
-| `/fix [problem]` | Problem-solving with RIPER workflow |
-| `/simplify` | Review changed code for reuse, quality, and efficiency |
-| `/retrospective` | Review session for learnings, update agent memories |
+| Command          | Purpose                                                  |
+| ---------------- | -------------------------------------------------------- |
+| `/commit`        | Generate conventional commit for staged changes          |
+| `/review`        | Code review (staged default, `--branch` for full branch) |
+| `/fix [problem]` | Problem-solving with RIPER workflow                      |
+| `/simplify`      | Review changed code for reuse, quality, and efficiency   |
+| `/retrospective` | Review session for learnings, update agent memories      |
 
 ## Conventions
 
@@ -50,6 +51,7 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 All agents must verify claims with evidence before reporting completion.
 
 **Process**: IDENTIFY → RUN → READ → VERIFY → CLAIM
+
 1. **IDENTIFY** the command that proves your claim (test, build, check)
 2. **RUN** the command fresh (not from memory or prior output)
 3. **READ** the full output including exit codes
@@ -57,11 +59,13 @@ All agents must verify claims with evidence before reporting completion.
 5. **CLAIM** completion only with evidence cited
 
 **Prohibited language** (before verification):
+
 - "should work", "probably fixed", "seems correct"
 - "Done!", "All good!", "Everything passes!" (without test output)
 - "I believe this fixes...", "This should resolve..."
 
 **What requires verification**:
+
 - Test pass claims → show test output with 0 failures
 - Build success → show exit code 0
 - Bug fixes → show the original symptom no longer reproduces
@@ -78,6 +82,7 @@ When domain agents receive findings from review agents:
 5. **Show fixes through code**, not acknowledgment phrases
 
 **Prohibited responses**:
+
 - "Great point!", "You're absolutely right!", "Thanks for catching that!"
 - Implementing suggestions without verifying they apply
 - Batch-implementing all feedback without testing between fixes
@@ -85,36 +90,36 @@ When domain agents receive findings from review agents:
 
 ## Agent Model Selection
 
-| Role | Model | Rationale |
-|------|-------|-----------|
-| Lead/orchestrator | Opus | Coordination complexity, multi-agent reasoning |
-| Review agents | Opus | Judgment quality, security/bug detection accuracy |
-| Domain agents | Sonnet | Code generation quality, cost-effective for execution |
-| Researcher | Opus | Reasoning depth + breadth, research quality |
-| Planner | Sonnet | Structured planning, spec writing |
-| Swarm teammates | Sonnet | Parallel cost control, code generation |
+| Role              | Model  | Rationale                                             |
+| ----------------- | ------ | ----------------------------------------------------- |
+| Lead/orchestrator | Opus   | Coordination complexity, multi-agent reasoning        |
+| Review agents     | Opus   | Judgment quality, security/bug detection accuracy     |
+| Domain agents     | Sonnet | Code generation quality, cost-effective for execution |
+| Researcher        | Opus   | Reasoning depth + breadth, research quality           |
+| Planner           | Sonnet | Structured planning, spec writing                     |
+| Swarm teammates   | Sonnet | Parallel cost control, code generation                |
 
 **Rule**: Only upgrade from Sonnet to Opus when judgment accuracy outweighs cost.
 
 ## Domain Agents
 
-| Agent | Languages/Focus | Tools |
-|-------|-----------------|-------|
-| nix | Nix, Flakes, home-manager, nix-darwin | Edit + context7 + memory |
-| hass | Home Assistant, YAML, automations | Edit + context7 + memory + hass-mcp |
-| rust | Rust, Cargo, systems programming | Edit + context7 + memory |
-| dart | Dart, Flutter, cross-platform | Edit + context7 + memory |
-| frontend | TypeScript, React, state management | Edit + context7 + memory |
-| backend | TypeScript, Node.js, APIs | Edit + context7 + memory |
-| ui | HTML, CSS, Tailwind, accessibility | Edit + context7 + memory |
+| Agent    | Languages/Focus                        | Tools                                |
+| -------- | -------------------------------------- | ------------------------------------ |
+| nix      | Nix, Flakes, home-manager, nix-darwin  | Edit + context7 + memory             |
+| hass     | Home Assistant, YAML, automations      | Edit + context7 + memory + hass-mcp  |
+| rust     | Rust, Cargo, systems programming       | Edit + context7 + memory             |
+| dart     | Dart, Flutter, cross-platform          | Edit + context7 + memory             |
+| frontend | TypeScript, React, state management    | Edit + context7 + memory             |
+| backend  | TypeScript, Node.js, APIs              | Edit + context7 + memory             |
+| ui       | HTML, CSS, Tailwind, accessibility     | Edit + context7 + memory             |
 
 ## Review Agents
 
-| Agent | Focus | Tools |
-|-------|-------|-------|
+| Agent             | Focus                                     | Tools                                     |
+| ----------------- | ----------------------------------------- | ----------------------------------------- |
 | security-reviewer | Vulnerabilities, auth, injection, secrets | Read-only (Read, Glob, Grep, LSP, memory) |
-| bug-hunter | Logic errors, edge cases, race conditions | Read-only (Read, Glob, Grep, LSP, memory) |
-| quality-reviewer | Performance, maintainability, code smells | Read-only (Read, Glob, Grep, LSP, memory) |
+| bug-hunter        | Logic errors, edge cases, race conditions | Read-only (Read, Glob, Grep, LSP, memory) |
+| quality-reviewer  | Performance, maintainability, code smells | Read-only (Read, Glob, Grep, LSP, memory) |
 
 ## Agent Teams (Swarms)
 
@@ -123,12 +128,13 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 
 **Hybrid routing** (decided during PLAN phase):
 
-| Execution Pattern | Use When |
-|-------------------|----------|
-| Subagents (default) | Single-layer, same-file, sequential, or < 3 files |
-| Agent team | Cross-layer (frontend + backend + infra), 3+ independent file sets, competing hypotheses |
+| Execution Pattern   | Use When                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| Subagents (default) | Single-layer, same-file, sequential, or < 3 files                                        |
+| Agent team          | Cross-layer (frontend + backend + infra), 3+ independent file sets, competing hypotheses |
 
 **Team conventions**:
+
 - 3 teammates is the sweet spot; more adds coordination overhead
 - Use delegate mode (`Shift+Tab`) to keep lead coordinating, not implementing
 - Use `isolation: "worktree"` for teammates to prevent cross-contamination
@@ -141,21 +147,25 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 ### Team Patterns
 
 **Full-Stack Feature** — API endpoint + frontend UI + infrastructure:
+
 - Teammates: backend, frontend, nix (or hass)
 - Waves: 1) backend implements API contract → 2) frontend consumes API (parallel with nix) → 3) integration tests
 - File ownership: backend owns `src/api/`, frontend owns `src/components/`, nix owns `*.nix`
 
 **Research Sprint** — Explore 3 different implementation approaches:
+
 - Teammates: 3x researcher (Sonnet), each explores one approach
 - Process: parallel exploration → reconvene findings → planner selects winner
 - File ownership: read-only (no conflicts)
 
 **Bug Hunt** — Critical bug with unclear root cause:
+
 - Teammates: 3x researcher — one reproduces, one analyzes code paths, one checks recent changes
 - Process: parallel investigation → share findings → single fixer implements solution
 - File ownership: read-only during hunt, single writer for fix
 
 **Migration** — Large refactor across multiple layers:
+
 - Teammates: domain agents per layer (e.g. rust + dart + frontend + nix)
 - Waves: 1) backend breaking changes → 2) all clients update in parallel → 3) integration + deployment
 - File ownership: each agent owns their language files
@@ -185,25 +195,28 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 
 ### Memory Systems
 
-| System | Location | Purpose |
-|--------|----------|---------|
-| Auto-memory | `~/.claude/projects/.../memory/MEMORY.md` | Session context, auto-saved by Claude Code |
-| Agent memory | Obsidian `claude/memory/{agent}/MEMORY.md` | Persistent patterns per agent role |
-| AIM graph | Project-scoped memory graph | Decisions, entity relationships |
+| System       | Location                                   | Purpose                                    |
+| ------------ | ------------------------------------------ | ------------------------------------------ |
+| Auto-memory  | `~/.claude/projects/.../memory/MEMORY.md`  | Session context, auto-saved by Claude Code |
+| Agent memory | Obsidian `claude/memory/{agent}/MEMORY.md` | Persistent patterns per agent role         |
+| AIM graph    | Project-scoped memory graph                | Decisions, entity relationships            |
 
 ### When to Store
 
 **Auto-memory** (managed automatically):
+
 - Claude Code saves useful session context here
 - Use `/memory` to view and manage
 
 **Agent Memory** (Obsidian vault `claude/memory/{agent}/MEMORY.md`):
+
 - Persistent patterns confirmed across 2+ interactions
 - Project conventions (file locations, build commands, naming)
 - Proven solutions to recurring problems
 - Anti-patterns discovered
 
 **AIM Memory Graph**:
+
 - Key decisions with rationale
 - Entity relationships (components, dependencies)
 - User preferences
@@ -225,10 +238,10 @@ Subagents handle RESEARCH/INNOVATE/PLAN/REVIEW; teams handle parallel EXECUTE.
 
 Three tiers available with Opus 4.6 (`alwaysThinkingEnabled: true` in settings):
 
-| Tier | Trigger | Use When |
-|------|---------|----------|
-| Medium | Always-on baseline | All turns (default) |
-| High | `ultrathink` keyword in prompt | RESEARCH/INNOVATE on COMPLEX tasks, architectural decisions, security review |
+| Tier   | Trigger                        | Use When                                                                     |
+| ------ | ------------------------------ | ---------------------------------------------------------------------------- |
+| Medium | Always-on baseline             | All turns (default)                                                          |
+| High   | `ultrathink` keyword in prompt | RESEARCH/INNOVATE on COMPLEX tasks, architectural decisions, security review |
 
 **Rule**: Use `ultrathink` for RESEARCH/INNOVATE phases on COMPLEX tasks. Medium suffices for EXECUTE and PLAN.
 

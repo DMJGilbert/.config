@@ -19,6 +19,7 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 ## Focus Areas
 
 ### Injection Vulnerabilities
+
 - SQL injection
 - Command injection
 - XSS (Cross-Site Scripting)
@@ -26,6 +27,7 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 - Path traversal
 
 ### Authentication & Authorization
+
 - Auth bypass possibilities
 - Missing authorization checks
 - Privilege escalation
@@ -33,18 +35,21 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 - Token handling
 
 ### Data Exposure
+
 - Secrets in code (API keys, passwords)
 - Sensitive data in logs
 - Information leakage in errors
 - Insecure data storage
 
 ### Cryptography
+
 - Weak algorithms
 - Hardcoded keys
 - Improper random generation
 - Missing encryption
 
 ### Dependencies
+
 - Known vulnerable packages
 - Outdated dependencies with CVEs
 
