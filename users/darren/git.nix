@@ -14,6 +14,7 @@ _: {
     enable = true;
     lfs.enable = true;
     signing = {
+      format = "ssh";
       key = "~/.ssh/id_ed25519";
       signByDefault = true;
     };
@@ -23,7 +24,6 @@ _: {
         email = "dmjgilbert@me.com";
       };
       init.defaultBranch = "main";
-      gpg.format = "ssh";
       github.user = "DMJGilbert";
       core.editor = "nvim";
       pull.rebase = true;

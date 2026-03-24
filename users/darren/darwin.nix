@@ -18,6 +18,7 @@
       "claude-code"
       "displaylink"
       "docker-desktop"
+      "figma"
       "flutter"
       "swiftformat-for-xcode"
       "librewolf"

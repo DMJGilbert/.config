@@ -1,82 +1,79 @@
----
-description: Comprehensive code review of staged changes
-allowed-tools:
-  - Bash(git status:*)
-  - Bash(git diff:*)
-  - Bash(git log:*)
-  - Bash(git show:*)
-  - Read
-  - Grep
-  - Glob
-  - Task
----
+# Review
 
-# Code Review
+Code review for staged changes or full branch.
 
-Perform a comprehensive code review of: $ARGUMENTS
+## Usage
 
-If no argument provided, review staged changes (`git diff --cached`).
+- `/review` - Review staged changes (default)
+- `/review --branch` - Review full branch diff from main
 
-## Analysis Steps
+## Process
 
-1. **Get Context**
-   - Run `git status` to see what's staged
-   - Run `git diff --cached` to see the actual changes
-   - Run `git diff --cached --stat` for a summary
+### 1. Get Changes
 
-2. **Code Quality Review**
-   - Check for clean code principles (SOLID, DRY, KISS)
-   - Verify meaningful naming conventions
-   - Look for code smells (long functions, deep nesting, magic numbers)
-   - Check error handling completeness
+**Staged (default)**:
 
-3. **Security Review**
-   - Look for hardcoded secrets or credentials
-   - Check input validation
-   - Review authentication/authorization logic
-   - Identify injection risks (SQL, XSS, command)
+```bash
+git diff --cached
+```
 
-4. **Architecture Review**
-   - Verify changes follow existing patterns
-   - Check for proper separation of concerns
-   - Look for circular dependencies
-   - Assess coupling and cohesion
+**Branch** (with `--branch` flag):
 
-5. **Performance Review**
-   - Identify potential bottlenecks
-   - Check for N+1 query patterns
-   - Look for unnecessary computations
-   - Review memory usage patterns
+```bash
+# Find merge base
+BASE=$(git merge-base main HEAD)
+git diff $BASE..HEAD
+```
 
-6. **Test Coverage**
-   - Check if new code has corresponding tests
-   - Identify untested edge cases
-   - Verify test quality and assertions
+If no changes found, inform user and exit.
+
+### 2. Invoke Review Agents (Parallel)
+
+Launch three reviewers simultaneously:
+
+```
+Task(security-reviewer, prompt="Review these changes for security issues: [diff]")
+Task(bug-hunter, prompt="Review these changes for bugs and edge cases: [diff]")
+Task(quality-reviewer, prompt="Review these changes for quality issues: [diff]")
+```
+
+### 3. Aggregate Findings
+
+Collect results from all three reviewers and merge:
+
+1. Combine all findings
+2. Sort by severity: Critical → High → Medium → Low
+3. Deduplicate overlapping issues
+4. Present unified report
 
 ## Output Format
 
-Group findings by severity:
+```markdown
+## Code Review
 
 ### Critical
-
-Issues that must be fixed before merging (security vulnerabilities, data loss risks)
+- [Issue from any reviewer]
 
 ### High
-
-Significant issues that should be addressed (performance problems, missing error handling)
+- [Issue]
 
 ### Medium
-
-Code quality concerns (code smells, maintainability issues)
+- [Issue]
 
 ### Low
+- [Issue]
 
-Minor suggestions and style improvements
+### Summary
 
-For each finding, provide:
+**Security**: [assessment]
+**Correctness**: [assessment]
+**Quality**: [assessment]
 
-- **File:Line** - Location of the issue
-- **Issue** - Clear description of the problem
-- **Suggestion** - How to fix it
+**Overall**: [Ready to merge / Needs fixes / Major concerns]
+```
 
-End with a summary: total issues by severity and overall assessment.
+## Notes
+
+- Review does not modify files
+- Issues include file:line references
+- Suggestions are actionable

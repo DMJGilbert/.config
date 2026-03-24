@@ -25,10 +25,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nvim-treesitter-main = {
-      url = "github:iofq/nvim-treesitter-main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs = {
     darwin,
@@ -36,7 +32,6 @@
     nixpkgs,
     home-manager,
     sops-nix,
-    nvim-treesitter-main,
     ...
   } @ inputs: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -44,7 +39,6 @@
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       (import ./overlays/pkgs.nix)
-      nvim-treesitter-main.overlays.default
     ];
     # Systems to generate devShells and checks for
     forAllSystems = nixpkgs.lib.genAttrs ["aarch64-darwin" "x86_64-linux"];
@@ -96,9 +90,11 @@
         touch $out
       '';
       markdown = pkgs.runCommand "check-markdown" {} ''
-        ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
+        ${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f \
+          -not -path '*/.git/*' -print0 | \
+          ${pkgs.findutils}/bin/xargs -0 \
+          ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
           --config ${./.markdownlint-cli2.yaml} \
-          $(${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f) \
           2>&1 || {
           echo ""
           echo "Fix markdown issues with: markdownlint-cli2 --fix '**/*.md'"
@@ -114,7 +110,7 @@
       user = "darren";
     };
     nixosConfigurations.rubecula = mkNixos "rubecula" {
-      inherit hardware nixpkgs home-manager overlays;
+      inherit hardware nixpkgs home-manager overlays sops-nix;
       system = "x86_64-linux";
       user = "darren";
       extraModules = [

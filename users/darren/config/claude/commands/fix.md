@@ -1,202 +1,92 @@
----
-description: Fix a problem (text description or GitHub issue number)
-allowed-tools:
-  - Bash(git:*)
-  - Bash(gh:*)
-  - Bash(nix:*)
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Task
-  - mcp__sequential-thinking__sequentialthinking
-  - mcp__memory__aim_memory_search
----
+# Fix
 
-# Fix Problem
+Problem-solving with RIPER workflow.
 
-Fix the specified problem: $ARGUMENTS
+## Usage
 
-**Input modes:**
+- `/fix [problem description]` - Fix a described problem
+- `/fix #123` - Fix GitHub issue by number
 
-- **GitHub Issue**: If argument is a number (e.g., `123` or `#123`), fetch issue details as context
-- **Text Description**: If argument is text, treat it as the problem description
-- **No argument**: Prompt user to describe the problem
+## Process
 
-## RIPER Workflow
+### 1. Parse Input
 
-This command follows the RIPER workflow phases:
+If input starts with `#`, fetch GitHub issue:
 
-### Phase 1: RESEARCH (Root Cause Investigation)
-
-**Core Principle: ALWAYS find root cause before attempting fixes. Symptom fixes are failure.**
-
-1. **Understand the Problem**
-
-   **If GitHub issue number provided:**
-
-   ```bash
-   gh issue view $1 --json title,body,state,labels,comments
-   ```
-
-   Extract: title, description, labels, comments, expected vs actual behavior.
-
-   **If text description provided:**
-   Parse the description to understand:
-   - What is broken or needs to change?
-   - What is the expected behavior?
-   - Any error messages or symptoms?
-
-2. **Root Cause Investigation (MANDATORY)**
-   - **Read error messages thoroughly** - Don't skip warnings or stack traces
-   - **Reproduce consistently** - Verify you can trigger the issue reliably
-   - **Check recent changes** - Examine git diffs, dependencies, config changes
-   - **Trace data flow** - Backward trace from error to find where bad values originate
-   - **Add instrumentation** - In multi-component systems, add logging at boundaries
-
-3. **Pattern Analysis**
-   - Locate similar working code in the codebase
-   - Read reference implementations completely (not skimmed)
-   - List every difference between working and broken code
-   - Understand all dependencies and assumptions
-
-4. **Gather Context**
-   - Search codebase for related files (`Grep`, `Glob`)
-   - Check knowledge graph: `mcp__memory__aim_memory_search`
-   - Read relevant files to understand current implementation
-   - Identify affected components and dependencies
-
-5. **Document Understanding**
-   - Summarize the problem clearly
-   - State the **root cause**, not just symptoms
-   - Note any ambiguities to clarify with user
-
-### Phase 2: INNOVATE (Hypothesis & Testing)
-
-6. **Form Hypothesis**
-   - State your hypothesis clearly with specific reasoning
-   - "I believe X is failing because Y, evidenced by Z"
-   - Use `mcp__sequential-thinking__sequentialthinking` for complex problems
-
-7. **Analyze Solutions**
-   - Consider multiple approaches
-   - Evaluate trade-offs (complexity, performance, maintainability)
-   - Test hypothesis with smallest possible change
-   - **Change only ONE variable at a time**
-
-8. **Select Approach**
-   - Choose the most appropriate solution
-   - Document the reasoning
-   - Identify risks and edge cases
-
-**Red Flags - STOP and Return to RESEARCH:**
-
-- Proposing fixes without understanding the issue
-- Attempting multiple simultaneous changes
-- Making assumptions without verification
-- "Quick fixes" before investigation
-
-### Phase 3: PLAN
-
-6. **Create Implementation Plan**
-   - List files to be modified
-   - Define the order of changes
-   - Identify tests or validation needed
-   - Estimate scope
-
-7. **Create Branch** (if significant change)
-
-   ```bash
-   git checkout -b fix/short-description
-   ```
-
-### Phase 4: EXECUTE
-
-8. **Implement Fix**
-   - Make the necessary code changes
-   - Follow existing code patterns and style
-   - Use appropriate specialist agents if needed:
-     - `nix-specialist` for Nix files
-     - `home-assistant-dev` for HA configs
-     - `test-engineer` for adding tests
-
-9. **Validate Changes**
-   - Run `nix flake check` for Nix changes
-   - Run `alejandra --check .` for formatting
-   - Run `statix check .` for linting
-   - Test the fix manually if applicable
-
-### Phase 5: REVIEW
-
-10. **Self-Review**
-    - Check all changes with `git diff`
-    - Verify no unintended changes
-    - Ensure code quality standards are met
-
-11. **Report Results**
-    - Summarize what was changed
-    - Explain how the fix works
-    - Note any follow-up actions needed
-
-## Output Format
-
-```markdown
-## Problem Summary
-
-[Clear description of what needed fixing]
-
-## Root Cause
-
-[What caused the issue - if applicable]
-
-## Solution
-
-[How it was fixed]
-
-## Changes Made
-
-| File         | Change                |
-| ------------ | --------------------- |
-| path/to/file | Description of change |
-
-## Validation
-
-- [ ] Code compiles/builds
-- [ ] Formatting passes
-- [ ] Linting passes
-- [ ] Manual testing (if applicable)
-
-## Next Steps
-
-[Any follow-up actions, commits, PRs, etc.]
+```bash
+gh issue view [number] --json title,body,labels
 ```
 
-## Error Handling
+### 2. Assess Complexity
 
-- If problem is unclear: Ask clarifying questions before proceeding
-- If fix requires breaking changes: Warn user and get confirmation
-- If multiple solutions exist: Present options and let user choose
+Invoke `complexity-gate` skill to assess:
 
-## When 2+ Fix Attempts Fail
+| Level   | Criteria                         | Action       |
+| ------- | -------------------------------- | ------------ |
+| TRIVIAL | Single file, obvious fix         | Direct fix   |
+| SIMPLE  | 1-2 files, clear solution        | Direct fix   |
+| MEDIUM  | 3+ files, some complexity        | Strict RIPER |
+| COMPLEX | Architecture, security, breaking | Strict RIPER |
 
-**Trigger ultrathink mode** for deeper analysis:
+### 3a. Direct Fix (TRIVIAL/SIMPLE)
 
-```
-ultrathink: What are all the possible root causes?
-What assumptions am I making? What haven't I checked yet?
-```
+1. Identify the issue
+2. Make the fix
+3. Run relevant tests
+4. Present changes for review
 
-See `skills/ultrathink-trigger/SKILL.md` for complexity indicators.
+### 3b. Strict RIPER (MEDIUM/COMPLEX)
 
-## When 3+ Fix Attempts Fail
+**RESEARCH** (researcher agent):
 
-**STOP.** This signals an architectural problem, not a fixable bug:
+- Investigate the problem systematically
+- Reproduce the issue with documented steps
+- Trace data flow backward from symptom to root cause
+- Check recent changes (`git log`, `git diff`) for regression sources
+- Find relevant code and understand root cause
 
-1. Do not attempt another fix
-2. Return to Phase 1 (RESEARCH)
-3. Question whether the underlying pattern/design is sound
-4. Discuss with user: "Should we refactor architecture vs. continue fixing symptoms?"
-5. Consider dispatching architect agent for design review
+**Circuit breaker**: If 3+ fix attempts fail, STOP. The problem is likely architectural, not a simple bug. Return to RESEARCH and question assumptions.
 
-**Random fixes waste time and create new bugs. Quick patches mask underlying issues.**
+**INNOVATE** (researcher agent):
+
+- Brainstorm 2-4 approaches
+- Evaluate trade-offs
+
+**PLAN** (planner agent):
+
+- Select approach
+- Create implementation spec
+- Define tasks and tests
+- Save to vault
+
+**⏸️ APPROVAL**:
+Present plan and wait for user confirmation.
+
+**EXECUTE** (domain agents):
+
+- Implement according to plan
+- Run sequentially if multiple languages
+- Run tests after each task
+- Run `/simplify` on changed code at each batch checkpoint
+
+**REVIEW** (3 reviewers in parallel):
+
+- Security review
+- Bug hunt
+- Quality review
+- Aggregate findings
+
+### 4. Complete
+
+**Verify before claiming done** (see Verification Gate):
+
+1. Run the test/command that proves the fix works
+2. Show the output as evidence
+3. Only then present summary
+
+Present summary:
+
+- What was fixed (with root cause)
+- Files changed
+- Test output proving the fix
+- Any remaining concerns

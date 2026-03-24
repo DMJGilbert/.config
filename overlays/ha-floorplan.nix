@@ -5,11 +5,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "ha-floorplan";
-  version = "1.1.3";
+  version = "1.1.4";
 
   src = fetchurl {
     url = "https://github.com/ExperienceLovelace/ha-floorplan/releases/download/v${version}/floorplan.js";
-    hash = "sha256-SaxHXfeSVCzh0dvXwwHnmrABj7gqoCejAAEJba2SIxg=";
+    hash = "sha256-EwyT3tKjkObuYn5pXkP9mvvRwHyaGLpieX4M0nKihDk=";
   };
 
   dontUnpack = true;

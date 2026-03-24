@@ -18,6 +18,7 @@
         tree-sitter
         luarocks
         nil
+        nixd
         alejandra
         shellcheck
         shfmt
@@ -28,6 +29,8 @@
         lua-language-server
         nodePackages.vscode-langservers-extracted
         nodePackages.typescript-language-server
+        nodePackages.yaml-language-server
+        nodePackages.bash-language-server
         nodePackages.prettier
         nodePackages.eslint_d
         nodePackages."@tailwindcss/language-server"
@@ -35,8 +38,6 @@
         # development
         pkgconf
         cmake
-        direnv
-        nix-direnv
         stylua
         uv # Python package manager (provides uvx)
 
@@ -59,7 +60,6 @@
         dust # Better du
         duf # Better df
         procs # Better ps
-        delta # Better git diffs
 
         # Secrets management
         age # Encryption tool for sops
@@ -69,7 +69,6 @@
         # tools
         zoom-us
         slack
-        # obsidian
         openconnect
 
         tuist
@@ -80,7 +79,6 @@
         jankyborders
         cocoapods
       ]);
-    file = {};
   };
 
   manual.manpages.enable = false;
@@ -91,6 +89,7 @@
       nix-direnv.enable = true;
     };
     eza.enable = true;
+    ripgrep.enable = true;
     fzf = {
       enable = true;
       enableZshIntegration = true;
@@ -117,11 +116,10 @@
     };
     wezterm = {
       enable = true;
-      # install wezterm via homebrew on macOS to avoid compilation, dummy package here.
       package =
         if pkgs.stdenv.isLinux
         then pkgs.wezterm
-        else pkgs.hello;
+        else pkgs.emptyDirectory;
       enableBashIntegration = pkgs.stdenv.isLinux;
       enableZshIntegration = pkgs.stdenv.isLinux;
       extraConfig = ''
@@ -191,9 +189,9 @@
       settings = {
         simplified_ui = true;
         pane_frames = false;
-        theme = "catppucin-latte";
+        theme = "catppuccin-frappe";
         default_layout = "compact";
-        themes.catppucin-latte = {
+        themes.catppuccin-frappe = {
           fg = [198 208 245];
           bg = [98 104 128];
           black = [41 44 60];
@@ -206,6 +204,7 @@
           white = [198 208 245];
           orange = [239 159 118];
         };
+        show_startup_tips = false;
         ui.pane_frames.hide_session_name = true;
       };
     };

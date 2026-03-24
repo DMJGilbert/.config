@@ -1,40 +1,27 @@
 {
   lib,
-  buildNpmPackage,
-  fetchFromGitHub,
+  stdenvNoCC,
+  fetchurl,
 }:
-buildNpmPackage rec {
+stdenvNoCC.mkDerivation rec {
   pname = "lovelace-tabbed-card";
-  version = "v0.3.2";
+  version = "0.3.3";
 
-  src = fetchFromGitHub {
-    owner = "kinghat";
-    repo = "tabbed-card";
-    rev = version;
-    hash = "sha256-Es8YHACUvbBIay1BzElBTtxdxdD7Hs1RrjGgm2C6BUU=";
+  src = fetchurl {
+    url = "https://github.com/kinghat/tabbed-card/releases/download/v${version}/tabbed-card.js";
+    hash = "sha256-bq1fmXdAtrTxYtJoMqSypvvLwFB7jpRw8PaiUa6OkBo=";
   };
 
-  npmDepsHash = "sha256-R+HhIghy15q8SM4NtwNMK5xw7tKNQsKZAYU7ygQErjE=";
-
-  makeCacheWritable = true;
-
-  postPatch = ''
-    cp ${./tabbed-card-package-lock.json} package-lock.json
-  '';
+  dontUnpack = true;
 
   installPhase = ''
-    runHook preInstall
-
-    mkdir $out
-    install -m0644 dist/tabbed-card.js $out
-
-    runHook postInstall
+    mkdir -p $out
+    cp $src $out/tabbed-card.js
   '';
 
   meta = with lib; {
-    description = "";
-    homepage = "";
+    description = "Tabbed card for Home Assistant Lovelace";
+    homepage = "https://github.com/kinghat/tabbed-card";
     license = licenses.mit;
-    maintainers = [];
   };
 }

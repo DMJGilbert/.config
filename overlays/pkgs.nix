@@ -1,7 +1,9 @@
-final: _prev: {
+final: prev: {
+  # Fix direnv build: CGO_ENABLED=0 conflicts with -linkmode=external in Makefile
+  direnv = prev.direnv.overrideAttrs (old: {
+    env = (old.env or {}) // {CGO_ENABLED = 1;};
+  });
   hass-catppuccin = final.callPackage ./hass-catppuccin.nix {};
-  hass-bubble-card = final.callPackage ./hass-bubble-card.nix {};
-  lovelace-auto-entities = final.callPackage ./lovelace-auto-entities.nix {};
   lovelace-tabbed-card = final.callPackage ./lovelace-tabbed-card.nix {};
   lovelace-layout-card = final.callPackage ./lovelace-layout-card.nix {};
   lovelace-stack-in-card = final.callPackage ./lovelace-stack-in-card.nix {};

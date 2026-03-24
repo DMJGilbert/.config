@@ -78,9 +78,8 @@ in
 
           # Custom Lovelace modules
           customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-            pkgs.hass-catppuccin
-            pkgs.hass-bubble-card
-            pkgs.lovelace-auto-entities
+            bubble-card
+            auto-entities
             pkgs.lovelace-tabbed-card
             pkgs.lovelace-layout-card
             pkgs.lovelace-stack-in-card
@@ -124,6 +123,7 @@ in
             "bluetooth"
             "automation"
             "tplink"
+            "nmap_tracker"
             "onvif"
             "hue"
             "apple_tv"
@@ -146,9 +146,7 @@ in
           # Main Home Assistant configuration
           config = {
             default_config = {};
-            logger = {
-              logs = {};
-            };
+            logger = {};
             homeassistant = {
               name = "Home";
               country = "GB";
@@ -160,7 +158,7 @@ in
               allowlist_external_dirs = ["/etc"];
             };
             http = {
-              server_host = "0.0.0.0";
+              server_host = "127.0.0.1";
               server_port = 8123;
               use_x_forwarded_for = true;
               trusted_proxies = ["127.0.0.1"];
@@ -172,7 +170,7 @@ in
             system_health = {};
             lovelace =
               {
-                mode = "yaml";
+                resource_mode = "yaml";
                 resources = [
                   {
                     url = "/local/nixos-lovelace-modules/bubble-card.js";
@@ -258,23 +256,25 @@ in
               };
             ffmpeg = {};
             energy = {};
-            sensor = [
-              {
-                platform = "systemmonitor";
-                resources = [
-                  {
-                    type = "disk_use_percent";
-                    arg = "/";
-                  }
-                  {type = "memory_use_percent";}
-                  {type = "processor_use";}
-                  {type = "processor_temperature";}
-                  {type = "load_1m";}
-                  {type = "load_5m";}
-                  {type = "load_15m";}
-                ];
-              }
-            ];
+            systemmonitor = {
+              sensor = {
+                process = [];
+              };
+              resources = [
+                {
+                  type = "disk_use_percent";
+                  arg = "/";
+                }
+                {type = "disk_free";}
+                {type = "memory_use_percent";}
+                {type = "processor_use";}
+                {type = "processor_temperature";}
+                {type = "load_1m";}
+                {type = "load_5m";}
+                {type = "load_15m";}
+                {type = "last_boot";}
+              ];
+            };
             template = [
               {
                 sensor = {
@@ -357,7 +357,7 @@ in
                 ];
               };
             };
-            scene = [];
+            scene = {};
             input_boolean = {
               party_mode = {
                 name = "Party Mode";
