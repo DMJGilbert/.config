@@ -4,24 +4,27 @@
   ...
 }:
 lib.mkIf pkgs.stdenv.isDarwin {
-  # Ensure memory storage directory exists for MCP knowledge graph
-  home.activation.createClaudeMemoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    $DRY_RUN_CMD mkdir -p $HOME/.local/share/claude
-  '';
+  home = {
+    activation = {
+      # Ensure memory storage directory exists for MCP knowledge graph
+      createClaudeMemoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        $DRY_RUN_CMD mkdir -p $HOME/.local/share/claude
+      '';
 
-  # Symlink agent memory directories into Obsidian vault
-  # This allows memory: user auto-injection while keeping files in the vault
-  home.activation.linkAgentMemoryToVault = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    VAULT="$HOME/Developer/dmjgilbert/vault/claude/memory"
-    AGENT_MEM="$HOME/.claude/agent-memory"
-    $DRY_RUN_CMD mkdir -p "$VAULT/researcher"
-    $DRY_RUN_CMD mkdir -p "$VAULT/planner"
-    $DRY_RUN_CMD mkdir -p "$AGENT_MEM"
-    $DRY_RUN_CMD ln -sfn "$VAULT/researcher" "$AGENT_MEM/researcher"
-    $DRY_RUN_CMD ln -sfn "$VAULT/planner" "$AGENT_MEM/planner"
-  '';
+      # Symlink agent memory directories into Obsidian vault
+      # This allows memory: user auto-injection while keeping files in the vault
+      linkAgentMemoryToVault = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        VAULT="$HOME/Developer/dmjgilbert/vault/claude/memory"
+        AGENT_MEM="$HOME/.claude/agent-memory"
+        $DRY_RUN_CMD mkdir -p "$VAULT/researcher"
+        $DRY_RUN_CMD mkdir -p "$VAULT/planner"
+        $DRY_RUN_CMD mkdir -p "$AGENT_MEM"
+        $DRY_RUN_CMD ln -sfn "$VAULT/researcher" "$AGENT_MEM/researcher"
+        $DRY_RUN_CMD ln -sfn "$VAULT/planner" "$AGENT_MEM/planner"
+      '';
+    };
 
-  home.file = {
+    file = {
     # Global memory storage directory
     ".local/share/claude-memory/.keep".text = "";
 
@@ -66,5 +69,6 @@ lib.mkIf pkgs.stdenv.isDarwin {
       source = ./config/claude/scripts;
       recursive = true;
     };
+  };
   };
 }

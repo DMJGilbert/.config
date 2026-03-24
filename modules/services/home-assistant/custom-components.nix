@@ -1,6 +1,8 @@
 # Home Assistant custom components (HACS-style)
 # Extracted from default.nix for maintainability
-{pkgs}: [
+{pkgs}: let
+  haPython = pkgs.home-assistant.python.pkgs;
+in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya
   pkgs.home-assistant-custom-components.yoto_ha
@@ -16,7 +18,7 @@
       sha256 = "sha256-QqJIPyITFYGD8OkbRTh//F0PWY9BFyhBbJaNtSIQ9tA=";
     };
     propagatedBuildInputs = [
-      pkgs.python3Packages.pycryptodome
+      haPython.pycryptodome
     ];
   })
   (pkgs.buildHomeAssistantComponent {
@@ -30,7 +32,7 @@
       sha256 = "sha256-xUha26YiSKY+5aRmZviHFqyPLUqOdN6/L/Ikcpe/YH0=";
     };
     propagatedBuildInputs = [
-      pkgs.python3Packages.pycryptodome
+      haPython.pycryptodome
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {
@@ -43,7 +45,7 @@
       rev = "v${version}";
       sha256 = "sha256-L1LqH9QMasVCZdsnHpKdxYGpsc/2vaIPAbiYc6vVshM=";
     };
-    propagatedBuildInputs = with pkgs.python3Packages; [
+    propagatedBuildInputs = with haPython; [
       pydantic
     ];
   })
@@ -68,7 +70,7 @@
       rev = "v${version}";
       sha256 = "sha256-UCWsprFkoEtBnoiemegmqPMawJ1/j0bpWaz4qNVTt9k=";
     };
-    propagatedBuildInputs = with pkgs.python3Packages; [
+    propagatedBuildInputs = with haPython; [
       arrow
       aiofiles
     ];
@@ -95,10 +97,10 @@
       sha256 = "sha256-M5M/kNUzplv+PuVQAWy0wdw4XXgho67zcvmW9QAXxTk=";
     };
     propagatedBuildInputs = [
-      pkgs.python3Packages.unidecode
-      pkgs.python3Packages.aiofiles
+      haPython.unidecode
+      haPython.aiofiles
       (
-        pkgs.python3.pkgs.buildPythonPackage rec {
+        haPython.buildPythonPackage rec {
           pname = "pyaarlo";
           version = "0.8.0.17";
           pyproject = true;
@@ -106,7 +108,7 @@
             inherit pname version;
             hash = "sha256-a7/MnUfzatdNY4RolJd2EsEucDwVoFIXnsYOGtJSGZU=";
           };
-          propagatedBuildInputs = with pkgs.python3Packages; [
+          propagatedBuildInputs = with haPython; [
             setuptools
             requests
             click

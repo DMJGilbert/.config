@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: let
-  isDarwin = pkgs.stdenv.isDarwin;
+  inherit (pkgs.stdenv) isDarwin;
   homeDir =
     if isDarwin
     then "/Users/darren"
