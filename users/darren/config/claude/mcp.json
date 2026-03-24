@@ -25,6 +25,28 @@
         "OBSIDIAN_HOST": "${OBSIDIAN_HOST}",
         "OBSIDIAN_PORT": "${OBSIDIAN_PORT}"
       }
+    },
+    "hass-mcp": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "HA_URL",
+        "-e",
+        "HA_TOKEN",
+        "--entrypoint",
+        "python",
+        "voska/hass-mcp",
+        "-c",
+        "import httpx; _orig = httpx.AsyncClient.__init__; httpx.AsyncClient.__init__ = lambda self, *a, **kw: _orig(self, *a, **dict(kw, verify=False)); from app.server import mcp; mcp.run()"
+      ],
+      "env": {
+        "HA_URL": "${HASS_HOST}",
+        "HA_TOKEN": "${HASS_TOKEN}"
+      }
     }
   }
 }
