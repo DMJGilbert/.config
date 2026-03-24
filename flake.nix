@@ -25,10 +25,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nvim-treesitter-main = {
-      url = "github:iofq/nvim-treesitter-main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs = {
     darwin,
@@ -36,7 +32,6 @@
     nixpkgs,
     home-manager,
     sops-nix,
-    nvim-treesitter-main,
     ...
   } @ inputs: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -44,7 +39,6 @@
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       (import ./overlays/pkgs.nix)
-      nvim-treesitter-main.overlays.default
     ];
     # Systems to generate devShells and checks for
     forAllSystems = nixpkgs.lib.genAttrs ["aarch64-darwin" "x86_64-linux"];
