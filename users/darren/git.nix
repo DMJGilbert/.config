@@ -24,7 +24,6 @@ _: {
         email = "dmjgilbert@me.com";
       };
       init.defaultBranch = "main";
-      gpg.format = "ssh";
       github.user = "DMJGilbert";
       core.editor = "nvim";
       pull.rebase = true;

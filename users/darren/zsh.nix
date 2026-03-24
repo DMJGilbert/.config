@@ -24,9 +24,6 @@
         eval "$(/usr/local/bin/brew shellenv)"
       fi
 
-      # SOPS age key location
-      export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-
       # Enable Claude Code LSP integration
       export ENABLE_LSP_TOOL=1
 
@@ -37,8 +34,8 @@
       bindkey "^[[A" up-line-or-beginning-search # Up
       bindkey "^[[B" down-line-or-beginning-search # Down
 
-      # Shared helper: check and warn about missing sops secrets
-      _claude_secrets_env() {
+      # Warn about missing sops secrets
+      _claude_check_secrets() {
         local secret_names=(
           GITHUB_PERSONAL_ACCESS_TOKEN
           HASS_HOST HASS_TOKEN
@@ -54,7 +51,7 @@
         fi
       }
 
-      _claude_secrets_export() {
+      _claude_export_secrets() {
         export GITHUB_PERSONAL_ACCESS_TOKEN="$(cat /run/secrets/GITHUB_PERSONAL_ACCESS_TOKEN 2>/dev/null)"
         export HASS_HOST="$(cat /run/secrets/HASS_HOST 2>/dev/null)"
         export HASS_TOKEN="$(cat /run/secrets/HASS_TOKEN 2>/dev/null)"
@@ -65,15 +62,14 @@
 
       # Claude Code with MCP secrets (reads from sops-nix decrypted files)
       claude-mcp() {
-        _claude_secrets_env
+        _claude_check_secrets
         (
-          _claude_secrets_export
+          _claude_export_secrets
           claude "$@"
         )
       }
 
       # Claude Code with local Ollama backend + MCP secrets
-      # Requires: ollama serve running on localhost:11434
       # Usage: ccode-local --model qwen3:32b
       claude-local() {
         if ! curl -s --max-time 1 http://localhost:11434/api/tags >/dev/null 2>&1; then
@@ -86,9 +82,9 @@
           echo "   Available models: ollama list" >&2
         fi
 
-        _claude_secrets_env
+        _claude_check_secrets
         (
-          _claude_secrets_export
+          _claude_export_secrets
           export ANTHROPIC_BASE_URL="http://localhost:11434"
           export ANTHROPIC_API_KEY="ollama"
           export ANTHROPIC_AUTH_TOKEN="ollama"
