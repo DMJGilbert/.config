@@ -25,50 +25,50 @@ lib.mkIf pkgs.stdenv.isDarwin {
     };
 
     file = {
-    # Global memory storage directory
-    ".local/share/claude-memory/.keep".text = "";
+      # Global memory storage directory
+      ".local/share/claude-memory/.keep".text = "";
 
-    # Project guidelines
-    ".claude/CLAUDE.md".source = ./config/claude/CLAUDE.md;
+      # Project guidelines
+      ".claude/CLAUDE.md".source = ./config/claude/CLAUDE.md;
 
-    # Settings (LSP plugins, model preferences)
-    ".claude/settings.json".source = ./config/claude/settings.json;
+      # Settings (LSP plugins, model preferences)
+      ".claude/settings.json".source = ./config/claude/settings.json;
 
-    # MCP configuration
-    ".mcp.json".source = ./config/claude/mcp.json;
+      # MCP configuration
+      ".mcp.json".source = ./config/claude/mcp.json;
 
-    # Hooks configuration
-    ".claude/hooks.json".source = ./config/claude/hooks.json;
+      # Hooks configuration
+      ".claude/hooks.json".source = ./config/claude/hooks.json;
 
-    # Slash commands (linked as directory)
-    ".claude/commands" = {
-      source = ./config/claude/commands;
-      recursive = true;
+      # Slash commands (linked as directory)
+      ".claude/commands" = {
+        source = ./config/claude/commands;
+        recursive = true;
+      };
+
+      # Specialist agents (linked as directory)
+      ".claude/agents" = {
+        source = ./config/claude/agents;
+        recursive = true;
+      };
+
+      # Skills (auto-invoked based on context)
+      ".claude/skills" = {
+        source = ./config/claude/skills;
+        recursive = true;
+      };
+
+      # Path-scoped rules (loaded contextually by file type)
+      ".claude/rules" = {
+        source = ./config/claude/rules;
+        recursive = true;
+      };
+
+      # Scripts (hooks and automation)
+      ".claude/scripts" = {
+        source = ./config/claude/scripts;
+        recursive = true;
+      };
     };
-
-    # Specialist agents (linked as directory)
-    ".claude/agents" = {
-      source = ./config/claude/agents;
-      recursive = true;
-    };
-
-    # Skills (auto-invoked based on context)
-    ".claude/skills" = {
-      source = ./config/claude/skills;
-      recursive = true;
-    };
-
-    # Path-scoped rules (loaded contextually by file type)
-    ".claude/rules" = {
-      source = ./config/claude/rules;
-      recursive = true;
-    };
-
-    # Scripts (hooks and automation)
-    ".claude/scripts" = {
-      source = ./config/claude/scripts;
-      recursive = true;
-    };
-  };
   };
 }
