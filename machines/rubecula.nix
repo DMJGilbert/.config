@@ -124,7 +124,10 @@
           port = "/dev/zigbee";
           adapter = "ezsp";
         };
-        frontend.port = 8080;
+        frontend = {
+          port = 8080;
+          host = "0.0.0.0";
+        };
       };
     };
   };
