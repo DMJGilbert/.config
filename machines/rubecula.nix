@@ -80,6 +80,7 @@
         22 # SSH
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
+        8080 # Zigbee2MQTT web frontend
         21064 # HomeKit Accessory Protocol (HAP)
       ];
       allowedUDPPorts = [
@@ -103,7 +104,33 @@
       freeMemThreshold = 5;
       freeSwapThreshold = 10;
     };
+    mosquitto = {
+      enable = true;
+      listeners = [
+        {
+          address = "127.0.0.1";
+          acl = ["pattern readwrite #"];
+          omitPasswordAuth = true;
+          settings.allow_anonymous = true;
+        }
+      ];
+    };
+    zigbee2mqtt = {
+      enable = true;
+      settings = {
+        homeassistant = true;
+        permit_join = false;
+        mqtt.server = "mqtt://localhost";
+        serial = {
+          port = "/dev/zigbee";
+          adapter = "ezsp";
+        };
+        frontend.port = 8080;
+      };
+    };
   };
+
+  users.users.zigbee2mqtt.extraGroups = ["dialout"];
 
   system.stateVersion = "26.05";
 }

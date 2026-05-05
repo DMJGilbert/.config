@@ -135,7 +135,7 @@ in
             "zeroconf"
             "tuya"
             "twinkly"
-            "zha"
+            "mqtt"
             "icloud"
             "systemmonitor"
             "energy"
