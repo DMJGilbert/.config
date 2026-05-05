@@ -122,7 +122,7 @@
         serial = {
           port = "/dev/ttyUSB0";
           adapter = "ember";
-          baudrate = 230400;
+          baudrate = 115200;
         };
         frontend = {
           port = 8080;
