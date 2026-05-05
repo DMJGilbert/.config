@@ -118,7 +118,6 @@
     zigbee2mqtt = {
       enable = true;
       settings = {
-        homeassistant = true;
         permit_join = false;
         mqtt.server = "mqtt://localhost";
         serial = {
