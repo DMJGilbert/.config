@@ -110,6 +110,7 @@
         {
           address = "127.0.0.1";
           omitPasswordAuth = true;
+          acl = ["topic readwrite #"];
           settings.allow_anonymous = true;
         }
       ];
