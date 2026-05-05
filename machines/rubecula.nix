@@ -120,8 +120,9 @@
         permit_join = false;
         mqtt.server = "mqtt://localhost";
         serial = {
-          port = "/dev/zigbee";
+          port = "/dev/ttyUSB0";
           adapter = "ember";
+          baudRate = 230400;
         };
         frontend = {
           port = 8080;
