@@ -25,6 +25,14 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pre-commit-hooks = {
+      url = "github:cachix/pre-commit-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     darwin,
@@ -32,6 +40,8 @@
     nixpkgs,
     home-manager,
     sops-nix,
+    treefmt-nix,
+    pre-commit-hooks,
     ...
   } @ inputs: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -42,31 +52,64 @@
     ];
     # Systems to generate devShells and checks for
     forAllSystems = nixpkgs.lib.genAttrs ["aarch64-darwin" "x86_64-linux"];
+
+    # treefmt configuration shared across all systems
+    treefmtEval = forAllSystems (system:
+      treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} {
+        projectRootFile = "flake.nix";
+        programs = {
+          alejandra.enable = true;
+          stylua.enable = true;
+          prettier = {
+            enable = true;
+            includes = [
+              "*.json"
+              "*.yaml"
+              "*.yml"
+              "*.md"
+              "*.ts"
+              "*.tsx"
+              "*.js"
+              "*.css"
+              "*.html"
+            ];
+          };
+          rustfmt.enable = true;
+        };
+      });
+
+    # pre-commit hooks configuration shared across all systems
+    preCommitChecks = forAllSystems (system:
+      pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          treefmt = {
+            enable = true;
+            package = treefmtEval.${system}.config.build.wrapper;
+          };
+          statix.enable = true;
+          deadnix.enable = true;
+        };
+      });
   in {
+    # Expose treefmt wrapper as the flake formatter (used by `nix fmt`)
+    formatter = forAllSystems (system: treefmtEval.${system}.config.build.wrapper);
+
     # Development shell for working on this config
     devShells = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       default = pkgs.mkShell {
-        packages = with pkgs; [
-          alejandra # Nix formatter
-          statix # Nix linter
-          deadnix # Find dead code
-          nil # Nix LSP
-          stylua # Lua formatter
-          markdownlint-cli2 # Markdown linter
-          yamllint # YAML linter
-          nodePackages.prettier # JS/TS/CSS/HTML/JSON formatter
-        ];
+        packages =
+          (with pkgs; [
+            nil # Nix LSP
+            markdownlint-cli2 # Markdown linter
+            yamllint # YAML linter
+          ])
+          ++ [treefmtEval.${system}.config.build.wrapper]
+          ++ preCommitChecks.${system}.enabledPackages;
         shellHook = ''
-          echo "Nix config development shell"
-          echo "  alejandra .  - format nix files"
-          echo "  statix check - lint nix files"
-          echo "  deadnix .    - find dead code"
-          echo "  stylua .     - format lua files"
-          echo "  markdownlint-cli2 '**/*.md' - lint markdown files"
-          echo "  yamllint .   - lint yaml files"
-          echo "  prettier --check . - check JS/TS/CSS/HTML/JSON formatting"
+          ${preCommitChecks.${system}.shellHook}
         '';
       };
     });
@@ -75,20 +118,8 @@
     checks = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      formatting = pkgs.runCommand "check-formatting" {} ''
-        ${pkgs.alejandra}/bin/alejandra --check ${inputs.self} 2>/dev/null || {
-          echo "Run 'alejandra .' to fix formatting"
-          exit 1
-        }
-        touch $out
-      '';
-      linting = pkgs.runCommand "check-linting" {} ''
-        ${pkgs.statix}/bin/statix check ${inputs.self} || {
-          echo "Fix linting issues above"
-          exit 1
-        }
-        touch $out
-      '';
+      formatting = treefmtEval.${system}.config.build.check inputs.self;
+      pre-commit = preCommitChecks.${system};
       markdown = pkgs.runCommand "check-markdown" {} ''
         ${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f \
           -not -path '*/.git/*' -print0 | \
@@ -114,9 +145,7 @@
       system = "x86_64-linux";
       user = "darren";
       extraModules = [
-        hardware.nixosModules.apple-t2
-        hardware.nixosModules.common-cpu-intel
-        hardware.nixosModules.common-pc-laptop-ssd
+        hardware.nixosModules.common-cpu-amd
         hardware.nixosModules.common-gpu-amd
       ];
     };

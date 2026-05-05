@@ -11,12 +11,12 @@
   # Enable hardware, features, and services via feature-flag modules
   local = {
     hardware = {
-      laptop.enable = true;
-      intelGraphics.enable = true;
+      amdGraphics.enable = true;
     };
 
+    profiles.server.enable = true;
+
     features = {
-      docker.enable = true;
       ccache.enable = true;
     };
 
@@ -25,7 +25,6 @@
         enable = true;
         dashboard.enable = true;
       };
-      tailscale.enable = true;
       adguardHome.enable = true;
       nginx = {
         enable = true;
@@ -46,14 +45,25 @@
     };
   };
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
-    efi.efiSysMountPoint = "/boot/efi";
+  boot = {
+    # Latest kernel for best AMD Ryzen 8845HS + MediaTek MT7922 WiFi support
+    kernelPackages = pkgs.linuxPackages_latest;
+    # Prevent blank/white screen issues on Radeon 780M iGPU
+    kernelParams = ["amdgpu.sg_display=0"];
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+      efi.efiSysMountPoint = "/boot";
+    };
   };
 
-  # Machine-specific hardware (Bluetooth)
+  # Server memory management (replaces laptop module)
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 25;
+  };
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -78,7 +88,6 @@
     };
   };
 
-  # Set your time zone.
   time.timeZone = "Europe/London";
 
   programs.git.enable = true;
@@ -86,11 +95,15 @@
   environment.systemPackages = with pkgs; [vim unzip gcc nmap];
 
   services = {
-    # Enable the OpenSSH daemon.
     openssh.enable = true;
+    fstrim.enable = true;
+    # Early OOM killer to prevent system freeze under memory pressure
+    earlyoom = {
+      enable = true;
+      freeMemThreshold = 5;
+      freeSwapThreshold = 10;
+    };
   };
 
-  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system.
-  system.stateVersion = "24.11";
+  system.stateVersion = "26.05";
 }

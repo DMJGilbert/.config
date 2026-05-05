@@ -3,18 +3,13 @@ name: ui
 description: HTML, CSS, Tailwind, accessibility specialist
 model: sonnet
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - Bash
-  - LSP
-  - mcp__context7__resolve-library-id
-  - mcp__context7__query-docs
-  - mcp__memory__aim_memory_search
-  - mcp__memory__aim_memory_get
+effort: medium
+maxTurns: 30
+color: pink
+mcpServers:
+  - memory
+  - context7
+memory: user
 ---
 
 # UI Specialist Agent

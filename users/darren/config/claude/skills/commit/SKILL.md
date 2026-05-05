@@ -1,3 +1,10 @@
+---
+name: commit
+description: Generate a conventional commit for staged changes
+argument-hint: "[optional scope hint]"
+allowed-tools: Read, Grep, Glob, Bash(git *)
+---
+
 # Commit
 
 Generate a conventional commit message for staged changes.

@@ -3,18 +3,13 @@ name: rust
 description: Rust systems programming, Cargo, async/tokio specialist
 model: sonnet
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - Bash
-  - LSP
-  - mcp__context7__resolve-library-id
-  - mcp__context7__query-docs
-  - mcp__memory__aim_memory_search
-  - mcp__memory__aim_memory_get
+effort: medium
+maxTurns: 30
+color: white
+mcpServers:
+  - memory
+  - context7
+memory: user
 ---
 
 # Rust Specialist Agent

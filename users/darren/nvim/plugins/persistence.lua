@@ -8,7 +8,13 @@ require("persistence").setup({
 			local buf = vim.api.nvim_win_get_buf(win)
 			local buftype = vim.bo[buf].buftype
 			local filetype = vim.bo[buf].filetype
-			if filetype == "lazy" or buftype == "nofile" then
+			if
+				filetype == "lazy"
+				or filetype == "lazygit"
+				or filetype == "neotest-summary"
+				or filetype == "neotest-output-panel"
+				or buftype == "nofile"
+			then
 				pcall(vim.api.nvim_win_close, win, true)
 			end
 		end

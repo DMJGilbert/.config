@@ -9,11 +9,34 @@
       }
     },
     {
-      "event": "PostToolUse",
+      "event": "SessionStart",
       "matcher": {
-        "tool": "Write",
-        "inputContains": ".nix"
+        "inputContains": "compact"
       },
+      "action": {
+        "type": "command",
+        "command": "echo '{\"systemMessage\": \"Post-compaction reminder: Check task list for in-progress work. Re-read any files you were actively editing. Current branch: '$(git branch --show-current 2>/dev/null || echo none)'\"}'"
+      }
+    },
+    {
+      "event": "PreCompact",
+      "matcher": {},
+      "action": {
+        "type": "command",
+        "command": "echo '{\"systemMessage\": \"About to compact. Save any critical in-progress context or task state now — compaction will replace this conversation history.\"}'"
+      }
+    },
+    {
+      "event": "Notification",
+      "matcher": {},
+      "action": {
+        "type": "command",
+        "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"' 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "if": "Edit(*.nix)|Write(*.nix)",
       "action": {
         "type": "command",
         "command": "alejandra --quiet \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
@@ -21,21 +44,7 @@
     },
     {
       "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".nix"
-      },
-      "action": {
-        "type": "command",
-        "command": "alejandra --quiet \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".rs"
-      },
+      "if": "Edit(*.rs)|Write(*.rs)",
       "action": {
         "type": "command",
         "command": "rustfmt \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
@@ -43,21 +52,7 @@
     },
     {
       "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".rs"
-      },
-      "action": {
-        "type": "command",
-        "command": "rustfmt \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".ts"
-      },
+      "if": "Edit(*.ts)|Write(*.ts)|Edit(*.tsx)|Write(*.tsx)|Edit(*.js)|Write(*.js)|Edit(*.jsx)|Write(*.jsx)|Edit(*.css)|Write(*.css)|Edit(*.html)|Write(*.html)|Edit(*.json)|Write(*.json)",
       "action": {
         "type": "command",
         "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
@@ -65,131 +60,7 @@
     },
     {
       "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".ts"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".tsx"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".tsx"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".js"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".js"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".jsx"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".jsx"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".css"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".css"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".html"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".html"
-      },
-      "action": {
-        "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool": "Write",
-        "inputContains": ".dart"
-      },
+      "if": "Edit(*.dart)|Write(*.dart)",
       "action": {
         "type": "command",
         "command": "dart format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
@@ -197,13 +68,18 @@
     },
     {
       "event": "PostToolUse",
-      "matcher": {
-        "tool": "Edit",
-        "inputContains": ".dart"
-      },
+      "if": "Edit(*.lua)|Write(*.lua)",
       "action": {
         "type": "command",
-        "command": "dart format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "stylua \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+      }
+    },
+    {
+      "event": "PostToolUse",
+      "if": "Edit(*.py)|Write(*.py)",
+      "action": {
+        "type": "command",
+        "command": "ruff format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
       }
     },
     {

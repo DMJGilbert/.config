@@ -1,3 +1,11 @@
+---
+name: fix
+description: Problem-solving with RIPER workflow
+argument-hint: "[problem description or #issue-number]"
+skills:
+  - complexity-gate
+---
+
 # Fix
 
 Problem-solving with RIPER workflow.
@@ -59,7 +67,7 @@ Invoke `complexity-gate` skill to assess:
 - Define tasks and tests
 - Save to vault
 
-**⏸️ APPROVAL**:
+**APPROVAL**:
 Present plan and wait for user confirmation.
 
 **EXECUTE** (domain agents):

@@ -7,6 +7,11 @@ in {
   # Enable cross-platform services via feature-flag modules
   local.services.tailscale.enable = true;
 
+  local.features.ollama = {
+    enable = true;
+    models = ["qwen2.5-coder:7b-base"];
+  };
+
   security.pam.services.sudo_local.touchIdAuth = true;
 
   # Fonts managed through nix-darwin

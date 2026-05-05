@@ -24,17 +24,8 @@ jobs:
 
       - uses: DeterminateSystems/magic-nix-cache-action@v13
 
-      - name: Check Nix formatting (alejandra)
-        run: nix develop --command alejandra --check .
-
-      - name: Lint Nix files (statix)
-        run: nix develop --command statix check .
-
-      - name: Check dead Nix code (deadnix)
-        run: nix develop --command deadnix --fail .
-
-      - name: Check Lua formatting (stylua)
-        run: nix develop --command stylua --check .
+      - name: Check formatting, linting, and markdown
+        run: nix build .#checks.x86_64-linux.formatting .#checks.x86_64-linux.pre-commit .#checks.x86_64-linux.markdown
 
   flake-check:
     name: Flake Check (${{ matrix.os }})

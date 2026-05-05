@@ -17,7 +17,7 @@ vim.opt.laststatus = 0
 -- Completion options
 vim.o.completeopt = "menuone,noinsert,noselect"
 vim.o.shortmess = vim.o.shortmess .. "c"
-vim.o.updatetime = 100 -- Faster completion and CursorHold events (default 4000ms)
+vim.o.updatetime = 250 -- Faster CursorHold events without being too aggressive (default 4000ms)
 
 -- Search options
 vim.o.ignorecase = true
@@ -55,7 +55,7 @@ vim.o.undolevels = 10000 -- Maximum number of undo steps
 vim.o.lazyredraw = false
 
 -- Buffers/Tabs/Windows
-vim.o.hidden = false
+vim.o.hidden = true -- Allow switching buffers without saving
 
 -- Set spelling
 vim.o.spell = true

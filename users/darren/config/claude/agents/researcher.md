@@ -3,6 +3,9 @@ name: researcher
 description: RESEARCH and INNOVATE phases - explore codebase, gather context, brainstorm approaches, bootstrap agent memories
 model: opus
 permissionMode: plan
+effort: high
+maxTurns: 40
+color: purple
 tools:
   - Read
   - Glob
@@ -17,6 +20,10 @@ tools:
   - mcp__sequential-thinking__sequentialthinking
   - Write
   - Edit
+mcpServers:
+  - memory
+  - context7
+  - sequential-thinking
 memory: user
 ---
 
@@ -77,12 +84,6 @@ During RESEARCH phase:
 2. Review agent memory files for patterns
 3. Search for prior context
 
-During INNOVATE phase:
-4. Check memory for similar past problems
-5. Review what worked/didn't work before
+During INNOVATE phase: 4. Check memory for similar past problems 5. Review what worked/didn't work before
 
-When bootstrapping agent memories:
-6. Write to `~/.claude/agent-memory/{agent}/MEMORY.md`
-7. Only write memory files, not source code
-8. Capture persistent patterns, not session-specific details
-9. Keep memories concise (under 200 lines)
+When bootstrapping agent memories: 6. Write to `~/.claude/agent-memory/{agent}/MEMORY.md` 7. Only write memory files, not source code 8. Capture persistent patterns, not session-specific details 9. Keep memories concise (under 200 lines)

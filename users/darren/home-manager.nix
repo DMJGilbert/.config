@@ -8,32 +8,47 @@
   ];
 
   home = {
-    stateVersion = "23.11";
+    stateVersion = "26.05";
     sessionVariables = {
       SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age/keys.txt";
     };
+    # Global treefmt config — discovered by walk-up in any project under ~/
+    file."treefmt.toml".text = ''
+      [formatter.alejandra]
+      command = "alejandra"
+      includes = ["*.nix"]
+
+      [formatter.stylua]
+      command = "stylua"
+      includes = ["*.lua"]
+
+      [formatter.prettier]
+      command = "prettier"
+      options = ["--write"]
+      includes = ["*.json", "*.yaml", "*.yml", "*.md", "*.ts", "*.tsx", "*.js", "*.css", "*.html"]
+
+      [formatter.rustfmt]
+      command = "rustfmt"
+      includes = ["*.rs"]
+    '';
     packages = with pkgs;
       [
         # neovim
-        tree-sitter
+        # tree-sitter
         luarocks
         nil
-        nixd
         alejandra
         shellcheck
         shfmt
         statix
         biome
-        prettierd
-        luajitPackages.lua-lsp
         lua-language-server
-        nodePackages.vscode-langservers-extracted
-        nodePackages.typescript-language-server
-        nodePackages.yaml-language-server
-        nodePackages.bash-language-server
-        nodePackages.prettier
-        nodePackages.eslint_d
-        nodePackages."@tailwindcss/language-server"
+        vscode-langservers-extracted
+        typescript-language-server
+        yaml-language-server
+        bash-language-server
+        prettier
+        eslint_d
 
         # development
         pkgconf
@@ -42,13 +57,14 @@
         uv # Python package manager (provides uvx)
 
         # nodejs
-        nodejs_22
+        nodejs_24
         # rust
         cargo
         rustc
         rust-analyzer
         rustfmt
         clippy
+        cargo-nextest
 
         # CLI tools
         jq # JSON processing
@@ -74,6 +90,7 @@
         tuist
         fastlane
         swiftformat
+        swiftlint
         sourcekit-lsp
 
         jankyborders

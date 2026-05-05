@@ -1,9 +1,10 @@
 ---
 name: retrospective
 description: Review session for learnings and update agent memories
+disable-model-invocation: true
 ---
 
-# Retrospective Command
+# Retrospective
 
 Review the current session and update relevant agent memories.
 

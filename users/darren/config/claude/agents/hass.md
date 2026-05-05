@@ -3,25 +3,14 @@ name: hass
 description: Home Assistant automations, dashboards, and integrations specialist
 model: sonnet
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - Bash
-  - LSP
-  - mcp__context7__resolve-library-id
-  - mcp__context7__query-docs
-  - mcp__memory__aim_memory_search
-  - mcp__memory__aim_memory_get
-  - mcp__hass-mcp__get_entity
-  - mcp__hass-mcp__list_entities
-  - mcp__hass-mcp__search_entities_tool
-  - mcp__hass-mcp__call_service_tool
-  - mcp__hass-mcp__get_history
-  - mcp__hass-mcp__list_automations
-  - mcp__hass-mcp__entity_action
+effort: medium
+maxTurns: 30
+color: teal
+mcpServers:
+  - memory
+  - context7
+  - hass-mcp
+memory: user
 ---
 
 # Home Assistant Specialist Agent

@@ -1,14 +1,7 @@
 vim.lsp.inlay_hint.enable(true)
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-	properties = {
-		"documentation",
-		"detail",
-		"additionalTextEdits",
-	},
-}
+-- Merge blink.cmp capabilities with folding range support
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 capabilities.textDocument.foldingRange = {
 	dynamicRegistration = false,
 	lineFolding = true,
@@ -22,7 +15,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			client.server_capabilities.document_formatting = true
 
 			-- Enable inlay hints for this buffer if supported
-			if client.supports_method("textDocument/inlayHint") then
+			if client:supports_method("textDocument/inlayHint") then
 				-- Schedule to ensure LSP is fully ready
 				vim.schedule(function()
 					vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
@@ -66,12 +59,7 @@ vim.lsp.config.lua_ls = {
 			diagnostics = {
 				globals = { "vim" },
 			},
-			workspace = {
-				library = {
-					[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-					[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-				},
-			},
+			-- workspace.library is managed by lazydev.nvim
 			telemetry = {
 				enable = false,
 			},
@@ -165,14 +153,6 @@ vim.lsp.config.html = {
 	capabilities = capabilities,
 }
 
--- Dart Language Server
-vim.lsp.config.dartls = {
-	cmd = { "dart", "language-server", "--protocol=lsp" },
-	filetypes = { "dart" },
-	root_markers = { "pubspec.yaml", ".git" },
-	capabilities = capabilities,
-}
-
 -- Go Language Server
 vim.lsp.config.gopls = {
 	cmd = { "gopls" },
@@ -243,37 +223,77 @@ vim.lsp.config.nil_ls = {
 	capabilities = capabilities,
 }
 
--- SourceKit (Swift)
-vim.lsp.config.sourcekit = {
-	cmd = {
-		"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+-- YAML Language Server
+vim.lsp.config.yamlls = {
+	cmd = { "yaml-language-server", "--stdio" },
+	filetypes = { "yaml", "yaml.docker-compose", "yaml.gitlab" },
+	root_markers = { ".git" },
+	capabilities = capabilities,
+	settings = {
+		yaml = {
+			validate = true,
+			schemas = {
+				["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+			},
+		},
 	},
+}
+
+-- Dart Language Server (bundled with Flutter/Dart SDK)
+vim.lsp.config.dartls = {
+	cmd = { "dart", "language-server", "--protocol=lsp" },
+	filetypes = { "dart" },
+	root_markers = { "pubspec.yaml", ".git" },
+	capabilities = capabilities,
+	settings = {
+		dart = {
+			showTodos = true,
+			completeFunctionCalls = true,
+			renameFilesWithClasses = "prompt",
+			enableSnippets = true,
+			updateImportsOnRename = true,
+		},
+	},
+}
+
+-- SourceKit (Swift) — macOS only; path resolved from PATH via Nix
+vim.lsp.config.sourcekit = {
+	cmd = { "sourcekit-lsp" },
 	filetypes = { "swift", "objective-c", "objective-cpp" },
 	root_markers = { "buildServer.json", "Package.swift", "Project.swift", ".git" },
 	capabilities = capabilities,
 }
 
--- Enable all configured LSP servers
-vim.lsp.enable({
+-- Base server list (all platforms)
+local servers = {
 	"lua_ls",
 	"rust_analyzer",
 	"biome",
 	"ts_ls",
 	"cssls",
 	"html",
-	"dartls",
 	"gopls",
 	"bashls",
 	"clangd",
 	"tailwindcss",
 	"nil_ls",
-	"sourcekit",
-})
+	"yamlls",
+	"dartls",
+}
+
+-- Enable sourcekit only on macOS
+if vim.fn.has("macunix") == 1 then
+	table.insert(servers, "sourcekit")
+end
+
+-- Enable all configured LSP servers
+vim.lsp.enable(servers)
 
 -- Configure diagnostic display
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+vim.diagnostic.config({
 	virtual_text = true,
 	signs = false,
 	underline = true,
-	update_on_insert = true,
+	update_in_insert = true, -- replaces deprecated update_on_insert
+	severity_sort = true,
 })

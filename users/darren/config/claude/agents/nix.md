@@ -3,18 +3,13 @@ name: nix
 description: Nix, Flakes, home-manager, nix-darwin specialist
 model: sonnet
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - Bash
-  - LSP
-  - mcp__context7__resolve-library-id
-  - mcp__context7__query-docs
-  - mcp__memory__aim_memory_search
-  - mcp__memory__aim_memory_get
+effort: medium
+maxTurns: 30
+color: cyan
+mcpServers:
+  - memory
+  - context7
+memory: user
 ---
 
 # Nix Specialist Agent

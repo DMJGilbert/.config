@@ -61,9 +61,7 @@ scope.setup({
 			height = 0.7,
 			preview_cutoff = 120,
 		},
-		file_sorter = require("telescope.sorters").get_fuzzy_file,
 		file_ignore_patterns = { "node_modules" },
-		generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
 		path_display = { "truncate" },
 		winblend = 0,
 		border = {},
@@ -75,6 +73,7 @@ scope.setup({
 		qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 	},
 })
+scope.load_extension("fzf")
 scope.load_extension("file_browser")
 scope.load_extension("ui-select")
 scope.load_extension("lazygit")

@@ -41,10 +41,15 @@ changed_files=$(git diff --name-only HEAD 2>/dev/null || echo "")
 # Check Nix files
 if echo "$changed_files" | grep -q '\.nix$'; then
   echo "  Checking Nix..."
-  if command -v alejandra &>/dev/null; then
+  if command -v treefmt &>/dev/null; then
     if [ "$FIX_MODE" = "1" ]; then
-      echo "    Fixing Nix formatting..."
-      alejandra --quiet . 2>&1 || true
+      echo "    Fixing formatting..."
+      treefmt 2>&1 || true
+    else
+      if ! treefmt --fail-on-change 2>&1; then
+        echo "Run 'treefmt' to fix formatting"
+        ((errors++)) || true
+      fi
     fi
   fi
   if command -v statix &>/dev/null; then
@@ -148,16 +153,6 @@ if echo "$changed_files" | grep -q '\.dart$'; then
       if ! dart test 2>&1; then
         ((errors++)) || true
       fi
-    fi
-  fi
-fi
-
-# Nix flake check (if flake.nix changed)
-if echo "$changed_files" | grep -q 'flake\.nix'; then
-  if command -v nix &>/dev/null; then
-    echo "    Running nix flake check..."
-    if ! nix flake check 2>&1; then
-      ((errors++)) || true
     fi
   fi
 fi

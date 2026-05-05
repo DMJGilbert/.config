@@ -16,11 +16,11 @@ lib.mkIf pkgs.stdenv.isDarwin {
       linkAgentMemoryToVault = lib.hm.dag.entryAfter ["writeBoundary"] ''
         VAULT="$HOME/Developer/dmjgilbert/vault/claude/memory"
         AGENT_MEM="$HOME/.claude/agent-memory"
-        $DRY_RUN_CMD mkdir -p "$VAULT/researcher"
-        $DRY_RUN_CMD mkdir -p "$VAULT/planner"
         $DRY_RUN_CMD mkdir -p "$AGENT_MEM"
-        $DRY_RUN_CMD ln -sfn "$VAULT/researcher" "$AGENT_MEM/researcher"
-        $DRY_RUN_CMD ln -sfn "$VAULT/planner" "$AGENT_MEM/planner"
+        for agent in researcher planner nix hass rust dart frontend backend ui security-reviewer bug-hunter quality-reviewer; do
+          $DRY_RUN_CMD mkdir -p "$VAULT/$agent"
+          $DRY_RUN_CMD ln -sfn "$VAULT/$agent" "$AGENT_MEM/$agent"
+        done
       '';
     };
 
@@ -39,12 +39,6 @@ lib.mkIf pkgs.stdenv.isDarwin {
 
       # Hooks configuration
       ".claude/hooks.json".source = ./config/claude/hooks.json;
-
-      # Slash commands (linked as directory)
-      ".claude/commands" = {
-        source = ./config/claude/commands;
-        recursive = true;
-      };
 
       # Specialist agents (linked as directory)
       ".claude/agents" = {

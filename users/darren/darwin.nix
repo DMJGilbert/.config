@@ -13,6 +13,7 @@
     brews = [
       "xcode-build-server" # sourcekit-lsp outside of xcode
       "ifstat"
+      "tree-sitter-cli"
     ];
     casks = [
       "claude-code"

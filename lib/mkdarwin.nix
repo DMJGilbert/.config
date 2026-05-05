@@ -36,6 +36,7 @@ darwin.lib.darwinSystem {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
+        backupFileExtension = "bak";
         users.${user} = import ../users/${user}/home-manager.nix;
       };
     }

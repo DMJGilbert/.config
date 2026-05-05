@@ -4,38 +4,32 @@
   ...
 }: {
   boot = {
-    initrd.availableKernelModules = ["xhci_pci" "nvme" "usbhid" "usb_storage" "sd_mod"];
+    initrd.availableKernelModules = ["nvme" "xhci_pci" "thunderbolt" "usbhid"];
     initrd.kernelModules = [];
-    kernelModules = ["kvm-intel" "uvcvideo"];
+    kernelModules = ["kvm-amd"];
     extraModulePackages = [];
   };
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/48d835d9-2848-43a2-8c9c-73f291f09816";
+    device = "/dev/disk/by-uuid/ac6ff5c3-84a6-4e2b-bac1-5429b6a43178";
     fsType = "ext4";
   };
 
-  fileSystems."/boot/efi" = {
-    device = "/dev/disk/by-uuid/5F66-17ED";
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/2EC3-F97D";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = ["fmask=0077" "dmask=0077"];
   };
 
-  swapDevices = [];
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/66864174-00c1-409e-880b-b9f402dff32c";}
+  ];
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp125s0u1i5.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp2s0f1u1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware = {
     enableAllFirmware = true;
-    bluetooth.enable = true;
-    # facetimehd.enable = true;
-    cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   };
 }

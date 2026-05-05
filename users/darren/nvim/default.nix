@@ -27,13 +27,6 @@
       nvim-ts-autotag
       vim-matchup
 
-      # LSP
-      {
-        plugin = nvim-lspconfig;
-        type = "lua";
-        config = builtins.readFile ./plugins/lsp.lua;
-      }
-
       # LSP UI enhancements
       {
         plugin = lspsaga-nvim;
@@ -41,26 +34,42 @@
         config = builtins.readFile ./plugins/lspsaga.lua;
       }
 
-      # Snippets (LuaSnip)
+      # Snippets (consumed by blink.cmp)
       luasnip
       friendly-snippets
-      cmp_luasnip
 
-      # Completion
+      # AI completion source — must load before blink.cmp so the provider is ready
       {
-        plugin = nvim-cmp;
+        plugin = minuet-ai-nvim;
         type = "lua";
-        config = builtins.readFile ./plugins/cmp.lua;
+        config = builtins.readFile ./plugins/minuet.lua;
       }
-      cmp-nvim-lsp
-      cmp-nvim-lsp-signature-help
-      cmp-nvim-lua
-      cmp-buffer
-      cmp-path
-      cmp-cmdline
-      cmp-spell
-      cmp-treesitter
+
+      # Completion — blink.cmp replaces the entire nvim-cmp ecosystem
+      {
+        plugin = blink-cmp;
+        type = "lua";
+        config = builtins.readFile ./plugins/blink.lua;
+      }
+      blink-compat
+
+      # Rust Cargo.toml completions (wired into blink via blink-compat)
       crates-nvim
+
+      # LSP — native Neovim 0.11 API; lazydev enhances Lua completions
+      # Loaded after blink so capabilities include blink's additions
+      {
+        plugin = lazydev-nvim;
+        type = "lua";
+        config = builtins.readFile ./plugins/lazydev.lua + builtins.readFile ./plugins/lsp.lua;
+      }
+
+      # Linting — wires up eslint_d, statix, shellcheck
+      {
+        plugin = nvim-lint;
+        type = "lua";
+        config = builtins.readFile ./plugins/lint.lua;
+      }
 
       # Telescope
       {
@@ -68,6 +77,7 @@
         type = "lua";
         config = builtins.readFile ./plugins/telescope.lua;
       }
+      telescope-fzf-native-nvim
       telescope-ui-select-nvim
       telescope-file-browser-nvim
       lazygit-nvim
@@ -103,6 +113,38 @@
       nvim-web-devicons
       barbecue-nvim
       nvim-navic
+
+      # Fast motion
+      {
+        plugin = flash-nvim;
+        type = "lua";
+        config = builtins.readFile ./plugins/flash.lua;
+      }
+
+      # LSP progress notifications
+      {
+        plugin = fidget-nvim;
+        type = "lua";
+        config = builtins.readFile ./plugins/fidget.lua;
+      }
+
+      # Test runner
+      nvim-nio
+      {
+        plugin = neotest;
+        type = "lua";
+        config = builtins.readFile ./plugins/neotest.lua;
+      }
+      neotest-rust
+      neotest-jest
+      neotest-vitest
+
+      # Keybinding discoverability
+      {
+        plugin = which-key-nvim;
+        type = "lua";
+        config = builtins.readFile ./plugins/whichkey.lua;
+      }
 
       # Utility plugins
       undotree

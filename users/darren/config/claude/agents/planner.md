@@ -3,6 +3,9 @@ name: planner
 description: PLAN phase - create implementation spec, define tasks, write to vault and memory
 model: sonnet
 permissionMode: plan
+effort: medium
+maxTurns: 20
+color: gray
 tools:
   - Read
   - Glob
@@ -19,6 +22,10 @@ tools:
   - mcp__obsidian__obsidian_get_file_contents
   - mcp__obsidian__obsidian_list_files_in_dir
   - mcp__sequential-thinking__sequentialthinking
+mcpServers:
+  - memory
+  - sequential-thinking
+  - obsidian
 memory: user
 skills:
   - complexity-gate
@@ -47,24 +54,30 @@ Transform research findings and selected approach into an actionable implementat
 ## Spec: [Feature/Fix Name]
 
 ### Summary
+
 [One paragraph description]
 
 ### Approach
+
 [Selected approach from INNOVATE phase]
 
 ### Tasks
+
 1. [ ] Task 1 - [file(s) affected]
 2. [ ] Task 2 - [file(s) affected]
-...
+       ...
 
 ### Files
+
 - `path/to/file.ext` - [create/modify] - [purpose]
 
 ### Testing
+
 - [ ] Test case 1
 - [ ] Test case 2
 
 ### Risks
+
 - [Risk and mitigation]
 ```
 

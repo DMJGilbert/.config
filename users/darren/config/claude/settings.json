@@ -1,6 +1,13 @@
 {
-  "model": "opus",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opusplan",
+  "effortLevel": "high",
   "alwaysThinkingEnabled": true,
+  "awaySummaryEnabled": true,
+  "attribution": {
+    "commit": "Co-Authored-By: Claude <noreply@anthropic.com>",
+    "pr": "Generated with Claude Code"
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
@@ -169,38 +176,7 @@
       "mcp__memory__*",
       "mcp__context7__*",
       "mcp__sequential-thinking__*",
-      "mcp__obsidian__*",
-      "mcp__hass-mcp__*",
-
-      "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:console.anthropic.com)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:docs.github.com)",
-      "WebFetch(domain:stackoverflow.com)",
-      "WebFetch(domain:developer.mozilla.org)",
-      "WebFetch(domain:nixos.org)",
-      "WebFetch(domain:nixos.wiki)",
-      "WebFetch(domain:nix.dev)",
-      "WebFetch(domain:wiki.nixos.org)",
-      "WebFetch(domain:home-assistant.io)",
-      "WebFetch(domain:developers.home-assistant.io)",
-      "WebFetch(domain:rust-lang.org)",
-      "WebFetch(domain:doc.rust-lang.org)",
-      "WebFetch(domain:docs.rs)",
-      "WebFetch(domain:crates.io)",
-      "WebFetch(domain:dart.dev)",
-      "WebFetch(domain:api.dart.dev)",
-      "WebFetch(domain:flutter.dev)",
-      "WebFetch(domain:api.flutter.dev)",
-      "WebFetch(domain:pub.dev)",
-      "WebFetch(domain:typescriptlang.org)",
-      "WebFetch(domain:nodejs.org)",
-      "WebFetch(domain:npmjs.com)",
-      "WebFetch(domain:react.dev)",
-      "WebFetch(domain:nextjs.org)",
-      "WebFetch(domain:tailwindcss.com)",
-      "WebFetch(domain:python.org)",
-      "WebFetch(domain:pypi.org)"
+      "mcp__obsidian__*"
     ],
     "ask": [
       "Bash(rm:*)",
@@ -346,5 +322,39 @@
     "context7",
     "sequential-thinking",
     "obsidian"
-  ]
+  ],
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "excludedCommands": [
+      "darwin-rebuild *",
+      "home-manager *",
+      "nix-collect-garbage *",
+      "nix build *",
+      "nix run *",
+      "nix develop *",
+      "nix flake update *",
+      "docker *",
+      "docker-compose *",
+      "podman *",
+      "sudo *"
+    ],
+    "filesystem": {
+      "allowWrite": ["~/.cargo", "~/.npm", "~/.pub-cache", "/tmp"]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com",
+        "*.crates.io",
+        "*.npmjs.org",
+        "registry.yarnpkg.com",
+        "pub.dev",
+        "*.pub.dev"
+      ],
+      "allowUnixSockets": ["/nix/var/nix/daemon-socket/socket"],
+      "allowLocalBinding": true
+    }
+  }
 }

@@ -3,13 +3,21 @@ name: security-reviewer
 description: REVIEW phase - analyze for security vulnerabilities, auth gaps, injection risks, secrets exposure
 model: opus
 permissionMode: plan
+effort: high
+maxTurns: 20
+color: red
 tools:
   - Read
   - Glob
   - Grep
   - LSP
+  - WebSearch
+  - WebFetch
   - mcp__memory__aim_memory_search
   - mcp__memory__aim_memory_get
+mcpServers:
+  - memory
+memory: user
 ---
 
 # Security Reviewer Agent
@@ -59,18 +67,22 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 ## Security Review
 
 ### Critical
+
 - [Issue]: [Description]
   - Location: [file:line]
   - Risk: [What could happen]
   - Fix: [Recommended remediation]
 
 ### High
+
 - ...
 
 ### Medium
+
 - ...
 
 ### Summary
+
 [Overall security assessment]
 ```
 

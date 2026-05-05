@@ -3,6 +3,9 @@ name: quality-reviewer
 description: REVIEW phase - analyze performance, maintainability, code smells, test coverage
 model: opus
 permissionMode: plan
+effort: high
+maxTurns: 20
+color: green
 tools:
   - Read
   - Glob
@@ -10,6 +13,9 @@ tools:
   - LSP
   - mcp__memory__aim_memory_search
   - mcp__memory__aim_memory_get
+mcpServers:
+  - memory
+memory: user
 ---
 
 # Quality Reviewer Agent
@@ -68,18 +74,22 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 ## Quality Review
 
 ### High
+
 - [Issue]: [Description]
   - Location: [file:line]
   - Impact: [Why it matters]
   - Suggestion: [How to improve]
 
 ### Medium
+
 - ...
 
 ### Low
+
 - ...
 
 ### Summary
+
 [Overall quality assessment]
 ```
 

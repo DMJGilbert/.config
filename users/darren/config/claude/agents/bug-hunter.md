@@ -3,6 +3,9 @@ name: bug-hunter
 description: REVIEW phase - find logic errors, edge cases, race conditions, null handling issues
 model: opus
 permissionMode: plan
+effort: high
+maxTurns: 20
+color: orange
 tools:
   - Read
   - Glob
@@ -10,6 +13,9 @@ tools:
   - LSP
   - mcp__memory__aim_memory_search
   - mcp__memory__aim_memory_get
+mcpServers:
+  - memory
+memory: user
 ---
 
 # Bug Hunter Agent
@@ -68,18 +74,22 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 ## Bug Hunt Review
 
 ### Critical
+
 - [Bug]: [Description]
   - Location: [file:line]
   - Trigger: [How to reproduce]
   - Fix: [Suggested fix]
 
 ### High
+
 - ...
 
 ### Medium
+
 - ...
 
 ### Summary
+
 [Overall correctness assessment]
 ```
 

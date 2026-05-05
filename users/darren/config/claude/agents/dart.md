@@ -3,18 +3,13 @@ name: dart
 description: Dart, Flutter, cross-platform mobile/desktop development specialist
 model: sonnet
 permissionMode: acceptEdits
-tools:
-  - Read
-  - Edit
-  - Write
-  - Glob
-  - Grep
-  - Bash
-  - LSP
-  - mcp__context7__resolve-library-id
-  - mcp__context7__query-docs
-  - mcp__memory__aim_memory_search
-  - mcp__memory__aim_memory_get
+effort: medium
+maxTurns: 30
+color: yellow
+mcpServers:
+  - memory
+  - context7
+memory: user
 ---
 
 # Dart/Flutter Specialist Agent
