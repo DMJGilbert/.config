@@ -122,7 +122,7 @@
         mqtt.server = "mqtt://localhost";
         serial = {
           port = "/dev/zigbee";
-          adapter = "ezsp";
+          adapter = "ember";
         };
         frontend = {
           port = 8080;
