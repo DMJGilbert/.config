@@ -121,8 +121,7 @@
         mqtt.server = "mqtt://localhost";
         serial = {
           port = "/dev/ttyUSB0";
-          adapter = "ember";
-          baudrate = 115200;
+          adapter = "zstack";
         };
         frontend = {
           port = 8080;
