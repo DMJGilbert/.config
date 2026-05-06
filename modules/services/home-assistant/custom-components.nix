@@ -134,21 +134,6 @@ in [
     };
     # aiohttp is provided by HA's Python environment
   })
-  # London TfL - departure boards for tube/bus/overground (configure station via UI)
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "morosanmihail";
-    domain = "london_tfl";
-    version = "0.8.6";
-    src = pkgs.fetchFromGitHub {
-      owner = "morosanmihail";
-      repo = "HA-LondonTfL";
-      rev = "v${version}";
-      sha256 = "sha256-d2FlW2DMzkGUlOOtshKCR+9eROIDW3WAE5hCeTyLaUU=";
-    };
-    propagatedBuildInputs = with haPython; [
-      zeep
-    ];
-  })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "twrecked";
     domain = "aarlo";
