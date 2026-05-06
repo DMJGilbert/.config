@@ -117,7 +117,7 @@ in [
         lxml
         pycryptodome
         pypdf
-        pdfminer
+        pdfminer-six
       ])
       ++ [haPython."curl-cffi"];
   })
