@@ -32,14 +32,31 @@
           acceptTerms = true;
           email = "dmjgilbert@gmail.com";
         };
-        virtualHosts."home.gilberts.one" = {
-          forceSSL = true;
-          enableACME = true;
-          extraConfig = ''
-            proxy_buffering off;
-          '';
-          proxyPass = "http://127.0.0.1:8123";
-          proxyWebsockets = true;
+        virtualHosts = {
+          "home.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            extraConfig = ''
+              proxy_buffering off;
+            '';
+            proxyPass = "http://127.0.0.1:8123";
+            proxyWebsockets = true;
+          };
+          "glances.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:61208";
+            proxyWebsockets = true;
+          };
+          "kuma.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            extraConfig = ''
+              proxy_buffering off;
+            '';
+            proxyPass = "http://127.0.0.1:3001";
+            proxyWebsockets = true;
+          };
         };
       };
     };
@@ -80,7 +97,6 @@
         22 # SSH
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
-        3001 # Uptime Kuma status dashboard
         8080 # Zigbee2MQTT web frontend
         21064 # HomeKit Accessory Protocol (HAP)
       ];
@@ -110,11 +126,10 @@
   };
 
   services = {
-    # Uptime Kuma - service health monitoring, HA integration at Settings → Integrations
     uptime-kuma = {
       enable = true;
       settings = {
-        HOST = "0.0.0.0";
+        HOST = "127.0.0.1";
         PORT = "3001";
       };
     };
