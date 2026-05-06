@@ -274,6 +274,16 @@ in
               }
               {
                 sensor = {
+                  name = "Washing Machine Power";
+                  unique_id = "washing_machine_power";
+                  state = "{{ states('sensor.sonoff_10022b2169_power') }}";
+                  unit_of_measurement = "W";
+                  device_class = "power";
+                  state_class = "measurement";
+                };
+              }
+              {
+                sensor = {
                   name = "Total Media Players Playing Template";
                   state = "{{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}";
                 };
@@ -369,6 +379,30 @@ in
                 ];
               };
             };
+            adaptive_lighting = [
+              {
+                name = "Default";
+                lights = [
+                  "light.living_room"
+                  "light.dining_room"
+                  "light.kitchen"
+                  "light.kitchen_sink"
+                  "light.kitchen_2"
+                  "light.bedroom"
+                  "light.above_bed"
+                  "light.hallway"
+                  "light.door"
+                ];
+                min_brightness = 1;
+                max_brightness = 100;
+                min_color_temp = 2000;
+                max_color_temp = 5500;
+                sleep_brightness = 1;
+                sleep_color_temp = 1000;
+                take_over_control = true;
+                detect_non_ha_changes = false;
+              }
+            ];
             scene = {};
             input_boolean = {
               party_mode = {

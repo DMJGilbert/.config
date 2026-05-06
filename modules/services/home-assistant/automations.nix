@@ -5,6 +5,7 @@
   # This reduces duplication for the common pattern of:
   # Motion detected -> Turn on light -> Wait for no motion -> Delay -> Turn off light
   mkMotionLightAutomation = {
+    id,
     alias,
     motion_sensor,
     target, # { area_id = [...] } or { entity_id = [...] }
@@ -27,7 +28,7 @@
       then {inherit brightness_pct;}
       else {};
   in {
-    inherit alias;
+    inherit id alias;
     description = "";
     mode = "restart";
     max_exceeded = "silent";
@@ -70,6 +71,7 @@
 in [
   # Front door entry light - turns on when door opens, off 5 min after close
   {
+    id = "front_door_hallway_lights";
     alias = "Front door hallway lights";
     description = "Turn on hallway lights when front door opens, off after 5 min";
     trigger = [
@@ -111,6 +113,7 @@ in [
 
   # Motion-activated lighting automations
   (mkMotionLightAutomation {
+    id = "hallway_lights_motion";
     alias = "Hallway lights";
     motion_sensor = "binary_sensor.hallway_motion_sensor_occupancy";
     target.area_id = ["hallway"];
@@ -119,6 +122,7 @@ in [
   })
 
   (mkMotionLightAutomation {
+    id = "bathroom_lights_day";
     alias = "Bathroom lights (day)";
     motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
     target.area_id = ["bathroom"];
@@ -131,6 +135,7 @@ in [
   })
 
   (mkMotionLightAutomation {
+    id = "bathroom_lights_night";
     alias = "Bathroom lights (night)";
     motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
     target.area_id = ["bathroom"];
@@ -143,6 +148,7 @@ in [
   })
 
   (mkMotionLightAutomation {
+    id = "bedroom_lights_night";
     alias = "Bedroom lights (night)";
     motion_sensor = "binary_sensor.bedroom_motion_sensor_occupancy";
     target.entity_id = ["light.bedroom"];
@@ -162,6 +168,7 @@ in [
   })
 
   (mkMotionLightAutomation {
+    id = "living_room_lights_night";
     alias = "Living room lights (night)";
     motion_sensor = "binary_sensor.living_room_motion_sensor_occupancy";
     target.entity_id = ["light.living_room"];
@@ -182,6 +189,7 @@ in [
 
   # Away from home notifications
   {
+    id = "away_notifications";
     alias = "Away notifications";
     description = "";
     trigger = [
@@ -224,6 +232,7 @@ in [
 
   # Low battery alert notifications
   {
+    id = "low_battery_notifications";
     alias = "Low battery notifications";
     description = "Alert when device batteries are low";
     trigger = [
@@ -234,6 +243,9 @@ in [
           "sensor.bathroom_motion_sensor_battery"
           "sensor.bedroom_motion_sensor_battery"
           "sensor.living_room_motion_sensor_battery"
+          "sensor.myggbett_door_window_sensor_battery"
+          "sensor.vibration_sensor_battery"
+          "sensor.bathroom_temp_sensor_battery"
         ];
         below = 20;
       }
@@ -256,6 +268,7 @@ in [
 
   # iPad low battery notification
   {
+    id = "ipad_low_battery";
     alias = "iPad low battery";
     trigger = [
       {
@@ -278,6 +291,7 @@ in [
 
   # TV Light - turn on when TV turns on (evening)
   {
+    id = "tv_backlight_on";
     alias = "TV Light - On";
     trigger = [
       {
@@ -308,6 +322,7 @@ in [
 
   # TV Light - turn off when TV turns off
   {
+    id = "tv_backlight_off";
     alias = "TV Lights - Off";
     trigger = [
       {
@@ -327,6 +342,7 @@ in [
 
   # Dishwasher complete notification
   {
+    id = "dishwasher_complete";
     alias = "Dishwasher complete";
     trigger = [
       {
@@ -366,11 +382,12 @@ in [
 
   # Washing machine complete notification
   {
+    id = "washing_machine_complete";
     alias = "Washing machine complete";
     trigger = [
       {
         platform = "numeric_state";
-        entity_id = "sensor.sonoff_10022b2169_power";
+        entity_id = "sensor.washing_machine_power";
         above = 50;
       }
     ];
@@ -379,7 +396,7 @@ in [
         wait_for_trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.sonoff_10022b2169_power";
+            entity_id = "sensor.washing_machine_power";
             below = 50;
             for.minutes = 5;
           }
@@ -405,6 +422,7 @@ in [
 
   # Auto turn off LG TV when Apple TV turns off
   {
+    id = "auto_turn_off_tv";
     alias = "Automatically turn off TV";
     trigger = [
       {
@@ -424,6 +442,7 @@ in [
 
   # Leave Home - turn off all devices when everyone leaves
   {
+    id = "leave_home";
     alias = "Leave Home";
     trigger = [
       {
@@ -460,24 +479,13 @@ in [
       {
         action = "light.turn_off";
         target.entity_id = [
+          "group.living_room_lights"
+          "group.hallway_lights"
+          "group.kitchen_lights"
+          "group.bathroom_lights"
+          "group.bedroom_lights"
+          "group.robynne_lights"
           "light.backlight"
-          "light.living_room"
-          "light.dining_room"
-          "light.kajplats_e27_ws_g95_clear_806lm"
-          "light.hallway"
-          "light.door"
-          "light.kitchen"
-          "light.kitchen_sink"
-          "light.kitchen_2"
-          "light.bath"
-          "light.bathroom_sink"
-          "light.toilet"
-          "light.above_bed"
-          "light.bedroom"
-          "light.robynne"
-          "light.darren_switch"
-          "light.lorraine_switch"
-          "light.fairy_lights"
         ];
       }
       {
@@ -501,6 +509,7 @@ in [
 
   # Enter Home - enable camera privacy when someone arrives
   {
+    id = "enter_home";
     alias = "Enter Home";
     trigger = [
       {
@@ -525,267 +534,32 @@ in [
     mode = "single";
   }
 
-  # Party Mode - use blueprint for party lights
-  {
-    alias = "Party Mode";
-    use_blueprint = {
-      path = "Twanne/party_lights.yaml";
-      input = {
-        party_mode_trigger = "input_boolean.party_mode";
-        target_lights = [
-          "light.backlight"
-          "light.living_room"
-        ];
-        color_mode = "random";
-        min_brightness_pct = 20;
-        time_between_changes = {
-          seconds = 5;
-        };
-        transition_time = 3;
-      };
-    };
-  }
-
   # =============================================================================
-  # BILRESA Living Room Control - Button 1 (Living/Dining Lights)
+  # BILRESA Living Room Control
+  # 3 automations (one per button), each using choose to dispatch by trigger ID
   # =============================================================================
 
-  # Button 1 Press - Toggle living room and dining room lights
+  # Button 1 - Living/Dining Lights (press=toggle, CW=brighter, CCW=dimmer)
   {
-    alias = "BILRESA Button 1 - Toggle Lights";
-    description = "Toggle living room and dining room lights on button 1 press";
+    id = "bilresa_button_1";
+    alias = "BILRESA Button 1 - Living Room Lights";
+    description = "Control living room and dining room lights";
+    mode = "single";
     trigger = [
       {
         platform = "state";
         entity_id = "event.bilresa_scroll_wheel_button_3";
+        id = "press";
       }
-    ];
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
-      }
-    ];
-    action = [
-      {
-        action = "light.toggle";
-        target.entity_id = [
-          "light.living_room"
-          "light.dining_room"
-        ];
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 1 Rotate CW - Increase brightness
-  {
-    alias = "BILRESA Button 1 - Brightness Up";
-    description = "Increase living/dining room brightness on clockwise rotation";
-    trigger = [
-      {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_1";
-        };
-      }
-    ];
-    action = [
-      {
-        action = "light.turn_on";
-        target.entity_id = [
-          "light.living_room"
-          "light.dining_room"
-        ];
-        data = {
-          brightness_step_pct = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
-        };
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 1 Rotate CCW - Decrease brightness
-  {
-    alias = "BILRESA Button 1 - Brightness Down";
-    description = "Decrease living/dining room brightness on counter-clockwise rotation";
-    trigger = [
-      {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_2";
-        };
-      }
-    ];
-    action = [
-      {
-        action = "light.turn_on";
-        target.entity_id = [
-          "light.living_room"
-          "light.dining_room"
-        ];
-        data = {
-          brightness_step_pct = "{{ -1 * trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
-        };
-      }
-    ];
-    mode = "single";
-  }
-
-  # =============================================================================
-  # BILRESA Living Room Control - Button 2 (Sofa Light)
-  # =============================================================================
-
-  # Button 2 Press - Toggle sofa light
-  {
-    alias = "BILRESA Button 2 - Toggle Sofa Light";
-    description = "Toggle sofa light on button 2 press";
-    trigger = [
       {
         platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_6";
+        entity_id = "event.bilresa_scroll_wheel_button_1";
+        id = "cw";
       }
-    ];
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
-      }
-    ];
-    action = [
-      {
-        action = "light.toggle";
-        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 2 Rotate CW - Increase brightness
-  {
-    alias = "BILRESA Button 2 - Sofa Brightness Up";
-    description = "Increase sofa light brightness on clockwise rotation";
-    trigger = [
-      {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_4";
-        };
-      }
-    ];
-    action = [
-      {
-        action = "light.turn_on";
-        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
-        data = {
-          # Scale brightness by number of scroll clicks (5% per click)
-          brightness_step_pct = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
-        };
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 2 Rotate CCW - Decrease brightness
-  {
-    alias = "BILRESA Button 2 - Sofa Brightness Down";
-    description = "Decrease sofa light brightness on counter-clockwise rotation";
-    trigger = [
-      {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_5";
-        };
-      }
-    ];
-    action = [
-      {
-        action = "light.turn_on";
-        target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
-        data = {
-          # Scale brightness by number of scroll clicks (5% per click)
-          brightness_step_pct = "{{ -1 * trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
-        };
-      }
-    ];
-    mode = "single";
-  }
-
-  # =============================================================================
-  # BILRESA Living Room Control - Button 3 (TV Control)
-  # =============================================================================
-
-  # Button 3 Single Press - Play/Pause Apple TV
-  {
-    alias = "BILRESA Button 3 - TV Play/Pause";
-    description = "Play/pause Living Room TV on single press";
-    trigger = [
       {
         platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_9";
-      }
-    ];
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
-      }
-    ];
-    action = [
-      {
-        action = "media_player.media_play_pause";
-        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 3 Double Press - Toggle HDMI1/HDMI2 on LG TV
-  {
-    alias = "BILRESA Button 3 - Switch HDMI";
-    description = "Toggle between HDMI1 and HDMI2 on double press";
-    trigger = [
-      {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_9";
-      }
-    ];
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_2' }}";
-      }
-    ];
-    action = [
-      {
-        action = "media_player.select_source";
-        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
-        data = {
-          source = "{{ 'HDMI2' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'HDMI1' }}";
-        };
-      }
-    ];
-    mode = "single";
-  }
-
-  # Button 3 Long Press - Toggle LG TV Power
-  {
-    alias = "BILRESA Button 3 - TV Power";
-    description = "Toggle LG TV power on long press";
-    trigger = [
-      {
-        platform = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_9";
-      }
-    ];
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.to_state.attributes.event_type == 'long_release' }}";
+        entity_id = "event.bilresa_scroll_wheel_button_2";
+        id = "ccw";
       }
     ];
     action = [
@@ -794,92 +568,289 @@ in [
           {
             conditions = [
               {
-                condition = "state";
-                entity_id = "media_player.lg_webos_tv_49sj800v_zb";
-                state = "off";
+                condition = "trigger";
+                id = "press";
+              }
+              {
+                condition = "template";
+                value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
               }
             ];
             sequence = [
               {
-                action = "media_player.turn_on";
-                target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+                action = "light.toggle";
+                target.entity_id = ["light.living_room" "light.dining_room"];
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "cw";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.turn_on";
+                target.entity_id = ["light.living_room" "light.dining_room"];
+                data.brightness_step_pct = "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "ccw";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.turn_on";
+                target.entity_id = ["light.living_room" "light.dining_room"];
+                data.brightness_step_pct = "{{ -1 * trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
               }
             ];
           }
         ];
-        default = [
+      }
+    ];
+  }
+
+  # Button 2 - Sofa Light (press=toggle, CW=brighter, CCW=dimmer)
+  {
+    id = "bilresa_button_2";
+    alias = "BILRESA Button 2 - Sofa Light";
+    description = "Control sofa light";
+    mode = "single";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_6";
+        id = "press";
+      }
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_4";
+        id = "cw";
+      }
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_5";
+        id = "ccw";
+      }
+    ];
+    action = [
+      {
+        choose = [
           {
-            action = "media_player.turn_off";
-            target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+            conditions = [
+              {
+                condition = "trigger";
+                id = "press";
+              }
+              {
+                condition = "template";
+                value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.toggle";
+                target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "cw";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.turn_on";
+                target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+                data.brightness_step_pct = "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "ccw";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.turn_on";
+                target.entity_id = "light.kajplats_e27_ws_g95_clear_806lm";
+                data.brightness_step_pct = "{{ -1 * trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
+              }
+            ];
           }
         ];
       }
     ];
-    mode = "single";
   }
 
-  # Button 3 Rotate CW - Volume Up
-  # Controls Apple TV volume on HDMI1, LG TV volume otherwise
+  # Button 3 - TV Control
+  # single press = play/pause (source-aware), double = HDMI toggle, long = power
+  # CW/CCW = volume (source-aware: Apple TV on HDMI1, LG TV otherwise)
   {
-    alias = "BILRESA Button 3 - Volume Up";
-    description = "Increase volume on clockwise rotation";
+    id = "bilresa_button_3";
+    alias = "BILRESA Button 3 - TV Control";
+    description = "Control TV: play/pause, HDMI switch, power, volume";
+    mode = "single";
     trigger = [
       {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_7";
-        };
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_9";
+        id = "press";
+      }
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_7";
+        id = "cw";
+      }
+      {
+        platform = "state";
+        entity_id = "event.bilresa_scroll_wheel_button_8";
+        id = "ccw";
       }
     ];
     action = [
       {
-        repeat = {
-          count = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
-          sequence = [
-            {
-              action = "media_player.volume_up";
-              target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
-            }
-          ];
-        };
+        choose = [
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "press";
+              }
+              {
+                condition = "template";
+                value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_1' }}";
+              }
+            ];
+            sequence = [
+              {
+                action = "media_player.media_play_pause";
+                target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "press";
+              }
+              {
+                condition = "template";
+                value_template = "{{ trigger.to_state.attributes.event_type == 'multi_press_2' }}";
+              }
+            ];
+            sequence = [
+              {
+                action = "media_player.select_source";
+                target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+                data.source = "{{ 'HDMI2' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'HDMI1' }}";
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "press";
+              }
+              {
+                condition = "template";
+                value_template = "{{ trigger.to_state.attributes.event_type == 'long_release' }}";
+              }
+            ];
+            sequence = [
+              {
+                choose = [
+                  {
+                    conditions = [
+                      {
+                        condition = "state";
+                        entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+                        state = "off";
+                      }
+                    ];
+                    sequence = [
+                      {
+                        action = "media_player.turn_on";
+                        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+                      }
+                    ];
+                  }
+                ];
+                default = [
+                  {
+                    action = "media_player.turn_off";
+                    target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+                  }
+                ];
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "cw";
+              }
+            ];
+            sequence = [
+              {
+                repeat = {
+                  count = "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
+                  sequence = [
+                    {
+                      action = "media_player.volume_up";
+                      target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
+                    }
+                  ];
+                };
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "ccw";
+              }
+            ];
+            sequence = [
+              {
+                repeat = {
+                  count = "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
+                  sequence = [
+                    {
+                      action = "media_player.volume_down";
+                      target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
+                    }
+                  ];
+                };
+              }
+            ];
+          }
+        ];
       }
     ];
-    mode = "single";
-  }
-
-  # Button 3 Rotate CCW - Volume Down
-  # Controls Apple TV volume on HDMI1, LG TV volume otherwise
-  {
-    alias = "BILRESA Button 3 - Volume Down";
-    description = "Decrease volume on counter-clockwise rotation";
-    trigger = [
-      {
-        platform = "event";
-        event_type = "state_changed";
-        event_data = {
-          entity_id = "event.bilresa_scroll_wheel_button_8";
-        };
-      }
-    ];
-    action = [
-      {
-        repeat = {
-          count = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int }}";
-          sequence = [
-            {
-              action = "media_player.volume_down";
-              target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
-            }
-          ];
-        };
-      }
-    ];
-    mode = "single";
   }
 
   # Humidity Extractor - toggle extractor when humidity is high
   {
+    id = "humidity_extractor";
     alias = "Humidity Extractor";
     trigger = [
       {
