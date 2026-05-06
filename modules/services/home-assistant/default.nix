@@ -142,6 +142,8 @@ in
             "matter"
             "thread"
             "london_underground"
+            "glances"
+            "uptimekuma"
           ];
 
           # Main Home Assistant configuration
