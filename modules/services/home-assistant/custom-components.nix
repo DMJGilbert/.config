@@ -132,7 +132,9 @@ in [
       rev = "v${version}";
       sha256 = "sha256-pqcl7cpszTJn5REEKc+mXrO20kIQQDAMpm35IQjnKlM=";
     };
-    # aiohttp is provided by HA's Python environment
+    propagatedBuildInputs = with haPython; [
+      aiohttp
+    ];
   })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "twrecked";
