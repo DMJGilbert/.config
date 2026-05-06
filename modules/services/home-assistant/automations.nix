@@ -76,7 +76,7 @@ in [
       path = "dieneuser/zha-remote-tradfri-wireless-dimmer-ictc-g-1-for-light.yaml";
       input = {
         remote = "13cdd5f70e7ee5f53a8ba526fb1969a9";
-        light = "light.living_room_light";
+        light = "light.living_room";
       };
     };
   }
@@ -97,7 +97,6 @@ in [
         action = "light.turn_on";
         target.area_id = ["hallway"];
         data = {
-          # 50% during day (07:30-20:00), 10% at night
           brightness_pct = "{{ 50 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
         };
       }
@@ -134,7 +133,7 @@ in [
 
   (mkMotionLightAutomation {
     alias = "Bathroom lights (day)";
-    motion_sensor = "binary_sensor.motion_sensor_motion";
+    motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
     target.area_id = ["bathroom"];
     brightness_pct = 85;
     delay_seconds = 300;
@@ -146,7 +145,7 @@ in [
 
   (mkMotionLightAutomation {
     alias = "Bathroom lights (night)";
-    motion_sensor = "binary_sensor.motion_sensor_motion";
+    motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
     target.area_id = ["bathroom"];
     brightness_pct = 10;
     delay_seconds = 300;
@@ -159,7 +158,7 @@ in [
   (mkMotionLightAutomation {
     alias = "Fairy lights";
     motion_sensor = "binary_sensor.aarlo_motion_nursery";
-    target.entity_id = ["switch.fairy_lights_switch"];
+    target.entity_id = ["switch.fairy_lights"];
     delay_seconds = 600;
     time_condition = {
       after = "20:00:00";
@@ -171,7 +170,7 @@ in [
   (mkMotionLightAutomation {
     alias = "Bedroom lights (night)";
     motion_sensor = "binary_sensor.bedroom_motion_sensor_occupancy";
-    target.entity_id = ["light.bedroom_light_2"];
+    target.entity_id = ["light.bedroom"];
     brightness_pct = 5;
     delay_seconds = 300;
     time_condition = {
@@ -181,7 +180,7 @@ in [
     extra_conditions = [
       {
         condition = "state";
-        entity_id = "light.bedroom_light_2";
+        entity_id = "light.bedroom";
         state = "off";
       }
     ];
@@ -190,7 +189,7 @@ in [
   (mkMotionLightAutomation {
     alias = "Living room lights (night)";
     motion_sensor = "binary_sensor.living_room_motion_sensor_occupancy";
-    target.entity_id = ["light.living_room_light"];
+    target.entity_id = ["light.living_room"];
     brightness_pct = 20;
     delay_seconds = 300;
     time_condition = {
@@ -200,7 +199,7 @@ in [
     extra_conditions = [
       {
         condition = "state";
-        entity_id = "light.living_room_light";
+        entity_id = "light.living_room";
         state = "off";
       }
     ];
@@ -257,7 +256,7 @@ in [
         platform = "numeric_state";
         entity_id = [
           "sensor.hallway_motion_sensor_battery"
-          "sensor.motion_sensor_battery"
+          "sensor.bathroom_motion_sensor_battery"
           "sensor.bedroom_motion_sensor_battery"
           "sensor.living_room_motion_sensor_battery"
         ];
@@ -322,7 +321,7 @@ in [
     action = [
       {
         action = "light.turn_on";
-        target.entity_id = "light.tv_light";
+        target.entity_id = "light.backlight";
         data = {
           kelvin = 6031;
           brightness_pct = 100;
@@ -345,7 +344,7 @@ in [
     action = [
       {
         action = "light.turn_off";
-        target.entity_id = "light.tv_light";
+        target.entity_id = "light.backlight";
       }
     ];
     mode = "single";
@@ -357,7 +356,7 @@ in [
     trigger = [
       {
         platform = "state";
-        entity_id = "binary_sensor.dishwasher_vibration";
+        entity_id = "binary_sensor.vibration_sensor_vibration";
         to = "on";
       }
     ];
@@ -366,7 +365,7 @@ in [
         wait_for_trigger = [
           {
             platform = "state";
-            entity_id = "binary_sensor.dishwasher_vibration";
+            entity_id = "binary_sensor.vibration_sensor_vibration";
             to = "off";
             for.minutes = 5;
           }
@@ -486,24 +485,21 @@ in [
       {
         action = "light.turn_off";
         target.entity_id = [
-          "light.tv_light"
-          "light.living_room_light"
-          "light.dining_room_light_3"
+          "light.backlight"
+          "light.living_room"
+          "light.dining_room"
           "light.kajplats_e27_ws_g95_clear_806lm"
           "light.hallway"
-          "light.doorway"
-          "light.kitchen_microwave"
+          "light.door"
+          "light.kitchen"
           "light.kitchen_sink"
-          "light.kitchen_random"
-          "light.bath_light"
-          "light.sink_light"
-          "light.toilet_light"
-          "light.above_bed_light"
-          "light.bedroom_light_2"
-          "light.darren_switch"
-          "light.lorraine_switch"
-          "light.robynne_light"
-          "light.fairy_lights_switch"
+          "light.kitchen_2"
+          "light.bath"
+          "light.bathroom_sink"
+          "light.toilet"
+          "light.above_bed"
+          "light.bedroom"
+          "light.robynne"
         ];
       }
       {
@@ -520,7 +516,12 @@ in [
       }
       {
         action = "switch.turn_off";
-        target.entity_id = "switch.security_camera_privacy_mode";
+        target.entity_id = [
+          "switch.fairy_lights"
+          "switch.darren_switch"
+          "switch.lorraine_switch"
+          "switch.security_camera_privacy_mode"
+        ];
       }
     ];
     mode = "single";
@@ -560,8 +561,8 @@ in [
       input = {
         party_mode_trigger = "input_boolean.party_mode";
         target_lights = [
-          "light.tv_light"
-          "light.living_room_light"
+          "light.backlight"
+          "light.living_room"
         ];
         color_mode = "random";
         min_brightness_pct = 20;
@@ -597,8 +598,8 @@ in [
       {
         action = "light.toggle";
         target.entity_id = [
-          "light.living_room_light"
-          "light.dining_room_light_3"
+          "light.living_room"
+          "light.dining_room"
         ];
       }
     ];
@@ -622,11 +623,10 @@ in [
       {
         action = "light.turn_on";
         target.entity_id = [
-          "light.living_room_light"
-          "light.dining_room_light_3"
+          "light.living_room"
+          "light.dining_room"
         ];
         data = {
-          # Scale brightness by number of scroll clicks (5% per click)
           brightness_step_pct = "{{ trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
@@ -651,11 +651,10 @@ in [
       {
         action = "light.turn_on";
         target.entity_id = [
-          "light.living_room_light"
-          "light.dining_room_light_3"
+          "light.living_room"
+          "light.dining_room"
         ];
         data = {
-          # Scale brightness by number of scroll clicks (5% per click)
           brightness_step_pct = "{{ -1 * trigger.event.data.new_state.attributes.totalNumberOfPressesCounted | default(1) | int * 5 }}";
         };
       }
@@ -913,7 +912,7 @@ in [
     trigger = [
       {
         platform = "numeric_state";
-        entity_id = "sensor.bathroom_sensor_humidity";
+        entity_id = "sensor.bathroom_temp_sensor_humidity";
         above = 70;
       }
     ];

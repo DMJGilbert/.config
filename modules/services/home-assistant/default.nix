@@ -302,7 +302,7 @@ in
               motion = {
                 name = "Home motion";
                 entities = [
-                  "binary_sensor.motion_sensor_motion"
+                  "binary_sensor.bathroom_motion_sensor_occupancy"
                   "binary_sensor.bedroom_motion_sensor_occupancy"
                   "binary_sensor.hallway_motion_sensor_occupancy"
                   "binary_sensor.living_room_motion_sensor_occupancy"
@@ -311,49 +311,49 @@ in
               hallway_lights = {
                 name = "Hallway Lights";
                 entities = [
-                  "light.doorway"
+                  "light.door"
                   "light.hallway"
                 ];
               };
               living_room_lights = {
                 name = "Living Room Lights";
                 entities = [
-                  "light.living_room_light"
-                  "light.dining_room_light_3"
-                  "light.sofa_light_switch"
+                  "light.living_room"
+                  "light.dining_room"
+                  "light.kajplats_e27_ws_g95_clear_806lm"
                 ];
               };
               kitchen_lights = {
                 name = "Kitchen Lights";
                 entities = [
-                  "light.kitchen_microwave"
+                  "light.kitchen"
                   "light.kitchen_sink"
-                  "light.kitchen_random"
+                  "light.kitchen_2"
                 ];
               };
               bathroom_lights = {
                 name = "Bathroom Lights";
                 entities = [
-                  "light.bath_light"
-                  "light.sink_light"
-                  "light.toilet_light"
+                  "light.bath"
+                  "light.bathroom_sink"
+                  "light.toilet"
                 ];
               };
               bedroom_lights = {
                 name = "Bedroom Lights";
                 entities = [
-                  "light.above_bed_light"
-                  "light.bedroom_light_2"
-                  "light.darren_switch"
-                  "light.lorraine_switch"
+                  "light.above_bed"
+                  "light.bedroom"
+                  "switch.darren_switch"
+                  "switch.lorraine_switch"
                 ];
               };
               robynne_lights = {
                 name = "Robynne Lights";
                 entities = [
-                  "light.robynne_light"
+                  "light.robynne"
                   "light.aarlo_nursery"
-                  "light.fairy_lights_switch"
+                  "switch.fairy_lights"
                 ];
               };
             };
