@@ -145,13 +145,12 @@ in [
   (mkMotionLightAutomation {
     alias = "Fairy lights";
     motion_sensor = "binary_sensor.aarlo_motion_nursery";
-    target.entity_id = ["switch.fairy_lights"];
+    target.entity_id = ["light.fairy_lights"];
     delay_seconds = 600;
     time_condition = {
       after = "20:00:00";
       before = "23:59:00";
     };
-    service_type = "switch";
   })
 
   (mkMotionLightAutomation {
@@ -487,6 +486,9 @@ in [
           "light.above_bed"
           "light.bedroom"
           "light.robynne"
+          "light.darren_switch"
+          "light.lorraine_switch"
+          "light.fairy_lights"
         ];
       }
       {
@@ -503,12 +505,7 @@ in [
       }
       {
         action = "switch.turn_off";
-        target.entity_id = [
-          "switch.fairy_lights"
-          "switch.darren_switch"
-          "switch.lorraine_switch"
-          "switch.security_camera_privacy_mode"
-        ];
+        target.entity_id = "switch.security_camera_privacy_mode";
       }
     ];
     mode = "single";

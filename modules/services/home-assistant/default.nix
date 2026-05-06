@@ -278,6 +278,37 @@ in
                   state = "{{ states.media_player | selectattr('state', 'eq', 'playing') | list | count }}";
                 };
               }
+              {
+                light = [
+                  {
+                    name = "Darren Switch";
+                    unique_id = "darren_switch_light";
+                    state = "{{ is_state('switch.darren_switch', 'on') }}";
+                    turn_on.action = "switch.turn_on";
+                    turn_on.target.entity_id = "switch.darren_switch";
+                    turn_off.action = "switch.turn_off";
+                    turn_off.target.entity_id = "switch.darren_switch";
+                  }
+                  {
+                    name = "Lorraine Switch";
+                    unique_id = "lorraine_switch_light";
+                    state = "{{ is_state('switch.lorraine_switch', 'on') }}";
+                    turn_on.action = "switch.turn_on";
+                    turn_on.target.entity_id = "switch.lorraine_switch";
+                    turn_off.action = "switch.turn_off";
+                    turn_off.target.entity_id = "switch.lorraine_switch";
+                  }
+                  {
+                    name = "Fairy Lights";
+                    unique_id = "fairy_lights_light";
+                    state = "{{ is_state('switch.fairy_lights', 'on') }}";
+                    turn_on.action = "switch.turn_on";
+                    turn_on.target.entity_id = "switch.fairy_lights";
+                    turn_off.action = "switch.turn_off";
+                    turn_off.target.entity_id = "switch.fairy_lights";
+                  }
+                ];
+              }
             ];
             group = {
               motion = {
@@ -325,8 +356,8 @@ in
                 entities = [
                   "light.above_bed"
                   "light.bedroom"
-                  "switch.darren_switch"
-                  "switch.lorraine_switch"
+                  "light.darren_switch"
+                  "light.lorraine_switch"
                 ];
               };
               robynne_lights = {
@@ -334,7 +365,7 @@ in
                 entities = [
                   "light.robynne"
                   "light.aarlo_nursery"
-                  "switch.fairy_lights"
+                  "light.fairy_lights"
                 ];
               };
             };
