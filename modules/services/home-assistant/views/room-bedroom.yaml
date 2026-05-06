@@ -214,10 +214,10 @@ cards:
                   # Apple TV (Bedroom TV)
                   - type: custom:button-card
                     template: room_item_card
-                    entity: media_player.apple_tv
+                    entity: media_player.bedroom_tv
                     variables:
                       item_icon: mdi:television
-                      item_entity: media_player.apple_tv
+                      item_entity: media_player.bedroom_tv
                       show_toggle: false
 
                   - type: custom:auto-entities

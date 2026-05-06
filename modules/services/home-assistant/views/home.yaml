@@ -266,7 +266,7 @@ cards:
                       room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
                       light_entity: group.bedroom_lights
                       motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
-                      media_entity: media_player.apple_tv
+                      media_entity: media_player.bedroom_tv
                       room_path: /lovelace-home/room-bedroom
 
                   # Kitchen
@@ -289,7 +289,7 @@ cards:
                       room_icon: mdi:shower
                       room_image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=200&h=200&fit=crop"
                       light_entity: group.bathroom_lights
-                      motion_entity: binary_sensor.motion_sensor_motion
+                      motion_entity: binary_sensor.bathroom_motion_sensor_occupancy
                       media_entity: null
                       room_path: /lovelace-home/room-bathroom
 
@@ -349,14 +349,14 @@ cards:
                   # Darren
                   - type: custom:button-card
                     template: person_card
-                    entity: person.darren_gilbert
+                    entity: person.darren
                     triggers_update:
-                      - person.darren_gilbert
+                      - person.darren
                       - sensor.hatchling_battery_level
                       - sensor.hatchling_steps
                     variables:
                       person_name: Darren
-                      person_entity: person.darren_gilbert
+                      person_entity: person.darren
                       battery_entity: sensor.hatchling_battery_level
                       steps_entity: sensor.hatchling_steps
 

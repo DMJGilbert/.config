@@ -411,11 +411,11 @@ cards:
                   # Bathroom motion sensor
                   - type: custom:button-card
                     template: room_item_card
-                    entity: binary_sensor.motion_sensor_motion
+                    entity: binary_sensor.bathroom_motion_sensor_occupancy
                     variables:
                       item_name: Bathroom Motion
                       item_icon: mdi:motion-sensor
-                      item_entity: binary_sensor.motion_sensor_motion
+                      item_entity: binary_sensor.bathroom_motion_sensor_occupancy
                       show_toggle: false
 
                   # Section: Sensors
@@ -438,26 +438,26 @@ cards:
                   # Bathroom Temperature
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.bathroom_sensor_temperature
+                    entity: sensor.bathroom_temp_sensor_temperature
                     variables:
                       sensor_name: Temperature
                       sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.bathroom_sensor_temperature
+                      sensor_entity: sensor.bathroom_temp_sensor_temperature
 
                   # Bathroom Humidity
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.bathroom_sensor_humidity
+                    entity: sensor.bathroom_temp_sensor_humidity
                     variables:
                       sensor_name: Humidity
                       sensor_icon: mdi:water-percent
-                      sensor_entity: sensor.bathroom_sensor_humidity
+                      sensor_entity: sensor.bathroom_temp_sensor_humidity
 
                   # Bathroom Sensor Battery
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.bathroom_sensor_battery
+                    entity: sensor.bathroom_temp_sensor_battery
                     variables:
                       sensor_name: Sensor Battery
                       sensor_icon: mdi:battery
-                      sensor_entity: sensor.bathroom_sensor_battery
+                      sensor_entity: sensor.bathroom_temp_sensor_battery
