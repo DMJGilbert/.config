@@ -848,6 +848,39 @@ in [
     ];
   }
 
+  # HA Backup overdue alert - fires daily at 09:00 if no backup in 2 days
+  {
+    id = "backup_overdue";
+    alias = "HA Backup Overdue";
+    description = "Alert if no successful HA backup in 2 days";
+    trigger = [
+      {
+        platform = "time";
+        at = "09:00:00";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = ''
+          {% set last = states('sensor.backup_last_successful_automatic_backup') %}
+          {{ last in ['unknown', 'unavailable']
+             or (now() - last | as_datetime | as_local).days >= 2 }}
+        '';
+      }
+    ];
+    action = [
+      {
+        action = "notify.notify";
+        data = {
+          title = "HA Backup Overdue";
+          message = "No successful Home Assistant backup in 2+ days. Check Settings → Backup.";
+        };
+      }
+    ];
+    mode = "single";
+  }
+
   # Humidity Extractor - toggle extractor when humidity is high
   {
     id = "humidity_extractor";

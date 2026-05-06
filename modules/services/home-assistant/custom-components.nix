@@ -86,6 +86,69 @@ in [
       sha256 = "sha256-V5RCepikTDrjZwi6MfRislpV2F9jR1MqwWxTq0GPBp4=";
     };
   })
+  # UK Carbon Intensity - same developer as OctopusEnergy, pairs well with it
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "BottlecapDave";
+    domain = "carbon_intensity";
+    version = "4.0.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "BottlecapDave";
+      repo = "HomeAssistant-CarbonIntensity";
+      rev = "v${version}";
+      sha256 = "sha256-n8BEdd94wUhvFe3TUJNhOSLFcHZroAs7JibgHQXQzE8=";
+    };
+  })
+  # Waste Collection Schedule - UK bin day reminders (configure council via UI)
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "mampfes";
+    domain = "waste_collection_schedule";
+    version = "2.22.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "mampfes";
+      repo = "hacs_waste_collection_schedule";
+      rev = "v${version}";
+      sha256 = "sha256-eUpfeWfMHsBBlDJpq0lBo1aQ7VF3THTXQTXDaXL5+tQ=";
+    };
+    propagatedBuildInputs =
+      (with haPython; [
+        beautifulsoup4
+        icalendar
+        icalevents
+        lxml
+        pycryptodome
+        pypdf
+        pdfminer
+      ])
+      ++ [haPython."curl-cffi"];
+  })
+  # National Rail UK - departure boards (needs free Darwin API key, configure via UI)
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "darrenparkinson";
+    domain = "nationalrailuk";
+    version = "1.0.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "darrenparkinson";
+      repo = "homeassistant_nationalrail";
+      rev = "v${version}";
+      sha256 = "sha256-pqcl7cpszTJn5REEKc+mXrO20kIQQDAMpm35IQjnKlM=";
+    };
+    # aiohttp is provided by HA's Python environment
+  })
+  # London TfL - departure boards for tube/bus/overground (configure station via UI)
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "morosanmihail";
+    domain = "london_tfl";
+    version = "0.8.6";
+    src = pkgs.fetchFromGitHub {
+      owner = "morosanmihail";
+      repo = "HA-LondonTfL";
+      rev = "v${version}";
+      sha256 = "sha256-d2FlW2DMzkGUlOOtshKCR+9eROIDW3WAE5hCeTyLaUU=";
+    };
+    propagatedBuildInputs = with haPython; [
+      zeep
+    ];
+  })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "twrecked";
     domain = "aarlo";

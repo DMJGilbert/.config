@@ -80,6 +80,7 @@
         22 # SSH
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
+        3001 # Uptime Kuma status dashboard
         8080 # Zigbee2MQTT web frontend
         21064 # HomeKit Accessory Protocol (HAP)
       ];
@@ -93,9 +94,30 @@
 
   programs.git.enable = true;
 
-  environment.systemPackages = with pkgs; [vim unzip gcc nmap];
+  environment.systemPackages = with pkgs; [vim unzip gcc nmap glances];
+
+  # Glances system monitoring API - HA Glances integration connects to localhost:61208
+  # Web UI accessible via Tailscale SSH tunnel: ssh -L 61208:localhost:61208 rubecula
+  systemd.services.glances = {
+    description = "Glances system monitoring API";
+    wantedBy = ["multi-user.target"];
+    after = ["network.target"];
+    serviceConfig = {
+      ExecStart = "${pkgs.glances}/bin/glances -w --disable-plugin docker --port 61208 --bind 127.0.0.1";
+      Restart = "on-failure";
+      User = "nobody";
+    };
+  };
 
   services = {
+    # Uptime Kuma - service health monitoring, HA integration at Settings → Integrations
+    uptime-kuma = {
+      enable = true;
+      settings = {
+        HOST = "0.0.0.0";
+        PORT = "3001";
+      };
+    };
     openssh.enable = true;
     fstrim.enable = true;
     # Early OOM killer to prevent system freeze under memory pressure

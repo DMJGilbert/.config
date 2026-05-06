@@ -141,6 +141,8 @@ in
             "energy"
             "matter"
             "thread"
+            "london_underground"
+            "nintendo_parental_controls"
           ];
 
           # Main Home Assistant configuration
