@@ -143,8 +143,7 @@ in
             "thread"
             "london_underground"
             "glances"
-            "uptimekuma"
-            "nintendo_parental_controls"
+            "uptime_kuma"
           ];
 
           # Main Home Assistant configuration
