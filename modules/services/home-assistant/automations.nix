@@ -68,19 +68,6 @@
     ];
   };
 in [
-  # Living Room light dimmer (blueprint-based)
-  {
-    alias = "Living Room light dimmer";
-    description = "";
-    use_blueprint = {
-      path = "dieneuser/zha-remote-tradfri-wireless-dimmer-ictc-g-1-for-light.yaml";
-      input = {
-        remote = "13cdd5f70e7ee5f53a8ba526fb1969a9";
-        light = "light.living_room";
-      };
-    };
-  }
-
   # Front door entry light - turns on when door opens, off 5 min after close
   {
     alias = "Front door hallway lights";
@@ -223,7 +210,7 @@ in [
         conditions = [
           {
             condition = "zone";
-            entity_id = "person.darren_gilbert";
+            entity_id = "person.darren";
             zone = "zone.home";
           }
           {
@@ -307,7 +294,7 @@ in [
     trigger = [
       {
         platform = "state";
-        entity_id = "media_player.lg_webos_smart_tv";
+        entity_id = "media_player.lg_webos_tv_49sj800v_zb";
         to = "on";
       }
     ];
@@ -337,7 +324,7 @@ in [
     trigger = [
       {
         platform = "state";
-        entity_id = "media_player.lg_webos_smart_tv";
+        entity_id = "media_player.lg_webos_tv_49sj800v_zb";
         to = "off";
       }
     ];
@@ -379,7 +366,7 @@ in [
         };
       }
       {
-        action = "notify.lg_webos_smart_tv";
+        action = "notify.lg_webos_tv_49sj800v_zb";
         data = {
           title = "Dishwasher";
           message = "Dishwasher";
@@ -418,7 +405,7 @@ in [
         };
       }
       {
-        action = "notify.lg_webos_smart_tv";
+        action = "notify.lg_webos_tv_49sj800v_zb";
         data = {
           title = "Washing machine";
           message = "Washing machine";
@@ -434,14 +421,14 @@ in [
     trigger = [
       {
         platform = "state";
-        entity_id = "remote.apple_tv";
+        entity_id = "remote.living_room";
         to = "off";
       }
     ];
     action = [
       {
         action = "media_player.turn_off";
-        target.entity_id = "media_player.lg_webos_smart_tv";
+        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
       }
     ];
     mode = "single";
@@ -453,7 +440,7 @@ in [
     trigger = [
       {
         platform = "zone";
-        entity_id = "person.darren_gilbert";
+        entity_id = "person.darren";
         zone = "zone.home";
         event = "leave";
       }
@@ -470,7 +457,7 @@ in [
         conditions = [
           {
             condition = "zone";
-            entity_id = "person.darren_gilbert";
+            entity_id = "person.darren";
             zone = "zone.home";
           }
           {
@@ -505,8 +492,8 @@ in [
       {
         action = "media_player.turn_off";
         target.entity_id = [
-          "media_player.apple_tv"
-          "media_player.lg_webos_smart_tv"
+          "media_player.living_room"
+          "media_player.lg_webos_tv_49sj800v_zb"
           "media_player.homepod_2"
         ];
       }
@@ -533,7 +520,7 @@ in [
     trigger = [
       {
         platform = "zone";
-        entity_id = "person.darren_gilbert";
+        entity_id = "person.darren";
         zone = "zone.home";
         event = "enter";
       }
@@ -766,7 +753,7 @@ in [
     action = [
       {
         action = "media_player.media_play_pause";
-        target.entity_id = "media_player.living_room_tv";
+        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
       }
     ];
     mode = "single";
@@ -791,9 +778,9 @@ in [
     action = [
       {
         action = "media_player.select_source";
-        target.entity_id = "media_player.lg_webos_smart_tv";
+        target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
         data = {
-          source = "{{ 'HDMI2' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'HDMI1' }}";
+          source = "{{ 'HDMI2' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'HDMI1' }}";
         };
       }
     ];
@@ -823,14 +810,14 @@ in [
             conditions = [
               {
                 condition = "state";
-                entity_id = "media_player.lg_webos_smart_tv";
+                entity_id = "media_player.lg_webos_tv_49sj800v_zb";
                 state = "off";
               }
             ];
             sequence = [
               {
                 action = "media_player.turn_on";
-                target.entity_id = "media_player.lg_webos_smart_tv";
+                target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
               }
             ];
           }
@@ -838,7 +825,7 @@ in [
         default = [
           {
             action = "media_player.turn_off";
-            target.entity_id = "media_player.lg_webos_smart_tv";
+            target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
           }
         ];
       }
@@ -867,7 +854,7 @@ in [
           sequence = [
             {
               action = "media_player.volume_up";
-              target.entity_id = "{{ 'media_player.living_room_tv' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'media_player.lg_webos_smart_tv' }}";
+              target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
             }
           ];
         };
@@ -897,7 +884,7 @@ in [
           sequence = [
             {
               action = "media_player.volume_down";
-              target.entity_id = "{{ 'media_player.living_room_tv' if state_attr('media_player.lg_webos_smart_tv', 'source') == 'HDMI1' else 'media_player.lg_webos_smart_tv' }}";
+              target.entity_id = "{{ 'media_player.living_room' if state_attr('media_player.lg_webos_tv_49sj800v_zb', 'source') == 'HDMI1' else 'media_player.lg_webos_tv_49sj800v_zb' }}";
             }
           ];
         };

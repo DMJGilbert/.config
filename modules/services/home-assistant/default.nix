@@ -256,25 +256,6 @@ in
               };
             ffmpeg = {};
             energy = {};
-            systemmonitor = {
-              sensor = {
-                process = [];
-              };
-              resources = [
-                {
-                  type = "disk_use_percent";
-                  arg = "/";
-                }
-                {type = "disk_free";}
-                {type = "memory_use_percent";}
-                {type = "processor_use";}
-                {type = "processor_temperature";}
-                {type = "load_1m";}
-                {type = "load_5m";}
-                {type = "load_15m";}
-                {type = "last_boot";}
-              ];
-            };
             template = [
               {
                 sensor = {
@@ -375,7 +356,7 @@ in
                 sequence = [
                   {
                     action = "media_player.play_media";
-                    target.entity_id = "media_player.apple_tv";
+                    target.entity_id = "media_player.living_room";
                     data = {
                       media_content_id = "https://music.apple.com/gb/playlist/robynnes/pl.u-vxJXsWbo9Pl";
                       media_content_type = "url";
@@ -384,7 +365,7 @@ in
                   {delay.seconds = 3;}
                   {
                     action = "remote.send_command";
-                    target.entity_id = "remote.apple_tv";
+                    target.entity_id = "remote.living_room";
                     data = {
                       command = ["right" "select"];
                       delay_secs = 1;
@@ -404,7 +385,7 @@ in
                 sequence = [
                   {
                     action = "media_player.play_media";
-                    target.entity_id = "media_player.apple_tv";
+                    target.entity_id = "media_player.living_room";
                     data = {
                       media_content_id = "{{ media_url }}";
                       media_content_type = "url";
@@ -413,7 +394,7 @@ in
                   {delay.seconds = 5;}
                   {
                     action = "remote.send_command";
-                    target.entity_id = "remote.apple_tv";
+                    target.entity_id = "remote.living_room";
                     data = {
                       command = "select";
                       delay_secs = 0.4;
