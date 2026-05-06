@@ -143,17 +143,6 @@ in [
   })
 
   (mkMotionLightAutomation {
-    alias = "Fairy lights";
-    motion_sensor = "binary_sensor.aarlo_motion_nursery";
-    target.entity_id = ["light.fairy_lights"];
-    delay_seconds = 600;
-    time_condition = {
-      after = "20:00:00";
-      before = "23:59:00";
-    };
-  })
-
-  (mkMotionLightAutomation {
     alias = "Bedroom lights (night)";
     motion_sensor = "binary_sensor.bedroom_motion_sensor_occupancy";
     target.entity_id = ["light.bedroom"];
@@ -496,7 +485,6 @@ in [
         target.entity_id = [
           "media_player.living_room"
           "media_player.lg_webos_tv_49sj800v_zb"
-          "media_player.homepod_2"
         ];
       }
       {
