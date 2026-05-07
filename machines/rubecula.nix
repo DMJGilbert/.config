@@ -42,6 +42,12 @@
             proxyPass = "http://127.0.0.1:8123";
             proxyWebsockets = true;
           };
+          "adguard.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:3000";
+            proxyWebsockets = true;
+          };
           "glances.gilberts.one" = {
             forceSSL = true;
             enableACME = true;
