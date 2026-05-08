@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   modulesPath,
   ...
 }: {
@@ -176,6 +177,25 @@
   };
 
   users.users.zigbee2mqtt.extraGroups = ["dialout"];
+
+  sops = {
+    secrets = {
+      "NAMECHEAP_API_USER" = {sopsFile = ../secrets/rubecula.yaml;};
+      "NAMECHEAP_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+    };
+    templates."namecheap-acme-env" = {
+      content = ''
+        NAMECHEAP_API_USER=${config.sops.placeholder."NAMECHEAP_API_USER"}
+        NAMECHEAP_API_KEY=${config.sops.placeholder."NAMECHEAP_API_KEY"}
+      '';
+      owner = "acme";
+    };
+  };
+
+  security.acme.certs."home.gilberts.one" = {
+    dnsProvider = "namecheap";
+    environmentFile = config.sops.templates."namecheap-acme-env".path;
+  };
 
   system.stateVersion = "26.05";
 }
