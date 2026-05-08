@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   config,
   modulesPath,
   ...
@@ -194,6 +195,7 @@
 
   security.acme.certs."home.gilberts.one" = {
     dnsProvider = "namecheap";
+    webroot = lib.mkForce null;
     environmentFile = config.sops.templates."namecheap-acme-env".path;
   };
 
