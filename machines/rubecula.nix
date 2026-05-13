@@ -215,6 +215,10 @@
         }
       ];
     };
+    flaresolverr = {
+      enable = true;
+      openFirewall = false;
+    };
     zigbee2mqtt = {
       enable = true;
       settings = {
