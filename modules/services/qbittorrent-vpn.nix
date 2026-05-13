@@ -101,8 +101,8 @@ in
         wg-netns = {
           description = "Mullvad WireGuard tunnel in netns ${cfg.namespace}";
           wantedBy = ["multi-user.target"];
-          after = ["netns-${cfg.namespace}.service" "network-online.target" "sops-install-secrets.service"];
-          requires = ["netns-${cfg.namespace}.service" "sops-install-secrets.service"];
+          after = ["netns-${cfg.namespace}.service" "network-online.target"];
+          requires = ["netns-${cfg.namespace}.service"];
           wants = ["network-online.target"];
           path = [pkgs.iproute2 pkgs.wireguard-tools];
           serviceConfig = {
