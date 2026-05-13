@@ -48,6 +48,12 @@ in
         description = "Path to the rendered WireGuard config file (from sops template)";
       };
 
+      wgAddressPath = lib.mkOption {
+        type = lib.types.str;
+        default = config.sops.secrets."MULLVAD_WG_ADDRESS".path;
+        description = "Path to the sops secret containing the WireGuard interface address (e.g. 10.x.x.x/32)";
+      };
+
       dns = lib.mkOption {
         type = lib.types.str;
         default = "10.64.0.1";
@@ -124,7 +130,7 @@ in
             ip link set ${cfg.wgInterface} netns ${cfg.namespace}
 
             # 4. Inside the netns: assign address, bring up, set default route
-            ADDR=$(awk -F'= *' '/^Address/{gsub(/ /,""); print $2; exit}' ${cfg.wgConfigPath})
+            ADDR=$(cat ${cfg.wgAddressPath})
             ip -n ${cfg.namespace} address add "$ADDR" dev ${cfg.wgInterface}
             ip -n ${cfg.namespace} link set ${cfg.wgInterface} up
             ip -n ${cfg.namespace} link set lo up

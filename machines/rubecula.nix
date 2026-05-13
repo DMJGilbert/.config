@@ -260,7 +260,6 @@
         content = ''
           [Interface]
           PrivateKey = ${config.sops.placeholder."MULLVAD_WG_PRIVATE_KEY"}
-          Address    = ${config.sops.placeholder."MULLVAD_WG_ADDRESS"}
 
           [Peer]
           PublicKey  = ${config.sops.placeholder."MULLVAD_WG_PEER_PUBKEY"}
