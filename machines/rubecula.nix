@@ -276,6 +276,7 @@
 
   security.acme.certs."gilberts.one" = {
     extraDomainNames = ["*.gilberts.one"];
+    group = "nginx";
     dnsProvider = "namecheap";
     webroot = lib.mkForce null;
     environmentFile = config.sops.templates."namecheap-acme-env".path;
