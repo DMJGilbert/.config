@@ -148,7 +148,6 @@ in
             "sonarr"
             "radarr"
             "qbittorrent"
-            "jellyseerr"
           ];
 
           # Main Home Assistant configuration
