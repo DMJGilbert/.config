@@ -59,6 +59,18 @@ in
         default = "10.64.0.1";
         description = "DNS server to use inside the namespace (Mullvad's DNS)";
       };
+
+      enableProxy = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Run a SOCKS5 proxy (microsocks) inside the namespace on proxyPort, reachable at vethNsIp:proxyPort from the host";
+      };
+
+      proxyPort = lib.mkOption {
+        type = lib.types.port;
+        default = 1080;
+        description = "Port for the in-namespace SOCKS5 proxy";
+      };
     };
 
     config.warnings =
@@ -148,6 +160,22 @@ in
             ${pkgs.iproute2}/bin/ip link delete veth-wg-host || true
             ip -n ${cfg.namespace} link delete ${cfg.wgInterface} || true
           '';
+        };
+
+        # SOCKS5 proxy inside the namespace — lets host services (Prowlarr)
+        # route requests through the VPN without entering the namespace
+        microsocks = lib.mkIf cfg.enableProxy {
+          description = "SOCKS5 proxy inside VPN namespace for host services";
+          wantedBy = ["multi-user.target"];
+          after = ["wg-netns.service"];
+          bindsTo = ["wg-netns.service"];
+          serviceConfig = {
+            NetworkNamespacePath = "/var/run/netns/${cfg.namespace}";
+            ExecStart = "${pkgs.microsocks}/bin/microsocks -p ${toString cfg.proxyPort}";
+            Restart = "on-failure";
+            RestartSec = "5s";
+            DynamicUser = true;
+          };
         };
 
         # Move qBittorrent into the namespace — bindsTo is the kill-switch:
