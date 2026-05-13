@@ -35,7 +35,12 @@ in
         openFirewall = false;
         webuiPort = cfg.webUIPort;
         serverConfig.Preferences = {
-          WebUI.Address = cfg.webUIAddress;
+          WebUI = {
+            Address = cfg.webUIAddress;
+            # Whitelist veth subnet so Sonarr/Radarr/Homepage can connect without credentials
+            AuthSubnetWhitelistEnabled = true;
+            AuthSubnetWhitelist = "10.200.200.0/30";
+          };
           Downloads = lib.mkIf config.local.services.mediaStorage.enable {
             SavePath = "${config.local.services.mediaStorage.root}/downloads/complete";
             TempPath = "${config.local.services.mediaStorage.root}/downloads/incomplete";
