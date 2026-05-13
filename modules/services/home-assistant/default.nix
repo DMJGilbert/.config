@@ -144,6 +144,10 @@ in
             "london_underground"
             "glances"
             "uptime_kuma"
+            "jellyfin"
+            "sonarr"
+            "radarr"
+            "qbittorrent"
           ];
 
           # Main Home Assistant configuration
