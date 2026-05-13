@@ -13,5 +13,6 @@
     ./radarr.nix
     ./sonarr.nix
     ./tailscale.nix
+    ./homepage.nix
   ];
 }

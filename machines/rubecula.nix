@@ -34,6 +34,7 @@
         webUIAddress = "0.0.0.0";
       };
       qbittorrentVpn.enable = true;
+      homepage.enable = true;
       homeAssistant = {
         enable = true;
         dashboard.enable = true;
@@ -110,6 +111,12 @@
             proxyPass = "http://10.200.200.2:8081";
             proxyWebsockets = true;
           };
+          "homepage.gilberts.one" = {
+            forceSSL = true;
+            useACMEHost = "gilberts.one";
+            proxyPass = "http://127.0.0.1:8082";
+            proxyWebsockets = true;
+          };
           "jellyfin.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
@@ -177,6 +184,9 @@
 
   # Glances system monitoring API - HA Glances integration connects to localhost:61208
   # Web UI accessible via Tailscale SSH tunnel: ssh -L 61208:localhost:61208 rubecula
+  # Route FlareSolverr's headless browser through the VPN namespace to bypass ISP blocks
+  systemd.services.flaresolverr.environment.PROXY_URL = "socks5://10.200.200.2:1080";
+
   systemd.services.glances = {
     description = "Glances system monitoring API";
     wantedBy = ["multi-user.target"];
