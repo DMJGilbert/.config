@@ -23,6 +23,17 @@
     };
 
     services = {
+      mediaStorage.enable = true;
+      jellyfin.enable = true;
+      sonarr.enable = true;
+      radarr.enable = true;
+      prowlarr.enable = true;
+      jellyseerr.enable = true;
+      qbittorrent = {
+        enable = true;
+        webUIAddress = "0.0.0.0";
+      };
+      qbittorrentVpn.enable = true;
       homeAssistant = {
         enable = true;
         dashboard.enable = true;
@@ -63,6 +74,50 @@
               proxy_buffering off;
             '';
             proxyPass = "http://127.0.0.1:3001";
+            proxyWebsockets = true;
+          };
+          "sonarr.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:8989";
+            proxyWebsockets = true;
+          };
+          "radarr.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:7878";
+            proxyWebsockets = true;
+          };
+          "prowlarr.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:9696";
+            proxyWebsockets = true;
+          };
+          "jellyseerr.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            proxyPass = "http://127.0.0.1:5055";
+            proxyWebsockets = true;
+          };
+          "qbittorrent.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            extraConfig = ''
+              proxy_buffering off;
+              client_max_body_size 100M;
+            '';
+            proxyPass = "http://10.200.200.2:8081";
+            proxyWebsockets = true;
+          };
+          "jellyfin.gilberts.one" = {
+            forceSSL = true;
+            enableACME = true;
+            extraConfig = ''
+              proxy_buffering off;
+              client_max_body_size 20M;
+            '';
+            proxyPass = "http://127.0.0.1:8096";
             proxyWebsockets = true;
           };
         };
@@ -183,13 +238,39 @@
     secrets = {
       "NAMECHEAP_API_USER" = {sopsFile = ../secrets/rubecula.yaml;};
       "NAMECHEAP_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "MULLVAD_WG_PRIVATE_KEY" = {
+        sopsFile = ../secrets/rubecula.yaml;
+        mode = "0400";
+        owner = "root";
+      };
+      "MULLVAD_WG_ADDRESS" = {sopsFile = ../secrets/rubecula.yaml;};
+      "MULLVAD_WG_PEER_PUBKEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "MULLVAD_WG_PEER_ENDPOINT" = {sopsFile = ../secrets/rubecula.yaml;};
+      "MULLVAD_WG_DNS" = {sopsFile = ../secrets/rubecula.yaml;};
     };
-    templates."namecheap-acme-env" = {
-      content = ''
-        NAMECHEAP_API_USER=${config.sops.placeholder."NAMECHEAP_API_USER"}
-        NAMECHEAP_API_KEY=${config.sops.placeholder."NAMECHEAP_API_KEY"}
-      '';
-      owner = "acme";
+    templates = {
+      "namecheap-acme-env" = {
+        content = ''
+          NAMECHEAP_API_USER=${config.sops.placeholder."NAMECHEAP_API_USER"}
+          NAMECHEAP_API_KEY=${config.sops.placeholder."NAMECHEAP_API_KEY"}
+        '';
+        owner = "acme";
+      };
+      "wg-mullvad.conf" = {
+        content = ''
+          [Interface]
+          PrivateKey = ${config.sops.placeholder."MULLVAD_WG_PRIVATE_KEY"}
+          Address    = ${config.sops.placeholder."MULLVAD_WG_ADDRESS"}
+
+          [Peer]
+          PublicKey  = ${config.sops.placeholder."MULLVAD_WG_PEER_PUBKEY"}
+          Endpoint   = ${config.sops.placeholder."MULLVAD_WG_PEER_ENDPOINT"}
+          AllowedIPs = 0.0.0.0/0
+          PersistentKeepalive = 25
+        '';
+        mode = "0400";
+        owner = "root";
+      };
     };
   };
 
