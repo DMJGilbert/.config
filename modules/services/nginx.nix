@@ -37,7 +37,13 @@ in
             enableACME = lib.mkOption {
               type = lib.types.bool;
               default = true;
-              description = "Enable ACME certificate provisioning";
+              description = "Enable ACME certificate provisioning (ignored when useACMEHost is set)";
+            };
+
+            useACMEHost = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Use an existing ACME certificate by cert name (e.g. \"gilberts.one\" for the wildcard cert)";
             };
 
             extraConfig = lib.mkOption {
@@ -80,14 +86,18 @@ in
         enable = true;
         recommendedProxySettings = true;
 
-        virtualHosts =
-          lib.mapAttrs (_name: vhost: {
-            inherit (vhost) forceSSL enableACME extraConfig;
+        virtualHosts = lib.mapAttrs (_name: vhost:
+          {
+            inherit (vhost) forceSSL extraConfig;
+            enableACME = vhost.enableACME && vhost.useACMEHost == null;
             locations."/" = lib.mkIf (vhost.proxyPass != null) {
               inherit (vhost) proxyPass proxyWebsockets;
             };
+          }
+          // lib.optionalAttrs (vhost.useACMEHost != null) {
+            inherit (vhost) useACMEHost;
           })
-          cfg.virtualHosts;
+        cfg.virtualHosts;
       };
     };
   }

@@ -48,7 +48,7 @@
         virtualHosts = {
           "home.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             extraConfig = ''
               proxy_buffering off;
             '';
@@ -57,19 +57,19 @@
           };
           "adguard.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:3000";
             proxyWebsockets = true;
           };
           "glances.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:61208";
             proxyWebsockets = true;
           };
           "kuma.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             extraConfig = ''
               proxy_buffering off;
             '';
@@ -78,31 +78,31 @@
           };
           "sonarr.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:8989";
             proxyWebsockets = true;
           };
           "radarr.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:7878";
             proxyWebsockets = true;
           };
           "prowlarr.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:9696";
             proxyWebsockets = true;
           };
           "jellyseerr.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:5055";
             proxyWebsockets = true;
           };
           "qbittorrent.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             extraConfig = ''
               proxy_buffering off;
               client_max_body_size 100M;
@@ -112,7 +112,7 @@
           };
           "jellyfin.gilberts.one" = {
             forceSSL = true;
-            enableACME = true;
+            useACMEHost = "gilberts.one";
             extraConfig = ''
               proxy_buffering off;
               client_max_body_size 20M;
@@ -274,7 +274,8 @@
     };
   };
 
-  security.acme.certs."home.gilberts.one" = {
+  security.acme.certs."gilberts.one" = {
+    extraDomainNames = ["*.gilberts.one"];
     dnsProvider = "namecheap";
     webroot = lib.mkForce null;
     environmentFile = config.sops.templates."namecheap-acme-env".path;
