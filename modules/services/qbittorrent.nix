@@ -34,7 +34,14 @@ in
         enable = true;
         openFirewall = false;
         webuiPort = cfg.webUIPort;
-        serverConfig.Preferences.WebUI.Address = cfg.webUIAddress;
+        serverConfig.Preferences = {
+          WebUI.Address = cfg.webUIAddress;
+          Downloads = lib.mkIf config.local.services.mediaStorage.enable {
+            SavePath = "${config.local.services.mediaStorage.root}/downloads/complete";
+            TempPath = "${config.local.services.mediaStorage.root}/downloads/incomplete";
+            TempPathEnabled = true;
+          };
+        };
       };
 
       users.users.qbittorrent.extraGroups =
