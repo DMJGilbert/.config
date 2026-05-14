@@ -188,6 +188,7 @@ in
             NetworkNamespacePath = "/var/run/netns/${cfg.namespace}";
             Restart = lib.mkForce "on-failure";
             RestartSec = lib.mkForce "5s";
+            UMask = "0002";
           };
         };
       };
