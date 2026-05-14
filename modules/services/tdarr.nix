@@ -6,10 +6,23 @@
 }: let
   cfg = config.local.services.tdarr;
   isLinux = builtins.match ".*-linux" currentSystem != null;
+  mediaGid = toString config.local.services.mediaStorage.gid;
 in
   {
     options.local.services.tdarr = {
       enable = lib.mkEnableOption "Tdarr automated media transcoding pipeline";
+
+      webUIPort = lib.mkOption {
+        type = lib.types.port;
+        default = 8265;
+        description = "Port for the Tdarr web UI";
+      };
+
+      serverPort = lib.mkOption {
+        type = lib.types.port;
+        default = 8266;
+        description = "Port for the Tdarr server (node communication)";
+      };
     };
 
     config.warnings =
@@ -25,33 +38,54 @@ in
         }
       ];
 
-      services.tdarr = {
-        enable = true;
+      users.users.tdarr = {
+        isSystemUser = true;
+        uid = 568;
         inherit (config.local.services.mediaStorage) group;
-        server = {
-          serverIP = "127.0.0.1";
-          serverPort = 8266;
-          webUIPort = 8265;
-        };
-        nodes.main = {
-          workers = {
-            transcodeGPU = 1;
-            transcodeCPU = 0;
-            healthcheckGPU = 0;
-            healthcheckCPU = 1;
-          };
-        };
+        extraGroups = ["render" "video"];
+        description = "Tdarr transcoding service user";
       };
 
-      # VAAPI access for hardware transcoding
-      users.users.tdarr.extraGroups = ["render" "video"];
+      systemd.tmpfiles.rules = [
+        "d /var/lib/tdarr/server       0775 tdarr ${config.local.services.mediaStorage.group} -"
+        "d /var/lib/tdarr/configs      0775 tdarr ${config.local.services.mediaStorage.group} -"
+        "d /var/lib/tdarr/logs         0775 tdarr ${config.local.services.mediaStorage.group} -"
+        "d /var/lib/tdarr/transcode-cache 0775 tdarr ${config.local.services.mediaStorage.group} -"
+      ];
 
-      # Allow server and node to read/write the media library
-      systemd.services.tdarr-server.serviceConfig.ReadWritePaths = [
-        config.local.services.mediaStorage.root
-      ];
-      systemd.services.tdarr-node-main.serviceConfig.ReadWritePaths = [
-        config.local.services.mediaStorage.root
-      ];
+      virtualisation.oci-containers = {
+        backend = "podman";
+        containers.tdarr = {
+          image = "ghcr.io/haveagitgat/tdarr:latest";
+          ports = [
+            "127.0.0.1:${toString cfg.webUIPort}:8265"
+            "127.0.0.1:${toString cfg.serverPort}:8266"
+          ];
+          volumes = [
+            "/var/lib/tdarr/server:/app/server"
+            "/var/lib/tdarr/configs:/app/configs"
+            "/var/lib/tdarr/logs:/app/logs"
+            "/var/lib/media:/media"
+            "/var/lib/tdarr/transcode-cache:/temp"
+          ];
+          environment = {
+            TZ = "Europe/London";
+            PUID = "568";
+            PGID = mediaGid;
+            UMASK_SET = "002";
+            serverIP = "0.0.0.0";
+            serverPort = toString cfg.serverPort;
+            webUIPort = toString cfg.webUIPort;
+            internalNode = "true";
+            inContainer = "true";
+            nodeName = "rubecula";
+          };
+          extraOptions = [
+            "--device=/dev/dri:/dev/dri"
+            "--group-add=render"
+            "--group-add=video"
+          ];
+        };
+      };
     };
   }
