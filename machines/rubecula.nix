@@ -36,6 +36,7 @@
       qbittorrentVpn.enable = true;
       homepage.enable = true;
       tdarr.enable = true;
+      pinchflat.enable = true;
       homeAssistant = {
         enable = true;
         dashboard.enable = true;
@@ -116,6 +117,12 @@
             forceSSL = true;
             useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:8265";
+            proxyWebsockets = true;
+          };
+          "pinchflat.gilberts.one" = {
+            forceSSL = true;
+            useACMEHost = "gilberts.one";
+            proxyPass = "http://127.0.0.1:8945";
             proxyWebsockets = true;
           };
           "homepage.gilberts.one" = {

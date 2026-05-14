@@ -14,6 +14,7 @@
     ./sonarr.nix
     ./tailscale.nix
     ./homepage.nix
+    ./pinchflat.nix
     ./tdarr.nix
   ];
 }
