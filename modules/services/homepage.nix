@@ -94,6 +94,13 @@ in
                   };
                 };
               }
+              {
+                Pinchflat = {
+                  href = "https://pinchflat.gilberts.one";
+                  description = "YouTube Archiver";
+                  icon = "pinchflat.svg";
+                };
+              }
             ];
           }
           {
