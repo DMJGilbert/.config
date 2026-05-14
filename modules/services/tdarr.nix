@@ -42,9 +42,13 @@ in
         isSystemUser = true;
         uid = 568;
         inherit (config.local.services.mediaStorage) group;
-        extraGroups = ["render" "video"];
         description = "Tdarr transcoding service user";
       };
+
+      # Make DRM render nodes accessible inside the container for VAAPI
+      services.udev.extraRules = ''
+        SUBSYSTEM=="drm", KERNEL=="renderD*", MODE="0666"
+      '';
 
       systemd.tmpfiles.rules = [
         "d /var/lib/tdarr/server       0775 tdarr ${config.local.services.mediaStorage.group} -"
@@ -82,8 +86,6 @@ in
           };
           extraOptions = [
             "--device=/dev/dri:/dev/dri"
-            "--group-add=render"
-            "--group-add=video"
           ];
         };
       };
