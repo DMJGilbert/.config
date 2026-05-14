@@ -71,7 +71,6 @@ in
             "/var/lib/tdarr/logs:/app/logs"
             "/var/lib/media:/media"
             "/var/lib/tdarr/transcode-cache:/temp"
-            "/run/opengl-driver:/run/opengl-driver:ro"
           ];
           environment = {
             TZ = "Europe/London";
@@ -84,7 +83,8 @@ in
             internalNode = "true";
             inContainer = "true";
             nodeName = "rubecula";
-            LIBVA_DRIVERS_PATH = "/run/opengl-driver/lib/dri";
+            LIBVA_DRIVER_NAME = "radeonsi";
+            LIBVA_DRIVERS_PATH = "/usr/lib/x86_64-linux-gnu/dri";
           };
           extraOptions = [
             "--device=/dev/dri:/dev/dri"
