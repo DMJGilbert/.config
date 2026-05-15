@@ -49,7 +49,7 @@ in
         };
       };
 
-      systemd.services.qbittorrent.serviceConfig.UMask = "0002";
+      systemd.services.qbittorrent.serviceConfig.UMask = lib.mkForce "0002";
 
       users.users.qbittorrent.extraGroups =
         lib.optional config.local.services.mediaStorage.enable

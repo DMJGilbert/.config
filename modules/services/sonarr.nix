@@ -23,7 +23,7 @@ in
         openFirewall = false;
       };
 
-      systemd.services.sonarr.serviceConfig.UMask = "0002";
+      systemd.services.sonarr.serviceConfig.UMask = lib.mkForce "0002";
 
       users.users.sonarr.extraGroups =
         lib.optional config.local.services.mediaStorage.enable
