@@ -98,13 +98,20 @@ in
                 Pinchflat = {
                   href = "https://pinchflat.gilberts.one";
                   description = "YouTube Archiver";
-                  icon = "pinchflat.svg";
+                  icon = "mdi-youtube-subscription";
                 };
               }
             ];
           }
           {
             Downloads = [
+              {
+                iPlayarr = {
+                  href = "https://iplayarr.gilberts.one";
+                  description = "BBC iPlayer Bridge";
+                  icon = "mdi-television-play";
+                };
+              }
               {
                 Sonarr = {
                   href = "https://sonarr.gilberts.one";

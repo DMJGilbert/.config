@@ -37,6 +37,10 @@
       homepage.enable = true;
       tdarr.enable = true;
       pinchflat.enable = true;
+      iplayarr = {
+        enable = true;
+        apiKeyFile = config.sops.templates."iplayarr-env".path;
+      };
       homeAssistant = {
         enable = true;
         dashboard.enable = true;
@@ -123,6 +127,12 @@
             forceSSL = true;
             useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:8945";
+            proxyWebsockets = true;
+          };
+          "iplayarr.gilberts.one" = {
+            forceSSL = true;
+            useACMEHost = "gilberts.one";
+            proxyPass = "http://127.0.0.1:4404";
             proxyWebsockets = true;
           };
           "homepage.gilberts.one" = {
@@ -275,8 +285,15 @@
       "MULLVAD_WG_PEER_PUBKEY" = {sopsFile = ../secrets/rubecula.yaml;};
       "MULLVAD_WG_PEER_ENDPOINT" = {sopsFile = ../secrets/rubecula.yaml;};
       "MULLVAD_WG_DNS" = {sopsFile = ../secrets/rubecula.yaml;};
+      "IPLAYARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
     };
     templates = {
+      "iplayarr-env" = {
+        content = ''
+          API_KEY=${config.sops.placeholder."IPLAYARR_API_KEY"}
+        '';
+        owner = "iplayarr";
+      };
       "namecheap-acme-env" = {
         content = ''
           NAMECHEAP_API_USER=${config.sops.placeholder."NAMECHEAP_API_USER"}
