@@ -72,6 +72,7 @@ in
             PGID = mediaGid;
             DOWNLOAD_DIR = "/incomplete";
             COMPLETE_DIR = "/complete";
+            REFRESH_SCHEDULE = "0 */6 * * *";
           };
           environmentFiles = lib.optional (cfg.apiKeyFile != null) cfg.apiKeyFile;
         };
