@@ -39,12 +39,14 @@ in
       ];
 
       systemd.tmpfiles.rules = [
-        "d ${cfg.mediaDir} 0775 pinchflat ${mediaGroup} -"
+        "d ${cfg.mediaDir} 2775 pinchflat ${mediaGroup} -"
       ];
 
       users.users.pinchflat = {
         extraGroups = [mediaGroup];
       };
+
+      systemd.services.pinchflat.serviceConfig.UMask = "0002";
 
       services.pinchflat = {
         enable = true;

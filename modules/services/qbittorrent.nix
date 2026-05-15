@@ -49,6 +49,8 @@ in
         };
       };
 
+      systemd.services.qbittorrent.serviceConfig.UMask = "0002";
+
       users.users.qbittorrent.extraGroups =
         lib.optional config.local.services.mediaStorage.enable
         config.local.services.mediaStorage.group;

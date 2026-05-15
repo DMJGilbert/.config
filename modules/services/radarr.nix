@@ -23,6 +23,8 @@ in
         openFirewall = false;
       };
 
+      systemd.services.radarr.serviceConfig.UMask = "0002";
+
       users.users.radarr.extraGroups =
         lib.optional config.local.services.mediaStorage.enable
         config.local.services.mediaStorage.group;
