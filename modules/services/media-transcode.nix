@@ -99,15 +99,17 @@ in
           trap 'rm -f "$tmp"' EXIT
 
           echo "Transcoding: $file"
+          # -vaapi_device: CPU decode + GPU encode via hwupload (more compatible than
+          # -hwaccel vaapi which tries to hardware-decode all streams including MJPEG
+          # attached pictures / cover art and fails)
+          # -map 0:V:0: capital V excludes attached picture streams
           ffmpeg -y \
-            -hwaccel vaapi \
-            -hwaccel_output_format vaapi \
-            -hwaccel_device "${cfg.vaapiDevice}" \
+            -vaapi_device "${cfg.vaapiDevice}" \
             -i "$file" \
-            -map 0:v:0 \
+            -map 0:V:0 \
             "''${audio_args[@]}" \
             -map "0:s?" \
-            -vf "format=nv12|vaapi,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709,hwupload" \
+            -vf "format=nv12,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709,hwupload" \
             -c:v h264_vaapi \
             -qp ${toString cfg.qp} \
             -c:a copy \
@@ -130,7 +132,7 @@ in
             --format '%w%f' \
             ${lib.escapeShellArgs cfg.watchDirs} \
             | while IFS= read -r path; do
-                media-transcode-file "$path"
+                media-transcode-file "$path" || echo "WARN: failed to process $path" >&2
               done
         '';
       };
@@ -141,7 +143,7 @@ in
         text = ''
           echo "Scanning directories: ${lib.escapeShellArgs cfg.watchDirs}"
           while IFS= read -r -d "" file; do
-            media-transcode-file "$file"
+            media-transcode-file "$file" || echo "WARN: failed to process $file" >&2
           done < <(find ${lib.escapeShellArgs cfg.watchDirs} \
             -type f \
             \( \
