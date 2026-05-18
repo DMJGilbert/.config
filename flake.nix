@@ -33,6 +33,11 @@
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    impermanence.url = "github:nix-community/impermanence";
   };
   outputs = {
     darwin,
@@ -42,6 +47,7 @@
     sops-nix,
     treefmt-nix,
     pre-commit-hooks,
+    impermanence,
     ...
   } @ inputs: let
     mkDarwin = import ./lib/mkdarwin.nix;
@@ -147,6 +153,7 @@
       extraModules = [
         hardware.nixosModules.common-cpu-amd
         hardware.nixosModules.common-gpu-amd
+        impermanence.nixosModules.impermanence
       ];
     };
   };

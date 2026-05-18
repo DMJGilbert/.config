@@ -220,6 +220,7 @@
       "Bash(gh release delete:*)",
       "Bash(gh api:*)",
 
+      "Bash(nh:*)",
       "Bash(darwin-rebuild:*)",
       "Bash(nixos-rebuild:*)",
       "Bash(nix build:*)",

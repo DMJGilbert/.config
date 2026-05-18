@@ -22,6 +22,12 @@ in
         default = "homepage.gilberts.one";
         description = "External hostname for Homepage (used in allowedHosts)";
       };
+
+      secretsFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = "Path to an env file with HOMEPAGE_VAR_* values (e.g. a sops template). Systemd reads this before starting the service.";
+      };
     };
 
     config.warnings =
@@ -30,6 +36,10 @@ in
   }
   // lib.optionalAttrs isLinux {
     config = lib.mkIf cfg.enable {
+      systemd.services.homepage-dashboard.serviceConfig = lib.mkIf (cfg.secretsFile != null) {
+        EnvironmentFile = cfg.secretsFile;
+      };
+
       services.homepage-dashboard = {
         enable = true;
         openFirewall = false;

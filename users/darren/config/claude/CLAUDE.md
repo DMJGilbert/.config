@@ -101,6 +101,9 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 ## Build Commands
 
 ```bash
-darwin-rebuild switch --flake .#ryukyu     # macOS
-sudo nixos-rebuild switch --flake .#rubecula  # NixOS
+nh darwin switch .#ryukyu                  # macOS (shows diff, cleaner output)
+nh os switch .#rubecula                    # NixOS (shows diff, cleaner output)
+# Fallback without nh:
+darwin-rebuild switch --flake .#ryukyu
+sudo nixos-rebuild switch --flake .#rubecula
 ```

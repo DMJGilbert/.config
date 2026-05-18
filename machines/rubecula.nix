@@ -34,7 +34,10 @@
         webUIAddress = "0.0.0.0";
       };
       qbittorrentVpn.enable = true;
-      homepage.enable = true;
+      homepage = {
+        enable = true;
+        secretsFile = config.sops.templates."homepage-env".path;
+      };
       tdarr.enable = true;
       pinchflat.enable = true;
       iplayarr = {
@@ -45,6 +48,13 @@
         enable = true;
         dashboard.enable = true;
       };
+      recyclarr = {
+        enable = true;
+        secretsFile = config.sops.templates."recyclarr-secrets".path;
+      };
+      crossSeed.enable = true;
+      # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
+      # impermanence.enable = true;
       adguardHome.enable = true;
       nginx = {
         enable = true;
@@ -286,6 +296,22 @@
       "MULLVAD_WG_PEER_ENDPOINT" = {sopsFile = ../secrets/rubecula.yaml;};
       "MULLVAD_WG_DNS" = {sopsFile = ../secrets/rubecula.yaml;};
       "IPLAYARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      # Homepage widget API keys — add values via: sops secrets/rubecula.yaml
+      "JELLYFIN_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "JELLYSEERR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "SONARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "RADARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "PROWLARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "QBITTORRENT_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
+      "QBITTORRENT_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
+      "ADGUARD_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
+      "ADGUARD_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
+      # System-level HASS_TOKEN for homepage template — uses key= to avoid name collision
+      # with the user-level "HASS_TOKEN" declared in users/darren/sops.nix
+      "HASS_TOKEN_SYSTEM" = {
+        sopsFile = ../secrets/claude.yaml;
+        key = "HASS_TOKEN";
+      };
     };
     templates = {
       "iplayarr-env" = {
@@ -293,6 +319,29 @@
           API_KEY=${config.sops.placeholder."IPLAYARR_API_KEY"}
         '';
         owner = "iplayarr";
+      };
+      "homepage-env" = {
+        content = ''
+          HOMEPAGE_VAR_JELLYFIN_API_KEY=${config.sops.placeholder."JELLYFIN_API_KEY"}
+          HOMEPAGE_VAR_JELLYSEERR_API_KEY=${config.sops.placeholder."JELLYSEERR_API_KEY"}
+          HOMEPAGE_VAR_SONARR_API_KEY=${config.sops.placeholder."SONARR_API_KEY"}
+          HOMEPAGE_VAR_RADARR_API_KEY=${config.sops.placeholder."RADARR_API_KEY"}
+          HOMEPAGE_VAR_PROWLARR_API_KEY=${config.sops.placeholder."PROWLARR_API_KEY"}
+          HOMEPAGE_VAR_QBITTORRENT_USERNAME=${config.sops.placeholder."QBITTORRENT_USERNAME"}
+          HOMEPAGE_VAR_QBITTORRENT_PASSWORD=${config.sops.placeholder."QBITTORRENT_PASSWORD"}
+          HOMEPAGE_VAR_ADGUARD_USERNAME=${config.sops.placeholder."ADGUARD_USERNAME"}
+          HOMEPAGE_VAR_ADGUARD_PASSWORD=${config.sops.placeholder."ADGUARD_PASSWORD"}
+          HOMEPAGE_VAR_HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
+        '';
+        mode = "0400";
+      };
+      "recyclarr-secrets" = {
+        content = ''
+          sonarr_api_key: ${config.sops.placeholder."SONARR_API_KEY"}
+          radarr_api_key: ${config.sops.placeholder."RADARR_API_KEY"}
+        '';
+        owner = "recyclarr";
+        mode = "0400";
       };
       "namecheap-acme-env" = {
         content = ''

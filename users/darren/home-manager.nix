@@ -80,6 +80,10 @@
         # Secrets management
         age # Encryption tool for sops
         sops # Encrypted secrets
+
+        # Nix tooling
+        nh # Better nixos-rebuild/darwin-rebuild wrapper with diff output
+        nvd # Show package version diffs between Nix generations
       ]
       ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
         # tools
@@ -228,6 +232,17 @@
     zoxide = {
       enable = true;
       enableZshIntegration = true;
+    };
+    yazi = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        manager = {
+          show_hidden = true;
+          sort_by = "natural";
+          sort_dir_first = true;
+        };
+      };
     };
   };
 }

@@ -1,7 +1,9 @@
 {...}: {
   imports = [
     ./adguard-home.nix
+    ./cross-seed.nix
     ./home-assistant
+    ./impermanence.nix
     ./jellyfin.nix
     ./jellyseerr.nix
     ./matter-server.nix
@@ -11,6 +13,7 @@
     ./qbittorrent-vpn.nix
     ./qbittorrent.nix
     ./radarr.nix
+    ./recyclarr.nix
     ./sonarr.nix
     ./tailscale.nix
     ./homepage.nix
