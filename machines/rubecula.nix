@@ -346,18 +346,14 @@
               base_url: http://localhost:8989
               api_key: ${config.sops.placeholder."SONARR_API_KEY"}
               include:
-                - template: sonarr-quality-definition-series
-                - template: sonarr-v4-quality-profile-web-1080p
-                - template: sonarr-v4-custom-formats-web-1080p
+                - template: sonarr-web-1080p
 
           radarr:
             gilberts-radarr:
               base_url: http://localhost:7878
               api_key: ${config.sops.placeholder."RADARR_API_KEY"}
               include:
-                - template: radarr-quality-definition-movie
-                - template: radarr-quality-profile-hd-bluray-plus-web
-                - template: radarr-custom-formats-hd-bluray-plus-web
+                - template: radarr-hd-bluray-web
         '';
         owner = "recyclarr";
         mode = "0400";
