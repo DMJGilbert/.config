@@ -92,10 +92,10 @@ in
             audio_args+=(-map "0:a?")
           fi
 
-          # Temp file alongside original; cleaned up on any exit
+          # Temp file alongside original; use short name to avoid PATH_MAX issues
+          # with long filenames containing emoji or multibyte characters
           dir="''${file%/*}"
-          base="''${file##*/}"
-          tmp="$dir/.transcode-tmp-$$-$base"
+          tmp="$dir/.transcode-tmp-$$"
           trap 'rm -f "$tmp"' EXIT
 
           echo "Transcoding: $file"
