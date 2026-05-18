@@ -13,7 +13,6 @@
     ./qbittorrent-vpn.nix
     ./qbittorrent.nix
     ./radarr.nix
-    ./recyclarr.nix
     ./sonarr.nix
     ./tailscale.nix
     ./homepage.nix

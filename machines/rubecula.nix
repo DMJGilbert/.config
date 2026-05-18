@@ -48,10 +48,6 @@
         enable = true;
         dashboard.enable = true;
       };
-      recyclarr = {
-        enable = true;
-        configFile = config.sops.templates."recyclarr-config".path;
-      };
       crossSeed = {
         enable = true;
         configFile = config.sops.templates."cross-seed-config".path;
@@ -166,6 +162,36 @@
             proxyWebsockets = true;
           };
         };
+      };
+    };
+  };
+
+  services.recyclarr = {
+    enable = true;
+    schedule = "04:00";
+    configuration = {
+      sonarr.gilberts-sonarr = {
+        base_url = "http://localhost:8989";
+        api_key._secret = config.sops.secrets."SONARR_API_KEY".path;
+        quality_definition.type = "series";
+        quality_profiles = [
+          {
+            trash_id = "9d142234e45d6143785ac55f5a9e8dc9"; # WEB-1080p (Alternative)
+            reset_unmatched_scores.enabled = true;
+          }
+        ];
+      };
+      radarr.gilberts-radarr = {
+        base_url = "http://localhost:7878";
+        api_key._secret = config.sops.secrets."RADARR_API_KEY".path;
+        delete_old_custom_formats = true;
+        quality_definition.type = "movie";
+        quality_profiles = [
+          {
+            trash_id = "d1d67249d3890e49bc12e275d989a7e9"; # HD Bluray + WEB
+            reset_unmatched_scores.enabled = true;
+          }
+        ];
       };
     };
   };
@@ -337,37 +363,6 @@
           HOMEPAGE_VAR_ADGUARD_PASSWORD=${config.sops.placeholder."ADGUARD_PASSWORD"}
           HOMEPAGE_VAR_HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
         '';
-        mode = "0400";
-      };
-      "recyclarr-config" = {
-        # recyclarr v8 removed official include templates entirely.
-        # Guide-backed quality profiles replace the old multi-include approach:
-        # a single trash_id pulls quality definition + profile + custom format scores.
-        content = ''
-          sonarr:
-            gilberts-sonarr:
-              base_url: http://localhost:8989
-              api_key: ${config.sops.placeholder."SONARR_API_KEY"}
-              quality_definition:
-                type: series
-              quality_profiles:
-                - trash_id: 9d142234e45d6143785ac55f5a9e8dc9 # WEB-1080p (Alternative)
-                  reset_unmatched_scores:
-                    enabled: true
-
-          radarr:
-            gilberts-radarr:
-              base_url: http://localhost:7878
-              api_key: ${config.sops.placeholder."RADARR_API_KEY"}
-              delete_old_custom_formats: true
-              quality_definition:
-                type: movie
-              quality_profiles:
-                - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
-                  reset_unmatched_scores:
-                    enabled: true
-        '';
-        owner = "recyclarr";
         mode = "0400";
       };
       "cross-seed-config" = {
