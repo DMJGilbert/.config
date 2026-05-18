@@ -50,9 +50,13 @@
       };
       recyclarr = {
         enable = true;
+        configFile = ./recyclarr.yml;
         secretsFile = config.sops.templates."recyclarr-secrets".path;
       };
-      crossSeed.enable = true;
+      crossSeed = {
+        enable = true;
+        configFile = config.sops.templates."cross-seed-config".path;
+      };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
       adguardHome.enable = true;
@@ -341,6 +345,31 @@
           radarr_api_key: ${config.sops.placeholder."RADARR_API_KEY"}
         '';
         owner = "recyclarr";
+        mode = "0400";
+      };
+      "cross-seed-config" = {
+        content = ''
+          module.exports = {
+            delay: 30,
+            torznab: [
+              "http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
+            ],
+            dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
+            torrentDir: "/qbit-data",
+            linkDir: "/cross-seeds",
+            linkType: "hardlink",
+            skipRecheck: false,
+            outputDir: "/cross-seeds",
+            port: 2468,
+            qbittorrentUrl: "http://10.200.200.2:8081",
+            action: "inject",
+            includeEpisodes: false,
+            includeNonVideos: false,
+            duplicateCategories: false,
+            matchMode: "safe",
+          };
+        '';
+        owner = "cross-seed";
         mode = "0400";
       };
       "namecheap-acme-env" = {

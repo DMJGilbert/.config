@@ -13,15 +13,19 @@
       gilberts-sonarr:
         base_url: http://localhost:8989
         api_key: !secret sonarr_api_key
-        quality_definition:
-          type: series
+        include:
+          - template: sonarr-quality-definition-series
+          - template: sonarr-v4-quality-profile-web-1080p
+          - template: sonarr-v4-custom-formats-web-1080p
 
     radarr:
       gilberts-radarr:
         base_url: http://localhost:7878
         api_key: !secret radarr_api_key
-        quality_definition:
-          type: movie
+        include:
+          - template: radarr-quality-definition-movie
+          - template: radarr-quality-profile-hd-bluray-plus-web
+          - template: radarr-custom-formats-hd-bluray-plus-web
   '';
 in
   {

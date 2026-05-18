@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   currentSystem,
   ...
 }: let
@@ -8,6 +9,26 @@
   isLinux = builtins.match ".*-linux" currentSystem != null;
   mediaGid = toString config.local.services.mediaStorage.gid;
   mediaRoot = config.local.services.mediaStorage.root;
+
+  defaultConfig = pkgs.writeText "cross-seed-config.js" ''
+    module.exports = {
+      delay: 30,
+      torznab: [],
+      dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
+      torrentDir: "/qbit-data",
+      linkDir: "/cross-seeds",
+      linkType: "hardlink",
+      skipRecheck: false,
+      outputDir: "/cross-seeds",
+      port: ${toString cfg.port},
+      qbittorrentUrl: "${cfg.qbittorrentUrl}",
+      action: "inject",
+      includeEpisodes: false,
+      includeNonVideos: false,
+      duplicateCategories: false,
+      matchMode: "safe",
+    };
+  '';
 in
   {
     options.local.services.crossSeed = {
@@ -23,6 +44,12 @@ in
         type = lib.types.str;
         default = "http://10.200.200.2:8081";
         description = "URL for the qBittorrent WebUI (must be reachable from host)";
+      };
+
+      configFile = lib.mkOption {
+        type = lib.types.path;
+        default = defaultConfig;
+        description = "Path to config.js — override with a sops template to inject secrets such as torznab API keys";
       };
     };
 
@@ -64,6 +91,9 @@ in
           extraOptions = ["--network=host"];
           volumes = [
             "/var/lib/cross-seed/config:/config"
+            # Overlay just config.js — lets sops templates or Nix-generated files be injected
+            # without replacing the whole /config dir (where cross-seed stores its database)
+            "${toString cfg.configFile}:/config/config.js:ro"
             "/var/lib/cross-seed/cross-seeds:/cross-seeds"
             # qBittorrent torrent files (host filesystem, unaffected by netns)
             "/var/lib/qbittorrent/.local/share/qBittorrent/BT_backup:/qbit-data:ro"
