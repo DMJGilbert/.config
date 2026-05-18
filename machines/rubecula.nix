@@ -48,11 +48,6 @@
         enable = true;
         dashboard.enable = true;
       };
-      crossSeed = {
-        enable = true;
-        configFile = config.sops.templates."cross-seed-config".path;
-        torrentDir = "/var/lib/qBittorrent/qBittorrent/data/BT_backup";
-      };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
       adguardHome.enable = true;
@@ -166,35 +161,7 @@
     };
   };
 
-  services.recyclarr = {
-    enable = true;
-    schedule = "04:00";
-    configuration = {
-      sonarr.gilberts-sonarr = {
-        base_url = "http://localhost:8989";
-        api_key._secret = config.sops.secrets."SONARR_API_KEY".path;
-        quality_definition.type = "series";
-        quality_profiles = [
-          {
-            trash_id = "9d142234e45d6143785ac55f5a9e8dc9"; # WEB-1080p (Alternative)
-            reset_unmatched_scores.enabled = true;
-          }
-        ];
-      };
-      radarr.gilberts-radarr = {
-        base_url = "http://localhost:7878";
-        api_key._secret = config.sops.secrets."RADARR_API_KEY".path;
-        delete_old_custom_formats = true;
-        quality_definition.type = "movie";
-        quality_profiles = [
-          {
-            trash_id = "d1d67249d3890e49bc12e275d989a7e9"; # HD Bluray + WEB
-            reset_unmatched_scores.enabled = true;
-          }
-        ];
-      };
-    };
-  };
+  users.users.cross-seed.uid = 566;
 
   boot = {
     # Latest kernel for best AMD Ryzen 8845HS + MediaTek MT7922 WiFi support
@@ -263,6 +230,59 @@
   };
 
   services = {
+    cross-seed = {
+      enable = true;
+      group = "media";
+      settings = {
+        delay = 30;
+        dataDirs = [
+          "/var/lib/media/downloads/complete"
+          "/var/lib/media/tv"
+          "/var/lib/media/movies"
+        ];
+        torrentDir = "/var/lib/qBittorrent/qBittorrent/data/BT_backup";
+        linkDirs = ["/var/lib/media/cross-seeds"];
+        linkType = "hardlink";
+        outputDir = null;
+        port = 2468;
+        action = "inject";
+        includeEpisodes = false;
+        includeNonVideos = false;
+        duplicateCategories = false;
+        matchMode = "safe";
+        skipRecheck = false;
+      };
+      settingsFile = config.sops.templates."cross-seed-secrets".path;
+    };
+    recyclarr = {
+      enable = true;
+      schedule = "04:00";
+      configuration = {
+        sonarr.gilberts-sonarr = {
+          base_url = "http://localhost:8989";
+          api_key._secret = config.sops.secrets."SONARR_API_KEY".path;
+          quality_definition.type = "series";
+          quality_profiles = [
+            {
+              trash_id = "9d142234e45d6143785ac55f5a9e8dc9"; # WEB-1080p (Alternative)
+              reset_unmatched_scores.enabled = true;
+            }
+          ];
+        };
+        radarr.gilberts-radarr = {
+          base_url = "http://localhost:7878";
+          api_key._secret = config.sops.secrets."RADARR_API_KEY".path;
+          delete_old_custom_formats = true;
+          quality_definition.type = "movie";
+          quality_profiles = [
+            {
+              trash_id = "d1d67249d3890e49bc12e275d989a7e9"; # HD Bluray + WEB
+              reset_unmatched_scores.enabled = true;
+            }
+          ];
+        };
+      };
+    };
     uptime-kuma = {
       enable = true;
       settings = {
@@ -365,31 +385,12 @@
         '';
         mode = "0400";
       };
-      "cross-seed-config" = {
+      "cross-seed-secrets" = {
         content = ''
-          module.exports = {
-            delay: 30,
-            torznab: [
-              "http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
-            ],
-            dataDirs: ["/media/downloads/complete", "/media/tv", "/media/movies"],
-            torrentDir: "/qbit-data",
-            linkDirs: ["/media/cross-seeds"],
-            linkType: "hardlink",
-            skipRecheck: false,
-            outputDir: null,
-            port: 2468,
-            torrentClients: [{
-              type: "qbittorrent",
-              url: "http://10.200.200.2:8081",
-              "cross-seed-path": "/var/lib/media/cross-seeds",
-            }],
-            action: "inject",
-            includeEpisodes: false,
-            includeNonVideos: false,
-            duplicateCategories: false,
-            matchMode: "safe",
-          };
+          {
+            "torznab": ["http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"],
+            "torrentClients": ["qbittorrent:http://${config.sops.placeholder."QBITTORRENT_USERNAME"}:${config.sops.placeholder."QBITTORRENT_PASSWORD"}@10.200.200.2:8081"]
+          }
         '';
         owner = "cross-seed";
         mode = "0400";

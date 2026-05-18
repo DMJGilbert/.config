@@ -1,7 +1,6 @@
 {...}: {
   imports = [
     ./adguard-home.nix
-    ./cross-seed.nix
     ./home-assistant
     ./impermanence.nix
     ./jellyfin.nix
