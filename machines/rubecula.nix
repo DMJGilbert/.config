@@ -38,7 +38,13 @@
         enable = true;
         secretsFile = config.sops.templates."homepage-env".path;
       };
-      tdarr.enable = true;
+      mediaTranscode = {
+        enable = true;
+        watchDirs = [
+          "/var/lib/media/tv"
+          "/var/lib/media/movies"
+        ];
+      };
       pinchflat.enable = true;
       iplayarr = {
         enable = true;
@@ -120,12 +126,6 @@
               client_max_body_size 100M;
             '';
             proxyPass = "http://10.200.200.2:8081";
-            proxyWebsockets = true;
-          };
-          "tdarr.gilberts.one" = {
-            forceSSL = true;
-            useACMEHost = "gilberts.one";
-            proxyPass = "http://127.0.0.1:8265";
             proxyWebsockets = true;
           };
           "pinchflat.gilberts.one" = {

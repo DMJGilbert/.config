@@ -16,7 +16,7 @@
     ./tailscale.nix
     ./homepage.nix
     ./iplayarr.nix
+    ./media-transcode.nix
     ./pinchflat.nix
-    ./tdarr.nix
   ];
 }
