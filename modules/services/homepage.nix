@@ -104,17 +104,6 @@ in
                   };
                 };
               }
-              {
-                Pinchflat = {
-                  href = "https://pinchflat.gilberts.one";
-                  description = "YouTube Archiver";
-                  icon = "pinchflat.png";
-                  widget = {
-                    type = "pinchflat";
-                    url = "http://127.0.0.1:8945";
-                  };
-                };
-              }
             ];
           }
           {
@@ -123,7 +112,14 @@ in
                 iPlayarr = {
                   href = "https://iplayarr.gilberts.one";
                   description = "BBC iPlayer Bridge";
-                  icon = "iplayarr.png";
+                  icon = "bbc-iplayer.png";
+                };
+              }
+              {
+                Pinchflat = {
+                  href = "https://pinchflat.gilberts.one";
+                  description = "YouTube Archiver";
+                  icon = "pinchflat.png";
                 };
               }
               {
@@ -237,10 +233,6 @@ in
                 "Zigbee2MQTT" = {
                   description = "Zigbee Gateway";
                   icon = "zigbee2mqtt.png";
-                  widget = {
-                    type = "zigbee2mqtt";
-                    url = "http://127.0.0.1:8080";
-                  };
                 };
               }
             ];
