@@ -357,6 +357,8 @@
       "QBITTORRENT_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
       "ADGUARD_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
       "ADGUARD_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
+      "TAILSCALE_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      "TAILSCALE_DEVICE_ID" = {sopsFile = ../secrets/rubecula.yaml;};
       # System-level HASS_TOKEN for homepage template — uses key= to avoid name collision
       # with the user-level "HASS_TOKEN" declared in users/darren/sops.nix
       "HASS_TOKEN_SYSTEM" = {
@@ -383,6 +385,8 @@
           HOMEPAGE_VAR_ADGUARD_USERNAME=${config.sops.placeholder."ADGUARD_USERNAME"}
           HOMEPAGE_VAR_ADGUARD_PASSWORD=${config.sops.placeholder."ADGUARD_PASSWORD"}
           HOMEPAGE_VAR_HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
+          HOMEPAGE_VAR_TAILSCALE_API_KEY=${config.sops.placeholder."TAILSCALE_API_KEY"}
+          HOMEPAGE_VAR_TAILSCALE_DEVICE_ID=${config.sops.placeholder."TAILSCALE_DEVICE_ID"}
         '';
         mode = "0400";
       };

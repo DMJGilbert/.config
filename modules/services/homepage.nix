@@ -65,6 +65,9 @@ in
               cpu = true;
               memory = true;
               disk = "/";
+              uptime = true;
+              cputemp = true;
+              network = true;
             };
           }
           {
@@ -197,6 +200,17 @@ in
                     type = "uptimekuma";
                     url = "http://127.0.0.1:3001";
                     slug = "home";
+                  };
+                };
+              }
+              {
+                Tailscale = {
+                  description = "VPN Mesh";
+                  icon = "tailscale.svg";
+                  widget = {
+                    type = "tailscale";
+                    deviceid = "{{HOMEPAGE_VAR_TAILSCALE_DEVICE_ID}}";
+                    key = "{{HOMEPAGE_VAR_TAILSCALE_API_KEY}}";
                   };
                 };
               }
