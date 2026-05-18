@@ -379,7 +379,11 @@
             skipRecheck: false,
             outputDir: null,
             port: 2468,
-            qbittorrentUrl: "http://10.200.200.2:8081",
+            torrentClients: [{
+              type: "qbittorrent",
+              url: "http://10.200.200.2:8081",
+              "cross-seed-path": "/var/lib/media/cross-seeds",
+            }],
             action: "inject",
             includeEpisodes: false,
             includeNonVideos: false,

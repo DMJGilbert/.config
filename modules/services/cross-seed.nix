@@ -20,7 +20,10 @@
       skipRecheck: false,
       outputDir: null,
       port: ${toString cfg.port},
-      qbittorrentUrl: "${cfg.qbittorrentUrl}",
+      torrentClients: [{
+        type: "qbittorrent",
+        url: "${cfg.qbittorrentUrl}",
+      }],
       action: "inject",
       includeEpisodes: false,
       includeNonVideos: false,
