@@ -77,6 +77,10 @@ in
         serviceConfig = {
           Type = "oneshot";
           User = "recyclarr";
+          # recyclarr writes migration markers and cache under $HOME/.config;
+          # system users default to /var/empty (read-only), so redirect home here
+          StateDirectory = "recyclarr";
+          Environment = ["HOME=/var/lib/recyclarr"];
           ExecStart = lib.concatStringsSep " " ([
               "${pkgs.recyclarr}/bin/recyclarr"
               "sync"

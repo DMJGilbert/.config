@@ -15,7 +15,6 @@
       delay: 30,
       torznab: [],
       dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
-      torrentDir: "/qbit-data",
       linkDir: "/cross-seeds",
       linkType: "hardlink",
       skipRecheck: false,
@@ -50,6 +49,16 @@ in
         type = lib.types.path;
         default = defaultConfig;
         description = "Path to config.js — override with a sops template to inject secrets such as torznab API keys";
+      };
+
+      torrentDir = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          Host path to qBittorrent's BT_backup directory for direct torrent scanning.
+          Leave null to skip the mount — cross-seed still works via torznab and the REST API.
+          Find the correct path with: find /var/lib/qbittorrent -name "BT_backup" -type d
+        '';
       };
     };
 
@@ -89,18 +98,18 @@ in
           # Host networking lets cross-seed reach qBittorrent at 10.200.200.2:8081
           # which falls within the WebUI subnet whitelist (10.200.200.0/30)
           extraOptions = ["--network=host"];
-          volumes = [
-            "/var/lib/cross-seed/config:/config"
-            # Overlay just config.js — lets sops templates or Nix-generated files be injected
-            # without replacing the whole /config dir (where cross-seed stores its database)
-            "${toString cfg.configFile}:/config/config.js:ro"
-            "/var/lib/cross-seed/cross-seeds:/cross-seeds"
-            # qBittorrent torrent files (host filesystem, unaffected by netns)
-            "/var/lib/qbittorrent/.local/share/qBittorrent/BT_backup:/qbit-data:ro"
-            "${mediaRoot}/downloads/complete:/media/complete"
-            "${mediaRoot}/tv:/media/tv"
-            "${mediaRoot}/movies:/media/movies"
-          ];
+          volumes =
+            [
+              "/var/lib/cross-seed/config:/config"
+              # Overlay just config.js — lets sops templates or Nix-generated files be injected
+              # without replacing the whole /config dir (where cross-seed stores its database)
+              "${toString cfg.configFile}:/config/config.js:ro"
+              "/var/lib/cross-seed/cross-seeds:/cross-seeds"
+              "${mediaRoot}/downloads/complete:/media/complete"
+              "${mediaRoot}/tv:/media/tv"
+              "${mediaRoot}/movies:/media/movies"
+            ]
+            ++ lib.optional (cfg.torrentDir != null) "${cfg.torrentDir}:/qbit-data:ro";
           environment = {
             TZ = "Europe/London";
             PUID = "566";

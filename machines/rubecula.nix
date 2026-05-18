@@ -355,7 +355,6 @@
               "http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
             ],
             dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
-            torrentDir: "/qbit-data",
             linkDir: "/cross-seeds",
             linkType: "hardlink",
             skipRecheck: false,
