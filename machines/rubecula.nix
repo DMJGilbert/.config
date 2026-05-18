@@ -43,6 +43,7 @@
         watchDirs = [
           "/var/lib/media/tv"
           "/var/lib/media/movies"
+          "/var/lib/media/youtube"
         ];
       };
       pinchflat.enable = true;
