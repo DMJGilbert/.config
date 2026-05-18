@@ -203,17 +203,6 @@ in
                   };
                 };
               }
-              {
-                Tailscale = {
-                  description = "VPN Mesh";
-                  icon = "tailscale.svg";
-                  widget = {
-                    type = "tailscale";
-                    deviceid = "{{HOMEPAGE_VAR_TAILSCALE_DEVICE_ID}}";
-                    key = "{{HOMEPAGE_VAR_TAILSCALE_API_KEY}}";
-                  };
-                };
-              }
             ];
           }
           {
