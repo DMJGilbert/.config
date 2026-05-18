@@ -7,26 +7,6 @@
 }: let
   cfg = config.local.services.recyclarr;
   isLinux = builtins.match ".*-linux" currentSystem != null;
-
-  defaultConfig = pkgs.writeText "recyclarr.yml" ''
-    sonarr:
-      gilberts-sonarr:
-        base_url: http://localhost:8989
-        api_key: !secret sonarr_api_key
-        include:
-          - template: sonarr-quality-definition-series
-          - template: sonarr-v4-quality-profile-web-1080p
-          - template: sonarr-v4-custom-formats-web-1080p
-
-    radarr:
-      gilberts-radarr:
-        base_url: http://localhost:7878
-        api_key: !secret radarr_api_key
-        include:
-          - template: radarr-quality-definition-movie
-          - template: radarr-quality-profile-hd-bluray-plus-web
-          - template: radarr-custom-formats-hd-bluray-plus-web
-  '';
 in
   {
     options.local.services.recyclarr = {
@@ -34,14 +14,7 @@ in
 
       configFile = lib.mkOption {
         type = lib.types.path;
-        default = defaultConfig;
-        description = "Path to the recyclarr YAML config file";
-      };
-
-      secretsFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        default = null;
-        description = "Path to a sops-rendered secrets file with sonarr_api_key, radarr_api_key, etc.";
+        description = "Path to the recyclarr YAML config file (must contain literal API keys — use a sops template)";
       };
 
       onCalendar = lib.mkOption {
@@ -57,13 +30,6 @@ in
   }
   // lib.optionalAttrs isLinux {
     config = lib.mkIf cfg.enable {
-      assertions = [
-        {
-          assertion = cfg.secretsFile != null;
-          message = "local.services.recyclarr requires secretsFile to be set (sops template with sonarr_api_key and radarr_api_key).";
-        }
-      ];
-
       users.users.recyclarr = {
         isSystemUser = true;
         uid = 567;
@@ -81,14 +47,8 @@ in
           # system users default to /var/empty (read-only), so redirect home here
           StateDirectory = "recyclarr";
           Environment = ["HOME=/var/lib/recyclarr"];
-          ExecStart = lib.concatStringsSep " " ([
-              "${pkgs.recyclarr}/bin/recyclarr"
-              "sync"
-              "--config"
-              (toString cfg.configFile)
-            ]
-            ++ lib.optional (cfg.secretsFile != null) "--secrets ${cfg.secretsFile}");
-          ReadOnlyPaths = [cfg.configFile] ++ lib.optional (cfg.secretsFile != null) cfg.secretsFile;
+          ExecStart = "${pkgs.recyclarr}/bin/recyclarr sync --config ${toString cfg.configFile}";
+          ReadOnlyPaths = [cfg.configFile];
         };
       };
 
