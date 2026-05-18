@@ -51,12 +51,13 @@ in
             *) exit 0 ;;
           esac
 
-          # Probe video codec
-          codec=$(ffprobe -v error -select_streams v:0 \
-            -show_entries stream=codec_name \
+          # Check if we already encoded this file: FFmpeg writes our encoder tag into
+          # the stream metadata, so we can detect our own output and avoid re-encoding.
+          encoder=$(ffprobe -v error -select_streams v:0 \
+            -show_entries stream_tags=encoder \
             -of default=noprint_wrappers=1:nokey=1 "$file")
-          is_h264=false
-          [[ "$codec" == "h264" ]] && is_h264=true
+          already_ours=false
+          [[ "$encoder" == *"h264_vaapi"* ]] && already_ours=true
 
           # Probe audio streams
           audio_count=$(ffprobe -v error -select_streams a \
@@ -78,8 +79,8 @@ in
             needs_audio_filter=true
           fi
 
-          # Skip only if video is already H.264 AND audio is already clean
-          if $is_h264 && ! $needs_audio_filter; then
+          # Skip only if we encoded this file ourselves AND audio is already clean
+          if $already_ours && ! $needs_audio_filter; then
             exit 0
           fi
 
@@ -97,36 +98,21 @@ in
           tmp="$dir/.transcode-tmp-$$-$base"
           trap 'rm -f "$tmp"' EXIT
 
-          if $is_h264; then
-            # Video already H.264 — copy stream, only drop unwanted audio
-            echo "Fixing audio (H.264 copy): $file"
-            ffmpeg -y \
-              -i "$file" \
-              -map 0:v:0 \
-              "''${audio_args[@]}" \
-              -map "0:s?" \
-              -c:v copy \
-              -c:a copy \
-              -c:s copy \
-              "$tmp"
-          else
-            # Re-encode to H.264 via AMD VAAPI
-            echo "Transcoding: $file (was: $codec)"
-            ffmpeg -y \
-              -hwaccel vaapi \
-              -hwaccel_output_format vaapi \
-              -hwaccel_device "${cfg.vaapiDevice}" \
-              -i "$file" \
-              -map 0:v:0 \
-              "''${audio_args[@]}" \
-              -map "0:s?" \
-              -vf "format=nv12|vaapi,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709,hwupload" \
-              -c:v h264_vaapi \
-              -qp ${toString cfg.qp} \
-              -c:a copy \
-              -c:s copy \
-              "$tmp"
-          fi
+          echo "Transcoding: $file"
+          ffmpeg -y \
+            -hwaccel vaapi \
+            -hwaccel_output_format vaapi \
+            -hwaccel_device "${cfg.vaapiDevice}" \
+            -i "$file" \
+            -map 0:v:0 \
+            "''${audio_args[@]}" \
+            -map "0:s?" \
+            -vf "format=nv12|vaapi,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709,hwupload" \
+            -c:v h264_vaapi \
+            -qp ${toString cfg.qp} \
+            -c:a copy \
+            -c:s copy \
+            "$tmp"
 
           mv "$tmp" "$file"
           echo "Done: $file"
