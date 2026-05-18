@@ -14,8 +14,8 @@
     module.exports = {
       delay: 30,
       torznab: [],
-      dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
-      linkDirs: ["/cross-seeds"],
+      dataDirs: ["/media/downloads/complete", "/media/tv", "/media/movies"],
+      linkDirs: ["/media/cross-seeds"],
       linkType: "hardlink",
       skipRecheck: false,
       outputDir: null,
@@ -87,8 +87,8 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/cross-seed/config          0775 cross-seed ${config.local.services.mediaStorage.group} -"
-        "d ${mediaRoot}/cross-seeds            0775 cross-seed ${config.local.services.mediaStorage.group} -"
+        "d /var/lib/cross-seed/config  0775 cross-seed ${config.local.services.mediaStorage.group} -"
+        "d ${mediaRoot}/cross-seeds    0775 cross-seed ${config.local.services.mediaStorage.group} -"
       ];
 
       virtualisation.oci-containers = {
@@ -104,11 +104,8 @@ in
               # Overlay just config.js — lets sops templates or Nix-generated files be injected
               # without replacing the whole /config dir (where cross-seed stores its database)
               "${toString cfg.configFile}:/config/config.js:ro"
-              # Must be on the same filesystem as dataDirs for hardlinks to work
-              "${mediaRoot}/cross-seeds:/cross-seeds"
-              "${mediaRoot}/downloads/complete:/media/complete"
-              "${mediaRoot}/tv:/media/tv"
-              "${mediaRoot}/movies:/media/movies"
+              # Single mount for all media paths so hardlinks work across dataDirs and linkDirs
+              "${mediaRoot}:/media"
             ]
             ++ lib.optional (cfg.torrentDir != null) "${cfg.torrentDir}:/qbit-data:ro";
           environment = {
