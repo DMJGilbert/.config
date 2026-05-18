@@ -87,8 +87,8 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/cross-seed/config    0775 cross-seed ${config.local.services.mediaStorage.group} -"
-        "d /var/lib/cross-seed/cross-seeds 0775 cross-seed ${config.local.services.mediaStorage.group} -"
+        "d /var/lib/cross-seed/config          0775 cross-seed ${config.local.services.mediaStorage.group} -"
+        "d ${mediaRoot}/cross-seeds            0775 cross-seed ${config.local.services.mediaStorage.group} -"
       ];
 
       virtualisation.oci-containers = {
@@ -104,7 +104,8 @@ in
               # Overlay just config.js — lets sops templates or Nix-generated files be injected
               # without replacing the whole /config dir (where cross-seed stores its database)
               "${toString cfg.configFile}:/config/config.js:ro"
-              "/var/lib/cross-seed/cross-seeds:/cross-seeds"
+              # Must be on the same filesystem as dataDirs for hardlinks to work
+              "${mediaRoot}/cross-seeds:/cross-seeds"
               "${mediaRoot}/downloads/complete:/media/complete"
               "${mediaRoot}/tv:/media/tv"
               "${mediaRoot}/movies:/media/movies"
