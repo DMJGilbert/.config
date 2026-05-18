@@ -56,6 +56,7 @@
       crossSeed = {
         enable = true;
         configFile = config.sops.templates."cross-seed-config".path;
+        torrentDir = "/var/lib/qBittorrent/qBittorrent/data/BT_backup";
       };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
@@ -355,6 +356,7 @@
               "http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
             ],
             dataDirs: ["/media/complete", "/media/tv", "/media/movies"],
+            torrentDir: "/qbit-data",
             linkDir: "/cross-seeds",
             linkType: "hardlink",
             skipRecheck: false,
