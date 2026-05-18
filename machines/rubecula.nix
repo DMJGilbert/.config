@@ -388,7 +388,16 @@
       "cross-seed-secrets" = {
         content = ''
           {
-            "torznab": ["http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"],
+            "torznab": [
+              "http://localhost:9696/1/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/2/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/3/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/4/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/5/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/6/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/7/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
+              "http://localhost:9696/8/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
+            ],
             "torrentClients": ["qbittorrent:http://${config.sops.placeholder."QBITTORRENT_USERNAME"}:${config.sops.placeholder."QBITTORRENT_PASSWORD"}@10.200.200.2:8081"]
           }
         '';
