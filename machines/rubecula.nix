@@ -340,20 +340,32 @@
         mode = "0400";
       };
       "recyclarr-config" = {
+        # recyclarr v8 removed official include templates entirely.
+        # Guide-backed quality profiles replace the old multi-include approach:
+        # a single trash_id pulls quality definition + profile + custom format scores.
         content = ''
           sonarr:
             gilberts-sonarr:
               base_url: http://localhost:8989
               api_key: ${config.sops.placeholder."SONARR_API_KEY"}
-              include:
-                - template: sonarr-web-1080p
+              quality_definition:
+                type: series
+              quality_profiles:
+                - trash_id: 9d142234e45d6143785ac55f5a9e8dc9 # WEB-1080p (Alternative)
+                  reset_unmatched_scores:
+                    enabled: true
 
           radarr:
             gilberts-radarr:
               base_url: http://localhost:7878
               api_key: ${config.sops.placeholder."RADARR_API_KEY"}
-              include:
-                - template: radarr-hd-bluray-web
+              delete_old_custom_formats: true
+              quality_definition:
+                type: movie
+              quality_profiles:
+                - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+                  reset_unmatched_scores:
+                    enabled: true
         '';
         owner = "recyclarr";
         mode = "0400";
