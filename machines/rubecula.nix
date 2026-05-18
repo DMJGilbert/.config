@@ -388,8 +388,8 @@
       "cross-seed-secrets" = {
         content = ''
           {
-            "torznab": ["http://localhost:9696/all/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"],
-            "torrentClients": ["qbittorrent:http://${config.sops.placeholder."QBITTORRENT_USERNAME"}:${config.sops.placeholder."QBITTORRENT_PASSWORD"}@10.200.200.2:8081"]
+            "torznab": ["http://localhost:9696/${config.sops.placeholder."PROWLARR_API_KEY"}/api"],
+            "torrentClients": ["qbittorrent:http://10.200.200.2:8081"]
           }
         '';
         owner = "cross-seed";
