@@ -94,7 +94,7 @@ in {
           {spacer = {small = false;};}
         ];
       };
-      spaces.spans-displays = true;
+      spaces.spans-displays = false;
       NSGlobalDomain = {
         _HIHideMenuBar = true;
 
