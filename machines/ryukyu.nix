@@ -44,11 +44,16 @@ in {
         FXDefaultSearchScope = "SCcf";
         FXPreferredViewStyle = "clmv";
         NewWindowTarget = "Home";
+        QuitMenuItem = true;
+        FXRemoveOldTrashItems = true;
+        _FXEnableColumnAutoSizing = true;
       };
       menuExtraClock = {
         ShowSeconds = true;
         Show24Hour = true;
         ShowAMPM = false;
+        ShowDate = 1;
+        ShowDayOfWeek = true;
       };
       dock = {
         # auto show and hide dock
@@ -68,6 +73,9 @@ in {
         # don't automatically rearrange spaces based on the most recent one
         mru-spaces = false;
         launchanim = false;
+        mineffect = "scale";
+        minimize-to-application = true;
+        expose-animation-duration = 0.1;
         wvous-bl-corner = 1;
         wvous-br-corner = 1;
         wvous-tl-corner = 1;
@@ -131,6 +139,12 @@ in {
         AppleInterfaceStyle = "Dark";
         AppleICUForce24HourTime = true;
         NSWindowShouldDragOnGesture = true;
+        AppleSpacesSwitchOnActivate = false;
+        NSStatusItemSpacing = 6;
+        NSStatusItemSelectionPadding = 6;
+        AppleMeasurementUnits = "Centimeters";
+        AppleMetricUnits = 1;
+        AppleTemperatureUnit = "Celsius";
       };
 
       CustomUserPreferences = {
@@ -163,6 +177,14 @@ in {
           "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" =
             true;
         };
+        "com.apple.AdLib" = {
+          "allowApplePersonalizedAdvertising" = false;
+          "forceLimitAdTracking" = true;
+        };
+        "com.apple.Siri" = {
+          "StatusMenuVisible" = false;
+          "UserHasDeclinedEnable" = true;
+        };
       };
 
       # Save screenshots to Downloads folder
@@ -178,7 +200,15 @@ in {
       controlcenter.BatteryShowPercentage = true;
       WindowManager.StandardHideDesktopIcons = true;
       trackpad.TrackpadThreeFingerDrag = true;
+      SoftwareUpdate.AutomaticallyInstallMacOSUpdates = false;
+      universalaccess = {
+        reduceMotion = true;
+        reduceTransparency = true;
+        closeViewScrollWheelToggle = true;
+      };
+      ActivityMonitor.IconType = 5;
     };
+    startup.chime = false;
   };
 
   networking.applicationFirewall = {
