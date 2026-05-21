@@ -66,6 +66,19 @@ in {
         wvous-br-corner = 1;
         wvous-tl-corner = 1;
         wvous-tr-corner = 1;
+        persistent-apps = [
+          "/System/Applications/Apps.app"
+          {spacer = {small = false;};}
+          "/System/Cryptexes/App/System/Applications/Safari.app"
+          "${pkgs.wezterm}/Applications/WezTerm.app"
+          "/System/Applications/Mail.app"
+          "${pkgs.teams-for-linux}/Applications/teams-for-linux.app"
+          "${pkgs.slack}/Applications/Slack.app"
+          "${pkgs.obsidian}/Applications/Obsidian.app"
+          "/Applications/Home Assistant.app"
+          "/System/Applications/Music.app"
+          {spacer = {small = false;};}
+        ];
       };
       spaces.spans-displays = true;
       NSGlobalDomain = {
