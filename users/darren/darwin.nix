@@ -13,23 +13,16 @@
     brews = [
       "xcode-build-server" # sourcekit-lsp outside of xcode
       "ifstat"
-      "tree-sitter-cli"
     ];
     casks = [
       "claude-code"
       "displaylink"
       "docker-desktop"
       "figma"
-      "flutter"
       "swiftformat-for-xcode"
-      "librewolf"
-      "microsoft-teams"
-      "obsidian"
       "teamviewer"
       "qmk-toolbox"
       "vlc"
-      "vmware-fusion"
-      "wezterm"
     ];
   };
 }

@@ -50,12 +50,28 @@
   } @ inputs: let
     mkDarwin = import ./lib/mkdarwin.nix;
     mkNixos = import ./lib/mknixos.nix;
+    mkHome = import ./lib/mkhome.nix;
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       (import ./overlays/pkgs.nix)
     ];
     # Systems to generate devShells and checks for
     forAllSystems = nixpkgs.lib.genAttrs ["aarch64-darwin" "x86_64-linux"];
+    # Standalone Home Manager configs — defined here so checks can reference them.
+    homeConfigurations = {
+      ryukyu = mkHome {
+        inherit nixpkgs home-manager overlays;
+        system = "aarch64-darwin";
+        user = "darren";
+        homeDirectory = "/Users/darren";
+      };
+      rubecula = mkHome {
+        inherit nixpkgs home-manager overlays;
+        system = "x86_64-linux";
+        user = "darren";
+        homeDirectory = "/home/darren";
+      };
+    };
 
     # treefmt configuration shared across all systems
     treefmtEval = forAllSystems (system:
@@ -121,23 +137,30 @@
     # Flake checks for CI
     checks = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      formatting = treefmtEval.${system}.config.build.check inputs.self;
-      pre-commit = preCommitChecks.${system};
-      markdown = pkgs.runCommand "check-markdown" {} ''
-        ${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f \
-          -not -path '*/.git/*' -print0 | \
-          ${pkgs.findutils}/bin/xargs -0 \
-          ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
-          --config ${./.markdownlint-cli2.yaml} \
-          2>&1 || {
-          echo ""
-          echo "Fix markdown issues with: markdownlint-cli2 --fix '**/*.md'"
-          exit 1
-        }
-        touch $out
-      '';
-    });
+    in
+      {
+        formatting = treefmtEval.${system}.config.build.check inputs.self;
+        pre-commit = preCommitChecks.${system};
+        markdown = pkgs.runCommand "check-markdown" {} ''
+          ${pkgs.findutils}/bin/find ${inputs.self} -name '*.md' -type f \
+            -not -path '*/.git/*' -print0 | \
+            ${pkgs.findutils}/bin/xargs -0 \
+            ${pkgs.markdownlint-cli2}/bin/markdownlint-cli2 \
+            --config ${./.markdownlint-cli2.yaml} \
+            2>&1 || {
+            echo ""
+            echo "Fix markdown issues with: markdownlint-cli2 --fix '**/*.md'"
+            exit 1
+          }
+          touch $out
+        '';
+      }
+      // pkgs.lib.optionalAttrs (system == "aarch64-darwin") {
+        home-darren-ryukyu = homeConfigurations.ryukyu.activationPackage;
+      }
+      // pkgs.lib.optionalAttrs (system == "x86_64-linux") {
+        home-darren-rubecula = homeConfigurations.rubecula.activationPackage;
+      });
 
     darwinConfigurations.ryukyu = mkDarwin "ryukyu" {
       inherit darwin nixpkgs home-manager overlays sops-nix;
@@ -154,5 +177,7 @@
         impermanence.nixosModules.impermanence
       ];
     };
+
+    inherit homeConfigurations;
   };
 }

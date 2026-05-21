@@ -34,7 +34,7 @@
     packages = with pkgs;
       [
         # neovim
-        # tree-sitter
+        tree-sitter
         luarocks
         nil
         alejandra
@@ -90,6 +90,10 @@
         zoom-us
         slack
         openconnect
+        obsidian
+        teams-for-linux
+        librewolf
+        flutter
 
         tuist
         fastlane
@@ -137,12 +141,9 @@
     };
     wezterm = {
       enable = true;
-      package =
-        if pkgs.stdenv.isLinux
-        then pkgs.wezterm
-        else pkgs.emptyDirectory;
-      enableBashIntegration = pkgs.stdenv.isLinux;
-      enableZshIntegration = pkgs.stdenv.isLinux;
+      package = pkgs.wezterm;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
       extraConfig = ''
         ${builtins.readFile ./config/wezterm/wezterm.lua}
       '';

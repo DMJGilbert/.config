@@ -17,14 +17,22 @@ flake.nix
     │       ├── users/darren/darwin.nix   (user system config)
     │       └── users/darren/home-manager.nix (home config)
     │
-    └── lib/mknixos.nix ──► nixosConfigurations.rubecula
+    ├── lib/mknixos.nix ──► nixosConfigurations.rubecula
+    │       │
+    │       ├── hardware/rubecula.nix     (hardware config)
+    │       ├── disko/rubecula.nix        (declarative disk layout — for reinstalls)
+    │       ├── machines/rubecula.nix     (system config)
+    │       ├── users/darren/nixos.nix    (user system config)
+    │       └── users/darren/home-manager.nix (home config)
+    │
+    └── lib/mkhome.nix ──► homeConfigurations
             │
-            ├── hardware/rubecula.nix     (hardware config)
-            ├── disko/rubecula.nix        (declarative disk layout — for reinstalls)
-            ├── machines/rubecula.nix     (system config)
-            ├── users/darren/nixos.nix    (user system config)
-            └── users/darren/home-manager.nix (home config)
+            ├── ryukyu   (aarch64-darwin, /Users/darren)
+            └── rubecula (x86_64-linux, /home/darren)
 ```
+
+Home Manager is deployed two ways: automatically as part of a full OS rebuild, or
+standalone for fast iteration on user-space changes (`nh home switch .`).
 
 ## Systems
 
@@ -35,15 +43,16 @@ flake.nix
 
 ## Quick Reference
 
-| Task            | Command                               |
-| --------------- | ------------------------------------- |
-| Rebuild macOS   | `nh darwin switch .#ryukyu`           |
-| Rebuild NixOS   | `nh os switch .#rubecula`             |
-| Update inputs   | `nix flake update`                    |
-| Check flake     | `nix flake check`                     |
-| Format code     | `nix fmt`                             |
-| Generation diff | `nvd diff /run/current-system result` |
-| Search packages | `nix search nixpkgs [name]`           |
+| Task                    | Command                               |
+| ----------------------- | ------------------------------------- |
+| Rebuild macOS           | `nh darwin switch .#ryukyu`           |
+| Rebuild NixOS           | `nh os switch .#rubecula`             |
+| Switch home config only | `nh home switch . -c ryukyu`          |
+| Update inputs           | `nix flake update`                    |
+| Check flake             | `nix flake check`                     |
+| Format code             | `nix fmt`                             |
+| Generation diff         | `nvd diff /run/current-system result` |
+| Search packages         | `nix search nixpkgs [name]`           |
 
 ## Structure
 
@@ -53,7 +62,8 @@ flake.nix
 ├── flake.lock                # Locked dependencies
 ├── lib/                      # System builder functions
 │   ├── mkdarwin.nix          # Darwin system builder
-│   └── mknixos.nix           # NixOS system builder
+│   ├── mknixos.nix           # NixOS system builder
+│   └── mkhome.nix            # Standalone Home Manager builder
 ├── machines/                 # Machine-specific configurations
 │   ├── shared.nix            # Shared Nix daemon / substituter config
 │   ├── ryukyu.nix            # macOS system config

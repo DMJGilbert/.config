@@ -4,10 +4,11 @@ Helper functions for creating system configurations.
 
 ## Files
 
-| File           | Purpose                                     |
-| -------------- | ------------------------------------------- |
-| `mkdarwin.nix` | Creates nix-darwin configurations for macOS |
-| `mknixos.nix`  | Creates NixOS configurations for Linux      |
+| File           | Purpose                                                   |
+| -------------- | --------------------------------------------------------- |
+| `mkdarwin.nix` | Creates nix-darwin configurations for macOS               |
+| `mknixos.nix`  | Creates NixOS configurations for Linux                    |
+| `mkhome.nix`   | Creates standalone Home Manager configurations (any host) |
 
 ## mkdarwin.nix
 
@@ -55,6 +56,41 @@ nixosConfigurations.hostname = mkNixos "hostname" {
 - `users/[user]/nixos.nix` - User system settings
 - `users/[user]/home-manager.nix` - Home Manager config
 - Applies overlays and extraModules
+
+## mkhome.nix
+
+Creates a standalone Home Manager configuration that can be deployed independently
+of the OS, enabling fast iteration on user-space changes without a full system rebuild.
+
+The same `users/[user]/home-manager.nix` is used by both this builder and the OS
+module integration in `mkdarwin`/`mknixos`, so both deployment paths stay in sync.
+
+**Usage in `flake.nix`:**
+
+```nix
+homeConfigurations."user@hostname" = mkHome {
+  inherit nixpkgs home-manager overlays;
+  system = "aarch64-darwin";  # or x86_64-linux
+  user = "username";
+  homeDirectory = "/Users/username";  # or /home/username
+};
+```
+
+**Deploy:**
+
+```bash
+nh home switch . -c ryukyu              # macOS
+nh home switch . -c rubecula            # NixOS
+home-manager switch --flake .#ryukyu    # explicit fallback
+```
+
+**What it loads:**
+
+- `users/[user]/home-manager.nix` — shared home config (same file as OS module path)
+- Sets `home.username` and `home.homeDirectory` from arguments
+- Creates its own nixpkgs instance with overlays and `allowUnfree = true`
+
+---
 
 ## Adding a New Machine
 
