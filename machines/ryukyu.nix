@@ -38,6 +38,12 @@ in {
         AppleShowAllExtensions = true;
         FXEnableExtensionChangeWarning = false;
         _FXShowPosixPathInTitle = true;
+        ShowStatusBar = true;
+        ShowPathbar = true;
+        _FXSortFoldersFirst = true;
+        FXDefaultSearchScope = "SCcf";
+        FXPreferredViewStyle = "clmv";
+        NewWindowTarget = "Home";
       };
       menuExtraClock = {
         ShowSeconds = true;
@@ -118,13 +124,16 @@ in {
         # Finder: show all filename extensions
         AppleShowAllExtensions = true;
         AppleShowScrollBars = "Automatic";
+
+        NSAutomaticSpellingCorrectionEnabled = false;
+        NSAutomaticInlinePredictionEnabled = false;
+        NSDocumentSaveNewDocumentsToCloud = false;
+        AppleInterfaceStyle = "Dark";
+        AppleICUForce24HourTime = true;
+        NSWindowShouldDragOnGesture = true;
       };
 
       CustomUserPreferences = {
-        "com.apple.screensaver" = {
-          "askForPassword" = true;
-          "askForPasswordDelay" = 0;
-        };
         "com.apple.trackpad" = {"scaling" = 2;};
         "com.apple.mouse" = {"scaling" = 2.5;};
         "com.apple.desktopservices" = {"DSDontWriteNetworkStores" = false;};
@@ -132,9 +141,6 @@ in {
           "ShowExternalHardDrivesOnDesktop" = false;
           "ShowRemovableMediaOnDesktop" = false;
           "WarnOnEmptyTrash" = false;
-        };
-        "com.apple.LaunchServices" = {
-          "LSQuarantine" = false;
         };
         "NSGlobalDomain" = {
           "NSTableViewDefaultSizeMode" = 1;
@@ -165,6 +171,20 @@ in {
         # Disable the "Are you sure you want to open this application?" dialog
         LSQuarantine = false;
       };
+      screensaver = {
+        askForPassword = true;
+        askForPasswordDelay = 0;
+      };
+      controlcenter.BatteryShowPercentage = true;
+      WindowManager.StandardHideDesktopIcons = true;
+      trackpad.TrackpadThreeFingerDrag = true;
     };
+  };
+
+  networking.applicationFirewall = {
+    enable = true;
+    allowSigned = true;
+    allowSignedApp = true;
+    enableStealthMode = true;
   };
 }
