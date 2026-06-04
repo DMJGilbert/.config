@@ -112,6 +112,7 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
+            TimeoutStartSec = 60;
           };
 
           script = let
@@ -119,8 +120,7 @@ in
             keyFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
           in ''
             TOKEN=$(cat ${keyFile})
-            until ${curl} -sf http://localhost:5380/api/user/session/token \
-              -d "token=$TOKEN" > /dev/null; do
+            until ${curl} -sf http://localhost:5380/ > /dev/null; do
               sleep 2
             done
             ${curl} -sf "http://localhost:5380/api/settings/set" \
@@ -138,14 +138,14 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
+            TimeoutStartSec = 60;
           };
 
           script = let
             keyFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
           in ''
             TOKEN=$(cat ${keyFile})
-            until ${curl} -sf http://localhost:5380/api/user/session/token \
-              -d "token=$TOKEN" > /dev/null; do
+            until ${curl} -sf http://localhost:5380/ > /dev/null; do
               sleep 2
             done
             ${lib.concatStrings (lib.mapAttrsToList mkZoneScript cfg.zones)}
