@@ -144,7 +144,7 @@ in [
       owner = "gcobb321";
       repo = "icloud3";
       rev = "v${version}";
-      sha256 = "sha256-qoXFZlH1jnhK44p3o91/y8S+HPJh8unIN0acJyHIeGM=";
+      sha256 = "sha256-HtA7VwYf9buWk6osiEHHXt/GAQeyIWDuZq20UdVb19E=";
     };
     propagatedBuildInputs = with haPython; [
       srp
