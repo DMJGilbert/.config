@@ -26,8 +26,7 @@
       "PROWLARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
       "QBITTORRENT_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
       "QBITTORRENT_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
-      "ADGUARD_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
-      "ADGUARD_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
+      "TECHNITIUM_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
       # System-level HASS_TOKEN for homepage template — uses key= to avoid name collision
       # with the user-level "HASS_TOKEN" declared in users/darren/sops.nix
       "HASS_TOKEN_SYSTEM" = {
@@ -51,8 +50,7 @@
           HOMEPAGE_VAR_PROWLARR_API_KEY=${config.sops.placeholder."PROWLARR_API_KEY"}
           HOMEPAGE_VAR_QBITTORRENT_USERNAME=${config.sops.placeholder."QBITTORRENT_USERNAME"}
           HOMEPAGE_VAR_QBITTORRENT_PASSWORD=${config.sops.placeholder."QBITTORRENT_PASSWORD"}
-          HOMEPAGE_VAR_ADGUARD_USERNAME=${config.sops.placeholder."ADGUARD_USERNAME"}
-          HOMEPAGE_VAR_ADGUARD_PASSWORD=${config.sops.placeholder."ADGUARD_PASSWORD"}
+          HOMEPAGE_VAR_TECHNITIUM_API_KEY=${config.sops.placeholder."TECHNITIUM_API_KEY"}
           HOMEPAGE_VAR_HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
         '';
         mode = "0400";

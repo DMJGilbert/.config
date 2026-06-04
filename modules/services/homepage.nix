@@ -178,15 +178,14 @@ in
           {
             Network = [
               {
-                "AdGuard Home" = {
-                  href = "https://adguard.gilberts.one";
+                "Technitium DNS" = {
+                  href = "https://dns.gilberts.one";
                   description = "DNS & Ad Blocking";
-                  icon = "adguard-home.svg";
+                  icon = "technitium-dns-server.svg";
                   widget = {
-                    type = "adguard";
-                    url = "http://127.0.0.1:3000";
-                    username = "{{HOMEPAGE_VAR_ADGUARD_USERNAME}}";
-                    password = "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}";
+                    type = "technitium";
+                    url = "http://127.0.0.1:5380";
+                    key = "{{HOMEPAGE_VAR_TECHNITIUM_API_KEY}}";
                   };
                 };
               }

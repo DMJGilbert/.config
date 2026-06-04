@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ./adguard-home.nix
+    ./technitium-dns-server.nix
     ./home-assistant
     ./impermanence.nix
     ./jellyfin.nix

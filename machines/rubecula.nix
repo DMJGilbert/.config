@@ -59,7 +59,7 @@
       };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
-      adguardHome.enable = true;
+      technitiumDnsServer.enable = true;
       nginx = {
         enable = true;
         acme = {
@@ -76,10 +76,10 @@
             proxyPass = "http://127.0.0.1:8123";
             proxyWebsockets = true;
           };
-          "adguard.gilberts.one" = {
+          "dns.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
-            proxyPass = "http://127.0.0.1:3000";
+            proxyPass = "http://127.0.0.1:5380";
             proxyWebsockets = true;
           };
           "glances.gilberts.one" = {
@@ -198,12 +198,13 @@
       enable = true;
       allowedTCPPorts = [
         22 # SSH
+        53 # DNS TCP (Technitium)
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
         21064 # HomeKit Accessory Protocol (HAP)
       ];
       allowedUDPPorts = [
-        53 # DNS (AdGuard Home)
+        53 # DNS (Technitium)
       ];
     };
   };

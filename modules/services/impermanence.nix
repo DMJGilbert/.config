@@ -39,7 +39,7 @@ in
           # Infrastructure
           "/var/lib/acme"
           "/var/lib/tailscale"
-          "/var/lib/adguardhome"
+          "/var/lib/technitium-dns-server"
           "/var/lib/uptime-kuma"
 
           # Home automation

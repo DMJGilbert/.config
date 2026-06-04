@@ -166,15 +166,15 @@ Notes:
 
 **Infrastructure:**
 
-| Service      | Purpose                                             |
-| ------------ | --------------------------------------------------- |
-| AdGuard Home | DNS ad-blocking                                     |
-| Nginx        | Reverse proxy with wildcard ACME (Namecheap DNS-01) |
-| Tailscale    | Mesh VPN                                            |
-| Homepage     | Homelab dashboard with live widget data             |
-| Uptime Kuma  | Uptime monitoring                                   |
-| Glances      | System metrics API (HA integration)                 |
-| FlareSolverr | Cloudflare bypass (routed via VPN)                  |
+| Service        | Purpose                                             |
+| -------------- | --------------------------------------------------- |
+| Technitium DNS | DNS ad-blocking                                     |
+| Nginx          | Reverse proxy with wildcard ACME (Namecheap DNS-01) |
+| Tailscale      | Mesh VPN                                            |
+| Homepage       | Homelab dashboard with live widget data             |
+| Uptime Kuma    | Uptime monitoring                                   |
+| Glances        | System metrics API (HA integration)                 |
+| FlareSolverr   | Cloudflare bypass (routed via VPN)                  |
 
 **Networking:**
 

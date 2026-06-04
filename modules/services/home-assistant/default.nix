@@ -175,7 +175,6 @@ in
             "blueprint"
             "lovelace"
             "tailscale"
-            "adguard"
             "bluetooth"
             "automation"
             "tplink"
