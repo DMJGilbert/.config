@@ -41,6 +41,7 @@
       "obsidian"
       "teams-for-linux"
       "neotest-vitest"
+      "broadcom-bt-firmware"
     ];
 
   programs.zsh.enable = true;
