@@ -46,12 +46,12 @@
   mkZoneScript = zone: records: ''
     # Zone: ${zone}
     ${curl} -sf "http://localhost:5380/api/zones/create" \
-      -d "token=$TECHNITIUM_API_KEY" \
+      -d "token=$TOKEN" \
       -d "zone=${zone}" \
       -d "type=Primary" > /dev/null || true
     ${lib.concatMapStrings (r: ''
         ${curl} -sf "http://localhost:5380/api/zones/records/add" \
-          -d "token=$TECHNITIUM_API_KEY" \
+          -d "token=$TOKEN" \
           --data-urlencode "domain=${r.domain}" \
           -d "zone=${zone}" \
           -d "type=${r.type}" \
@@ -112,18 +112,19 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
-            EnvironmentFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
           };
 
           script = let
             blockListUrls = lib.concatStringsSep "," cfg.blockLists;
+            keyFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
           in ''
+            TOKEN=$(cat ${keyFile})
             until ${curl} -sf http://localhost:5380/api/user/session/token \
-              -d "token=$TECHNITIUM_API_KEY" > /dev/null; do
+              -d "token=$TOKEN" > /dev/null; do
               sleep 2
             done
             ${curl} -sf "http://localhost:5380/api/settings/set" \
-              -d "token=$TECHNITIUM_API_KEY&blockListUrls=${blockListUrls}" > /dev/null
+              -d "token=$TOKEN&blockListUrls=${blockListUrls}" > /dev/null
             echo "Block lists configured: ${blockListUrls}"
           '';
         };
@@ -137,12 +138,14 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
-            EnvironmentFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
           };
 
-          script = ''
+          script = let
+            keyFile = config.sops.secrets."TECHNITIUM_API_KEY".path;
+          in ''
+            TOKEN=$(cat ${keyFile})
             until ${curl} -sf http://localhost:5380/api/user/session/token \
-              -d "token=$TECHNITIUM_API_KEY" > /dev/null; do
+              -d "token=$TOKEN" > /dev/null; do
               sleep 2
             done
             ${lib.concatStrings (lib.mapAttrsToList mkZoneScript cfg.zones)}
