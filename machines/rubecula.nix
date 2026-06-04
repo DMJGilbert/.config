@@ -49,6 +49,7 @@
         ];
       };
       pinchflat.enable = true;
+      dispatcharr.enable = true;
       iplayarr = {
         enable = true;
         apiKeyFile = config.sops.templates."iplayarr-env".path;
@@ -149,6 +150,12 @@
             forceSSL = true;
             useACMEHost = "gilberts.one";
             proxyPass = "http://127.0.0.1:8945";
+            proxyWebsockets = true;
+          };
+          "dispatcharr.gilberts.one" = {
+            forceSSL = true;
+            useACMEHost = "gilberts.one";
+            proxyPass = "http://127.0.0.1:9191";
             proxyWebsockets = true;
           };
           "iplayarr.gilberts.one" = {

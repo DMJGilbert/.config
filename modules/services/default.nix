@@ -15,6 +15,7 @@
     ./sonarr.nix
     ./tailscale.nix
     ./homepage.nix
+    ./dispatcharr.nix
     ./iplayarr.nix
     ./media-transcode.nix
     ./pinchflat.nix

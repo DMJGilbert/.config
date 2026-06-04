@@ -106,6 +106,13 @@ in
                   };
                 };
               }
+              {
+                Dispatcharr = {
+                  href = "https://dispatcharr.gilberts.one";
+                  description = "IPTV Stream Proxy";
+                  icon = "mdi-television-play";
+                };
+              }
             ];
           }
           {
