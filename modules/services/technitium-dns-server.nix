@@ -18,5 +18,8 @@ in
   // lib.optionalAttrs isLinux {
     config = lib.mkIf cfg.enable {
       services.technitium-dns-server.enable = true;
+      # nixpkgs module sets ProtectSystem=strict but omits LogsDirectory,
+      # so /var/log is read-only and the service crashes on first write
+      systemd.services.technitium-dns-server.serviceConfig.LogsDirectory = "technitium-dns-server";
     };
   }
