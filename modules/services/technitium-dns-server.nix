@@ -20,6 +20,6 @@ in
       services.technitium-dns-server.enable = true;
       # nixpkgs module sets ProtectSystem=strict but omits LogsDirectory,
       # so /var/log is read-only and the service crashes on first write
-      systemd.services.technitium-dns-server.serviceConfig.LogsDirectory = "technitium-dns-server";
+      systemd.services.technitium-dns-server.serviceConfig.LogsDirectory = "technitium";
     };
   }
