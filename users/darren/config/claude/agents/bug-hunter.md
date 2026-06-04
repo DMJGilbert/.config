@@ -68,6 +68,13 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 - Incorrect state transitions
 - Missing state cleanup
 
+## Severity (canonical rubric in `workflows/riper-review.md`)
+
+- **Critical**: Active exploit path, data loss, production-breaking — block merge
+- **High**: Confirmed bug with significant impact — fix before merge
+- **Medium**: Notable correctness concern, normal-cycle fix
+- **Low**: Minor improvement, informational
+
 ## Output Format
 
 ```markdown
@@ -88,6 +95,10 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 
 - ...
 
+### Low
+
+- ...
+
 ### Summary
 
 [Overall correctness assessment]
@@ -97,4 +108,5 @@ You are a bug specialist in the REVIEW phase. Run in parallel with security-revi
 
 - **Read-only**: Report bugs, do not fix them
 - **Be specific**: Include reproduction steps
-- **Verify**: Only report confirmed issues, not speculation
+- **Cite evidence**: Every Critical/High finding must include `file:line`. Run greps/reads fresh in this session — do not paraphrase from memory.
+- **Don't speculate silently**: If a finding is unconfirmed, mark it explicitly ("possible issue") rather than presenting it as a confirmed bug.

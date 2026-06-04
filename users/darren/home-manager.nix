@@ -1,4 +1,7 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  treefmtIncludes = import ../../lib/treefmt-includes.nix;
+  prettierIncludes = builtins.concatStringsSep ", " (map (s: ''"${s}"'') treefmtIncludes.prettier);
+in {
   imports = [
     ./nvim
     ./aerospace.nix
@@ -25,7 +28,7 @@
       [formatter.prettier]
       command = "prettier"
       options = ["--write"]
-      includes = ["*.json", "*.yaml", "*.yml", "*.md", "*.ts", "*.tsx", "*.js", "*.css", "*.html"]
+      includes = [${prettierIncludes}]
 
       [formatter.rustfmt]
       command = "rustfmt"
@@ -103,6 +106,10 @@
 
         jankyborders
         cocoapods
+
+        # diagnostic / dev tools — moved off rubecula (system closure) into
+        # ryukyu's user profile where they're actually used day-to-day
+        nmap
       ]);
   };
 
@@ -126,16 +133,16 @@
     ssh = {
       enable = true;
       enableDefaultConfig = false;
-      matchBlocks = {
+      settings = {
         "*" = {
-          addKeysToAgent = "yes";
+          AddKeysToAgent = "yes";
         };
         "github.com" = {
-          identityFile = "~/.ssh/id_ed25519";
+          IdentityFile = "~/.ssh/id_ed25519";
         };
         "rubecula" = {
-          hostname = "rubecula";
-          user = "darren";
+          HostName = "rubecula";
+          User = "darren";
         };
       };
     };

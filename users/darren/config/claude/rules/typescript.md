@@ -33,6 +33,15 @@ paths:
 - Use parameterized queries (never string concatenation)
 - Return consistent error format
 
+## Security
+
+- Never use `eval()`, `Function()`, or `innerHTML` with user data — use `textContent`, DOM APIs, or DOMPurify
+- Store secrets in environment variables, never in source; `.env` files must be gitignored
+- Avoid `prototype` pollution — never merge untrusted objects into bare `{}` with spread or `Object.assign`
+- Use `dangerouslySetInnerHTML` only as a last resort and always with DOMPurify sanitisation
+- Review `npm audit` before adding dependencies; prefer maintained packages with minimal transitive deps
+- Use `Content-Security-Policy` headers; avoid inline scripts
+
 ## Validation
 
 1. `prettier --write`

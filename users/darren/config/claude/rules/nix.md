@@ -28,6 +28,13 @@ paths:
 - Add assertions for invalid configurations
 - Document options with `description`
 
+## Security
+
+- Never store secrets in `.nix` files — use `sops-nix` or `agenix` for encrypted secrets management
+- Minimise `nix.settings.trusted-users` — only users who genuinely need to build unsigned packages
+- Pin flake inputs (`flake.lock`) and review `nix flake update` diff before committing
+- Prefer per-package `allowUnfree` overrides over a global `allowUnfree = true`
+
 ## Validation
 
 1. `alejandra` to format

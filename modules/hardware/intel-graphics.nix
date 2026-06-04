@@ -2,11 +2,10 @@
   config,
   lib,
   pkgs,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.hardware.intelGraphics;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.hardware.intelGraphics = {

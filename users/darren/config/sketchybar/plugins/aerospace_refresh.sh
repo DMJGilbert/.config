@@ -1,4 +1,4 @@
-#!/opt/local/bin/bash
+#!/usr/bin/env bash
 
 # Colors (Catppuccin Frappe inspired)
 export BG_COLOR=0xff414559

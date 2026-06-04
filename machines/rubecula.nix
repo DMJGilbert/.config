@@ -8,12 +8,14 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ./shared.nix
+    ./rubecula-sops.nix
   ];
 
   # Enable hardware, features, and services via feature-flag modules
   local = {
     hardware = {
       amdGraphics.enable = true;
+      server.enable = true;
     };
 
     profiles.server.enable = true;
@@ -157,6 +159,12 @@
             proxyPass = "http://127.0.0.1:8096";
             proxyWebsockets = true;
           };
+          "zigbee2mqtt.gilberts.one" = {
+            forceSSL = true;
+            useACMEHost = "gilberts.one";
+            proxyPass = "http://127.0.0.1:8080";
+            proxyWebsockets = true;
+          };
         };
       };
     };
@@ -176,13 +184,6 @@
     };
   };
 
-  # Server memory management (replaces laptop module)
-  zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-    memoryPercent = 25;
-  };
-
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -199,7 +200,6 @@
         22 # SSH
         80 # HTTP (ACME + nginx redirect)
         443 # HTTPS (nginx)
-        8080 # Zigbee2MQTT web frontend
         21064 # HomeKit Accessory Protocol (HAP)
       ];
       allowedUDPPorts = [
@@ -212,25 +212,22 @@
 
   programs.git.enable = true;
 
-  environment.systemPackages = with pkgs; [vim unzip gcc nmap glances];
+  # Minimal system-wide tooling. `glances` is provided by services.glances; gcc
+  # and nmap are dev/diagnostic tools — install ad-hoc via `nix shell nixpkgs#<pkg>`
+  # when actually needed, rather than living in the persistent system closure.
+  environment.systemPackages = with pkgs; [vim unzip];
 
   # Glances system monitoring API - HA Glances integration connects to localhost:61208
   # Web UI accessible via Tailscale SSH tunnel: ssh -L 61208:localhost:61208 rubecula
   # Route FlareSolverr's headless browser through the VPN namespace to bypass ISP blocks
   systemd.services.flaresolverr.environment.PROXY_URL = "socks5://10.200.200.2:1080";
 
-  systemd.services.glances = {
-    description = "Glances system monitoring API";
-    wantedBy = ["multi-user.target"];
-    after = ["network.target"];
-    serviceConfig = {
-      ExecStart = "${pkgs.glances}/bin/glances -w --disable-plugin docker --port 61208 --bind 127.0.0.1";
-      Restart = "on-failure";
-      User = "nobody";
-    };
-  };
-
   services = {
+    glances = {
+      enable = true;
+      openFirewall = false;
+    };
+
     cross-seed = {
       enable = true;
       group = "media";
@@ -291,13 +288,13 @@
         PORT = "3001";
       };
     };
-    openssh.enable = true;
-    fstrim.enable = true;
-    # Early OOM killer to prevent system freeze under memory pressure
-    earlyoom = {
+    openssh = {
       enable = true;
-      freeMemThreshold = 5;
-      freeSwapThreshold = 10;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "no";
+      };
     };
     mosquitto = {
       enable = true;
@@ -325,109 +322,13 @@
         };
         frontend = {
           port = 8080;
-          host = "0.0.0.0";
+          host = "127.0.0.1";
         };
       };
     };
   };
 
   users.users.zigbee2mqtt.extraGroups = ["dialout"];
-
-  sops = {
-    secrets = {
-      "NAMECHEAP_API_USER" = {sopsFile = ../secrets/rubecula.yaml;};
-      "NAMECHEAP_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "MULLVAD_WG_PRIVATE_KEY" = {
-        sopsFile = ../secrets/rubecula.yaml;
-        mode = "0400";
-        owner = "root";
-      };
-      "MULLVAD_WG_ADDRESS" = {sopsFile = ../secrets/rubecula.yaml;};
-      "MULLVAD_WG_PEER_PUBKEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "MULLVAD_WG_PEER_ENDPOINT" = {sopsFile = ../secrets/rubecula.yaml;};
-      "MULLVAD_WG_DNS" = {sopsFile = ../secrets/rubecula.yaml;};
-      "IPLAYARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      # Homepage widget API keys — add values via: sops secrets/rubecula.yaml
-      "JELLYFIN_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "JELLYSEERR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "SONARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "RADARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "PROWLARR_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
-      "QBITTORRENT_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
-      "QBITTORRENT_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
-      "ADGUARD_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
-      "ADGUARD_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
-      # System-level HASS_TOKEN for homepage template — uses key= to avoid name collision
-      # with the user-level "HASS_TOKEN" declared in users/darren/sops.nix
-      "HASS_TOKEN_SYSTEM" = {
-        sopsFile = ../secrets/claude.yaml;
-        key = "HASS_TOKEN";
-      };
-    };
-    templates = {
-      "iplayarr-env" = {
-        content = ''
-          API_KEY=${config.sops.placeholder."IPLAYARR_API_KEY"}
-        '';
-        owner = "iplayarr";
-      };
-      "homepage-env" = {
-        content = ''
-          HOMEPAGE_VAR_JELLYFIN_API_KEY=${config.sops.placeholder."JELLYFIN_API_KEY"}
-          HOMEPAGE_VAR_JELLYSEERR_API_KEY=${config.sops.placeholder."JELLYSEERR_API_KEY"}
-          HOMEPAGE_VAR_SONARR_API_KEY=${config.sops.placeholder."SONARR_API_KEY"}
-          HOMEPAGE_VAR_RADARR_API_KEY=${config.sops.placeholder."RADARR_API_KEY"}
-          HOMEPAGE_VAR_PROWLARR_API_KEY=${config.sops.placeholder."PROWLARR_API_KEY"}
-          HOMEPAGE_VAR_QBITTORRENT_USERNAME=${config.sops.placeholder."QBITTORRENT_USERNAME"}
-          HOMEPAGE_VAR_QBITTORRENT_PASSWORD=${config.sops.placeholder."QBITTORRENT_PASSWORD"}
-          HOMEPAGE_VAR_ADGUARD_USERNAME=${config.sops.placeholder."ADGUARD_USERNAME"}
-          HOMEPAGE_VAR_ADGUARD_PASSWORD=${config.sops.placeholder."ADGUARD_PASSWORD"}
-          HOMEPAGE_VAR_HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
-        '';
-        mode = "0400";
-      };
-      "cross-seed-secrets" = {
-        content = ''
-          {
-            "torznab": [
-              "http://localhost:9696/1/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/2/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/3/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/4/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/5/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/6/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/7/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}",
-              "http://localhost:9696/8/api?apikey=${config.sops.placeholder."PROWLARR_API_KEY"}"
-            ],
-            "torrentClients": ["qbittorrent:http://${config.sops.placeholder."QBITTORRENT_USERNAME"}:${config.sops.placeholder."QBITTORRENT_PASSWORD"}@10.200.200.2:8081"]
-          }
-        '';
-        owner = "cross-seed";
-        mode = "0400";
-      };
-      "namecheap-acme-env" = {
-        content = ''
-          NAMECHEAP_API_USER=${config.sops.placeholder."NAMECHEAP_API_USER"}
-          NAMECHEAP_API_KEY=${config.sops.placeholder."NAMECHEAP_API_KEY"}
-        '';
-        owner = "acme";
-      };
-      "wg-mullvad.conf" = {
-        content = ''
-          [Interface]
-          PrivateKey = ${config.sops.placeholder."MULLVAD_WG_PRIVATE_KEY"}
-
-          [Peer]
-          PublicKey  = ${config.sops.placeholder."MULLVAD_WG_PEER_PUBKEY"}
-          Endpoint   = ${config.sops.placeholder."MULLVAD_WG_PEER_ENDPOINT"}
-          AllowedIPs = 0.0.0.0/0
-          PersistentKeepalive = 25
-        '';
-        mode = "0400";
-        owner = "root";
-      };
-    };
-  };
 
   security.acme.certs."gilberts.one" = {
     extraDomainNames = ["*.gilberts.one"];

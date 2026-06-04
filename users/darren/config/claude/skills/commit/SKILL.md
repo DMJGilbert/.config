@@ -55,6 +55,17 @@ Generate a conventional commit message for staged changes.
    git commit -m "<message>"
    ```
 
+8. **Handle pre-commit hook failure**:
+
+   If commit fails because pre-commit reformatted files (alejandra, rustfmt, prettier, etc.), the formatter output is now in your working tree. Do **not** retry with `--amend` (the commit hasn't happened). Instead:
+
+   ```bash
+   git add -u  # re-stage the formatter changes
+   git commit -m "<message>"  # retry
+   ```
+
+   If commit fails for another reason (lint error, blocked file), surface the hook output to the user and pause for direction. Never use `--no-verify` unless the user explicitly asks for it.
+
 ## Conventional Commit Types
 
 | Type       | When to use                             |

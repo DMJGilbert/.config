@@ -19,18 +19,18 @@ Assess task complexity and route to appropriate workflow.
 
 ### Scoring Factors
 
-| Factor                    | Points                | Examples                    |
-| ------------------------- | --------------------- | --------------------------- |
-| **File count**            | +1 per file beyond 2  | 5 files = +3 points         |
-| **Keyword: architecture** | +3                    | "redesign architecture"     |
-| **Keyword: refactor**     | +2                    | "refactor module"           |
-| **Keyword: security**     | +3                    | "fix auth vulnerability"    |
-| **Keyword: migrate**      | +3                    | "migrate to new API"        |
-| **Keyword: breaking**     | +3                    | "breaking change"           |
-| **Keyword: performance**  | +2                    | "optimize queries"          |
-| **Scope: module/system**  | +2                    | Affects multiple components |
-| **Risk: production**      | +2                    | Production code, data       |
-| **Risk: auth/secrets**    | +2                    | Authentication, credentials |
+| Factor                    | Points               | Examples                    |
+| ------------------------- | -------------------- | --------------------------- |
+| **File count**            | +1 per file beyond 2 | 5 files = +3 points         |
+| **Keyword: architecture** | +3                   | "redesign architecture"     |
+| **Keyword: refactor**     | +2                   | "refactor module"           |
+| **Keyword: security**     | +3                   | "fix auth vulnerability"    |
+| **Keyword: migrate**      | +3                   | "migrate to new API"        |
+| **Keyword: breaking**     | +3                   | "breaking change"           |
+| **Keyword: performance**  | +2                   | "optimize queries"          |
+| **Scope: module/system**  | +2                   | Affects multiple components |
+| **Risk: production**      | +2                   | Production code, data       |
+| **Risk: auth/secrets**    | +2                   | Authentication, credentials |
 
 ### Negation Factors
 
@@ -50,6 +50,19 @@ Assess task complexity and route to appropriate workflow.
 | 5-7   | MEDIUM  | **Strict RIPER** |
 | 8+    | COMPLEX | **Strict RIPER** |
 
+### Minimum Floor Overrides
+
+The score is **floored** before threshold lookup if any of these apply, regardless of negation keywords:
+
+| Trigger                                         | Floor  |
+| ----------------------------------------------- | ------ |
+| Touches auth, secrets, credentials, or sessions | MEDIUM |
+| Touches migration, breaking change, or schema   | MEDIUM |
+| Production data path / payment / PII            | MEDIUM |
+| Cryptographic operations (signing, encryption)  | MEDIUM |
+
+Rationale: "simple auth typo" should not bypass RIPER — security-relevant changes carry tail risk that the additive keyword score doesn't capture. The floor sets a minimum; positive points still escalate above MEDIUM if warranted.
+
 ## Output
 
 After assessment, state:
@@ -66,11 +79,12 @@ Then proceed with appropriate workflow.
 
 Gate also recommends execution pattern:
 
-| Pattern    | When                         | Reason                              |
-| ---------- | ---------------------------- | ----------------------------------- |
-| `direct`   | TRIVIAL/SIMPLE               | No RIPER needed                     |
-| `subagent` | MEDIUM/COMPLEX, single-layer | Sequential RIPER with domain agents |
-| `team`     | COMPLEX + cross-layer        | Parallel execution with agent team  |
+| Pattern    | When                                        | Reason                                                |
+| ---------- | ------------------------------------------- | ----------------------------------------------------- |
+| `direct`   | TRIVIAL/SIMPLE                              | No RIPER needed                                       |
+| `subagent` | MEDIUM/COMPLEX, single-layer                | Sequential RIPER with domain agents                   |
+| `team`     | COMPLEX + cross-layer                       | Parallel execution with agent team                    |
+| `workflow` | COMPLEX (score ≥ 8) + highly parallelisable | Dynamic workflow — orchestration codified as a script |
 
 **Cross-layer indicators** (trigger `team` mode):
 
@@ -79,13 +93,21 @@ Gate also recommends execution pattern:
 - 3+ independent file sets with no shared dependencies
 - Competing implementation hypotheses to evaluate in parallel
 
+**High-parallelism indicators** (trigger `workflow` mode, requires COMPLEX):
+
+- Codebase-wide audit or scan (e.g. security review of all files)
+- Large migration where N independent modules can be updated concurrently
+- Multi-source research requiring synthesis from many independent inputs
+- Tasks where intermediate results must live in script variables, not context
+- REVIEW phase fan-out → use `/riper-review` saved workflow
+
 Include execution mode in output:
 
 ```
 Complexity: [LEVEL] (score: [N])
 Factors: [list key factors]
 Workflow: [Direct action / Strict RIPER]
-Execution: [direct / subagent / team]
+Execution: [direct / subagent / team / workflow]
 ```
 
 ## Examples

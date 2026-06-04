@@ -6,7 +6,8 @@ Package overlays for custom builds not available in nixpkgs.
 
 ```
 overlays/
-├── pkgs.nix                    # Main overlay (imports all packages)
+├── pkgs.nix                    # Overlay entry — wires the per-package files below
+├── cross-seed.nix              # Pinned cross-seed (qBittorrent 204-bypass fix)
 ├── ha-floorplan.nix            # Floorplan for HA
 ├── hass-catppuccin.nix         # Catppuccin theme for HA
 ├── lovelace-layout-card.nix    # Layout card
@@ -17,20 +18,23 @@ overlays/
 └── README.md
 ```
 
+`pkgs.nix` only contains tiny overrides (e.g., `direnv` CGO fix) and `final.callPackage ./<file>.nix {}` references — never inline derivations.
+
 ## Packages
 
-| Package                  | Description                                        |
-| ------------------------ | -------------------------------------------------- |
-| `ha-floorplan`           | SVG floor plans for Home Assistant                 |
-| `hass-catppuccin`        | Catppuccin theme for Home Assistant                |
-| `lovelace-layout-card`   | Custom grid layouts for dashboards                 |
-| `lovelace-stack-in-card` | Group cards into one with no borders               |
-| `lovelace-state-switch`  | Dynamically replace cards depending on state       |
-| `lovelace-tabbed-card`   | Tabbed container card                              |
-| `modern-circular-gauge`  | Modern circular gauge card                         |
+| Package                  | Description                                                                   |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `cross-seed`             | Cross-seeding bot, pinned to v6.13.7 (fixes qBittorrent HTTP 204 bypass-auth) |
+| `ha-floorplan`           | SVG floor plans for Home Assistant                                            |
+| `hass-catppuccin`        | Catppuccin theme for Home Assistant                                           |
+| `lovelace-layout-card`   | Custom grid layouts for dashboards                                            |
+| `lovelace-stack-in-card` | Group cards into one with no borders                                          |
+| `lovelace-state-switch`  | Dynamically replace cards depending on state                                  |
+| `lovelace-tabbed-card`   | Tabbed container card                                                         |
+| `modern-circular-gauge`  | Modern circular gauge card                                                    |
 
 Packages available in nixpkgs (use `home-assistant-custom-lovelace-modules.*`):
-`bubble-card`, `auto-entities`
+`bubble-card`, `auto-entities`, `mushroom`, `multiple-entity-row`, `decluttering-card`, `button-card`, `lg-webos-remote-control`, `light-entity-card`, `mini-graph-card`, `card-mod`, `apexcharts-card`
 
 ## Adding a New Package
 

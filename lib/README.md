@@ -4,15 +4,17 @@ Helper functions for creating system configurations.
 
 ## Files
 
-| File           | Purpose                                                   |
-| -------------- | --------------------------------------------------------- |
-| `mkdarwin.nix` | Creates nix-darwin configurations for macOS               |
-| `mknixos.nix`  | Creates NixOS configurations for Linux                    |
-| `mkhome.nix`   | Creates standalone Home Manager configurations (any host) |
+| File                   | Purpose                                                                             |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `mkdarwin.nix`         | Creates nix-darwin configurations for macOS                                         |
+| `mknixos.nix`          | Creates NixOS configurations for Linux                                              |
+| `mkhome.nix`           | Creates standalone Home Manager configurations (any host)                           |
+| `mkMediaService.nix`   | Helper for sonarr/radarr/prowlarr-style services — used by `modules/services/*.nix` |
+| `treefmt-includes.nix` | Shared prettier include list — consumed by `flake.nix` and home-manager             |
 
 ## mkdarwin.nix
 
-Creates a complete nix-darwin system configuration.
+Creates a complete nix-darwin system configuration. User-specific modules are passed in by the caller (`extraUserModules`) so the helper isn't tied to any one user's filesystem layout.
 
 **Usage in `flake.nix`:**
 
@@ -21,41 +23,54 @@ darwinConfigurations.hostname = mkDarwin "hostname" {
   inherit darwin nixpkgs home-manager overlays sops-nix;
   system = "aarch64-darwin";  # or x86_64-darwin
   user = "username";
-};
-```
-
-**What it loads:**
-
-- `machines/[hostname].nix` - System configuration
-- `users/[user]/darwin.nix` - User system settings
-- `users/[user]/sops.nix` - Secrets configuration
-- `users/[user]/home-manager.nix` - Home Manager config
-- Applies overlays from `overlays/`
-
-## mknixos.nix
-
-Creates a complete NixOS system configuration.
-
-**Usage in `flake.nix`:**
-
-```nix
-nixosConfigurations.hostname = mkNixos "hostname" {
-  inherit hardware nixpkgs home-manager overlays;
-  system = "x86_64-linux";  # or aarch64-linux
-  user = "username";
-  extraModules = [
-    # Additional modules
+  homeManagerUser = ./users/username/home-manager.nix;
+  extraUserModules = [
+    ./users/username/darwin-user.nix       # users.users.<name>
+    ./users/username/darwin-homebrew.nix   # brews/casks
+    ./users/username/sops.nix
   ];
 };
 ```
 
 **What it loads:**
 
-- `hardware/[hostname].nix` - Hardware configuration
-- `machines/[hostname].nix` - System configuration
-- `users/[user]/nixos.nix` - User system settings
-- `users/[user]/home-manager.nix` - Home Manager config
-- Applies overlays and extraModules
+- `machines/[hostname].nix` — system configuration
+- All `extraUserModules` (per-user system config + sops)
+- Home Manager config from `homeManagerUser` (linked under `users.${user}`)
+- Applies overlays from `overlays/`
+- Provides `isLinux` / `isDarwin` via `specialArgs` so modules don't re-derive from `currentSystem`
+
+## mknixos.nix
+
+Creates a complete NixOS system configuration. As with `mkdarwin.nix`, user-specific modules are passed in by the caller.
+
+**Usage in `flake.nix`:**
+
+```nix
+nixosConfigurations.hostname = mkNixos "hostname" {
+  inherit hardware nixpkgs home-manager overlays sops-nix;
+  system = "x86_64-linux";  # or aarch64-linux
+  user = "username";
+  homeManagerUser = ./users/username/home-manager.nix;
+  extraUserModules = [
+    ./users/username/nixos.nix
+    ./users/username/sops.nix
+  ];
+  extraModules = [
+    hardware.nixosModules.common-cpu-amd
+    # …
+  ];
+};
+```
+
+**What it loads:**
+
+- `hardware/[hostname].nix` — hardware configuration
+- `machines/[hostname].nix` — system configuration
+- All `extraUserModules` (per-user system config + sops)
+- Home Manager config from `homeManagerUser`
+- Applies overlays and `extraModules`
+- Provides `isLinux` / `isDarwin` via `specialArgs`
 
 ## mkhome.nix
 
@@ -88,7 +103,7 @@ home-manager switch --flake .#ryukyu    # explicit fallback
 
 - `users/[user]/home-manager.nix` — shared home config (same file as OS module path)
 - Sets `home.username` and `home.homeDirectory` from arguments
-- Creates its own nixpkgs instance with overlays and `allowUnfree = true`
+- Creates its own nixpkgs instance with overlays and a scoped `allowUnfreePredicate` (Zoom, Slack, Obsidian, Teams, etc. — see `mkhome.nix` for the canonical list)
 
 ---
 
@@ -121,6 +136,12 @@ darwinConfigurations.[hostname] = mkDarwin "[hostname]" {
   inherit darwin nixpkgs home-manager overlays sops-nix;
   system = "aarch64-darwin";
   user = "darren";
+  homeManagerUser = ./users/darren/home-manager.nix;
+  extraUserModules = [
+    ./users/darren/darwin-user.nix
+    ./users/darren/darwin-homebrew.nix
+    ./users/darren/sops.nix
+  ];
 };
 ```
 
@@ -150,9 +171,14 @@ nixos-generate-config --show-hardware-config > hardware/[hostname].nix
 
 ```nix
 nixosConfigurations.[hostname] = mkNixos "[hostname]" {
-  inherit hardware nixpkgs home-manager overlays;
+  inherit hardware nixpkgs home-manager overlays sops-nix;
   system = "x86_64-linux";
   user = "darren";
+  homeManagerUser = ./users/darren/home-manager.nix;
+  extraUserModules = [
+    ./users/darren/nixos.nix
+    ./users/darren/sops.nix
+  ];
   extraModules = [];
 };
 ```

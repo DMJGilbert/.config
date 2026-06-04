@@ -2,12 +2,11 @@
   config,
   lib,
   pkgs,
-  currentSystem,
+  isDarwin,
+  isLinux,
   ...
 }: let
   cfg = config.local.features.ollama;
-  isDarwin = builtins.match ".*-darwin" currentSystem != null;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.features.ollama = {

@@ -1,4 +1,7 @@
 # This function creates a NixOS system.
+# The caller passes user-specific modules (per-user nixos.nix, sops.nix) and the
+# home-manager user config via `extraUserModules` / `homeManagerUser`, so the
+# helper does not hardcode any specific username's filesystem layout.
 name: {
   nixpkgs,
   home-manager,
@@ -6,7 +9,9 @@ name: {
   user,
   overlays,
   sops-nix,
+  homeManagerUser,
   extraModules ? [],
+  extraUserModules ? [],
   ...
 }:
 nixpkgs.lib.nixosSystem {
@@ -17,6 +22,8 @@ nixpkgs.lib.nixosSystem {
   specialArgs = {
     currentSystemName = name;
     currentSystem = system;
+    isLinux = builtins.match ".*-linux" system != null;
+    isDarwin = builtins.match ".*-darwin" system != null;
   };
 
   modules =
@@ -32,17 +39,16 @@ nixpkgs.lib.nixosSystem {
       ../modules
       (../hardware + "/${name}.nix")
       (../machines + "/${name}.nix")
-      (../users + "/${user}/nixos.nix")
-      (../users + "/${user}/sops.nix")
       home-manager.nixosModules.home-manager
       {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
           backupFileExtension = "bak";
-          users.${user} = import ../users/${user}/home-manager.nix;
+          users.${user} = homeManagerUser;
         };
       }
     ]
+    ++ extraUserModules
     ++ extraModules;
 }

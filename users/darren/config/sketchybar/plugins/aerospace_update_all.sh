@@ -1,4 +1,4 @@
-#!/opt/local/bin/bash
+#!/usr/bin/env bash
 
 # This script updates ALL workspace highlighting at once
 # Gets called on aerospace_workspace_change event

@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.services.iplayarr;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
   mediaGid = toString config.local.services.mediaStorage.gid;
   mediaRoot = config.local.services.mediaStorage.root;
 in
@@ -55,7 +54,7 @@ in
       virtualisation.oci-containers = {
         backend = "podman";
         containers.iplayarr = {
-          image = "nikorag/iplayarr:latest";
+          image = "nikorag/iplayarr@sha256:13639365de480b91f0822189dada92f84b93a002d602d2d0aab09258d145b759";
           ports = [
             "127.0.0.1:${toString cfg.port}:4404"
           ];

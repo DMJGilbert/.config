@@ -1,13 +1,11 @@
-{pkgs, ...}: let
-  inherit (pkgs.stdenv) isDarwin;
-  homeDir =
-    if isDarwin
-    then "/Users/darren"
-    else "/home/darren";
-in {
+{
+  config,
+  isDarwin,
+  ...
+}: {
   sops = {
     defaultSopsFile = ../../secrets/claude.yaml;
-    age.keyFile = "${homeDir}/.config/sops/age/keys.txt";
+    age.keyFile = "${config.users.users.darren.home}/.config/sops/age/keys.txt";
 
     # On darwin, SSH host keys aren't available; on NixOS, use them as fallback
     age.sshKeyPaths =

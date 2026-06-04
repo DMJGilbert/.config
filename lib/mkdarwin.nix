@@ -1,4 +1,7 @@
 # This function creates a nix-darwin system.
+# The caller passes user-specific modules (per-user darwin.nix, sops.nix) and
+# the home-manager user config via `extraUserModules` / `homeManagerUser`, so
+# the helper does not hardcode any specific username's filesystem layout.
 name: {
   darwin,
   home-manager,
@@ -6,6 +9,9 @@ name: {
   user,
   overlays,
   sops-nix,
+  homeManagerUser,
+  extraModules ? [],
+  extraUserModules ? [],
   ...
 }:
 darwin.lib.darwinSystem {
@@ -16,29 +22,32 @@ darwin.lib.darwinSystem {
   specialArgs = {
     currentSystemName = name;
     currentSystem = system;
+    isLinux = builtins.match ".*-linux" system != null;
+    isDarwin = builtins.match ".*-darwin" system != null;
   };
 
-  modules = [
-    # Apply our overlays. Overlays are keyed by system type so we have
-    # to go through and apply our system type. We do this first so
-    # the overlays are available globally.
-    {nixpkgs.overlays = overlays;}
+  modules =
+    [
+      # Apply our overlays. Overlays are keyed by system type so we have
+      # to go through and apply our system type. We do this first so
+      # the overlays are available globally.
+      {nixpkgs.overlays = overlays;}
 
-    # Encrypted secrets management
-    sops-nix.darwinModules.sops
+      # Encrypted secrets management
+      sops-nix.darwinModules.sops
 
-    ../modules
-    (../machines + "/${name}.nix")
-    (../users + "/${user}/darwin.nix")
-    (../users + "/${user}/sops.nix")
-    home-manager.darwinModules.home-manager
-    {
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        backupFileExtension = "bak";
-        users.${user} = import ../users/${user}/home-manager.nix;
-      };
-    }
-  ];
+      ../modules
+      (../machines + "/${name}.nix")
+      home-manager.darwinModules.home-manager
+      {
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "bak";
+          users.${user} = homeManagerUser;
+        };
+      }
+    ]
+    ++ extraUserModules
+    ++ extraModules;
 }

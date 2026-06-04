@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.profiles.server;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.profiles.server = {

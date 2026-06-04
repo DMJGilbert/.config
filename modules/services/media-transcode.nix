@@ -2,11 +2,10 @@
   config,
   lib,
   pkgs,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.services.mediaTranscode;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.services.mediaTranscode = {
@@ -176,10 +175,6 @@ in
         extraGroups = ["render" "video"];
         description = "media-transcode service user";
       };
-
-      services.udev.extraRules = ''
-        SUBSYSTEM=="drm", KERNEL=="renderD*", MODE="0666"
-      '';
 
       systemd.services.media-transcode = {
         description = "Watch media dirs and transcode new video files to H.264";

@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.features.docker;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.features.docker = {

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Quality Gate - runs on Claude Code session Stop event
-# Only runs checks if uncommitted changes exist
-# Exit code 2 feeds errors back to Claude for fixing
-# Set QUALITY_GATE_ENFORCE=1 to make gate blocking (exit 1)
+# Quality Gate — runs on Claude Code session Stop / TeammateIdle events.
+# Only runs checks if uncommitted changes exist.
+# Exit code 2 feeds errors back to Claude for fixing.
+# Set QUALITY_GATE_ENFORCE=1 to make the gate blocking (exit 1).
+# Set QUALITY_GATE_VERBOSE=1 to keep successful tool output (default: quiet on success).
 
-# Parse arguments
 FIX_MODE=0
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -14,156 +14,146 @@ while [[ $# -gt 0 ]]; do
       FIX_MODE=1
       shift
       ;;
-    *)
-      shift
-      ;;
+    *) shift ;;
   esac
 done
 
 ENFORCE_MODE="${QUALITY_GATE_ENFORCE:-0}"
+VERBOSE="${QUALITY_GATE_VERBOSE:-0}"
 
-# Check if we're in a git repo
 if ! git rev-parse --git-dir &>/dev/null; then
   exit 0
 fi
 
-# Only run if uncommitted changes exist
+# Only run if there are uncommitted changes vs HEAD (covers staged + unstaged).
 if git diff --quiet HEAD 2>/dev/null; then
   exit 0
 fi
 
-echo "Running quality checks..."
-errors=0
+# Failed tools accumulate here; each entry: "<tool> (exit <N>)"
+declare -a failed_tools=()
+declare -a logs=()
 
-# Get list of changed files
+# Run `cmd args…`, label as `$1`. On non-zero exit, record the label + first
+# lines of output for the summary; on zero exit, optionally echo when VERBOSE.
+run_check() {
+  local label="$1"
+  shift
+  local output rc
+  output=$("$@" 2>&1) && rc=0 || rc=$?
+  if [[ $rc -eq 0 ]]; then
+    if [[ $VERBOSE == "1" && -n $output ]]; then
+      printf '%s\n' "$output"
+    fi
+    return 0
+  fi
+  failed_tools+=("$label (exit $rc)")
+  logs+=("--- $label ---" "$output" "")
+  return 0 # don't propagate failure under set -e; summary handles final exit
+}
+
+echo "Running quality checks..."
 changed_files=$(git diff --name-only HEAD 2>/dev/null || echo "")
 
-# Check Nix files
+# === Nix ===
 if echo "$changed_files" | grep -q '\.nix$'; then
   echo "  Checking Nix..."
   if command -v treefmt &>/dev/null; then
-    if [ "$FIX_MODE" = "1" ]; then
-      echo "    Fixing formatting..."
+    if [[ $FIX_MODE == "1" ]]; then
       treefmt 2>&1 || true
     else
-      if ! treefmt --fail-on-change 2>&1; then
-        echo "Run 'treefmt' to fix formatting"
-        ((errors++)) || true
-      fi
+      run_check "treefmt (formatting)" treefmt --fail-on-change
     fi
   fi
   if command -v statix &>/dev/null; then
-    statix_output=$(statix check . 2>&1 || true)
-    if [ -n "$statix_output" ]; then
-      echo "$statix_output"
-      if [ "$FIX_MODE" = "1" ]; then
-        statix fix . 2>&1 || true
-      else
-        ((errors++)) || true
-      fi
+    if [[ $FIX_MODE == "1" ]]; then
+      statix fix . 2>&1 || true
+    else
+      run_check "statix" statix check .
     fi
   fi
-  if command -v nix &>/dev/null; then
-    if ! nix flake check 2>&1; then
-      ((errors++)) || true
-    fi
+  # nix flake check is expensive and only meaningful at the flake root
+  if command -v nix &>/dev/null && [[ -f flake.nix ]]; then
+    run_check "nix flake check" nix flake check
   fi
 fi
 
-# Check Rust files
+# === Rust ===
 if echo "$changed_files" | grep -q '\.rs$'; then
   echo "  Checking Rust..."
   if command -v cargo &>/dev/null; then
-    if [ "$FIX_MODE" = "1" ]; then
-      echo "    Fixing Rust formatting..."
+    if [[ $FIX_MODE == "1" ]]; then
       cargo fmt 2>&1 || true
     fi
-    if ! cargo clippy --quiet 2>&1; then
-      ((errors++)) || true
-    fi
-    if ! cargo check 2>&1; then
-      ((errors++)) || true
-    fi
+    run_check "cargo clippy" cargo clippy --quiet -- -D warnings
+    run_check "cargo check" cargo check
   fi
 fi
 
-# Check TypeScript files
+# === TypeScript ===
 if echo "$changed_files" | grep -qE '\.(ts|tsx)$'; then
   echo "  Checking TypeScript..."
-  if [ -f "package.json" ]; then
-    if command -v npx &>/dev/null; then
-      if [ "$FIX_MODE" = "1" ]; then
-        echo "    Fixing TypeScript lint issues..."
-        npx eslint . --fix --quiet 2>&1 || true
-      else
-        npx eslint . --quiet 2>&1 || ((errors++)) || true
-      fi
-      npx tsc --noEmit 2>&1 || ((errors++)) || true
+  if [[ -f package.json ]] && command -v npx &>/dev/null; then
+    if [[ $FIX_MODE == "1" ]]; then
+      npx eslint . --fix --quiet 2>&1 || true
+    else
+      run_check "eslint" npx eslint . --quiet
     fi
+    run_check "tsc" npx tsc --noEmit
   fi
 fi
 
-# Check Dart files
+# === Dart ===
 if echo "$changed_files" | grep -q '\.dart$'; then
   echo "  Checking Dart..."
   if command -v dart &>/dev/null; then
-    if [ "$FIX_MODE" = "1" ]; then
-      echo "    Fixing Dart issues..."
+    if [[ $FIX_MODE == "1" ]]; then
       dart fix --apply 2>&1 || true
     fi
-    dart analyze 2>&1 || ((errors++)) || true
+    run_check "dart analyze" dart analyze
   fi
 fi
 
-# Test detection and execution
 echo "  Detecting tests..."
 
 # Rust tests
-if echo "$changed_files" | grep -q '\.rs$'; then
-  if command -v cargo &>/dev/null && [ -f "Cargo.toml" ]; then
-    echo "    Running Rust tests..."
-    if ! cargo test --quiet 2>&1; then
-      ((errors++)) || true
-    fi
-  fi
+if echo "$changed_files" | grep -q '\.rs$' && command -v cargo &>/dev/null && [[ -f Cargo.toml ]]; then
+  run_check "cargo test" cargo test --quiet
 fi
 
-# TypeScript/JavaScript tests
-if echo "$changed_files" | grep -qE '\.(ts|tsx|js|jsx)$'; then
-  if [ -f "package.json" ] && command -v npm &>/dev/null; then
-    if npm run --silent 2>&1 | grep -q "test"; then
-      echo "    Running npm tests..."
-      if ! npm test 2>&1; then
-        ((errors++)) || true
-      fi
-    fi
+# TypeScript / JavaScript tests — use jq to detect a real `test` script
+if echo "$changed_files" | grep -qE '\.(ts|tsx|js|jsx)$' && [[ -f package.json ]] && command -v jq &>/dev/null; then
+  if jq -e '.scripts.test' package.json &>/dev/null; then
+    run_check "npm test" npm test
   fi
 fi
 
 # Dart tests
-if echo "$changed_files" | grep -q '\.dart$'; then
-  if [ -f "pubspec.yaml" ]; then
-    if command -v flutter &>/dev/null && grep -q "sdk: flutter" pubspec.yaml 2>/dev/null; then
-      echo "    Running Flutter tests..."
-      if ! flutter test 2>&1; then
-        ((errors++)) || true
-      fi
-    elif command -v dart &>/dev/null; then
-      echo "    Running Dart tests..."
-      if ! dart test 2>&1; then
-        ((errors++)) || true
-      fi
-    fi
+if echo "$changed_files" | grep -q '\.dart$' && [[ -f pubspec.yaml ]]; then
+  if command -v flutter &>/dev/null && grep -q "sdk: flutter" pubspec.yaml 2>/dev/null; then
+    run_check "flutter test" flutter test
+  elif command -v dart &>/dev/null; then
+    run_check "dart test" dart test
   fi
 fi
 
-# Report results
-if [ $errors -gt 0 ]; then
-  echo "Quality gate found $errors issue(s)"
-  if [ "$ENFORCE_MODE" = "1" ]; then
-    exit 1  # Blocking failure
+# === Report ===
+if ((${#failed_tools[@]} > 0)); then
+  echo ""
+  echo "============================================================"
+  echo "Quality gate: ${#failed_tools[@]} failure(s)"
+  echo "============================================================"
+  for tool in "${failed_tools[@]}"; do
+    echo "  ✗ $tool"
+  done
+  echo ""
+  echo "--- detailed output ---"
+  printf '%s\n' "${logs[@]}"
+
+  if [[ $ENFORCE_MODE == "1" ]]; then
+    exit 1
   else
-    exit 2  # Feed back to Claude
+    exit 2
   fi
 fi
 

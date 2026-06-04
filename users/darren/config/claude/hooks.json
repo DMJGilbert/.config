@@ -5,7 +5,7 @@
       "matcher": {},
       "action": {
         "type": "command",
-        "command": "echo '{\"systemMessage\": \"Branch: '$(git branch --show-current 2>/dev/null || echo none)' | Last commit: '$(git log --oneline -1 2>/dev/null || echo none)'\"}'"
+        "command": "~/.claude/scripts/session-start.sh default"
       }
     },
     {
@@ -15,7 +15,7 @@
       },
       "action": {
         "type": "command",
-        "command": "echo '{\"systemMessage\": \"Post-compaction reminder: Check task list for in-progress work. Re-read any files you were actively editing. Current branch: '$(git branch --show-current 2>/dev/null || echo none)'\"}'"
+        "command": "~/.claude/scripts/session-start.sh compact"
       }
     },
     {
@@ -39,7 +39,7 @@
       "if": "Edit(*.nix)|Write(*.nix)",
       "action": {
         "type": "command",
-        "command": "alejandra --quiet \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "alejandra --quiet \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
       }
     },
     {
@@ -47,7 +47,7 @@
       "if": "Edit(*.rs)|Write(*.rs)",
       "action": {
         "type": "command",
-        "command": "rustfmt \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "rustfmt \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
       }
     },
     {
@@ -55,7 +55,7 @@
       "if": "Edit(*.ts)|Write(*.ts)|Edit(*.tsx)|Write(*.tsx)|Edit(*.js)|Write(*.js)|Edit(*.jsx)|Write(*.jsx)|Edit(*.css)|Write(*.css)|Edit(*.html)|Write(*.html)|Edit(*.json)|Write(*.json)",
       "action": {
         "type": "command",
-        "command": "prettier --write \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "prettier --write \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
       }
     },
     {
@@ -63,7 +63,7 @@
       "if": "Edit(*.dart)|Write(*.dart)",
       "action": {
         "type": "command",
-        "command": "dart format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "dart format \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
       }
     },
     {
@@ -71,7 +71,7 @@
       "if": "Edit(*.lua)|Write(*.lua)",
       "action": {
         "type": "command",
-        "command": "stylua \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "stylua \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
       }
     },
     {
@@ -79,7 +79,15 @@
       "if": "Edit(*.py)|Write(*.py)",
       "action": {
         "type": "command",
-        "command": "ruff format \"$CC_TOOL_INPUT_FILE_PATH\" 2>/dev/null || true"
+        "command": "ruff format \"$(jq -r '.tool_input.file_path // empty')\" 2>/dev/null"
+      }
+    },
+    {
+      "event": "TeammateIdle",
+      "matcher": {},
+      "action": {
+        "type": "command",
+        "command": "~/.claude/scripts/quality-gate.sh"
       }
     },
     {

@@ -2,11 +2,10 @@
   config,
   lib,
   pkgs,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.services.homeAssistant;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
   theme = pkgs.hass-catppuccin;
 
   # Import extracted modules
@@ -20,6 +19,81 @@
   viewsDir = "${moduleDir}/views";
   templatesDir = "${moduleDir}/templates";
   popupsDir = "${moduleDir}/popups";
+
+  # Single source of truth for Lovelace custom modules: each entry pairs a
+  # package with its JS entrypoint filename. Order matters — it's the load
+  # order delivered to the frontend (e.g. card-mod is loaded before cards
+  # that style with it).
+  lovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
+    {
+      pkg = bubble-card;
+      js = "bubble-card.js";
+    }
+    {
+      pkg = pkgs.lovelace-tabbed-card;
+      js = "tabbed-card.js";
+    }
+    {
+      pkg = pkgs.lovelace-state-switch;
+      js = "state-switch.js";
+    }
+    {
+      pkg = auto-entities;
+      js = "auto-entities.js";
+    }
+    {
+      pkg = mushroom;
+      js = "mushroom.js";
+    }
+    {
+      pkg = multiple-entity-row;
+      js = "multiple-entity-row.js";
+    }
+    {
+      pkg = decluttering-card;
+      js = "decluttering-card.js";
+    }
+    {
+      pkg = button-card;
+      js = "button-card.js";
+    }
+    {
+      pkg = light-entity-card;
+      js = "light-entity-card.js";
+    }
+    {
+      pkg = mini-graph-card;
+      js = "mini-graph-card-bundle.js";
+    }
+    {
+      pkg = lg-webos-remote-control;
+      js = "lg-remote-control.js";
+    }
+    {
+      pkg = card-mod;
+      js = "card-mod.js";
+    }
+    {
+      pkg = apexcharts-card;
+      js = "apexcharts-card.js";
+    }
+    {
+      pkg = pkgs.lovelace-layout-card;
+      js = "layout-card.js";
+    }
+    {
+      pkg = pkgs.lovelace-stack-in-card;
+      js = "stack-in-card.js";
+    }
+    {
+      pkg = pkgs.modern-circular-gauge;
+      js = "modern-circular-gauge.js";
+    }
+    {
+      pkg = pkgs.ha-floorplan;
+      js = "floorplan.js";
+    }
+  ];
 in
   # Only define options on all platforms; config only on Linux
   {
@@ -76,26 +150,8 @@ in
         home-assistant = {
           enable = true;
 
-          # Custom Lovelace modules
-          customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-            bubble-card
-            auto-entities
-            pkgs.lovelace-tabbed-card
-            pkgs.lovelace-layout-card
-            pkgs.lovelace-stack-in-card
-            pkgs.lovelace-state-switch
-            pkgs.modern-circular-gauge
-            pkgs.ha-floorplan
-            mini-graph-card
-            multiple-entity-row
-            decluttering-card
-            button-card
-            lg-webos-remote-control
-            light-entity-card
-            mushroom
-            card-mod
-            apexcharts-card
-          ];
+          # Custom Lovelace modules (derived from lovelaceModules)
+          customLovelaceModules = map (m: m.pkg) lovelaceModules;
 
           # Custom components (HACS-style) - imported from custom-components.nix
           inherit customComponents;
@@ -178,76 +234,12 @@ in
             lovelace =
               {
                 resource_mode = "yaml";
-                resources = [
-                  {
-                    url = "/local/nixos-lovelace-modules/bubble-card.js";
+                resources =
+                  map (m: {
+                    url = "/local/nixos-lovelace-modules/${m.js}";
                     type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/tabbed-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/state-switch.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/auto-entities.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/mushroom.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/multiple-entity-row.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/decluttering-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/button-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/light-entity-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/mini-graph-card-bundle.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/lg-remote-control.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/card-mod.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/apexcharts-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/layout-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/stack-in-card.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/modern-circular-gauge.js";
-                    type = "module";
-                  }
-                  {
-                    url = "/local/nixos-lovelace-modules/floorplan.js";
-                    type = "module";
-                  }
-                ];
+                  })
+                  lovelaceModules;
               }
               // lib.optionalAttrs cfg.dashboard.enable {
                 dashboards = {

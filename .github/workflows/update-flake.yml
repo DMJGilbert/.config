@@ -20,6 +20,9 @@ jobs:
 
       - uses: DeterminateSystems/magic-nix-cache-action@v13
 
+      - name: Snapshot flake.lock before update
+        run: cp flake.lock flake.lock.bak
+
       - name: Update flake inputs
         run: nix flake update
 
@@ -32,13 +35,61 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Get updated inputs
+      - name: Generate per-input change summary
         if: steps.changes.outputs.changed == 'true'
-        id: inputs
+        id: summary
         run: |
-          echo "diff<<EOF" >> $GITHUB_OUTPUT
-          git diff flake.lock | head -100
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "summary<<SUMMARY_EOF"
+            python3 - flake.lock.bak flake.lock <<'PYEOF'
+          import json, sys, datetime
+
+          before_path, after_path = sys.argv[1], sys.argv[2]
+          with open(before_path) as f: before = json.load(f)
+          with open(after_path)  as f: after  = json.load(f)
+
+          def index(lock):
+              out = {}
+              for name, node in lock["nodes"].items():
+                  if name == "root":
+                      continue
+                  locked = node.get("locked")
+                  if not locked:
+                      continue
+                  out[name] = {
+                      "rev": (locked.get("rev") or "")[:7],
+                      "lastModified": locked.get("lastModified", 0),
+                  }
+              return out
+
+          b, a = index(before), index(after)
+          names = sorted(set(b) | set(a))
+
+          rows = []
+          for name in names:
+              bn, an = b.get(name), a.get(name)
+              if not bn:
+                  rows.append((name, "_(new)_", f"`{an['rev']}`"))
+                  continue
+              if not an:
+                  rows.append((name, f"`{bn['rev']}`", "_(removed)_"))
+                  continue
+              if bn["rev"] == an["rev"]:
+                  continue
+              dt_b = datetime.date.fromtimestamp(bn["lastModified"]).isoformat() if bn["lastModified"] else "?"
+              dt_a = datetime.date.fromtimestamp(an["lastModified"]).isoformat() if an["lastModified"] else "?"
+              rows.append((name, f"`{bn['rev']}` ({dt_b})", f"`{an['rev']}` ({dt_a})"))
+
+          if not rows:
+              print("_No input revisions changed._")
+          else:
+              print("| Input | Before | After |")
+              print("| --- | --- | --- |")
+              for r in rows:
+                  print(f"| {r[0]} | {r[1]} | {r[2]} |")
+          PYEOF
+            echo "SUMMARY_EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
@@ -50,17 +101,24 @@ jobs:
           body: |
             Automated weekly flake input updates.
 
-            ## Changes
+            ## Changed inputs
 
-            ```diff
-            ${{ steps.inputs.outputs.diff }}
-            ```
+            ${{ steps.summary.outputs.summary }}
 
             ## Checklist
 
-            - [ ] Review the changes to `flake.lock`
+            - [ ] Review per-input bumps above
             - [ ] Ensure CI passes
-            - [ ] Test locally if needed: `nix flake check`
+            - [ ] If `nixpkgs` bumped, scan release notes for breaking changes
+            - [ ] Test locally if needed: `nix flake check && nh darwin switch .#ryukyu`
+
+            <details><summary>Full lockfile diff</summary>
+
+            ```diff
+            (run `git diff flake.lock` locally for the byte-level diff — omitted here to keep PR bodies under GitHub's size limit)
+            ```
+
+            </details>
           branch: chore/update-flake-inputs
           delete-branch: true
           labels: |

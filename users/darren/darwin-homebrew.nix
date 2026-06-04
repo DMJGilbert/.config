@@ -1,14 +1,11 @@
-{pkgs, ...}: {
-  users.users.darren = {
-    name = "darren";
-    home = "/Users/darren";
-    shell = pkgs.zsh;
-  };
-
+_: {
   homebrew = {
     enable = true;
-    onActivation.autoUpdate = true;
-    onActivation.cleanup = "zap";
+    onActivation = {
+      autoUpdate = true;
+      cleanup = "zap";
+      extraFlags = ["--force-cleanup"];
+    };
     global.brewfile = true;
     brews = [
       "xcode-build-server" # sourcekit-lsp outside of xcode

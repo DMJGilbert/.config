@@ -32,6 +32,13 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 **Rule**: Do NOT propose solutions yet
 
+**Exit criteria** (advance only when all true):
+
+- Relevant files identified and their relationships are clear
+- Constraints documented (technical, scope, time)
+- Open questions explicitly listed (or marked "none")
+- Still in problem-space — no solution language has been written
+
 ---
 
 ### 2. INNOVATE
@@ -49,6 +56,13 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Output**: Options with trade-offs for planner
 
 **Rule**: Do NOT pick a winner yet
+
+**Exit criteria** (advance only when all true):
+
+- At least 2 distinct approaches generated
+- Pros / cons / risks listed per approach
+- Trade-offs between approaches stated, not implicit
+- No single winner chosen yet — still in option-space
 
 ---
 
@@ -71,6 +85,15 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 **Rule**: Do NOT write code yet
 
+**Exit criteria** (advance only when all true):
+
+- Approach selected with stated reason
+- Task list broken down to individually-executable units
+- Affected files enumerated
+- Verification criteria defined per task
+- Spec saved to vault, decisions stored to memory
+- No code has been written yet
+
 ---
 
 ### 4. APPROVAL GATE
@@ -87,6 +110,12 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Wait for**: User approval or feedback
 
 **On rejection**: Return to PLAN (or RESEARCH if fundamental issue)
+
+**Exit criteria** (advance only when all true):
+
+- User has explicitly approved (not inferred from absence of pushback)
+- Any feedback incorporated back into PLAN
+- Plan still reflects current codebase state (not stale)
 
 ---
 
@@ -107,8 +136,8 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 1. Complete up to 3 tasks from the plan
 2. Run verification (tests, build, checks) for the batch
-3. Run `/simplify` on changed code to catch reuse, quality, and efficiency issues
-4. Present: what was done, verification output, simplify findings, any issues
+3. Run `/code-review` on changed code to catch correctness bugs, quality, and efficiency issues
+4. Present: what was done, verification output, code-review findings, any issues
 5. Say "Ready for feedback" and wait for user response
 6. Adjust based on feedback, then continue to next batch
 
@@ -131,14 +160,16 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 | .dart       | dart     |
 | .yaml (HA)  | hass     |
 
-**Execution mode** (determined in PLAN phase):
-
-| Mode               | Use When                                                                   | Pattern                                          |
-| ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------ |
-| Subagent (default) | Single-layer, same file type, sequential, <3 files                         | Domain agents called sequentially by lead        |
-| Team               | Cross-layer (3+ languages), 3+ independent file sets, competing approaches | Parallel teammates with file ownership           |
+**Execution mode** (determined in PLAN phase): see canonical table in `skills/complexity-gate/SKILL.md` (§ Execution Mode Selection). RIPER uses `subagent` / `team` / `workflow`; the `direct` mode bypasses RIPER and is selected by the gate before this skill runs.
 
 **Rule**: Follow the plan, don't improvise
+
+**Exit criteria** (advance only when all true):
+
+- All tasks from the plan complete
+- Each task has verification output cited (per Verification Gate in CLAUDE.md)
+- No outstanding fix attempts (circuit breaker not tripped)
+- Diff is ready for REVIEW phase
 
 ---
 
@@ -147,9 +178,11 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Agents**: security-reviewer, bug-hunter, quality-reviewer (parallel)
 **Purpose**: Validate implementation
 
-**Actions**:
+**Preferred**: Use `/riper-review` saved workflow — runs all 3 reviewers concurrently via dynamic workflow and returns an aggregated severity report.
 
-- Run all 3 reviewers in parallel
+**Manual fallback** (if workflow unavailable):
+
+- Spawn all 3 reviewers in parallel as subagents
 - Each focuses on their specialty
 - Aggregate findings by severity
 - Present unified report
@@ -170,14 +203,26 @@ When review findings require fixes:
 4. Push back technically if a suggestion doesn't apply
 5. Re-run reviewers after fixes to confirm resolution
 
+**Exit criteria** (workflow complete when all true):
+
+- All 3 reviewers ran (or manual fallback completed)
+- Findings aggregated by the canonical Severity Rubric (`workflows/riper-review.md`)
+- Each Critical/High finding triaged (applied as fix, rejected with rationale, or accepted as known risk)
+- Merge recommendation stated: ready / needs fixes / block
+
 ---
 
-## Anti-Patterns
+## Enforce-able Checks
 
-1. **Never** skip RESEARCH - understand before acting
-2. **Never** execute without a PLAN - know what you're building
-3. **Never** skip REVIEW - validate your work
-4. **Never** ignore approval gate - user must confirm plan
+These positive checks make phase-skipping detectable rather than relying on "don't skip" intent:
+
+1. **Before INNOVATE** — state the 3-bullet RESEARCH summary back (problem, relevant files, open questions). If you can't, you skipped RESEARCH.
+2. **Before EXECUTE** — restate the PLAN's task list verbatim (1 line per task). If you're improvising, this check fails.
+3. **Before declaring task done** — cite the verification command output (per Verification Gate in CLAUDE.md). If you can't cite, you skipped verification.
+4. **Before REVIEW** — confirm all PLAN tasks have verification output cited. If not, EXECUTE hasn't actually exited.
+5. **Before merge/handoff** — state the merge recommendation from REVIEW (ready / needs fixes / block). Implicit "looks fine" is not a recommendation.
+
+Each check has a corresponding **Exit criteria** block in the phase definitions above — these checks just make the check moment explicit at the gate.
 
 ## When Plan is Rejected
 
@@ -194,9 +239,10 @@ When plan specifies team execution:
 
 ### Setup
 
-1. Lead spawns teammates via delegate mode with `isolation: "worktree"`
-2. Assign file ownership per teammate (no overlaps)
-3. Define dependency waves in plan
+1. Lead spawns teammates via the Agent tool (`subagent_type`) or natural-language team instructions
+2. Worktree isolation is the default; set `worktree.bgIsolation: "none"` in settings.json to allow working-copy edits
+3. Assign file ownership per teammate (no overlaps)
+4. Define dependency waves in plan
 
 ### Execution
 

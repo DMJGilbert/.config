@@ -35,7 +35,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
   outputs = {
     darwin,
@@ -45,6 +49,7 @@
     sops-nix,
     treefmt-nix,
     pre-commit-hooks,
+    disko,
     impermanence,
     ...
   } @ inputs: let
@@ -74,6 +79,7 @@
     };
 
     # treefmt configuration shared across all systems
+    treefmtIncludes = import ./lib/treefmt-includes.nix;
     treefmtEval = forAllSystems (system:
       treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} {
         projectRootFile = "flake.nix";
@@ -82,17 +88,7 @@
           stylua.enable = true;
           prettier = {
             enable = true;
-            includes = [
-              "*.json"
-              "*.yaml"
-              "*.yml"
-              "*.md"
-              "*.ts"
-              "*.tsx"
-              "*.js"
-              "*.css"
-              "*.html"
-            ];
+            includes = treefmtIncludes.prettier;
           };
           rustfmt.enable = true;
         };
@@ -109,6 +105,12 @@
           };
           statix.enable = true;
           deadnix.enable = true;
+          # shellcheck fires per-staged-file, so legacy scripts only get
+          # caught when next edited (progressive improvement).
+          shellcheck.enable = true;
+          # yamllint with defaults — relax via a top-level .yamllint config
+          # if HA dashboard YAML or workflow files trip strict checks.
+          yamllint.enable = true;
         };
       });
   in {
@@ -154,7 +156,21 @@
           }
           touch $out
         '';
+        # Cross-system evaluation smoke checks. These reference
+        # `.activationPackage.drvPath` (a string), forcing the home-manager
+        # module tree to fully evaluate without building any platform-specific
+        # binaries. Catches eval errors (missing options, type mismatches,
+        # broken assertions) before the change reaches the matching runner.
+        home-darren-ryukyu-eval = pkgs.runCommand "home-darren-ryukyu-eval" {
+          drvPath = builtins.unsafeDiscardStringContext homeConfigurations.ryukyu.activationPackage.drvPath;
+        } "echo ryukyu drv: $drvPath > $out";
+
+        home-darren-rubecula-eval = pkgs.runCommand "home-darren-rubecula-eval" {
+          drvPath = builtins.unsafeDiscardStringContext homeConfigurations.rubecula.activationPackage.drvPath;
+        } "echo rubecula drv: $drvPath > $out";
       }
+      # Full activation-package build only on the matching runner — the
+      # derivation contains platform-native binaries that can't cross-build.
       // pkgs.lib.optionalAttrs (system == "aarch64-darwin") {
         home-darren-ryukyu = homeConfigurations.ryukyu.activationPackage;
       }
@@ -166,15 +182,48 @@
       inherit darwin nixpkgs home-manager overlays sops-nix;
       system = "aarch64-darwin";
       user = "darren";
+      homeManagerUser = ./users/darren/home-manager.nix;
+      extraUserModules = [
+        ./users/darren/darwin-user.nix
+        ./users/darren/darwin-homebrew.nix
+        ./users/darren/sops.nix
+      ];
     };
     nixosConfigurations.rubecula = mkNixos "rubecula" {
       inherit hardware nixpkgs home-manager overlays sops-nix;
       system = "x86_64-linux";
       user = "darren";
+      homeManagerUser = ./users/darren/home-manager.nix;
+      extraUserModules = [
+        ./users/darren/nixos.nix
+        ./users/darren/sops.nix
+      ];
       extraModules = [
         hardware.nixosModules.common-cpu-amd
         hardware.nixosModules.common-gpu-amd
         impermanence.nixosModules.impermanence
+      ];
+    };
+
+    # Fresh-install variant for nixos-anywhere — applies the disko btrfs layout
+    # at install time, overriding the ext4 mkDefault mounts in hardware/rubecula.nix.
+    # Run: nix run github:nix-community/nixos-anywhere -- --flake .#rubecula-install root@<ip>
+    # After a successful reinstall, fold disko into .#rubecula and remove this output.
+    nixosConfigurations.rubecula-install = mkNixos "rubecula" {
+      inherit hardware nixpkgs home-manager overlays sops-nix;
+      system = "x86_64-linux";
+      user = "darren";
+      homeManagerUser = ./users/darren/home-manager.nix;
+      extraUserModules = [
+        ./users/darren/nixos.nix
+        ./users/darren/sops.nix
+      ];
+      extraModules = [
+        hardware.nixosModules.common-cpu-amd
+        hardware.nixosModules.common-gpu-amd
+        impermanence.nixosModules.impermanence
+        disko.nixosModules.disko
+        ./disko/rubecula.nix
       ];
     };
 

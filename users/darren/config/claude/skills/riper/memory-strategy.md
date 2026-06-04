@@ -2,15 +2,15 @@
 
 ## Memory Systems
 
-| System       | Location                                   | Purpose                                    |
-| ------------ | ------------------------------------------ | ------------------------------------------ |
-| Auto-memory  | `~/.claude/projects/.../memory/MEMORY.md`  | Session context, auto-saved by Claude Code |
-| Agent memory | Obsidian `claude/memory/{agent}/MEMORY.md` | Persistent patterns per agent role         |
-| AIM graph    | Project-scoped memory graph                | Decisions, entity relationships            |
+| System       | Location                                   | Purpose                                                                                        |
+| ------------ | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Auto-memory  | `~/.claude/projects/.../memory/MEMORY.md`  | Session context, auto-saved by Claude Code                                                     |
+| Agent memory | `~/.claude/agent-memory/{agent}/MEMORY.md` | Persistent patterns per agent role (symlinked into Obsidian vault at `claude/memory/{agent}/`) |
+| AIM graph    | Project-scoped memory graph                | Decisions, entity relationships                                                                |
 
 ## When to Store
 
-**Agent Memory** (Obsidian vault `claude/memory/{agent}/MEMORY.md`):
+**Agent Memory** (`~/.claude/agent-memory/{agent}/MEMORY.md`):
 
 - Persistent patterns confirmed across 2+ interactions
 - Project conventions (file locations, build commands, naming)

@@ -15,20 +15,23 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 ## Skills
 
-| Skill            | Purpose                                                |
-| ---------------- | ------------------------------------------------------ |
-| `/commit`        | Generate conventional commit for staged changes        |
-| `/fix [problem]` | Problem-solving with RIPER workflow                    |
-| `/retrospective` | Review session for learnings, update agent memories    |
-| `/simplify`      | Review changed code for reuse, quality, and efficiency |
-| `/review`        | Code review (built-in)                                 |
+| Skill                      | Purpose                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `/commit`                  | Generate conventional commit for staged changes                                |
+| `/fix [problem]`           | Problem-solving with RIPER workflow                                            |
+| `/retrospective`           | Review session for learnings, update agent memories                            |
+| `/code-review [--comment]` | Review changed code for correctness bugs; `--comment` posts inline PR comments |
+| `/review`                  | Code review (built-in)                                                         |
+| `/riper-review`            | Saved RIPER workflow: parallel security + bug + quality fan-out                |
+| `/deep-research`           | Saved workflow: multi-source research fan-out (codebase + memory + docs + web) |
+| `/migration-audit`         | Saved workflow: per-module parallel scan for large migrations                  |
 
 ## Conventions
 
 **Commits**: Conventional format (`feat`, `fix`, `refactor`, `docs`, `chore`)
 **Branches**: `feat/`, `fix/`, `refactor/`, `docs/`
 **Formatting**: Auto-applied via hooks (alejandra, rustfmt, prettier, dart format, stylua, ruff)
-**Rules**: Path-scoped rules in `.claude/rules/` loaded contextually by file type
+**Rules**: Path-scoped rules in `.claude/rules/` loaded contextually by file type. Each rule file declares `paths:` globs in frontmatter (e.g. `**/*.nix`); Claude Code injects the rule body as a system reminder when matching files are read or edited. To verify a rule applies, observe the `<system-reminder>` block at edit time. To add coverage for a new language, drop `<lang>.md` into `rules/` with the appropriate `paths:` and a body following the Style / Patterns / Security / Validation structure.
 
 ## Code Style
 
@@ -77,6 +80,17 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 
 **Model selection rule**: Only upgrade from Sonnet to Opus when judgment accuracy outweighs cost.
 
+## Orchestration Primitives
+
+| Primitive   | When to Use                                                             |
+| ----------- | ----------------------------------------------------------------------- |
+| Subagents   | Sequential delegation, single-layer, < 3 independent file sets          |
+| Skills      | Turn-by-turn guided workflows (RIPER, commit, etc.)                     |
+| Agent Teams | Cross-layer (3+ languages), 3+ independent file sets in parallel        |
+| Workflows   | Score ≥ 8 AND highly parallelisable; orchestration codified as a script |
+
+`ultracode` keyword (or `/effort ultracode`) triggers dynamic workflow mode — **on by default**. Saved workflows live in `~/.claude/workflows/`. See `complexity-gate` skill for routing criteria. Use `/riper-review` for REVIEW fan-out, `/deep-research` for multi-source research, `/migration-audit` for per-module migration scans.
+
 ## MCP Servers
 
 **Core**: memory, context7, sequential-thinking, obsidian
@@ -91,12 +105,13 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 
 ## Reasoning Effort
 
-| Tier   | Trigger                        | Use When                                            |
-| ------ | ------------------------------ | --------------------------------------------------- |
-| Medium | Always-on baseline             | EXECUTE, PLAN, standard tasks                       |
-| High   | `ultrathink` keyword in prompt | RESEARCH/INNOVATE on COMPLEX tasks, security review |
-| XHigh  | Opus 4.7 default               | Architectural decisions, multi-system reasoning     |
-| Max    | Session-only                   | One-off deep analysis (resets after turn)           |
+| Tier      | Trigger                        | Use When                                                    |
+| --------- | ------------------------------ | ----------------------------------------------------------- |
+| Medium    | Always-on baseline             | EXECUTE, PLAN, standard tasks                               |
+| High      | `ultrathink` keyword in prompt | RESEARCH/INNOVATE on COMPLEX tasks, security review         |
+| XHigh     | `/effort xhigh`                | Architectural decisions, multi-system reasoning             |
+| Ultracode | `ultracode` keyword in prompt  | Highly parallelisable COMPLEX tasks; triggers workflow mode |
+| Max       | Session-only                   | One-off deep analysis (resets after turn)                   |
 
 ## Build Commands
 

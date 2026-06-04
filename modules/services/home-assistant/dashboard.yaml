@@ -247,7 +247,7 @@ button_card_templates:
     tap_action:
       action: '[[[ return variables.room_path ? "navigate" : "more-info"; ]]]'
       navigation_path: '[[[ return variables.room_path || ""; ]]]'
-      entity: '[[[ return variables.light_entity; ]]]'
+      entity: "[[[ return variables.light_entity; ]]]"
 
   # Person card template for peoples tab
   # Variables: person_name, person_entity, battery_entity, steps_entity
@@ -425,7 +425,7 @@ button_card_templates:
         ]]]
     tap_action:
       action: more-info
-      entity: '[[[ return variables.person_entity; ]]]'
+      entity: "[[[ return variables.person_entity; ]]]"
 
   # Info card template for other tab (System, Car, Tank, etc.)
   # Variables: card_name, card_icon, card_image, status_entity, status_template, info_entity, info_template
@@ -575,7 +575,7 @@ button_card_templates:
         ]]]
     tap_action:
       action: more-info
-      entity: '[[[ return variables.status_entity || variables.info_entity; ]]]'
+      entity: "[[[ return variables.status_entity || variables.info_entity; ]]]"
 
   # Calendar card template for calendar tab
   # Variables: calendar_entity, calendar_name, calendar_icon, calendar_image
@@ -756,7 +756,7 @@ button_card_templates:
         ]]]
     tap_action:
       action: more-info
-      entity: '[[[ return variables.calendar_entity; ]]]'
+      entity: "[[[ return variables.calendar_entity; ]]]"
 
   # Room view hero section with back button
   # Variables: room_name, room_image
@@ -1029,10 +1029,10 @@ button_card_templates:
         ]]]
     tap_action:
       action: toggle
-      entity: '[[[ return variables.item_entity; ]]]'
+      entity: "[[[ return variables.item_entity; ]]]"
     hold_action:
       action: more-info
-      entity: '[[[ return variables.item_entity; ]]]'
+      entity: "[[[ return variables.item_entity; ]]]"
 
   # Room sensor card for displaying sensor values
   # Variables: sensor_name, sensor_icon, sensor_entity, sensor_secondary_entity
@@ -1146,7 +1146,7 @@ button_card_templates:
         ]]]
     tap_action:
       action: more-info
-      entity: '[[[ return variables.sensor_entity; ]]]'
+      entity: "[[[ return variables.sensor_entity; ]]]"
 
 # ==================== VIEWS ====================
 views:

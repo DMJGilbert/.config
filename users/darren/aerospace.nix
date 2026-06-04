@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -67,14 +68,14 @@ lib.mkIf pkgs.stdenv.isDarwin {
         text = ''
           #!/usr/bin/env bash
           # Cycle to next workspace in order: W -> R -> C -> P -> F -> W
-          CURRENT=$(/etc/profiles/per-user/darren/bin/aerospace list-workspaces --focused)
+          CURRENT=$(${pkgs.aerospace}/bin/aerospace list-workspaces --focused)
           case "$CURRENT" in
-            W) /etc/profiles/per-user/darren/bin/aerospace workspace R ;;
-            R) /etc/profiles/per-user/darren/bin/aerospace workspace C ;;
-            C) /etc/profiles/per-user/darren/bin/aerospace workspace P ;;
-            P) /etc/profiles/per-user/darren/bin/aerospace workspace F ;;
-            F) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
-            *) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
+            W) ${pkgs.aerospace}/bin/aerospace workspace R ;;
+            R) ${pkgs.aerospace}/bin/aerospace workspace C ;;
+            C) ${pkgs.aerospace}/bin/aerospace workspace P ;;
+            P) ${pkgs.aerospace}/bin/aerospace workspace F ;;
+            F) ${pkgs.aerospace}/bin/aerospace workspace W ;;
+            *) ${pkgs.aerospace}/bin/aerospace workspace W ;;
           esac
         '';
         executable = true;
@@ -85,14 +86,14 @@ lib.mkIf pkgs.stdenv.isDarwin {
         text = ''
           #!/usr/bin/env bash
           # Cycle to previous workspace in order: W <- R <- C <- P <- F <- W
-          CURRENT=$(/etc/profiles/per-user/darren/bin/aerospace list-workspaces --focused)
+          CURRENT=$(${pkgs.aerospace}/bin/aerospace list-workspaces --focused)
           case "$CURRENT" in
-            W) /etc/profiles/per-user/darren/bin/aerospace workspace F ;;
-            R) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
-            C) /etc/profiles/per-user/darren/bin/aerospace workspace R ;;
-            P) /etc/profiles/per-user/darren/bin/aerospace workspace C ;;
-            F) /etc/profiles/per-user/darren/bin/aerospace workspace P ;;
-            *) /etc/profiles/per-user/darren/bin/aerospace workspace W ;;
+            W) ${pkgs.aerospace}/bin/aerospace workspace F ;;
+            R) ${pkgs.aerospace}/bin/aerospace workspace W ;;
+            C) ${pkgs.aerospace}/bin/aerospace workspace R ;;
+            P) ${pkgs.aerospace}/bin/aerospace workspace C ;;
+            F) ${pkgs.aerospace}/bin/aerospace workspace P ;;
+            *) ${pkgs.aerospace}/bin/aerospace workspace W ;;
           esac
         '';
         executable = true;
@@ -129,7 +130,7 @@ lib.mkIf pkgs.stdenv.isDarwin {
       StandardOutPath = "/tmp/sketchybar.log";
       StandardErrorPath = "/tmp/sketchybar.error.log";
       EnvironmentVariables = {
-        PATH = "/etc/profiles/per-user/darren/bin:/run/current-system/sw/bin:${pkgs.sketchybar}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+        PATH = "${config.home.profileDirectory}/bin:/run/current-system/sw/bin:${pkgs.sketchybar}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
       };
     };
   };

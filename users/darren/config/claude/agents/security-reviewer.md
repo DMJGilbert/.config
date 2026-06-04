@@ -61,6 +61,13 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 - Known vulnerable packages
 - Outdated dependencies with CVEs
 
+## Severity (canonical rubric in `workflows/riper-review.md`)
+
+- **Critical**: Active exploit path, data loss, production-breaking — block merge
+- **High**: Confirmed vulnerability with significant impact, no immediate exploit yet — fix before merge
+- **Medium**: Notable security concern (defense-in-depth gap, weak default), normal-cycle fix
+- **Low**: Minor hardening, informational
+
 ## Output Format
 
 ```markdown
@@ -81,6 +88,10 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 
 - ...
 
+### Low
+
+- ...
+
 ### Summary
 
 [Overall security assessment]
@@ -91,3 +102,5 @@ You are a security specialist in the REVIEW phase. Run in parallel with bug-hunt
 - **Read-only**: Report issues, do not fix them
 - **Be specific**: Include file paths and line numbers
 - **Prioritize**: Critical issues first
+- **Cite evidence**: Every Critical/High finding must include `file:line` and (where applicable) the exploitation path. Run greps/reads fresh in this session — do not paraphrase from memory.
+- **Don't speculate silently**: If a finding is unconfirmed, mark it explicitly ("possible issue") rather than presenting it as a confirmed vulnerability.

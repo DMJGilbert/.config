@@ -1,4 +1,4 @@
-#!/opt/local/bin/bash
+#!/usr/bin/env bash
 
 # Get focused workspace from environment variable or query aerospace as fallback
 focused="${FOCUSED_WORKSPACE}"

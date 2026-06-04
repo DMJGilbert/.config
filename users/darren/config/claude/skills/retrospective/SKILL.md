@@ -23,9 +23,12 @@ Review the current session and update relevant agent memories.
    - Reusable solutions
 
 3. **Update memories**:
-   - Read relevant agent MEMORY.md files from `~/.claude/agent-memory/{agent}/MEMORY.md`
-   - Add new learnings to appropriate sections
-   - Remove outdated information
+   - Read relevant agent MEMORY.md files from `~/.claude/agent-memory/{agent}/MEMORY.md` **before writing**
+   - Match each candidate learning against existing entries:
+     - If similar exists → update the existing entry (clarify, sharpen, add date)
+     - If new → append to the appropriate section
+     - If contradicted by experience → remove the stale entry rather than leaving both
+   - Do NOT append duplicate entries that differ only in wording
    - Keep memories concise (under 200 lines)
 
 4. **Store decisions**:

@@ -1,7 +1,7 @@
 # Home Assistant custom components (HACS-style)
 # Extracted from default.nix for maintainability
 {pkgs}: let
-  haPython = pkgs.home-assistant.python.pkgs;
+  haPython = pkgs.home-assistant.python3Packages;
 in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya

@@ -2,23 +2,21 @@
 
 Reference for PLAN phase when deciding execution mode.
 
-## Hybrid Routing
+## Routing
 
-| Execution Pattern   | Use When                                                           |
-| ------------------- | ------------------------------------------------------------------ |
-| Subagents (default) | Single-layer, same-file, sequential, or < 3 files                  |
-| Agent team          | Cross-layer (frontend + backend + infra), 3+ independent file sets |
+Execution-mode selection (`direct` / `subagent` / `team` / `workflow`) is canonical in `skills/complexity-gate/SKILL.md` (§ Execution Mode Selection). This file covers conventions specific to `team` mode.
 
 ## Team Conventions
 
 - 3 teammates is the sweet spot; more adds coordination overhead
-- Use delegate mode (`Shift+Tab`) to keep lead coordinating, not implementing
-- Use `isolation: "worktree"` for teammates to prevent cross-contamination
+- Spawn teammates via the Agent tool (`subagent_type`) or natural-language instructions to the lead
+- Worktree isolation is the default; to allow teammates to edit the working copy directly, set `worktree.bgIsolation: "none"` in settings.json
 - Assign file ownership per teammate to avoid overwrites
 - Size tasks at 5-6 per teammate
 - Use Opus for lead, Sonnet for teammates
 - Require plan approval for risky changes before teammates implement
 - Plan phase identifies dependency waves; team executes wave by wave
+- **Caveat**: `skills:` and `mcpServers:` frontmatter fields in agent definitions are **not applied** when that agent runs as a teammate (only when run as a subagent)
 
 ## Patterns
 

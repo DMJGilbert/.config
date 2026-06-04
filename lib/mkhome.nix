@@ -11,7 +11,15 @@
 home-manager.lib.homeManagerConfiguration {
   pkgs = import nixpkgs {
     inherit system overlays;
-    config.allowUnfree = true;
+    config.allowUnfreePredicate = pkg:
+      builtins.elem (nixpkgs.lib.getName pkg) [
+        "zoom"
+        "zoom-us"
+        "slack"
+        "obsidian"
+        "teams-for-linux"
+        "neotest-vitest"
+      ];
   };
   modules = [
     {

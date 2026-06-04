@@ -29,6 +29,14 @@ paths:
 - Avoid global mutable state
 - Use `ref.watch` for reactive updates
 
+## Security
+
+- Use `flutter_secure_storage` for tokens and keys — not `SharedPreferences` (unencrypted on most platforms)
+- Never hardcode API keys or secrets in source — load from environment or secure storage at runtime
+- Enforce HTTPS; never override `badCertificateCallback` in production `HttpClient`
+- Treat all data from HTTP responses, deep links, and WebView as untrusted input
+- Isolate CPU-intensive crypto work with `dart:isolate` to avoid blocking the main thread
+
 ## Validation
 
 1. `dart format .`

@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.services.pinchflat;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
   mediaGroup = config.local.services.mediaStorage.group;
 in
   {
@@ -20,7 +19,8 @@ in
 
       mediaDir = lib.mkOption {
         type = lib.types.path;
-        default = "/var/lib/media/youtube";
+        default = "${config.local.services.mediaStorage.root}/youtube";
+        defaultText = lib.literalExpression ''"''${config.local.services.mediaStorage.root}/youtube"'';
         description = "Directory where downloaded media is stored";
       };
     };

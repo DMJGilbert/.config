@@ -2,11 +2,10 @@
   config,
   lib,
   pkgs,
-  currentSystem,
+  isLinux,
   ...
 }: let
   cfg = config.local.services.jellyfin;
-  isLinux = builtins.match ".*-linux" currentSystem != null;
 in
   {
     options.local.services.jellyfin = {
