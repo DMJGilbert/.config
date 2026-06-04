@@ -137,6 +137,21 @@ in [
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {
+    owner = "gcobb321";
+    domain = "icloud3";
+    version = "3.5.1";
+    src = pkgs.fetchFromGitHub {
+      owner = "gcobb321";
+      repo = "icloud3";
+      rev = "v${version}";
+      sha256 = "sha256-qoXFZlH1jnhK44p3o91/y8S+HPJh8unIN0acJyHIeGM=";
+    };
+    propagatedBuildInputs = with haPython; [
+      srp
+      fido2
+    ];
+  })
+  (pkgs.buildHomeAssistantComponent rec {
     owner = "twrecked";
     domain = "aarlo";
     version = "0.8.1.19";

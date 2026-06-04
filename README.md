@@ -141,19 +141,20 @@ Notes:
 
 **Media stack:**
 
-| Service         | Purpose                                            | Port |
-| --------------- | -------------------------------------------------- | ---- |
-| Jellyfin        | Media server                                       | 8096 |
-| Sonarr          | TV automation                                      | 8989 |
-| Radarr          | Movie automation                                   | 7878 |
-| Prowlarr        | Indexer manager                                    | 9696 |
-| Jellyseerr      | Request management                                 | 5055 |
-| qBittorrent     | Torrent client (VPN kill-switch)                   | 8081 |
-| media-transcode | Native inotify-driven FFmpeg + AMD VAAPI re-encode | —    |
-| Pinchflat       | YouTube archiver                                   | 8945 |
-| iPlayarr        | BBC iPlayer bridge (pinned digest)                 | 4404 |
-| Recyclarr       | TRaSH Guides sync (Sonarr/Radarr)                  | —    |
-| cross-seed      | Cross-seeding automation                           | 2468 |
+| Service         | Purpose                                             | Port |
+| --------------- | --------------------------------------------------- | ---- |
+| Jellyfin        | Media server                                        | 8096 |
+| Sonarr          | TV automation                                       | 8989 |
+| Radarr          | Movie automation                                    | 7878 |
+| Prowlarr        | Indexer manager                                     | 9696 |
+| Jellyseerr      | Request management                                  | 5055 |
+| qBittorrent     | Torrent client (VPN kill-switch)                    | 8081 |
+| media-transcode | Native inotify-driven FFmpeg + AMD VAAPI re-encode  | —    |
+| Pinchflat       | YouTube archiver                                    | 8945 |
+| Dispatcharr     | IPTV stream proxy / HDHomeRun emulator for Jellyfin | 9191 |
+| iPlayarr        | BBC iPlayer bridge (pinned digest)                  | 4404 |
+| Recyclarr       | TRaSH Guides sync (Sonarr/Radarr)                   | —    |
+| cross-seed      | Cross-seeding automation                            | 2468 |
 
 **Home automation:**
 

@@ -55,6 +55,7 @@ in
           "/var/lib/prowlarr"
           "/var/lib/qbittorrent"
           "/var/lib/pinchflat"
+          "/var/lib/dispatcharr"
           "/var/lib/iplayarr"
           "/var/lib/tdarr"
           "/var/lib/cross-seed"
