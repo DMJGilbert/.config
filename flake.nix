@@ -108,9 +108,11 @@
           # shellcheck fires per-staged-file, so legacy scripts only get
           # caught when next edited (progressive improvement).
           shellcheck.enable = true;
-          # yamllint with defaults — relax via a top-level .yamllint config
-          # if HA dashboard YAML or workflow files trip strict checks.
-          yamllint.enable = true;
+          yamllint = {
+            enable = true;
+            # secrets/ contains sops-encrypted YAML with long ciphertext lines
+            excludes = ["^secrets/"];
+          };
         };
       });
   in {

@@ -1,0 +1,5 @@
+extends: default
+rules:
+  # sops-encrypted files have long ciphertext lines and no document-start marker
+  line-length: disable
+  document-start: disable
