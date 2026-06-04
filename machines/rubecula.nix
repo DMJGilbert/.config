@@ -59,7 +59,21 @@
       };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
-      technitiumDnsServer.enable = true;
+      technitiumDnsServer = {
+        enable = true;
+        blockLists = [
+          "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+        ];
+        zones = {
+          "gilberts.one" = [
+            {
+              domain = "*.gilberts.one";
+              type = "A";
+              value = "192.168.68.101";
+            }
+          ];
+        };
+      };
       nginx = {
         enable = true;
         acme = {
