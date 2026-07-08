@@ -206,7 +206,7 @@ When review findings require fixes:
 **Exit criteria** (workflow complete when all true):
 
 - All 3 reviewers ran (or manual fallback completed)
-- Findings aggregated by the canonical Severity Rubric (`workflows/riper-review.md`)
+- Findings aggregated by the canonical Severity Rubric (`workflows/riper-review.js`)
 - Each Critical/High finding triaged (applied as fix, rejected with rationale, or accepted as known risk)
 - Merge recommendation stated: ready / needs fixes / block
 

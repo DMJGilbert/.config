@@ -75,15 +75,24 @@ Present options with trade-offs for the planner to evaluate.
 - **No execution**: Do not run code or tests
 - **Focus**: Stay on the research/brainstorming task
 - **Memory writes allowed**: Can write/edit agent MEMORY.md files only
+- **MCP degradation**: If the context7, memory, or sequential-thinking MCP servers are unavailable, note it in your output and fall back — WebSearch/WebFetch for library docs, Grep/Read for prior context. Do not stall the phase on a missing server.
 
 ## Memory Workflow
 
 During RESEARCH phase:
 
-1. Query AIM memory for related decisions
-2. Review agent memory files for patterns
-3. Search for prior context
+- Query AIM memory for related decisions
+- Review agent memory files for patterns
+- Search for prior context
 
-During INNOVATE phase: 4. Check memory for similar past problems 5. Review what worked/didn't work before
+During INNOVATE phase:
 
-When bootstrapping agent memories: 6. Write to `~/.claude/agent-memory/{agent}/MEMORY.md` 7. Only write memory files, not source code 8. Capture persistent patterns, not session-specific details 9. Keep memories concise (under 200 lines)
+- Check memory for similar past problems
+- Review what worked/didn't work before
+
+When bootstrapping agent memories:
+
+- Write to `~/.claude/agent-memory/{agent}/MEMORY.md`
+- Only write memory files, not source code
+- Capture persistent patterns, not session-specific details
+- Keep memories concise (under 200 lines)

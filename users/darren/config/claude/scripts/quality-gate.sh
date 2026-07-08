@@ -6,6 +6,7 @@ set -euo pipefail
 # Exit code 2 feeds errors back to Claude for fixing.
 # Set QUALITY_GATE_ENFORCE=1 to make the gate blocking (exit 1).
 # Set QUALITY_GATE_VERBOSE=1 to keep successful tool output (default: quiet on success).
+# Set QUALITY_GATE_FULL=1 to include expensive checks (nix flake check).
 
 FIX_MODE=0
 while [[ $# -gt 0 ]]; do
@@ -72,8 +73,10 @@ if echo "$changed_files" | grep -q '\.nix$'; then
       run_check "statix" statix check .
     fi
   fi
-  # nix flake check is expensive and only meaningful at the flake root
-  if command -v nix &>/dev/null && [[ -f flake.nix ]]; then
+  # nix flake check fully evaluates every configuration — minutes of wall-clock
+  # on every Stop event. Opt in with QUALITY_GATE_FULL=1; treefmt + statix cover
+  # the fast path and the real check happens at deploy.
+  if [[ ${QUALITY_GATE_FULL:-0} == "1" ]] && command -v nix &>/dev/null && [[ -f flake.nix ]]; then
     run_check "nix flake check" nix flake check
   fi
 fi
