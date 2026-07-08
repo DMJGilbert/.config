@@ -19,12 +19,9 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 | -------------------------- | ------------------------------------------------------------------------------ |
 | `/commit`                  | Generate conventional commit for staged changes                                |
 | `/fix [problem]`           | Problem-solving with RIPER workflow                                            |
-| `/retrospective`           | Review session for learnings, update agent memories                            |
 | `/code-review [--comment]` | Review changed code for correctness bugs; `--comment` posts inline PR comments |
 | `/review`                  | Code review (built-in)                                                         |
-| `/riper-review`            | Saved RIPER workflow: parallel security + bug + quality fan-out                |
-| `/deep-research`           | Saved workflow: multi-source research fan-out (codebase + memory + docs + web) |
-| `/migration-audit`         | Saved workflow: per-module parallel scan for large migrations                  |
+| `/security-review`         | Security review of pending changes on the current branch                       |
 
 ## Conventions
 
@@ -89,7 +86,7 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 | Agent Teams | Cross-layer (3+ languages), 3+ independent file sets in parallel        |
 | Workflows   | Score ≥ 8 AND highly parallelisable; orchestration codified as a script |
 
-`ultracode` keyword (or `/effort ultracode`) triggers dynamic workflow mode — **on by default**. Saved workflows live in `~/.claude/workflows/`. See `complexity-gate` skill for routing criteria. Use `/riper-review` for REVIEW fan-out, `/deep-research` for multi-source research, `/migration-audit` for per-module migration scans.
+`ultracode` keyword (or `/effort ultracode`) triggers dynamic workflow mode — **on by default**. Saved workflows live in `~/.claude/workflows/`. See `complexity-gate` skill for routing criteria.
 
 ## MCP Servers
 
@@ -112,6 +109,8 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 | XHigh     | `/effort xhigh`                | Architectural decisions, multi-system reasoning             |
 | Ultracode | `ultracode` keyword in prompt  | Highly parallelisable COMPLEX tasks; triggers workflow mode |
 | Max       | Session-only                   | One-off deep analysis (resets after turn)                   |
+
+Default model is Opus 4.8. Review agents also run Opus 4.8; domain agents run Sonnet (resolves to Sonnet 5).
 
 ## Build Commands
 

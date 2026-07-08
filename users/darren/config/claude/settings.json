@@ -1,7 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "model": "sonnet",
+  "model": "opus",
   "effortLevel": "medium",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/scripts/statusline.sh"
+  },
   "alwaysThinkingEnabled": true,
   "awaySummaryEnabled": true,
   "attribution": {
