@@ -5,8 +5,38 @@
 in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya
-  pkgs.home-assistant-custom-components.yoto_ha
   pkgs.home-assistant-custom-components.adaptive_lighting
+  # Yoto - dropped from nixpkgs; build from upstream (needs yoto-api, not packaged)
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "cdnninja";
+    domain = "yoto";
+    version = "3.2.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "cdnninja";
+      repo = "yoto_ha";
+      rev = "v${version}";
+      sha256 = "sha256-dMzFrc3dlmog4qfiaV8mhQv1h/EWp5cRsyVYb4ZDUw0=";
+    };
+    propagatedBuildInputs = [
+      (haPython.buildPythonPackage rec {
+        pname = "yoto-api";
+        version = "2.3.0";
+        pyproject = true;
+        src = pkgs.fetchPypi {
+          pname = "yoto_api";
+          inherit version;
+          hash = "sha256-f7YCOiJ5BXi3DXH3m+17PZiCT6EhwEbh5U97LBv2igo=";
+        };
+        build-system = [haPython.setuptools];
+        propagatedBuildInputs = with haPython; [
+          pytz
+          requests
+          paho-mqtt
+        ];
+        doCheck = false;
+      })
+    ];
+  })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "AlexxIT";
     domain = "sonoff";
