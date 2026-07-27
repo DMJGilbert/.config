@@ -39,7 +39,6 @@
       "zoom-us"
       "slack"
       "obsidian"
-      "teams-for-linux"
       "neotest-vitest"
     ];
 

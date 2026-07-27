@@ -13,10 +13,12 @@ _: {
     ];
     casks = [
       "claude-code"
+      "clickup"
       "displaylink"
       "docker-desktop"
       "figma"
       "swiftformat-for-xcode"
+      "microsoft-teams"
       "teamviewer"
       "qmk-toolbox"
       "vlc"

@@ -86,7 +86,7 @@ in {
           "/System/Cryptexes/App/System/Applications/Safari.app"
           "${pkgs.wezterm}/Applications/WezTerm.app"
           "/System/Applications/Mail.app"
-          "${pkgs.teams-for-linux}/Applications/teams-for-linux.app"
+          "/Applications/Microsoft Teams.app"
           "${pkgs.slack}/Applications/Slack.app"
           "${pkgs.obsidian}/Applications/Obsidian.app"
           "/Applications/Home Assistant.app"

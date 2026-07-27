@@ -54,12 +54,14 @@ Assess task complexity and route to appropriate workflow.
 
 The score is **floored** before threshold lookup if any of these apply, regardless of negation keywords:
 
-| Trigger                                         | Floor  |
-| ----------------------------------------------- | ------ |
-| Touches auth, secrets, credentials, or sessions | MEDIUM |
-| Touches migration, breaking change, or schema   | MEDIUM |
-| Production data path / payment / PII            | MEDIUM |
-| Cryptographic operations (signing, encryption)  | MEDIUM |
+| Trigger                                                        | Floor  |
+| -------------------------------------------------------------- | ------ |
+| Touches auth, secrets, credentials, or sessions                | MEDIUM |
+| Touches migration, breaking change, or schema                  | MEDIUM |
+| Production data path / payment / PII                           | MEDIUM |
+| Cryptographic operations (signing, encryption)                 | MEDIUM |
+| Debugging with unknown root cause after one failed fix attempt | MEDIUM |
+| Cross-repo port/migration ("apply X from repo A to repo B")    | MEDIUM |
 
 Rationale: "simple auth typo" should not bypass RIPER — security-relevant changes carry tail risk that the additive keyword score doesn't capture. The floor sets a minimum; positive points still escalate above MEDIUM if warranted.
 
@@ -109,6 +111,15 @@ Factors: [list key factors]
 Workflow: [Direct action / Strict RIPER]
 Execution: [direct / subagent / team / workflow]
 ```
+
+## DIAGNOSE Loop (live-system debugging)
+
+When the feedback loop runs through a live system the user operates (remote host, Home Assistant, hardware, a deployed service), the full RIPER phase ladder fits poorly — evidence arrives one user-retest at a time. Route these to a DIAGNOSE loop instead:
+
+1. **RESEARCH once**: read relevant code/config, form 2-3 ranked hypotheses.
+2. **Loop**: one batched, labelled diagnostic script (or one scoped change) per turn → user runs/retests → interpret ALL outputs before the next round. Never emit single commands one turn at a time.
+3. **Escalate**: once the root cause is confirmed and the fix scores MEDIUM+, exit the loop into normal RIPER (PLAN → approval → EXECUTE).
+4. **Circuit breaker**: 3 failed hypotheses → stop, restate what has been ruled out, and question the framing.
 
 ## Examples
 

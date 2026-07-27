@@ -14,6 +14,25 @@ Structured development workflow ensuring thorough analysis before implementation
 RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 ```
 
+### 0. GATE (self-assessment — always runs first)
+
+On invocation, run the `complexity-gate` assessment yourself before entering RESEARCH — do not assume the user pre-routed correctly:
+
+- **TRIVIAL/SIMPLE** → state the score and downgrade to direct action; do not run the phase ladder on a one-liner.
+- **Live-system debugging** (feedback comes from a system the user operates — remote host, Home Assistant, hardware) → use the DIAGNOSE loop (see `complexity-gate` § DIAGNOSE Loop) instead of the full ladder.
+- **MEDIUM/COMPLEX** → proceed to RESEARCH.
+
+### Agent Hygiene (applies to every phase)
+
+- **Inline-first**: the lead does RESEARCH inline by default; spawn a researcher only when the task spans 3+ independent file sets (per the Orchestration Primitives table).
+- **Preview before spawn**: before spawning any agent, state its intended prompt in one line so the user can veto cheaply.
+- **Stand down means stop**: TaskStop teammates/background agents the moment their phase output is accepted — never leave them emitting idle heartbeats.
+- **No open-ended fixers**: never spawn an `acceptEdits` agent with an open-ended "debug and fix it" prompt; diagnose first, then delegate a scoped change.
+
+### Phase State (survives compaction)
+
+At every phase transition, persist the current phase + pointer to the approved plan/spec (vault spec, or `.claude/riper-state.md` if the vault is unavailable). After any context compaction, re-read it and restate the current phase header before continuing — compaction summaries do not preserve phase discipline.
+
 ### 1. RESEARCH
 
 **Agent**: researcher (opus)
@@ -163,6 +182,10 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 **Execution mode** (determined in PLAN phase): see canonical table in `skills/complexity-gate/SKILL.md` (§ Execution Mode Selection). RIPER uses `subagent` / `team` / `workflow`; the `direct` mode bypasses RIPER and is selected by the gate before this skill runs.
 
 **Rule**: Follow the plan, don't improvise
+
+**Deviation checkpoint**: If execution requires reversing a decision the user previously approved or stated (library choice, design direction), or adding a dependency, submodule, or config default not named in the approved plan, STOP and confirm first — one sentence stating the change and why, before the tool call that makes it. Silent pivots are the failure mode; friction with the approved approach is a checkpoint, not an implementation detail.
+
+**Committing**: Never include commit steps in plans or task batches unless the user explicitly requested committing — the user always commits manually via `/commit`.
 
 **Exit criteria** (advance only when all true):
 

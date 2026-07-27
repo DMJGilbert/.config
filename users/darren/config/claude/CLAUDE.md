@@ -26,7 +26,9 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 ## Conventions
 
 **Commits**: Conventional format (`feat`, `fix`, `refactor`, `docs`, `chore`)
+**Committing**: NEVER run `git commit` (or stage-and-commit) unless explicitly asked in the current turn — the user always commits manually via `/commit`. At task end, stop after verification; do not commit or offer to commit.
 **Branches**: `feat/`, `fix/`, `refactor/`, `docs/`
+**Remote diagnostics**: When debugging a system you cannot execute on (remote host, Home Assistant, cloud, build box), emit ONE batched diagnostic script per turn with labelled outputs — never single commands the user must ferry back one at a time. For Home Assistant, use hass-mcp (`get_error_log`, entity queries) before asking the user to run anything.
 **Formatting**: Auto-applied via hooks (alejandra, rustfmt, prettier, dart format, stylua, ruff)
 **Rules**: Path-scoped rules in `.claude/rules/` loaded contextually by file type. Each rule file declares `paths:` globs in frontmatter (e.g. `**/*.nix`); Claude Code injects the rule body as a system reminder when matching files are read or edited. To verify a rule applies, observe the `<system-reminder>` block at edit time. To add coverage for a new language, drop `<lang>.md` into `rules/` with the appropriate `paths:` and a body following the Style / Patterns / Security / Validation structure.
 

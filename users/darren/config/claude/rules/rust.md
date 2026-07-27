@@ -36,6 +36,10 @@ paths:
 - Use checked arithmetic (`checked_add`, `saturating_add`) for untrusted numeric input in release builds
 - Deserialise untrusted data defensively — apply size limits and use `#[serde(deny_unknown_fields)]` where appropriate
 
+## Sandbox
+
+- If a cargo command fails with `.cargo-lock ... Operation not permitted` (or similar write denial in a sibling repo's `target/`), that is a Claude Code sandbox allowlist gap — report it and ask for the directory to be added to `sandbox.filesystem.allowWrite`. Do NOT improvise `CARGO_TARGET_DIR` redirections or other workarounds.
+
 ## Validation
 
 1. `cargo fmt`

@@ -17,7 +17,6 @@ home-manager.lib.homeManagerConfiguration {
         "zoom-us"
         "slack"
         "obsidian"
-        "teams-for-linux"
         "neotest-vitest"
       ];
   };
