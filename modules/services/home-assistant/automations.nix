@@ -303,7 +303,7 @@ in [
         action = "light.turn_on";
         target.entity_id = "light.backlight";
         data = {
-          kelvin = 6031;
+          color_temp_kelvin = 6031;
           brightness_pct = 100;
         };
       }
