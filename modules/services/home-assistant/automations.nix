@@ -69,11 +69,12 @@
     ];
   };
 in [
-  # Front door entry light - turns on when door opens, off 5 min after close
+  # Front door entry light - turns on 100% when door opens, off 5 min after
+  # the last open. mode=restart means reopening the door restarts the timer.
   {
     id = "front_door_hallway_lights";
     alias = "Front door hallway lights";
-    description = "Turn on hallway lights when front door opens, off after 5 min";
+    description = "Turn hallway lights to 100% when front door opens, off 5 min after last open";
     trigger = [
       {
         platform = "state";
@@ -86,18 +87,8 @@ in [
         action = "light.turn_on";
         target.area_id = ["hallway"];
         data = {
-          brightness_pct = "{{ 50 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
+          brightness_pct = "{{ 100 if today_at('07:30') <= now() < today_at('20:00') else 30 }}";
         };
-      }
-      {
-        alias = "Wait for door to close";
-        wait_for_trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.myggbett_door_window_sensor_door";
-            to = "off";
-          }
-        ];
       }
       {
         alias = "Wait 5 minutes";
