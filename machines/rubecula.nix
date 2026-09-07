@@ -378,6 +378,14 @@
     dnsProvider = "namecheap";
     webroot = lib.mkForce null;
     environmentFile = config.sops.templates."namecheap-acme-env".path;
+    # Technitium serves a primary authoritative zone for gilberts.one (see
+    # technitiumDnsServer.zones above) purely for the split-horizon
+    # *.gilberts.one -> LAN A record. Because rubecula resolves through
+    # Technitium, lego's DNS-01 propagation check asked *this host* for the
+    # _acme-challenge TXT record — which only ever exists at Namecheap — and
+    # timed out every run. Pin the check to a public resolver so it follows the
+    # real delegation instead of the local override.
+    dnsResolver = "1.1.1.1:53";
   };
 
   system.stateVersion = "26.05";
