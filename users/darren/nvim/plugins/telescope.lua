@@ -89,6 +89,17 @@ vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { bg = colors.teal, fg = colors.
 -- Keymaps
 vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope resume<CR>", { desc = "Resume telescope" })
 vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<cr>")
+
+-- lazygit uses <esc> for "go back"; the global terminal <esc> mapping steals it
+-- and leaves lazygit running headless in a hidden buffer. Unmap it per-buffer.
+vim.api.nvim_create_autocmd("TermOpen", {
+	group = vim.api.nvim_create_augroup("lazygit_esc", { clear = true }),
+	callback = function(args)
+		if vim.api.nvim_buf_get_name(args.buf):match("lazygit") then
+			vim.keymap.set("t", "<esc>", "<esc>", { buffer = args.buf })
+		end
+	end,
+})
 vim.keymap.set("n", "<leader>o", function()
 	require("telescope.builtin").find_files({
 		hidden = true,

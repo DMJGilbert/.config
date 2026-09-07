@@ -81,6 +81,13 @@
           acceptTerms = true;
           email = "dmjgilbert@gmail.com";
         };
+        # Admin and *arr UIs are restricted to these ranges (internalOnly below).
+        # Certificates are issued over DNS-01 (security.acme.certs."gilberts.one"),
+        # so refusing HTTP from the public internet does not affect renewal.
+        internalSources = [
+          "100.64.0.0/10" # Tailscale CGNAT
+          "192.168.68.0/24" # LAN
+        ];
         virtualHosts = {
           "home.gilberts.one" = {
             forceSSL = true;
@@ -94,18 +101,21 @@
           "dns.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:5380";
             proxyWebsockets = true;
           };
           "glances.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:61208";
             proxyWebsockets = true;
           };
           "kuma.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             extraConfig = ''
               proxy_buffering off;
             '';
@@ -115,30 +125,35 @@
           "sonarr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:8989";
             proxyWebsockets = true;
           };
           "radarr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:7878";
             proxyWebsockets = true;
           };
           "prowlarr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:9696";
             proxyWebsockets = true;
           };
           "jellyseerr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:5055";
             proxyWebsockets = true;
           };
           "qbittorrent.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             extraConfig = ''
               proxy_buffering off;
               client_max_body_size 100M;
@@ -149,24 +164,28 @@
           "pinchflat.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:8945";
             proxyWebsockets = true;
           };
           "dispatcharr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:9191";
             proxyWebsockets = true;
           };
           "iplayarr.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:4404";
             proxyWebsockets = true;
           };
           "homepage.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:8082";
             proxyWebsockets = true;
           };
@@ -183,6 +202,7 @@
           "zigbee2mqtt.gilberts.one" = {
             forceSSL = true;
             useACMEHost = "gilberts.one";
+            internalOnly = true;
             proxyPass = "http://127.0.0.1:8080";
             proxyWebsockets = true;
           };

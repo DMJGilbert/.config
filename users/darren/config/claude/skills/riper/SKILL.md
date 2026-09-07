@@ -198,23 +198,27 @@ At every phase transition, persist the current phase + pointer to the approved p
 
 ### 6. REVIEW
 
-**Agents**: security-reviewer, bug-hunter, quality-reviewer (parallel)
+**Agents**: security-reviewer, bug-hunter, quality-reviewer, intent/style reviewer (parallel)
 **Purpose**: Validate implementation
 
-**Preferred**: Use `/riper-review` saved workflow — runs all 3 reviewers concurrently via dynamic workflow and returns an aggregated severity report.
+**Preferred**: Use `/riper-review` saved workflow — resolves scope (committed diff **plus** uncommitted work), infers branch intent, runs the 4 reviewers and the project's lint/typecheck concurrently, then adversarially verifies and baseline-attributes every Critical/High finding.
 
 **Manual fallback** (if workflow unavailable):
 
-- Spawn all 3 reviewers in parallel as subagents
+- Spawn all 4 reviewers in parallel as subagents
 - Each focuses on their specialty
+- Run the project lint and type checker; triage their diagnostics as findings
 - Aggregate findings by severity
 - Present unified report
 
 **Output**:
 
-- Critical/High/Medium/Low issues
+- `review.md` at the repo root: branch intent, iteration number, issues numbered and grouped into Logical Errors / Style Compliance / Other, each with a grep-verified line number and a provenance label (new / pre-existing / latent bug exposed by this branch)
+- Chat summary: Critical/High/Medium/Low issues, refuted findings, coverage gaps
 - Overall assessment
 - Ready to merge or needs fixes
+
+**Iterative reviews**: `review.md` is read back on the next run — each prior issue is re-checked and reported as fixed / unchanged / partially improved, and the iteration count increments.
 
 ### Processing Review Findings
 
@@ -228,9 +232,11 @@ When review findings require fixes:
 
 **Exit criteria** (workflow complete when all true):
 
-- All 3 reviewers ran (or manual fallback completed)
+- All 4 reviewers ran (or manual fallback completed), and lint/typecheck either ran or the reason it could not is recorded
+- Changed files outside lint/typecheck config paths reviewed manually and the gap noted
 - Findings aggregated by the canonical Severity Rubric (`workflows/riper-review.js`)
 - Each Critical/High finding triaged (applied as fix, rejected with rationale, or accepted as known risk)
+- Each Critical/High finding attributed: introduced by this branch, pre-existing on the base ref, or a latent bug exposed by this branch (latent-exposed still blocks merge)
 - Merge recommendation stated: ready / needs fixes / block
 
 ---
