@@ -1,4 +1,11 @@
 _: {
+  # Principals trusted for SSH commit-signature verification. Without this,
+  # `signing.signByDefault` still signs but `git log --show-signature` reports
+  # "No signature" — git has no way to map a key back to an identity.
+  home.file.".config/git/allowed_signers".text = ''
+    dmjgilbert@me.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFH8IIyjwbibIv0rnDE3SJ/StlKjcQG1NuKeEuBwTH5+
+  '';
+
   programs = {
     delta = {
       enable = true;
@@ -26,6 +33,7 @@ _: {
         };
         init.defaultBranch = "main";
         github.user = "DMJGilbert";
+        gpg.ssh.allowedSignersFile = "~/.config/git/allowed_signers";
         core.editor = "nvim";
         pull.rebase = true;
         push.autoSetupRemote = true;

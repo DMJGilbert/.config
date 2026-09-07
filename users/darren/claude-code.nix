@@ -40,9 +40,6 @@ lib.mkIf pkgs.stdenv.isDarwin {
       # MCP configuration
       ".mcp.json".source = ./config/claude/mcp.json;
 
-      # Hooks configuration
-      ".claude/hooks.json".source = ./config/claude/hooks.json;
-
       # Specialist agents (linked as directory)
       ".claude/agents" = {
         source = ./config/claude/agents;

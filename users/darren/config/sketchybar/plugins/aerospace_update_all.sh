@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
+set -uo pipefail
 
-# This script updates ALL workspace highlighting at once
-# Gets called on aerospace_workspace_change event
+# Updates ALL workspace highlighting at once, on aerospace_workspace_change.
 
-# Get focused workspace from environment variable or query aerospace
-focused="${FOCUSED_WORKSPACE:-$(/etc/profiles/per-user/darren/bin/aerospace list-workspaces --focused)}"
+AEROSPACE=/etc/profiles/per-user/darren/bin/aerospace
+SKETCHYBAR=/etc/profiles/per-user/darren/bin/sketchybar
 
-# Log for debugging
-echo "[$(date)] aerospace_update_all.sh triggered, focused=$focused, env=$FOCUSED_WORKSPACE" >> /tmp/sketchybar_debug.log
+focused="${FOCUSED_WORKSPACE:-$("$AEROSPACE" list-workspaces --focused)}"
 
-# Update all workspaces
 for ws in W R C P F; do
     if [ "$ws" = "$focused" ]; then
-        echo "[$(date)] Setting $ws to ON" >> /tmp/sketchybar_debug.log
-        /etc/profiles/per-user/darren/bin/sketchybar --set space.$ws background.drawing=on
+        "$SKETCHYBAR" --set "space.$ws" background.drawing=on
     else
-        /etc/profiles/per-user/darren/bin/sketchybar --set space.$ws background.drawing=off
+        "$SKETCHYBAR" --set "space.$ws" background.drawing=off
     fi
 done

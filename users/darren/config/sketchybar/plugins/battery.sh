@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -uo pipefail
 
 PERCENTAGE=$(pmset -g batt | grep -Eo "[0-9]+%" | cut -d% -f1)
 

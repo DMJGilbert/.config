@@ -53,7 +53,10 @@ in
           "/var/lib/sonarr"
           "/var/lib/radarr"
           "/var/lib/prowlarr"
-          "/var/lib/qbittorrent"
+          # Capital B: the qBittorrent NixOS module's profileDir is
+          # /var/lib/qBittorrent (see machines/rubecula.nix cross-seed
+          # torrentDir). A lowercase entry silently persists nothing.
+          "/var/lib/qBittorrent"
           "/var/lib/pinchflat"
           "/var/lib/dispatcharr"
           "/var/lib/iplayarr"

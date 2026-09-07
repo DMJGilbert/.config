@@ -61,7 +61,7 @@ button_card_templates:
       name:
         - font-weight: 500
         - color: "#E85D04"
-        - border-bottom: 2px solid #E85D04
+        - border-bottom: "2px solid #E85D04"
         - padding-bottom: 6px
 
   # Inactive tab button

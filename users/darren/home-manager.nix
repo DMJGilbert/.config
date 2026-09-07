@@ -121,6 +121,12 @@ in {
     };
     eza.enable = true;
     ripgrep.enable = true;
+    # Required by the fzf widgets below, which reference `fd` directly.
+    fd = {
+      enable = true;
+      hidden = true;
+      ignores = [".git/" "node_modules/"];
+    };
     fzf = {
       enable = true;
       enableZshIntegration = true;

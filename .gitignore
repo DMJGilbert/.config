@@ -4,6 +4,16 @@ target-install
 .direnv
 .aim
 
+# Key material and decrypted secrets must never be committed.
+# Encrypted secrets/*.yaml ARE tracked — the pre-commit `sops-encrypted`
+# hook is what enforces they stay encrypted.
+keys.txt
+*.age
+*.dec
+*.decrypted
+secrets/*.plain.yaml
+secrets/*.dec.yaml
+
 # Obsidian Vault Protection
 # Prevent any vault content from being committed
 **/vault/

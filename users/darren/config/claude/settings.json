@@ -64,7 +64,6 @@
       "Bash(tr:*)",
       "Bash(touch:*)",
       "Bash(mkdir:*)",
-
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -82,7 +81,6 @@
       "Bash(git stash list:*)",
       "Bash(git config --get:*)",
       "Bash(git config --list:*)",
-
       "Bash(git add:*)",
       "Bash(git checkout -b:*)",
       "Bash(git branch -d:*)",
@@ -91,7 +89,6 @@
       "Bash(git stash apply:*)",
       "Bash(git fetch:*)",
       "Bash(git pull --rebase:*)",
-
       "Bash(gh pr view:*)",
       "Bash(gh pr list:*)",
       "Bash(gh pr status:*)",
@@ -105,7 +102,6 @@
       "Bash(gh run view:*)",
       "Bash(gh release list:*)",
       "Bash(gh release view:*)",
-
       "Bash(nix eval:*)",
       "Bash(nix search:*)",
       "Bash(nix flake show:*)",
@@ -119,7 +115,6 @@
       "Bash(nix-store --query:*)",
       "Bash(nix-store -q:*)",
       "Bash(nixfmt:*)",
-
       "Bash(alejandra:*)",
       "Bash(rustfmt:*)",
       "Bash(prettier:*)",
@@ -130,7 +125,6 @@
       "Bash(black:*)",
       "Bash(isort:*)",
       "Bash(ruff format:*)",
-
       "Bash(cargo check:*)",
       "Bash(cargo clippy:*)",
       "Bash(cargo fmt:*)",
@@ -154,13 +148,11 @@
       "Bash(pip show:*)",
       "Bash(poetry show:*)",
       "Bash(uv pip list:*)",
-
       "Bash(man:*)",
       "Bash(tldr:*)",
       "Bash(curl --head:*)",
       "Bash(curl -I:*)",
       "Bash(http --headers:*)",
-
       "Read",
       "Edit",
       "Write",
@@ -174,9 +166,7 @@
       "AskUserQuestion",
       "ListMcpResourcesTool",
       "ReadMcpResourceTool",
-
       "Skill(*)",
-
       "mcp__memory__*",
       "mcp__context7__*",
       "mcp__sequential-thinking__*",
@@ -195,7 +185,6 @@
       "Bash(awk:*)",
       "Bash(xargs:*)",
       "Bash(tee:*)",
-
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(git push origin:*)",
@@ -212,7 +201,6 @@
       "Bash(git remote remove:*)",
       "Bash(git restore:*)",
       "Bash(git switch:*)",
-
       "Bash(gh pr create:*)",
       "Bash(gh pr merge:*)",
       "Bash(gh pr close:*)",
@@ -224,7 +212,6 @@
       "Bash(gh release create:*)",
       "Bash(gh release delete:*)",
       "Bash(gh api:*)",
-
       "Bash(nh:*)",
       "Bash(darwin-rebuild:*)",
       "Bash(nixos-rebuild:*)",
@@ -234,7 +221,6 @@
       "Bash(nix-collect-garbage:*)",
       "Bash(nix flake update:*)",
       "Bash(nix-env:*)",
-
       "Bash(cargo build:*)",
       "Bash(cargo test:*)",
       "Bash(cargo run:*)",
@@ -268,21 +254,17 @@
       "Bash(brew install:*)",
       "Bash(brew uninstall:*)",
       "Bash(brew upgrade:*)",
-
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(podman:*)",
-
       "Bash(sudo:*)",
       "Bash(doas:*)",
       "Bash(kill:*)",
       "Bash(pkill:*)",
       "Bash(killall:*)",
-
       "Bash(curl:*)",
       "Bash(wget:*)",
       "Bash(http:*)",
-
       "Bash(open:*)",
       "Bash(xdg-open:*)"
     ],
@@ -299,7 +281,6 @@
       "Bash(git push --force master:*)",
       "Bash(git push -f main:*)",
       "Bash(git push -f master:*)",
-
       "Bash(dd:*)",
       "Bash(mkfs:*)",
       "Bash(fdisk:*)",
@@ -366,5 +347,86 @@
       "allowUnixSockets": ["/nix/var/nix/daemon-socket/socket"],
       "allowLocalBinding": true
     }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/session-start.sh default",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/session-start.sh compact",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"About to compact. Save any critical in-progress context or task state now — compaction will replace this conversation history.\"}'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"' 2>/dev/null || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/format-file.sh",
+            "statusMessage": "Formatting...",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/quality-gate.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/quality-gate.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
   }
 }

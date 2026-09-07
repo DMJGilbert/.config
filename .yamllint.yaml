@@ -1,0 +1,17 @@
+---
+# The pre-commit hook runs yamllint with --strict, so warnings are fatal.
+# These rules produce only noise for this repo.
+extends: default
+
+rules:
+  # GitHub Actions uses `on:` as a mapping key, which yamllint reads as the
+  # boolean `on`. Keys are not values, so don't check them.
+  truthy:
+    check-keys: false
+  # This repo consistently uses a single space before inline comments.
+  comments:
+    min-spaces-from-content: 1
+  # Home Assistant templates and generated YAML legitimately run long.
+  line-length: disable
+  # Not every YAML file here is a stream document needing an explicit ---.
+  document-start: disable

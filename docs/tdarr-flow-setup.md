@@ -4,7 +4,7 @@ Target: Transcode all media to H.265 using VAAPI hardware acceleration, with HDR
 
 ## URLs
 
-- Tdarr UI: https://tdarr.gilberts.one
+- Tdarr UI: <https://tdarr.gilberts.one>
 - Media paths (inside container): `/media/movies`, `/media/tv`
 - Transcode cache (inside container): `/temp`
 

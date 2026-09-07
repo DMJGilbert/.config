@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
+set -uo pipefail
 
+# Total CPU across all processes, normalised by thread count. Summing every
+# pcpu column in one awk pass replaces the previous two grep/sed/awk pipelines
+# plus two `whoami` forks — this runs on a timer, so fork count matters.
 CORE_COUNT=$(sysctl -n machdep.cpu.thread_count)
-CPU_INFO=$(ps -eo pcpu,user)
-CPU_SYS=$(echo "$CPU_INFO" | grep -v $(whoami) | sed 1d | awk '{sum+=$1} END {print sum/(100.0 * '"$CORE_COUNT"')}')
-CPU_USER=$(echo "$CPU_INFO" | grep $(whoami) | awk '{sum+=$1} END {print sum/(100.0 * '"$CORE_COUNT"')}')
+LABEL=$(ps -eo pcpu | awk -v cores="$CORE_COUNT" '
+    NR > 1 { sum += $1 }
+    END    { printf "%02.0f", (cores > 0 ? sum / cores : 0) }
+')
 
-sketchybar -m --set cpu_percent label=$(echo "$CPU_SYS $CPU_USER" | awk '{printf "%02.0f\n", ($1 + $2)*100}')%
+sketchybar -m --set cpu_percent label="${LABEL:-00}%"

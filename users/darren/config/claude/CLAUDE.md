@@ -112,7 +112,7 @@ Domain agents inherit all tools. Review agents: security-reviewer has Read, Glob
 | Ultracode | `ultracode` keyword in prompt  | Highly parallelisable COMPLEX tasks; triggers workflow mode |
 | Max       | Session-only                   | One-off deep analysis (resets after turn)                   |
 
-Default model is Opus 4.8. Review agents also run Opus 4.8; domain agents run Sonnet (resolves to Sonnet 5).
+Default model is Opus 5 (`claude-opus-5`). Review agents also run Opus 5; domain agents run Sonnet 5 (`claude-sonnet-5`).
 
 ## Build Commands
 

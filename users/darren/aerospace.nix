@@ -23,11 +23,6 @@ lib.mkIf pkgs.stdenv.isDarwin {
         executable = true;
       };
 
-      ".config/sketchybar/plugins/aerospace.sh" = {
-        source = ./config/sketchybar/plugins/aerospace.sh;
-        executable = true;
-      };
-
       ".config/sketchybar/plugins/aerospace_refresh.sh" = {
         source = ./config/sketchybar/plugins/aerospace_refresh.sh;
         executable = true;

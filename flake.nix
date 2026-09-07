@@ -10,7 +10,10 @@
   };
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    hardware.url = "github:NixOS/nixos-hardware";
+    hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -95,7 +98,24 @@
       });
 
     # pre-commit hooks configuration shared across all systems
-    preCommitChecks = forAllSystems (system:
+    preCommitChecks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      # secrets/claude.yaml.template documents a workflow that writes plaintext
+      # into secrets/*.yaml before `sops -e -i` encrypts it. A commit inside
+      # that window would publish real tokens, so refuse any secrets/*.yaml
+      # that lacks a sops metadata block. The .template files are plaintext by
+      # design and don't match (they end in .template, not .yaml).
+      checkSopsEncrypted = pkgs.writeShellScript "check-sops-encrypted" ''
+        status=0
+        for f in "$@"; do
+          if ! grep -q '^sops:' "$f"; then
+            echo "ERROR: $f is not sops-encrypted — run: sops -e -i $f" >&2
+            status=1
+          fi
+        done
+        exit $status
+      '';
+    in
       pre-commit-hooks.lib.${system}.run {
         src = ./.;
         hooks = {
@@ -105,6 +125,16 @@
           };
           statix.enable = true;
           deadnix.enable = true;
+          # Scans staged files for credential-shaped strings.
+          ripsecrets.enable = true;
+          sops-encrypted = {
+            enable = true;
+            name = "sops-encrypted";
+            description = "Refuse unencrypted secrets/*.yaml";
+            entry = "${checkSopsEncrypted}";
+            files = "^secrets/.*\\.yaml$";
+            language = "system";
+          };
           # shellcheck fires per-staged-file, so legacy scripts only get
           # caught when next edited (progressive improvement).
           shellcheck.enable = true;
@@ -112,6 +142,9 @@
             enable = true;
             # secrets/ contains sops-encrypted YAML with long ciphertext lines
             excludes = ["^secrets/"];
+            # The hook runs yamllint with --strict, so warnings are fatal.
+            # yamllint does not auto-discover a config here, so pass it.
+            settings.configPath = ".yamllint.yaml";
           };
         };
       });
