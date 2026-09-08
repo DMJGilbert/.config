@@ -19,9 +19,12 @@ keys:
   # left DARREN_PASSWORD (backing hashedPasswordFile) dependent on a key inside
   # a user home directory on a host intended to run impermanent.
   #
-  # Regenerate with:
-  #   nix shell nixpkgs#ssh-to-age -c ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub
-  - &rubecula age1yte4jsfn909gfg6tv68cqhkkaxa0cqrervy2qzmaqy6m5gt6t9nqjdfry4
+  # This MUST be rubecula's own host key. The authoritative value is what
+  # sops-install-secrets logs at activation:
+  #   'Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint ...'
+  # Deriving it on a different machine yields a different key and decryption
+  # fails with 'Error getting data key: 0 successful groups required, got 0'.
+  - &rubecula age1rje6vv9xmkclq5w9f7pet08z5d3ykpzj9aluxjsje9gggmsqwfzs23f4nm
 
 creation_rules:
   # Both files are decrypted on rubecula: secrets/rubecula.yaml for system
