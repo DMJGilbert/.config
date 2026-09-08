@@ -40,14 +40,15 @@ nixpkgs.lib.nixosSystem {
       (../hardware + "/${name}.nix")
       (../machines + "/${name}.nix")
       home-manager.nixosModules.home-manager
-      {
+      ({pkgs, ...}: {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          backupFileExtension = "bak";
+          # Timestamped backups rather than a fixed ".bak" — see lib/hm-backup.nix.
+          backupCommand = "${import ./hm-backup.nix pkgs}/bin/hm-backup-file";
           users.${user} = homeManagerUser;
         };
-      }
+      })
     ]
     ++ extraUserModules
     ++ extraModules;

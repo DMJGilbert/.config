@@ -203,6 +203,19 @@
         home-darren-rubecula-eval = pkgs.runCommand "home-darren-rubecula-eval" {
           drvPath = builtins.unsafeDiscardStringContext homeConfigurations.rubecula.activationPackage.drvPath;
         } "echo rubecula drv: $drvPath > $out";
+
+        # The same eval-only trick for the OS-level closures. Without these,
+        # `nix flake check` gates only home-manager: darwinConfigurations isn't
+        # a standard flake output so it is skipped entirely, and
+        # nixosConfigurations is evaluated but never forced. That left the whole
+        # machines/ and modules/services/ tree with no CI gate.
+        darwin-ryukyu-eval = pkgs.runCommand "darwin-ryukyu-eval" {
+          drvPath = builtins.unsafeDiscardStringContext inputs.self.darwinConfigurations.ryukyu.system.drvPath;
+        } "echo ryukyu system drv: $drvPath > $out";
+
+        nixos-rubecula-eval = pkgs.runCommand "nixos-rubecula-eval" {
+          drvPath = builtins.unsafeDiscardStringContext inputs.self.nixosConfigurations.rubecula.config.system.build.toplevel.drvPath;
+        } "echo rubecula system drv: $drvPath > $out";
       }
       # Full activation-package build only on the matching runner — the
       # derivation contains platform-native binaries that can't cross-build.

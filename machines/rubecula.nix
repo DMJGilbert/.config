@@ -60,6 +60,24 @@
       };
       # Uncomment after migrating to disko btrfs layout (see disko/rubecula.nix):
       # impermanence.enable = true;
+      backup = {
+        enable = true;
+        # No second disk in this machine today, so the repository shares the
+        # system disk. That covers a bad deploy, a deleted directory or app
+        # corruption — but NOT the disk failing. Move this to a separate device
+        # and drop acknowledgeSameDisk when one is available.
+        repository = "/var/backup/restic";
+        acknowledgeSameDisk = true;
+        passwordFile = config.sops.secrets."RESTIC_PASSWORD".path;
+      };
+      # Surfaces any systemd unit failure as a phone notification. Added after
+      # the wildcard certificate's renewal unit failed nightly for 27 days
+      # without anyone noticing.
+      failureNotify = {
+        enable = true;
+        notifyService = "notify/mobile_app_hatchling";
+        tokenFile = config.sops.templates."hass-notify-env".path;
+      };
       technitiumDnsServer = {
         enable = true;
         blockLists = [

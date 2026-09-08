@@ -27,6 +27,14 @@
       "QBITTORRENT_USERNAME" = {sopsFile = ../secrets/rubecula.yaml;};
       "QBITTORRENT_PASSWORD" = {sopsFile = ../secrets/rubecula.yaml;};
       "TECHNITIUM_API_KEY" = {sopsFile = ../secrets/rubecula.yaml;};
+      # restic repository encryption key. Read by restic-backups-state.service,
+      # which runs as root. Losing this makes existing backups unreadable, so
+      # keep a copy somewhere that is not rubecula.
+      "RESTIC_PASSWORD" = {
+        sopsFile = ../secrets/rubecula.yaml;
+        mode = "0400";
+        owner = "root";
+      };
       # System-level HASS_TOKEN for homepage template — uses key= to avoid name collision
       # with the user-level "HASS_TOKEN" declared in users/darren/sops.nix
       "HASS_TOKEN_SYSTEM" = {
@@ -80,6 +88,13 @@
           NAMECHEAP_API_KEY=${config.sops.placeholder."NAMECHEAP_API_KEY"}
         '';
         owner = "acme";
+      };
+      # Read by notify-failure@.service, which runs under DynamicUser — root
+      # ownership with the default 0400 is correct here, systemd passes it in.
+      "hass-notify-env" = {
+        content = ''
+          HASS_TOKEN=${config.sops.placeholder."HASS_TOKEN_SYSTEM"}
+        '';
       };
       "wg-mullvad.conf" = {
         content = ''

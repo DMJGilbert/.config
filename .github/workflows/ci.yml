@@ -18,11 +18,21 @@ jobs:
     name: Lint & Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
-      - uses: DeterminateSystems/nix-installer-action@v21
+      - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a # v21
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      # magic-nix-cache was deprecated and stopped working on 2025-02-01 when
+      # GitHub retired the cache API it relied on. cache-nix-action uses the
+      # current Actions cache and needs no external account.
+      - uses: nix-community/cache-nix-action@8351fb9f51c580c96c509987ebb99e38aed956ce # v5.2.1
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size: 5G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-created: 604800
 
       - name: Check formatting, linting, and markdown
         run: nix build .#checks.x86_64-linux.formatting .#checks.x86_64-linux.pre-commit .#checks.x86_64-linux.markdown
@@ -35,11 +45,21 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
-      - uses: DeterminateSystems/nix-installer-action@v21
+      - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a # v21
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      # magic-nix-cache was deprecated and stopped working on 2025-02-01 when
+      # GitHub retired the cache API it relied on. cache-nix-action uses the
+      # current Actions cache and needs no external account.
+      - uses: nix-community/cache-nix-action@8351fb9f51c580c96c509987ebb99e38aed956ce # v5.2.1
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size: 5G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-created: 604800
 
       - name: Run flake check
         run: nix flake check

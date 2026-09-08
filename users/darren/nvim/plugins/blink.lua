@@ -58,7 +58,7 @@ require("blink.cmp").setup({
 
 	sources = {
 		-- Default source list for all filetypes; lazydev auto-filters to Lua only
-		default = { "lazydev", "lsp", "path", "snippets", "buffer", "crates", "minuet" },
+		default = { "lazydev", "lsp", "path", "snippets", "buffer", "minuet" },
 
 		providers = {
 			-- lazydev: full Neovim API type annotations for Lua config files
@@ -85,13 +85,8 @@ require("blink.cmp").setup({
 				max_items = 5,
 				score_offset = -5,
 			},
-			-- crates.nvim via blink-compat (Rust Cargo.toml completions)
-			crates = {
-				name = "crates",
-				module = "blink.compat.source",
-				score_offset = -1,
-				opts = {},
-			},
+			-- crates.nvim now registers as a real LSP (see simple.lua), so its
+			-- completions arrive through the `lsp` source above.
 			-- Local LLM FIM completions via minuet-ai.nvim + Ollama
 			minuet = {
 				name = "minuet",

@@ -36,14 +36,23 @@ in {
     '';
     packages = with pkgs;
       [
+        # Run any nixpkgs binary without installing it: `, cowsay hello`.
+        # Needs the nix-index database (see programs.nix-index below).
+        comma
         # neovim
         tree-sitter
         luarocks
-        nil
+        nixd # Nix LSP with flake evaluation + option-name completion
+        taplo # TOML LSP — Cargo.toml has no language server without it
         alejandra
+        # Reads the global treefmt.toml written above (found by walk-up in any
+        # project) and is what quality-gate.sh shells out to. Without it on
+        # PATH both were silently no-ops.
+        treefmt
         shellcheck
         shfmt
         statix
+        deadnix
         biome
         lua-language-server
         vscode-langservers-extracted
@@ -68,6 +77,12 @@ in {
         rustfmt
         clippy
         cargo-nextest
+
+        # PDF extraction. Without these the Read tool cannot open a PDF at all,
+        # which previously led to hand-rolling a zlib stream decompressor to
+        # scrape a spec document.
+        poppler-utils # pdftoppm, pdftotext
+        mupdf # mutool
 
         # CLI tools
         jq # JSON processing
@@ -115,6 +130,27 @@ in {
   manual.manpages.enable = false;
   programs = {
     bat.enable = true;
+    # Shell history in SQLite, searchable across sessions.
+    atuin = {
+      enable = true;
+      enableZshIntegration = true;
+      # zsh.nix binds Up/Down to up-line-or-beginning-search; atuin would
+      # otherwise take the Up arrow for itself.
+      flags = ["--disable-up-arrow"];
+      settings = {
+        style = "compact";
+        inline_height = 20;
+        # Nix owns the version; don't nag about upstream releases.
+        update_check = false;
+      };
+    };
+    # `nix-index` answers "which package provides this file"; `comma` (,) runs
+    # a binary straight from nixpkgs without installing it. Build the index
+    # once with `nix-index`, then refresh it occasionally.
+    nix-index = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     direnv = {
       enable = true;
       nix-direnv.enable = true;
@@ -134,6 +170,10 @@ in {
       defaultOptions = ["--height 40%" "--border"];
       fileWidget.command = "fd --type f --hidden --follow --exclude .git";
       changeDirWidget.command = "fd --type d --hidden --follow --exclude .git";
+      # Atuin owns Ctrl-R: it searches a SQLite history with directory, exit
+      # code and duration, where fzf's widget only fuzzy-matches .zsh_history.
+      # fzf keeps Ctrl-T (files) and Alt-C (cd).
+      historyWidget.zsh.command = "";
     };
     ssh = {
       enable = true;

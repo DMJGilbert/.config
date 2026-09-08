@@ -3,8 +3,16 @@
 -- Treesitter context
 require("treesitter-context").setup({})
 
--- Crates
-require("crates").setup({})
+-- Crates. Both the completion source and the in-process LSP default to OFF,
+-- so setup({}) registered nothing and Cargo.toml completion never worked.
+require("crates").setup({
+	lsp = {
+		enabled = true,
+		actions = true,
+		completion = true,
+		hover = true,
+	},
+})
 
 -- Todo comments
 require("todo-comments").setup({
@@ -23,11 +31,6 @@ require("todo-comments").setup({
 	},
 })
 vim.keymap.set("n", "<leader>t", ":TodoTelescope keywords=TODO,FIX<cr>", { desc = "Open TODO list" })
-
--- Barbecue
-require("barbecue").setup({
-	theme = "catppuccin",
-})
 
 -- Undotree
 vim.keymap.set("n", "<leader>u", function()

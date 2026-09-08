@@ -35,13 +35,13 @@ require("flutter-tools").setup({
 	},
 
 	lsp = {
-		-- flutter-tools manages Dart LSP (replaces dartls) to get Flutter SDK extensions
-		-- including colour decorations, widget guides, and flutter-specific completions
-		color = {
-			enabled = true,
-			virtual_text = true,
-			virtual_text_str = "■",
-		},
+		-- flutter-tools manages the Dart LSP (which is why dartls is absent from
+		-- lsp.lua's server list) for Flutter SDK extensions and widget guides.
+		--
+		-- Colour decorations are NOT configured here: Neovim 0.12 enables
+		-- document colours natively for every server, and flutter-tools' own
+		-- `color` option is deprecated against it. The ■ style is set once,
+		-- LSP-wide, in plugins/lsp.lua.
 		capabilities = require("blink.cmp").get_lsp_capabilities(),
 		settings = {
 			showTodos = true,

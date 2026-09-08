@@ -31,10 +31,10 @@ export PLUGINS_DIR="$HOME/.config/sketchybar/plugins"
 # Workspace definitions: key -> icon
 # W = Work, R = Reference, C = Communication, P = Personal, F = Fun
 declare -A workspace_icons=(
-    ["W"]=""
-    ["R"]=""
+    ["W"]=""
+    ["R"]=""
     ["C"]="󰍡"
-    ["P"]=""
+    ["P"]=""
     ["F"]="󰝚"
 )
 # Fallback monitor per workspace, used only when aerospace doesn't report one.

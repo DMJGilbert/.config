@@ -17,13 +17,11 @@ tools:
   - mcp__memory__aim_memory_get
   - mcp__context7__resolve-library-id
   - mcp__context7__query-docs
-  - mcp__sequential-thinking__sequentialthinking
   - Write
   - Edit
 mcpServers:
   - memory
   - context7
-  - sequential-thinking
 memory: user
 ---
 
@@ -67,7 +65,7 @@ After research, brainstorm multiple approaches.
 
 ### Output
 
-Present options with trade-offs for the planner to evaluate.
+Present options with trade-offs for the PLAN phase to evaluate.
 
 ## Constraints
 
@@ -75,7 +73,7 @@ Present options with trade-offs for the planner to evaluate.
 - **No execution**: Do not run code or tests
 - **Focus**: Stay on the research/brainstorming task
 - **Memory writes allowed**: Can write/edit agent MEMORY.md files only
-- **MCP degradation**: If the context7, memory, or sequential-thinking MCP servers are unavailable, note it in your output and fall back — WebSearch/WebFetch for library docs, Grep/Read for prior context. Do not stall the phase on a missing server.
+- **MCP degradation**: If the context7 or memory MCP servers are unavailable, note it in your output and fall back — WebSearch/WebFetch for library docs, Grep/Read for prior context. Do not stall the phase on a missing server.
 
 ## Memory Workflow
 

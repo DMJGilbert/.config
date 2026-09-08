@@ -31,11 +31,6 @@ catppuccin.setup({
 			virtual_text = {},
 			underlines = {},
 		},
-		barbecue = {
-			dim_dirname = true,
-			bold_basename = true,
-			dim_context = false,
-		},
 		hop = false,
 		cmp = false,
 		blink_cmp = true,

@@ -19,6 +19,20 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Claude Code delivers the hook payload as JSON on stdin. When a Stop hook
+# blocks (exit 2), the next Stop carries stop_hook_active=true — if we block
+# again on that one we loop until the harness force-quits the turn, which is
+# exactly what happened the first time these hooks went live. Always succeed
+# while the flag is set: the gate has already had its say this turn.
+if [ ! -t 0 ]; then
+  hook_input=$(cat 2>/dev/null || true)
+  if [ -n "$hook_input" ] && command -v jq >/dev/null 2>&1; then
+    if [ "$(printf '%s' "$hook_input" | jq -r '.stop_hook_active // false' 2>/dev/null)" = "true" ]; then
+      exit 0
+    fi
+  fi
+fi
+
 ENFORCE_MODE="${QUALITY_GATE_ENFORCE:-0}"
 VERBOSE="${QUALITY_GATE_VERBOSE:-0}"
 
@@ -142,16 +156,18 @@ fi
 
 # === Report ===
 if ((${#failed_tools[@]} > 0)); then
-  echo ""
-  echo "============================================================"
-  echo "Quality gate: ${#failed_tools[@]} failure(s)"
-  echo "============================================================"
-  for tool in "${failed_tools[@]}"; do
-    echo "  ✗ $tool"
-  done
-  echo ""
-  echo "--- detailed output ---"
-  printf '%s\n' "${logs[@]}"
+  {
+    echo ""
+    echo "============================================================"
+    echo "Quality gate: ${#failed_tools[@]} failure(s)"
+    echo "============================================================"
+    for tool in "${failed_tools[@]}"; do
+      echo "  ✗ $tool"
+    done
+    echo ""
+    echo "--- detailed output ---"
+    printf '%s\n' "${logs[@]}"
+  } >&2
 
   if [[ $ENFORCE_MODE == "1" ]]; then
     exit 1

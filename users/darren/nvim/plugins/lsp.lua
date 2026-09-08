@@ -12,8 +12,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 		if client then
-			client.server_capabilities.document_formatting = true
-
 			-- Enable inlay hints for this buffer if supported
 			if client:supports_method("textDocument/inlayHint") then
 				-- Schedule to ensure LSP is fully ready
@@ -22,20 +20,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				end)
 			end
 		end
-		-- LSP keymaps
-		local opts = { buffer = args.buf }
-		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-		vim.keymap.set("n", "<leader>z", vim.lsp.buf.code_action, opts)
-	end,
-})
-
--- Ensure inlay hints refresh when entering buffers
-vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-	callback = function(args)
-		if vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }) then
-			vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
-		end
+		-- Neovim 0.11+ already binds gri/grn/gra/grr/grt natively. Binding gi,
+		-- <leader>rn and <leader>z alongside them left every native gr* key
+		-- waiting out timeoutlen for a longer match that never came.
+		-- Nothing to add here -- the defaults are the same functions.
 	end,
 })
 
@@ -216,10 +204,27 @@ vim.lsp.config.tailwindcss = {
 }
 
 -- Nix Language Server
-vim.lsp.config.nil_ls = {
-	cmd = { "nil" },
+-- nixd evaluates the flake, so it completes nixpkgs / home-manager / nix-darwin
+-- option names and paths -- which is most of what gets written in this repo.
+-- nil_ls only does syntax and scope analysis.
+vim.lsp.config.nixd = {
+	cmd = { "nixd" },
 	filetypes = { "nix" },
 	root_markers = { "flake.nix", "default.nix", "shell.nix", ".git" },
+	capabilities = capabilities,
+	settings = {
+		nixd = {
+			formatting = { command = { "alejandra" } },
+			nixpkgs = { expr = "import <nixpkgs> { }" },
+		},
+	},
+}
+
+-- TOML. Without this, Cargo.toml opens with no language server at all.
+vim.lsp.config.taplo = {
+	cmd = { "taplo", "lsp", "stdio" },
+	filetypes = { "toml" },
+	root_markers = { "Cargo.toml", ".taplo.toml", ".git" },
 	capabilities = capabilities,
 }
 
@@ -235,23 +240,6 @@ vim.lsp.config.yamlls = {
 			schemas = {
 				["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
 			},
-		},
-	},
-}
-
--- Dart Language Server (bundled with Flutter/Dart SDK)
-vim.lsp.config.dartls = {
-	cmd = { "dart", "language-server", "--protocol=lsp" },
-	filetypes = { "dart" },
-	root_markers = { "pubspec.yaml", ".git" },
-	capabilities = capabilities,
-	settings = {
-		dart = {
-			showTodos = true,
-			completeFunctionCalls = true,
-			renameFilesWithClasses = "prompt",
-			enableSnippets = true,
-			updateImportsOnRename = true,
 		},
 	},
 }
@@ -276,9 +264,10 @@ local servers = {
 	"bashls",
 	"clangd",
 	"tailwindcss",
-	"nil_ls",
+	"nixd",
+	"taplo",
 	"yamlls",
-	"dartls",
+	-- dartls is configured by flutter-tools (see plugins/flutter.lua)
 }
 
 -- Enable sourcekit only on macOS
@@ -289,11 +278,16 @@ end
 -- Enable all configured LSP servers
 vim.lsp.enable(servers)
 
+-- Document colours are on by default in 0.12 for every LSP that supports them.
+-- Only the presentation needs setting; `style` as a string is used as the
+-- virtual-text marker, matching the ■ flutter-tools used to draw for Dart alone.
+vim.lsp.document_color.enable(true, {}, { style = "■" })
+
 -- Configure diagnostic display
 vim.diagnostic.config({
 	virtual_text = true,
 	signs = false,
 	underline = true,
-	update_in_insert = true, -- replaces deprecated update_on_insert
+	update_in_insert = false, -- recomputing on every keystroke is wasted work
 	severity_sort = true,
 })

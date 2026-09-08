@@ -227,6 +227,36 @@ in
             };
             mobile_app = {};
             frontend.themes = "!include ${theme}/${theme.pname}.yaml";
+
+            # Recorder was previously undeclared, so retention ran on HA's
+            # defaults and /var/lib/hass reached 3.9GB — 76% of everything worth
+            # backing up on this host. Declaring it makes the trade-off visible.
+            #
+            # purge_keep_days matches the upstream default: the size problem is
+            # not how long rows are kept, it is which entities write them.
+            # Zigbee link-quality and RSSI sensors update on every mesh poll and
+            # have essentially no historical value, so they are excluded rather
+            # than shortening history for everything.
+            #
+            # To find the current worst offenders:
+            #   sudo sqlite3 /var/lib/hass/home-assistant_v2.db \
+            #     "SELECT m.entity_id, COUNT(*) c FROM states s
+            #      JOIN states_meta m ON s.metadata_id = m.metadata_id
+            #      GROUP BY m.entity_id ORDER BY c DESC LIMIT 25;"
+            recorder = {
+              purge_keep_days = 10;
+              auto_purge = true;
+              # Batch writes; the default of 1s is a commit per state change.
+              commit_interval = 5;
+              exclude = {
+                entity_globs = [
+                  "sensor.*_linkquality"
+                  "sensor.*_rssi"
+                  "sensor.*_last_seen"
+                ];
+              };
+            };
+
             history = {};
             config = {};
             system_health = {};

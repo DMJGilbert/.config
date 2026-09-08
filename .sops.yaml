@@ -10,10 +10,25 @@
 # To edit secrets: sops secrets/claude.yaml
 
 keys:
+  # Darren's personal key (~/.config/sops/age/keys.txt). Used on ryukyu, and
+  # for editing secrets from a laptop.
   - &darren age1t0xygdnmfynt05td76zwth6hwrjj05jm39elmayasqvdpgdh9y3q2zz8g3
+  # rubecula's SSH host key, converted with ssh-to-age. Added so the server can
+  # decrypt its own secrets without reaching into /home — previously the only
+  # recipient was &darren, which made `sops.age.sshKeyPaths` dead config and
+  # left DARREN_PASSWORD (backing hashedPasswordFile) dependent on a key inside
+  # a user home directory on a host intended to run impermanent.
+  #
+  # Regenerate with:
+  #   nix shell nixpkgs#ssh-to-age -c ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub
+  - &rubecula age1yte4jsfn909gfg6tv68cqhkkaxa0cqrervy2qzmaqy6m5gt6t9nqjdfry4
 
 creation_rules:
+  # Both files are decrypted on rubecula: secrets/rubecula.yaml for system
+  # services, and secrets/claude.yaml for HASS_TOKEN_SYSTEM (machines/rubecula-sops.nix)
+  # plus the user-level secrets in users/darren/sops.nix.
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
           - *darren
+          - *rubecula

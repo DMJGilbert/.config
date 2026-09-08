@@ -1,9 +1,8 @@
----
-name: complexity-gate
-description: Assess task complexity to determine workflow. Use at the start of tasks to route TRIVIAL/SIMPLE to direct action or MEDIUM/COMPLEX to strict RIPER.
-allowed-tools: Read, Grep, Glob
-argument-hint: "[task description]"
----
+# Complexity & Execution-Mode Reference
+
+Supporting reference for the `riper` skill. Not a skill itself — it is
+consulted as documentation (see `../SKILL.md` GATE and Execution Mode),
+so it no longer carries a description into every system prompt.
 
 # Complexity Gate
 

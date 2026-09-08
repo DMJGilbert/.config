@@ -51,9 +51,8 @@
         type = "lua";
         config = builtins.readFile ./plugins/blink.lua;
       }
-      blink-compat
 
-      # Rust Cargo.toml completions (wired into blink via blink-compat)
+      # Rust Cargo.toml completions (registers as an LSP; see plugins/simple.lua)
       crates-nvim
 
       # LSP — native Neovim 0.11 API; lazydev enhances Lua completions
@@ -62,6 +61,15 @@
         plugin = lazydev-nvim;
         type = "lua";
         config = builtins.readFile ./plugins/lazydev.lua + builtins.readFile ./plugins/lsp.lua;
+      }
+
+      # Flutter — owns the Dart LSP (so dartls is NOT in lsp.lua's server list),
+      # and adds hot-reload-on-save plus colour decorations. Must load after
+      # the LSP block above, since its config calls blink's capabilities helper.
+      {
+        plugin = flutter-tools-nvim;
+        type = "lua";
+        config = builtins.readFile ./plugins/flutter.lua;
       }
 
       # Linting — wires up eslint_d, statix, shellcheck
@@ -79,7 +87,6 @@
       }
       telescope-fzf-native-nvim
       telescope-ui-select-nvim
-      telescope-file-browser-nvim
       lazygit-nvim
       todo-comments-nvim
 
@@ -111,8 +118,6 @@
         config = builtins.readFile ./plugins/neotree.lua;
       }
       nvim-web-devicons
-      barbecue-nvim
-      nvim-navic
 
       # Fast motion
       {

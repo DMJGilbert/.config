@@ -40,5 +40,5 @@ highlight() {
 }
 
 sketchybar -m \
-    --set network_down label=" $(format_rate "$DOWN")" icon.highlight="$(highlight "$DOWN")" \
-    --set network_up label=" $(format_rate "$UP")" icon.highlight="$(highlight "$UP")"
+    --set network_down label=" $(format_rate "$DOWN")" icon.highlight="$(highlight "$DOWN")" \
+    --set network_up label=" $(format_rate "$UP")" icon.highlight="$(highlight "$UP")"

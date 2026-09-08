@@ -13,15 +13,12 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
     },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
     "obsidian": {
       "command": "uvx",
       "args": ["mcp-obsidian"],
       "env": {
         "OBSIDIAN_API_KEY": "${OBSIDIAN_API_KEY}",
+        "OBSIDIAN_PROTOCOL": "http",
         "OBSIDIAN_HOST": "${OBSIDIAN_HOST}",
         "OBSIDIAN_PORT": "${OBSIDIAN_PORT}"
       }

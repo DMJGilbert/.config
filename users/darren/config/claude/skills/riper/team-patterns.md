@@ -4,7 +4,7 @@ Reference for PLAN phase when deciding execution mode.
 
 ## Routing
 
-Execution-mode selection (`direct` / `subagent` / `team` / `workflow`) is canonical in `skills/complexity-gate/SKILL.md` (§ Execution Mode Selection). This file covers conventions specific to `team` mode.
+Execution-mode selection (`direct` / `subagent` / `team` / `workflow`) is canonical in `skills/riper/references/complexity.md` (§ Execution Mode Selection). This file covers conventions specific to `team` mode.
 
 ## Team Conventions
 
@@ -29,7 +29,7 @@ Execution-mode selection (`direct` / `subagent` / `team` / `workflow`) is canoni
 **Research Sprint** — Explore 3 different implementation approaches:
 
 - Teammates: 3x researcher (Sonnet), each explores one approach
-- Process: parallel exploration → reconvene → planner selects winner
+- Process: parallel exploration → reconvene → the lead selects winner
 
 **Bug Hunt** — Critical bug with unclear root cause:
 

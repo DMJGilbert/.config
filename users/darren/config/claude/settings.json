@@ -9,6 +9,7 @@
   },
   "alwaysThinkingEnabled": true,
   "awaySummaryEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "attribution": {
     "commit": "Co-Authored-By: Claude <noreply@anthropic.com>",
     "pr": "Generated with Claude Code"
@@ -31,6 +32,7 @@
       "Bash(tail:*)",
       "Bash(tree:*)",
       "Bash(grep:*)",
+      "Bash(sed -n:*)",
       "Bash(rg:*)",
       "Bash(fd:*)",
       "Bash(file:*)",
@@ -169,7 +171,6 @@
       "Skill(*)",
       "mcp__memory__*",
       "mcp__context7__*",
-      "mcp__sequential-thinking__*",
       "mcp__obsidian__*"
     ],
     "ask": [
@@ -302,12 +303,7 @@
       "Bash(chown -R:*)"
     ]
   },
-  "enabledMcpjsonServers": [
-    "memory",
-    "context7",
-    "sequential-thinking",
-    "obsidian"
-  ],
+  "enabledMcpjsonServers": ["memory", "context7", "obsidian"],
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -376,7 +372,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"systemMessage\": \"About to compact. Save any critical in-progress context or task state now — compaction will replace this conversation history.\"}'",
+            "command": "echo '{\"systemMessage\": \"About to compact. Save any critical in-progress context or task state now \u2014 compaction will replace this conversation history.\"}'",
             "timeout": 10
           }
         ]

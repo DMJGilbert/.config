@@ -30,10 +30,6 @@ scope.setup({
 					borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
 				}),
 			},
-			file_browser = {
-				theme = "ivy",
-				disable_devicons = true,
-			},
 		},
 		mappings = {
 			i = {
@@ -74,7 +70,6 @@ scope.setup({
 	},
 })
 scope.load_extension("fzf")
-scope.load_extension("file_browser")
 scope.load_extension("ui-select")
 scope.load_extension("lazygit")
 local colors = require("catppuccin.palettes").get_palette()
@@ -131,6 +126,8 @@ end, { desc = "Find issues" })
 vim.keymap.set("n", "<leader>b", function()
 	require("telescope.builtin").buffers()
 end, { desc = "Find open buffer" })
-vim.keymap.set("n", "gr", function()
+-- Override the native grr rather than binding a shorter `gr`. Binding `gr`
+-- made every native gr* key (grn/gra/gri/grt/grx) wait out timeoutlen.
+vim.keymap.set("n", "grr", function()
 	require("telescope.builtin").lsp_references()
 end, { desc = "Find LSP references" })

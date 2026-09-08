@@ -16,10 +16,10 @@ RESEARCH → INNOVATE → PLAN → [APPROVAL] → EXECUTE → REVIEW
 
 ### 0. GATE (self-assessment — always runs first)
 
-On invocation, run the `complexity-gate` assessment yourself before entering RESEARCH — do not assume the user pre-routed correctly:
+On invocation, run the complexity assessment yourself (see `references/complexity.md`) before entering RESEARCH — do not assume the user pre-routed correctly:
 
 - **TRIVIAL/SIMPLE** → state the score and downgrade to direct action; do not run the phase ladder on a one-liner.
-- **Live-system debugging** (feedback comes from a system the user operates — remote host, Home Assistant, hardware) → use the DIAGNOSE loop (see `complexity-gate` § DIAGNOSE Loop) instead of the full ladder.
+- **Live-system debugging** (feedback comes from a system the user operates — remote host, Home Assistant, hardware) → use the DIAGNOSE loop (see `references/complexity.md` § DIAGNOSE Loop) instead of the full ladder.
 - **MEDIUM/COMPLEX** → proceed to RESEARCH.
 
 ### Agent Hygiene (applies to every phase)
@@ -87,7 +87,7 @@ At every phase transition, persist the current phase + pointer to the approved p
 
 ### 3. PLAN
 
-**Agent**: planner (sonnet)
+**Runs inline** (the `planner` agent was removed — it was never spawned)
 **Purpose**: Create implementation specification
 
 **Actions**:
@@ -179,7 +179,7 @@ At every phase transition, persist the current phase + pointer to the approved p
 | .dart       | dart     |
 | .yaml (HA)  | hass     |
 
-**Execution mode** (determined in PLAN phase): see canonical table in `skills/complexity-gate/SKILL.md` (§ Execution Mode Selection). RIPER uses `subagent` / `team` / `workflow`; the `direct` mode bypasses RIPER and is selected by the gate before this skill runs.
+**Execution mode** (determined in PLAN phase): see canonical table in `references/complexity.md` (§ Execution Mode Selection). RIPER uses `subagent` / `team` / `workflow`; the `direct` mode bypasses RIPER and is selected by the gate before this skill runs.
 
 **Rule**: Follow the plan, don't improvise
 

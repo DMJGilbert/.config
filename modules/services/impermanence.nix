@@ -39,12 +39,15 @@ in
           # Infrastructure
           "/var/lib/acme"
           "/var/lib/tailscale"
-          "/var/lib/technitium-dns-server"
-          "/var/lib/uptime-kuma"
+          # These four run with systemd DynamicUser=true, which puts real state
+          # in /var/lib/private/<name> and leaves /var/lib/<name> as a symlink.
+          # Listing the symlink persists nothing — the service comes back empty.
+          "/var/lib/private/technitium-dns-server"
+          "/var/lib/private/uptime-kuma"
 
           # Home automation
           "/var/lib/hass"
-          "/var/lib/matter-server"
+          "/var/lib/private/matter-server"
           "/var/lib/zigbee2mqtt"
 
           # Media services
@@ -52,7 +55,7 @@ in
           "/var/lib/jellyfin"
           "/var/lib/sonarr"
           "/var/lib/radarr"
-          "/var/lib/prowlarr"
+          "/var/lib/private/prowlarr"
           # Capital B: the qBittorrent NixOS module's profileDir is
           # /var/lib/qBittorrent (see machines/rubecula.nix cross-seed
           # torrentDir). A lowercase entry silently persists nothing.

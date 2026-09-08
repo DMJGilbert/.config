@@ -1,5 +1,7 @@
 {...}: {
   imports = [
+    ./backup.nix
+    ./failure-notify.nix
     ./technitium-dns-server.nix
     ./home-assistant
     ./impermanence.nix
