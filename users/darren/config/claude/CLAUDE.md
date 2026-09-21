@@ -24,6 +24,7 @@ call made inline, not a skill to invoke.
 | `/code-review [--comment]` | Quick diff review; `--comment` posts inline PR comments                  |
 | `/riper-review [ref]`      | Branch-level review: 4 reviewers + lint, findings adversarially verified |
 | `/security-review`         | Security review of pending changes on the current branch                 |
+| `/comments [path]`         | Comment-hygiene pass on changed files; fans out workers, never commits   |
 
 ## Conventions
 
@@ -72,6 +73,41 @@ and never bundle a mutation with its own verification behind one approval.
 - Explicit error handling
 - No secrets in code
 - Keep functions focused
+
+## Comments
+
+**Comments are the exception, not the default.** Code that needs a comment to be
+followed is usually code that should be renamed or split instead. Reach for a
+better name, a smaller function, or an explicit type before reaching for a
+comment.
+
+**Write a comment only when it carries what the code cannot:**
+
+- Why a non-obvious choice was made — a workaround, an ordering constraint, a
+  performance trade-off. Name the constraint, not the change.
+- An invariant the type system cannot express (every Rust `unsafe` block states
+  what makes it sound)
+- A link to the spec, RFC, issue, or vendor bug that explains the code's shape
+- Public API documentation — rustdoc, TSDoc, dartdoc, Nix option `description`.
+  These are contracts, and are exempt from "by exception".
+
+**Never write a comment that:**
+
+- narrates the conversation that produced the code — "as requested", "per the
+  review", "switched this to X as discussed"
+- describes what the code used to do, or what was removed or renamed —
+  "previously a loop", "no longer uses foo", "was broken before"
+- restates the line beneath it — "increment the counter", "loop over users"
+- flags the change as new — "NEW:", "UPDATED:", "added support for…". Git
+  history is the changelog.
+- is commented-out code. Delete it; git remembers.
+
+**When editing**: a comment that no longer matches the code under it is a
+defect — update or delete it in the same change. Never leave stale comments
+behind a refactor.
+
+**Voice**: present tense, describing the code as it is, written for a reader who
+has never seen this diff and never will.
 
 ## Verification Gate
 

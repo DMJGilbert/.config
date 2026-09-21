@@ -28,6 +28,14 @@ paths:
 - Add assertions for invalid configurations
 - Document options with `description`
 
+## Comments
+
+Comments are the exception — see `CLAUDE.md` § Comments for what earns one.
+
+- Option `description` is the documentation surface (see Module Design); a `#` comment is not a substitute for it
+- Reserve `#` comments for what the expression cannot show: why an input is pinned, why an override exists, the upstream issue a workaround tracks — link it
+- Do not comment-narrate module structure; attribute names and `alejandra` formatting already carry it
+
 ## Security
 
 - Never store secrets in `.nix` files — use `sops-nix` or `agenix` for encrypted secrets management

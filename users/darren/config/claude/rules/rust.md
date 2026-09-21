@@ -28,6 +28,15 @@ paths:
 - Avoid unnecessary `Arc`/`Mutex`
 - Understand move vs copy semantics
 
+## Comments
+
+Comments are the exception — see `CLAUDE.md` § Comments for what earns one.
+
+- `///` and `//!` rustdoc on public items is a contract, not commentary — write it, and keep it accurate through refactors
+- Every `unsafe` block carries a `// SAFETY:` comment naming the invariant that makes it sound (see Security)
+- Every `#[allow(…)]` / `#[expect(…)]` carries a comment saying why the lint does not apply here
+- Prefer a named binding or an extracted function over a `//` comment explaining a dense expression
+
 ## Security
 
 - Minimise `unsafe` blocks; every `unsafe` requires a comment stating the invariant that makes it sound

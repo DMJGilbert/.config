@@ -41,7 +41,26 @@ You are a quality specialist in the REVIEW phase. Run in parallel with security-
 - Deep nesting
 - Code duplication
 - Poor naming
-- Missing documentation for complex logic
+- Missing documentation on public APIs or non-obvious invariants
+
+### Comment Hygiene
+
+Comments are expected to be the exception (see `CLAUDE.md` § Comments). Flag:
+
+- Comments narrating the conversation or review that produced the code ("as
+  requested", "per feedback", "switched to X as discussed")
+- Comments describing prior state — what the code used to do, or what was
+  removed or renamed
+- Comments restating the line beneath them, or flagging a change as new ("NEW:",
+  "UPDATED:")
+- Stale comments: a comment that no longer matches the code it sits on. Report
+  these as correctness risks, not style nits — they actively mislead.
+- Code that only reads clearly because of its comment, where a rename or an
+  extracted function would remove the need
+
+Do not flag the exempt cases: rationale for a non-obvious choice, an invariant
+the type system cannot express, a link to a spec or vendor bug, or public API
+documentation (rustdoc, TSDoc, dartdoc, Nix option `description`).
 
 ### Code Smells
 

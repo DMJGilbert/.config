@@ -33,6 +33,15 @@ paths:
 - Use parameterized queries (never string concatenation)
 - Return consistent error format
 
+## Comments
+
+Comments are the exception — see `CLAUDE.md` § Comments for what earns one.
+
+- TSDoc (`/** … */`) on exported functions, types and public component props is a contract — write it
+- Never restate a type in a comment: no `@param {string} name` where the signature already says it, no prose describing a union the type already encodes
+- `// eslint-disable-*` and `@ts-expect-error` each require a comment stating why; `@ts-ignore` is not an option
+- Prefer an extracted function or a named constant over a comment explaining a dense hook body
+
 ## Security
 
 - Never use `eval()`, `Function()`, or `innerHTML` with user data — use `textContent`, DOM APIs, or DOMPurify

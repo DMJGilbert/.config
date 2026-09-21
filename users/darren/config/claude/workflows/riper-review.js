@@ -32,7 +32,9 @@ const RUBRIC = `Severity rubric:
 const CATEGORIES = `Category (exactly one per finding):
 - logic: incorrect behaviour, security holes, edge cases, race conditions, missing error handling.
 - style: deviations from the established conventions of this repository, naming, formatting the
-  formatter does not cover, spelling mistakes in identifiers/comments/user-facing strings.
+  formatter does not cover, spelling mistakes in identifiers/comments/user-facing strings,
+  comment hygiene (comments that narrate the change or the conversation, describe prior state,
+  restate the code, or no longer match the code they sit on).
 - other: performance, maintainability, test-coverage gaps, tooling/config gaps, anything else.`;
 
 const SCOPE_SCHEMA = {
@@ -306,6 +308,17 @@ const REVIEWERS = [
     focus: `deviation from the stated branch intent, deviation from the established
 conventions of this repository, and spelling mistakes in identifiers, comments,
 commit-visible strings and user-facing text.
+
+Comment hygiene is part of this review. Comments are the exception in this
+codebase, and a diff is where bad ones enter. Flag any comment added or touched
+by this branch that narrates the change or the conversation behind it ("as
+requested", "per review", "switched to X"), describes what the code used to do,
+restates the line beneath it, or flags itself as new ("NEW:", "UPDATED:"). Flag
+commented-out code, and flag any comment the branch left stale — one whose
+surrounding code changed but whose text did not. Exempt: rationale for a
+non-obvious choice, invariants the type system cannot express (e.g. Rust
+\`unsafe\` soundness), links to a spec or vendor bug, and public API
+documentation.
 
 You have git access — additionally check for code that is BEHIND the base ref:
 a fix landed on \`${scope.base_ref}\` after this branch was cut and this branch still
