@@ -4,7 +4,7 @@
   pkgs,
   ...
 }:
-lib.mkIf pkgs.stdenv.isDarwin {
+lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
   # Install AeroSpace, JankyBorders, and SketchyBar
   home = {
     packages = with pkgs; [

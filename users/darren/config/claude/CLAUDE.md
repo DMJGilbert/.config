@@ -39,16 +39,24 @@ call made inline, not a skill to invoke.
 
 Derived from a month of transcript analysis; each line fixes a measured failure.
 
-**Read before Edit**: use the `Read` tool on any file you intend to modify, even
-when Bash would do. Bash is fine for _searching_. Three reasons: `Edit` refuses
-to apply against an unread file; path-scoped `rules/` only inject on `Read`/`Edit`,
-so `cat`/`sed -n` silently bypasses them; and `Edit` fails loudly where a
-`sed`/heredoc rewrite corrupts a file without saying anything.
+**Built-in tools first, for reads and searches as well as edits.** Read a file
+with `Read`, search with `Grep`, list paths with `Glob`, change a file with
+`Edit` or `Write` — not `cat`/`head`/`tail`/`sed -n`/`grep`/`find`. This
+overrides auto mode's standing instruction to prefer the shell, which is
+measurably wrong here: auto mode auto-approves the built-in tools without
+classifier review, while the same work through Bash matches an `ask` rule
+(`sed`, `find`, `awk`) or goes to the classifier, costing a permission prompt
+for no extra capability. Path-scoped `rules/` also only inject on `Read`/`Edit`,
+so `cat`/`sed -n` silently bypasses them, and `Edit` fails loudly where a
+`sed`/heredoc rewrite corrupts a file without saying anything. The
+`prefer-builtin-tools.sh` PreToolUse hook enforces this and names the tool to
+use; treat a denial from it as the instruction, not an obstacle. Bash stays the
+right tool for pipelines, git, builds, and anything with real shell logic.
 
 **Never rewrite a file wholesale to change part of it.** Use `Edit` for targeted
 changes. A heredoc rewrite silently destroys anything not retyped — invisible
-characters (Nerd Font glyphs, PUA codepoints) do not survive. If a whole-file
-rewrite is unavoidable, diff the byte-level result before moving on.
+characters (Nerd Font glyphs, PUA codepoints) do not survive. Heredocs belong in
+`$TMPDIR` or the scratchpad; the hook blocks one redirected at a tracked file.
 
 **Terminate diagnostic chains**: end multi-stage read-only pipelines with
 `|| echo "(none)"` or `; true`. A `grep` with no matches exits 1 and aborts the

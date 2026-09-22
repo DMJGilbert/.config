@@ -103,7 +103,7 @@ in {
         nh # Better nixos-rebuild/darwin-rebuild wrapper with diff output
         nvd # Show package version diffs between Nix generations
       ]
-      ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+      ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin (with pkgs; [
         # tools
         zoom-us
         slack

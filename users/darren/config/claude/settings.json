@@ -32,7 +32,6 @@
       "Bash(tail:*)",
       "Bash(tree:*)",
       "Bash(grep:*)",
-      "Bash(sed -n:*)",
       "Bash(rg:*)",
       "Bash(fd:*)",
       "Bash(file:*)",
@@ -384,6 +383,18 @@
           {
             "type": "command",
             "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"' 2>/dev/null || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/prefer-builtin-tools.sh",
             "timeout": 10
           }
         ]

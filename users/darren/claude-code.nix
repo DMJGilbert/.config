@@ -3,7 +3,7 @@
   pkgs,
   ...
 }:
-lib.mkIf pkgs.stdenv.isDarwin {
+lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
   home = {
     activation = {
       # Symlink agent memory directories into Obsidian vault.
