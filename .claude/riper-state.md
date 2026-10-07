@@ -1,7 +1,22 @@
 # RIPER state
 
 - Task: Home Assistant review + fixes (2026-10-07)
-- Phase: EXECUTE — Batches 1–3 deployed + verified (startup errors 27 → 9; orphans 126 → 13 kept: Dyson + calendar.family). hallway_lights_2 renamed. Next: Batch 4 (dashboard) needs re-plan.
+- Phase: EXECUTE Batch 4a done (views generated, proven equal; Robynne → Girls' Room incl. group.girls_room_lights + light.girls_room renamed live via Spook) — awaiting deploy. 4b next.
+- Previously: PLAN (Batch 4) approved. Batches 1–3 + icloud3 fix deployed + verified (startup errors 55 → 3).
+- Batch 4 decisions: approach A (Nix-generated room views from rooms.nix); accent → theme var(--accent-color)
+
+## Batch 4 plan
+
+4a (behaviour-preserving refactor, proven by semantic diff)
+
+1. dashboard/rooms.nix: 6 rooms (name, slug, icon, image, group, per-tab extras/filter overrides)
+2. dashboard/room-view.nix: function → view attrset (hero, chips, 4 tabs)
+3. default.nix: build views dir (generated room-_.yaml + home.yaml) ; delete views/room-_.yaml
+4. Verify: PyYAML-load old views vs generated JSON → identical (normalised)
+   4b (visual/robustness)
+5. dashboard.yaml: shared `pill_card` base template; theme vars for bg/text/disabled; accent → var(--accent-color); drop :host-context dark overrides
+6. esc() for calendar/media/team text; iOS-safe date parse; info_card eval() → button-card [[[ ]]] variables (home.yaml callers)
+
 - Follow-ups offered: icloud3 www/themes permissions, RoboVac IP, BILRESA replay guard + mode
 - Branch: wip (user choice)
 - Vault spec: write failed (Obsidian REST 127.0.0.1:27123 connection refused); plan held here

@@ -16,7 +16,26 @@
   moduleDir = ./.;
   dashboardYaml = pkgs.writeText "home.yaml" (builtins.readFile "${moduleDir}/dashboard.yaml");
   floorplanSvg = "${moduleDir}/floorplan.svg";
-  viewsDir = "${moduleDir}/views";
+
+  roomView = import ./dashboard/room-view.nix {inherit lib;};
+  rooms = import ./dashboard/rooms.nix {inherit (roomView) cards;};
+  # Room views are generated from rooms.nix; the home view is hand-written.
+  # dashboard.yaml includes each by its file name.
+  viewsDir = pkgs.linkFarm "hass-dashboard-views" (
+    [
+      {
+        name = "home.yaml";
+        path = ./views/home.yaml;
+      }
+    ]
+    ++ map (room: let
+      view = roomView.mkView room;
+    in {
+      name = "${view.path}.yaml";
+      path = (pkgs.formats.yaml {}).generate "${view.path}.yaml" view;
+    })
+    rooms
+  );
   templatesDir = "${moduleDir}/templates";
   popupsDir = "${moduleDir}/popups";
 
@@ -392,10 +411,10 @@ in
                   "light.lorraine_switch"
                 ];
               };
-              robynne_lights = {
-                name = "Robynne Lights";
+              girls_room_lights = {
+                name = "Girls' Room Lights";
                 entities = [
-                  "light.robynne"
+                  "light.girls_room"
                   "light.fairy_lights"
                 ];
               };

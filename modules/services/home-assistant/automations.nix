@@ -778,7 +778,7 @@ in [
           "group.kitchen_lights"
           "group.bathroom_lights"
           "group.bedroom_lights"
-          "group.robynne_lights"
+          "group.girls_room_lights"
           "light.backlight"
         ];
       }

@@ -305,17 +305,17 @@ cards:
                       media_entity: null
                       room_path: /lovelace-home/room-hallway
 
-                  # Robynne's Room
+                  # Girls' Room
                   - type: custom:button-card
                     template: room_card
                     variables:
-                      room_name: Robynne's Room
+                      room_name: Girls' Room
                       room_icon: mdi:teddy-bear
                       room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
-                      light_entity: group.robynne_lights
+                      light_entity: group.girls_room_lights
                       motion_entity: null
                       media_entity: media_player.robynnes_yoto_player
-                      room_path: /lovelace-home/room-robynne
+                      room_path: /lovelace-home/room-girls-room
 
           "tab-peoples":
             type: custom:stack-in-card
