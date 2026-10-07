@@ -203,6 +203,7 @@ in
             "sonarr"
             "radarr"
             "qbittorrent"
+            "yoto"
           ];
 
           # Main Home Assistant configuration
@@ -218,12 +219,6 @@ in
               internal_url = "https://home.gilberts.one";
               external_url = "https://home.gilberts.one";
               allowlist_external_dirs = ["/etc"];
-            };
-            http = {
-              server_host = "127.0.0.1";
-              server_port = 8123;
-              use_x_forwarded_for = true;
-              trusted_proxies = ["127.0.0.1"];
             };
             mobile_app = {};
             frontend.themes = "!include ${theme}/${theme.pname}.yaml";
@@ -401,7 +396,6 @@ in
                 name = "Robynne Lights";
                 entities = [
                   "light.robynne"
-                  "light.aarlo_nursery"
                   "light.fairy_lights"
                 ];
               };

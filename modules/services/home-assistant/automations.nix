@@ -260,7 +260,7 @@ in [
     trigger = [
       {
         platform = "numeric_state";
-        entity_id = "sensor.lorraines_ipad_battery_level";
+        entity_id = "sensor.lorraines_ipad_battery";
         below = 10;
       }
     ];

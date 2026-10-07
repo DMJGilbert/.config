@@ -509,15 +509,14 @@ cards:
                     tap_action:
                       action: none
 
-                  # Media Switch Power (TV/AV setup in living room)
+                  # Media Switch energy (TV/AV setup in living room)
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.media_switch_power
+                    entity: sensor.media_switch_total_energy
                     variables:
                       sensor_name: Media Setup
                       sensor_icon: mdi:flash
-                      sensor_entity: sensor.media_switch_power
-                      sensor_secondary_entity: sensor.media_switch_add_electricity
+                      sensor_entity: sensor.media_switch_total_energy
 
                   # Section: Sensors
                   - type: custom:button-card

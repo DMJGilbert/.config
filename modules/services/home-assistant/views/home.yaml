@@ -313,7 +313,7 @@ cards:
                       room_icon: mdi:teddy-bear
                       room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
                       light_entity: group.robynne_lights
-                      motion_entity: binary_sensor.aarlo_motion_nursery
+                      motion_entity: null
                       media_entity: media_player.yoto_player
                       room_path: /lovelace-home/room-robynne
 
@@ -447,16 +447,16 @@ cards:
                   # System
                   - type: custom:button-card
                     template: info_card
-                    entity: sensor.system_monitor_load_1m
+                    entity: sensor.system_monitor_load_1_min
                     triggers_update:
-                      - sensor.system_monitor_load_1m
+                      - sensor.system_monitor_load_1_min
                       - sensor.system_monitor_disk_free
                       - sensor.system_monitor_last_boot
                     variables:
                       card_name: System
                       card_icon: mdi:server
                       card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1m']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; })()}"
+                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1_min']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; })()}"
                       info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; })()}"
 
                   # Car

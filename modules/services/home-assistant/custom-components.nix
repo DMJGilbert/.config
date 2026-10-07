@@ -6,99 +6,56 @@ in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya
   pkgs.home-assistant-custom-components.adaptive_lighting
-  # Yoto - dropped from nixpkgs; build from upstream (needs yoto-api, not packaged)
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "cdnninja";
-    domain = "yoto";
-    version = "3.2.2";
-    src = pkgs.fetchFromGitHub {
-      owner = "cdnninja";
-      repo = "yoto_ha";
-      rev = "v${version}";
-      sha256 = "sha256-dMzFrc3dlmog4qfiaV8mhQv1h/EWp5cRsyVYb4ZDUw0=";
-    };
-    propagatedBuildInputs = [
-      (haPython.buildPythonPackage rec {
-        pname = "yoto-api";
-        version = "2.3.0";
-        pyproject = true;
-        src = pkgs.fetchPypi {
-          pname = "yoto_api";
-          inherit version;
-          hash = "sha256-f7YCOiJ5BXi3DXH3m+17PZiCT6EhwEbh5U97LBv2igo=";
-        };
-        build-system = [haPython.setuptools];
-        propagatedBuildInputs = with haPython; [
-          pytz
-          requests
-          paho-mqtt
-        ];
-        doCheck = false;
-      })
-    ];
-  })
+  pkgs.home-assistant-custom-components.octopus_energy
+  pkgs.home-assistant-custom-components.waste_collection_schedule
   (pkgs.buildHomeAssistantComponent rec {
     owner = "AlexxIT";
     domain = "sonoff";
-    version = "3.9.3";
+    version = "3.13.1";
     src = pkgs.fetchFromGitHub {
       owner = "AlexxIT";
       repo = "SonoffLAN";
       rev = "v${version}";
-      sha256 = "sha256-QqJIPyITFYGD8OkbRTh//F0PWY9BFyhBbJaNtSIQ9tA=";
+      sha256 = "sha256-ECQKv2WZ8/2+trmfg6fFFNhwkEWIwBzEWIJSpoFm5aM=";
     };
-    propagatedBuildInputs = [
-      haPython.pycryptodome
-    ];
   })
-  (pkgs.buildHomeAssistantComponent {
-    owner = "maximoei";
-    domain = "robovac";
-    version = "1.0.0";
-    src = pkgs.fetchFromGitHub {
-      owner = "maximoei";
-      repo = "robovac";
-      rev = "ca5ce8b5f65664899f0dc184d131b68021c2737b";
-      sha256 = "sha256-xUha26YiSKY+5aRmZviHFqyPLUqOdN6/L/Ikcpe/YH0=";
-    };
-    propagatedBuildInputs = [
-      haPython.pycryptodome
-    ];
-  })
+  # Maintained fork: the original CodeFoodPixels repo and the maximoei fork
+  # (T2266 support) are both archived and break on HA 2026.9.
   (pkgs.buildHomeAssistantComponent rec {
-    owner = "BottlecapDave";
-    domain = "octopus_energy";
-    version = "17.1.1";
+    owner = "damacus";
+    domain = "robovac";
+    version = "2.5.0";
     src = pkgs.fetchFromGitHub {
-      owner = "BottlecapDave";
-      repo = "HomeAssistant-OctopusEnergy";
+      owner = "damacus";
+      repo = "robovac";
       rev = "v${version}";
-      sha256 = "sha256-L1LqH9QMasVCZdsnHpKdxYGpsc/2vaIPAbiYc6vVshM=";
+      sha256 = "sha256-0D5FzJsRIzo41FujFLbaOzgnBTRO3vOdFRM4aPcq8uc=";
     };
     propagatedBuildInputs = with haPython; [
-      pydantic
+      cryptography
+      requests
     ];
   })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "marq24";
     domain = "fordpass";
-    version = "2025.11.4";
+    version = "2026.9.3";
     src = pkgs.fetchFromGitHub {
       owner = "marq24";
       repo = "ha-fordpass";
       rev = version;
-      sha256 = "sha256-FdGPNfdA/x3bv3a1yaOlRdI8+EdXI1LoJFYWW4l/Dvg=";
+      sha256 = "sha256-wYqrfYmCmofnSG8DYuVfBdUPA8vvN/ry85ceuZpMoKQ=";
     };
   })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "vasqued2";
     domain = "teamtracker";
-    version = "0.14.9";
+    version = "0.18.4";
     src = pkgs.fetchFromGitHub {
       owner = "vasqued2";
       repo = "ha-teamtracker";
       rev = "v${version}";
-      sha256 = "sha256-UCWsprFkoEtBnoiemegmqPMawJ1/j0bpWaz4qNVTt9k=";
+      sha256 = "sha256-B7XszI5Ge4avnbKEk1HZaVWaxexfqTLadd5B5vLLa8w=";
     };
     propagatedBuildInputs = with haPython; [
       arrow
@@ -128,29 +85,6 @@ in [
       sha256 = "sha256-n8BEdd94wUhvFe3TUJNhOSLFcHZroAs7JibgHQXQzE8=";
     };
   })
-  # Waste Collection Schedule - UK bin day reminders (configure council via UI)
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "mampfes";
-    domain = "waste_collection_schedule";
-    version = "2.22.0";
-    src = pkgs.fetchFromGitHub {
-      owner = "mampfes";
-      repo = "hacs_waste_collection_schedule";
-      rev = "v${version}";
-      sha256 = "sha256-eUpfeWfMHsBBlDJpq0lBo1aQ7VF3THTXQTXDaXL5+tQ=";
-    };
-    propagatedBuildInputs =
-      (with haPython; [
-        beautifulsoup4
-        icalendar
-        icalevents
-        lxml
-        pycryptodome
-        pypdf
-        pdfminer-six
-      ])
-      ++ [haPython."curl-cffi"];
-  })
   # National Rail UK - departure boards (needs free Darwin API key, configure via UI)
   (pkgs.buildHomeAssistantComponent rec {
     owner = "darrenparkinson";
@@ -169,54 +103,16 @@ in [
   (pkgs.buildHomeAssistantComponent rec {
     owner = "gcobb321";
     domain = "icloud3";
-    version = "3.5.1";
+    version = "3.7.5";
     src = pkgs.fetchFromGitHub {
       owner = "gcobb321";
       repo = "icloud3";
       rev = "v${version}";
-      sha256 = "sha256-HtA7VwYf9buWk6osiEHHXt/GAQeyIWDuZq20UdVb19E=";
+      sha256 = "sha256-zAEMgcrz5NB+lHCz6zY0OxwbW1LebRdNCrcYoc+93Zc=";
     };
     propagatedBuildInputs = with haPython; [
       srp
       fido2
-    ];
-  })
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "twrecked";
-    domain = "aarlo";
-    version = "0.8.1.19";
-    src = pkgs.fetchFromGitHub {
-      owner = "twrecked";
-      repo = "hass-aarlo";
-      rev = "v${version}";
-      sha256 = "sha256-M5M/kNUzplv+PuVQAWy0wdw4XXgho67zcvmW9QAXxTk=";
-    };
-    propagatedBuildInputs = [
-      haPython.unidecode
-      haPython.aiofiles
-      (
-        haPython.buildPythonPackage rec {
-          pname = "pyaarlo";
-          version = "0.8.0.17";
-          pyproject = true;
-          src = pkgs.fetchPypi {
-            inherit pname version;
-            hash = "sha256-a7/MnUfzatdNY4RolJd2EsEucDwVoFIXnsYOGtJSGZU=";
-          };
-          propagatedBuildInputs = with haPython; [
-            setuptools
-            requests
-            click
-            pycryptodome
-            unidecode
-            cloudscraper
-            paho-mqtt
-            cryptography
-            aiofiles
-            python-slugify
-          ];
-        }
-      )
     ];
   })
 ]

@@ -418,10 +418,10 @@ cards:
                 mode: vertical
                 card_mod: *tab_content_style
                 cards:
-                  # Section: Motion Activity
+                  # Section: Sensors
                   - type: custom:button-card
                     template: transparent
-                    name: Motion Activity
+                    name: Sensors
                     styles:
                       card:
                         - padding: 8px 0 4px 0
@@ -434,80 +434,6 @@ cards:
                         - justify-self: start
                     tap_action:
                       action: none
-
-                  # Nursery Motion (Arlo camera)
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: binary_sensor.aarlo_motion_nursery
-                    variables:
-                      item_name: Nursery Motion
-                      item_icon: mdi:motion-sensor
-                      item_entity: binary_sensor.aarlo_motion_nursery
-                      show_toggle: false
-
-                  # Nursery Sound
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: binary_sensor.aarlo_sound_nursery
-                    variables:
-                      item_name: Sound Detection
-                      item_icon: mdi:volume-high
-                      item_entity: binary_sensor.aarlo_sound_nursery
-                      show_toggle: false
-
-                  # Nursery Cry Detection
-                  - type: custom:button-card
-                    template: room_item_card
-                    entity: binary_sensor.aarlo_cry_nursery
-                    variables:
-                      item_name: Cry Detection
-                      item_icon: mdi:emoticon-cry-outline
-                      item_entity: binary_sensor.aarlo_cry_nursery
-                      show_toggle: false
-
-                  # Section: Sensors
-                  - type: custom:button-card
-                    template: transparent
-                    name: Sensors
-                    styles:
-                      card:
-                        - padding: 16px 0 4px 0
-                      name:
-                        - font-size: 14px
-                        - font-weight: 600
-                        - color: var(--secondary-text-color)
-                        - text-transform: uppercase
-                        - letter-spacing: 0.5px
-                        - justify-self: start
-                    tap_action:
-                      action: none
-
-                  # Nursery Temperature (Arlo)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.aarlo_temperature_nursery
-                    variables:
-                      sensor_name: Temperature
-                      sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.aarlo_temperature_nursery
-
-                  # Nursery Humidity (Arlo)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.aarlo_humidity_nursery
-                    variables:
-                      sensor_name: Humidity
-                      sensor_icon: mdi:water-percent
-                      sensor_entity: sensor.aarlo_humidity_nursery
-
-                  # Nursery Air Quality (Arlo)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.aarlo_air_quality_nursery
-                    variables:
-                      sensor_name: Air Quality
-                      sensor_icon: mdi:air-filter
-                      sensor_entity: sensor.aarlo_air_quality_nursery
 
                   # Yoto Temperature
                   - type: custom:button-card
@@ -526,12 +452,3 @@ cards:
                       sensor_name: Yoto Battery
                       sensor_icon: mdi:battery
                       sensor_entity: sensor.yoto_player_battery_level
-
-                  # Nursery Camera Battery
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.aarlo_battery_level_nursery
-                    variables:
-                      sensor_name: Camera Battery
-                      sensor_icon: mdi:battery
-                      sensor_entity: sensor.aarlo_battery_level_nursery
