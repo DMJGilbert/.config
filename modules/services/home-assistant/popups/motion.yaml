@@ -1,15 +1,14 @@
 # Motion Popup
-type: vertical-stack
+type: custom:bubble-card
+card_type: pop-up
+hash: "#motion-popup"
+name: Active Motion
+icon: mdi:run
+styles: |
+  .bubble-pop-up-container {
+    background: var(--card-background-color);
+  }
 cards:
-  - type: custom:bubble-card
-    card_type: pop-up
-    hash: "#motion-popup"
-    name: Active Motion
-    icon: mdi:run
-    styles: |
-      .bubble-pop-up-container {
-        background: var(--card-background-color);
-      }
   - type: custom:auto-entities
     card:
       type: entities
