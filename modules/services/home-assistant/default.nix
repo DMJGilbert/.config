@@ -330,14 +330,6 @@ in
               }
             ];
             group = {
-              motion = {
-                name = "Home motion";
-                entities = [
-                  "binary_sensor.bathroom_motion_sensor_occupancy"
-                  "binary_sensor.hallway_motion_sensor_occupancy"
-                  "binary_sensor.living_room_motion_sensor_occupancy"
-                ];
-              };
               hallway_lights = {
                 name = "Hallway Lights";
                 entities = [

@@ -545,49 +545,6 @@ in [
     ];
   })
 
-  # Away from home notifications
-  {
-    id = "away_notifications";
-    alias = "Away notifications";
-    description = "";
-    triggers = [
-      {
-        trigger = "state";
-        entity_id = ["group.motion"];
-        from = null;
-        to = "on";
-      }
-    ];
-    conditions = [
-      {
-        condition = "not";
-        conditions = [
-          {
-            condition = "zone";
-            entity_id = "person.darren";
-            zone = "zone.home";
-          }
-          {
-            condition = "zone";
-            entity_id = "person.lorraine";
-            zone = "zone.home";
-          }
-        ];
-      }
-    ];
-    actions = [
-      {
-        action = "notify.family";
-        data = {
-          title = "Motion detected";
-          message = "Detected a motion: {{ ( expand('group.motion') | sort(reverse=true, attribute='last_changed') | map(attribute='name') | list )[0] }}";
-        };
-      }
-    ];
-    mode = "queued";
-    max = 5;
-  }
-
   # A crossing trigger alone misses a sensor that is already low, and one
   # whose battery died outright (it goes unavailable instead). The daily sweep
   # covers both; phones, tablets and watches report their own batteries.
@@ -653,29 +610,6 @@ in [
     ];
     mode = "single";
     max_exceeded = "silent";
-  }
-
-  # iPad low battery notification
-  {
-    id = "ipad_low_battery";
-    alias = "iPad low battery";
-    triggers = [
-      {
-        trigger = "numeric_state";
-        entity_id = "sensor.lorraines_ipad_battery";
-        below = 10;
-      }
-    ];
-    actions = [
-      {
-        action = "notify.family";
-        data = {
-          title = "Please";
-          message = "Change the iPad";
-        };
-      }
-    ];
-    mode = "single";
   }
 
   # TV Light - turn on when TV turns on (evening)
