@@ -90,14 +90,9 @@ with cards; [
     image = "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&h=600&fit=crop";
     lightGroup = "group.bedroom_lights";
     media = [
-      (item {
-        entity = "media_player.bedroom_tv";
-        icon = "mdi:television";
-      })
       (mediaAuto {
         slugs = ["bedroom"];
         icon = "mdi:television";
-        showEmpty = false;
       })
     ];
     climate = [

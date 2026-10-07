@@ -31,10 +31,13 @@
     const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     let timeStr;
-    if (diffMs < 0) {
+    if (diffMs <= 0) {
       timeStr = 'Now';
+    } else if (diffDays === 0 && diffHours === 0) {
+      const diffMins = Math.ceil(diffMs / (1000 * 60));
+      timeStr = `${diffMins} min`;
     } else if (diffDays === 0) {
-      timeStr = diffHours === 0 ? 'Now' : `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+      timeStr = `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
     } else if (diffDays === 1) {
       timeStr = diffHours > 0 ? `1 day ${diffHours} hour${diffHours !== 1 ? 's' : ''}` : '1 day';
     } else {

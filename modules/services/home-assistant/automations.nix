@@ -9,6 +9,16 @@
     value_template = "{{ trigger.platform != 'state' or (trigger.from_state is not none and trigger.to_state is not none) }}";
   };
 
+  # Button and scroll-wheel event entities. Going unavailable and back (a
+  # Thread drop, a matterjs-server restart) would otherwise replay the last
+  # event as a fresh press or scroll.
+  eventEntityTrigger = entity_id: id: {
+    trigger = "state";
+    inherit entity_id id;
+    not_from = ["unavailable"];
+    not_to = ["unavailable"];
+  };
+
   # Motion lighting switched off by a restore=true timer rather than a wait
   # inside the run, so a sensor passing through "unavailable" or an HA restart
   # mid-countdown cannot leave the lights on. The timer also records whether
@@ -19,8 +29,8 @@
   #
   # on_conditions gate only taking the lights over; once owned, they are held
   # and released regardless, and turned back on if switched off meanwhile. A
-  # door opening counts as motion that has already cleared: it turns the lights
-  # on and starts the countdown.
+  # door opening turns the lights on and starts the countdown, which holds
+  # instead if motion is on.
   #
   # A sensor that stays unavailable for 10 minutes counts as the room
   # clearing, so a dead battery cannot hold the lights on indefinitely.
@@ -268,7 +278,9 @@
     # the timer stays cancelled. An unavailable sensor counts as clear, so a
     # dead battery cannot hold the lights on. It does not check the lights are
     # on: right after light.turn_on their state may not have updated yet, and
-    # a timer finishing on lights that are already off is harmless.
+    # a timer finishing on lights that are already off is harmless. The cancel
+    # matters: a bare timer.start on a timer restored after a restart resumes
+    # its remaining time rather than the full duration.
     restartTimer = {
       "if" = [
         {
@@ -278,6 +290,10 @@
         }
       ];
       "then" = [
+        {
+          action = "timer.cancel";
+          target.entity_id = timer;
+        }
         {
           action = "timer.start";
           target.entity_id = timer;
@@ -319,13 +335,6 @@
           ++ [{delay.milliseconds = 300;}];
       };
     };
-
-    buttonTrigger = entity_id: id: {
-      trigger = "state";
-      inherit entity_id id;
-      not_from = ["unavailable"];
-      not_to = ["unavailable"];
-    };
   };
 in [
   (mkTimedLights {
@@ -349,7 +358,7 @@ in [
     description = "Motion lighting with time-of-day defaults; the dual button adjusts brightness until the lights turn off";
     mode = "restart";
     max_exceeded = "silent";
-    # "unknown" stays allowed through buttonTrigger: that is the event
+    # "unknown" stays allowed through eventEntityTrigger: that is the event
     # entities' state before the first press after every restart.
     conditions = [ignoreEntityChurn];
     variables = {
@@ -392,8 +401,8 @@ in [
         event_data.entity_id = bathroom.timer;
         id = "timer_finished";
       }
-      (bathroom.buttonTrigger bathroom.buttonUp "up")
-      (bathroom.buttonTrigger bathroom.buttonDown "down")
+      (eventEntityTrigger bathroom.buttonUp "up")
+      (eventEntityTrigger bathroom.buttonDown "down")
     ];
     actions = [
       {
@@ -451,6 +460,28 @@ in [
                   }
                 ];
                 "then" = [bathroom.restartTimer];
+              }
+              # Motion that came on while HA was down left no transition to
+              # cancel the restored countdown, as motion_on would have.
+              {
+                "if" = [
+                  {
+                    condition = "state";
+                    entity_id = bathroom.timer;
+                    state = "active";
+                  }
+                  {
+                    condition = "state";
+                    entity_id = bathroom.motion;
+                    state = "on";
+                  }
+                ];
+                "then" = [
+                  {
+                    action = "timer.cancel";
+                    target.entity_id = bathroom.timer;
+                  }
+                ];
               }
             ];
           }
@@ -841,13 +872,10 @@ in [
     description = "Control living room and dining room lights";
     mode = "single";
     conditions = [ignoreEntityChurn];
-    # Guarded like the bathroom buttons: the event entity going unavailable
-    # and back (a Thread drop, matterjs-server restart) would otherwise
-    # replay as a press or a scroll.
     triggers = [
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_3" "press")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_1" "cw")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_2" "ccw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_3" "press")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_1" "cw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_2" "ccw")
     ];
     actions = [
       {
@@ -913,9 +941,9 @@ in [
     mode = "single";
     conditions = [ignoreEntityChurn];
     triggers = [
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_6" "press")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_4" "cw")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_5" "ccw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_6" "press")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_4" "cw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_5" "ccw")
     ];
     actions = [
       {
@@ -983,9 +1011,9 @@ in [
     mode = "single";
     conditions = [ignoreEntityChurn];
     triggers = [
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_9" "press")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_7" "cw")
-      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_8" "ccw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_9" "press")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_7" "cw")
+      (eventEntityTrigger "event.bilresa_scroll_wheel_button_8" "ccw")
     ];
     actions = [
       {

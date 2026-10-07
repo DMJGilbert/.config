@@ -6,7 +6,9 @@
 
     for (const sensor of sensors) {
       const s = states[sensor];
-      if (s && s.state !== 'NOT_FOUND' && s.state !== 'unavailable' && s.attributes.date) {
+      // PRE is upcoming and IN is in play; POST, BYE and the rest carry a
+      // past date that would win the earliest-date comparison.
+      if (s && (s.state === 'PRE' || s.state === 'IN') && s.attributes.date) {
         const matchDate = new Date(s.attributes.date);
         if (!nextDate || matchDate < nextDate) {
           nextDate = matchDate;

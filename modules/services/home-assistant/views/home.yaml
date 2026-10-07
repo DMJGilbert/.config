@@ -206,12 +206,6 @@ cards:
               type: vertical-stack
               cards:
                 - type: horizontal-stack
-                  card_mod: &tab_container_style
-                    style: |
-                      ha-card {
-                        background: transparent !important;
-                        box-shadow: none !important;
-                      }
                   cards:
                     - type: custom:button-card
                       template: tab_button_active
@@ -329,7 +323,6 @@ cards:
               type: vertical-stack
               cards:
                 - type: horizontal-stack
-                  card_mod: *tab_container_style
                   cards:
                     - type: custom:button-card
                       template: tab_button_inactive
@@ -388,7 +381,6 @@ cards:
               type: vertical-stack
               cards:
                 - type: horizontal-stack
-                  card_mod: *tab_container_style
                   cards:
                     - type: custom:button-card
                       template: tab_button_inactive
@@ -431,7 +423,6 @@ cards:
               type: vertical-stack
               cards:
                 - type: horizontal-stack
-                  card_mod: *tab_container_style
                   cards:
                     - type: custom:button-card
                       template: tab_button_inactive
