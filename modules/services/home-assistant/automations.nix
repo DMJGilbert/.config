@@ -75,7 +75,8 @@
     timer = "timer.bathroom_lights";
     buttonUp = "event.bathroom_buttons_button_1";
     buttonDown = "event.bathroom_buttons_button_2";
-    floorPct = 2;
+    floorPct = 1;
+    stepPct = 10;
 
     # Jinja fragments over the `lights` automation variable. currentPct is the
     # brightest bathroom light that is on, as a percentage, or 0 when all are off.
@@ -138,8 +139,8 @@
         sequence = [
           (setPct (
             if up
-            then "[${currentPct} + 10, 100] | min"
-            else "[${currentPct} - 10, ${toString floorPct}] | max"
+            then "[${currentPct} + ${toString stepPct}, 100] | min"
+            else "[${currentPct} - ${toString stepPct}, ${toString floorPct}] | max"
           ))
           {delay.milliseconds = 300;}
         ];
@@ -352,7 +353,7 @@ in [
                     value_template = "{{ ${bathroom.lightsOn} }}";
                   }
                 ];
-                "then" = [(bathroom.setPct "[${bathroom.currentPct} + 15, 100] | min")];
+                "then" = [(bathroom.setPct "[${bathroom.currentPct} + ${toString bathroom.stepPct}, 100] | min")];
                 "else" = [bathroom.turnOnDefault];
               }
               bathroom.restartTimer
@@ -368,7 +369,7 @@ in [
                 }
               ];
             sequence = [
-              (bathroom.setPct "[${bathroom.currentPct} - 15, ${toString bathroom.floorPct}] | max")
+              (bathroom.setPct "[${bathroom.currentPct} - ${toString bathroom.stepPct}, ${toString bathroom.floorPct}] | max")
               bathroom.restartTimer
             ];
           }
