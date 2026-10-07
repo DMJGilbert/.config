@@ -286,7 +286,7 @@
         alignment = "center";
         card_mod.style = ''
           ha-card {
-            --chip-background: rgba(255,255,255,0.95);
+            --chip-background: var(--card-background-color);
             --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             --chip-border-radius: 24px;
             --chip-padding: 0 12px;

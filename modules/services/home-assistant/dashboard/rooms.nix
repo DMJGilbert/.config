@@ -55,7 +55,7 @@ with cards; [
       })
       (heading "Sensors")
       (sensor {
-        entity = "sensor.dyson_pm_2_5";
+        entity = "sensor.dyson_pm2_5";
         icon = "mdi:blur";
         name = "Air Quality (PM 2.5)";
       })

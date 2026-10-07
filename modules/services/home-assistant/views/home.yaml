@@ -76,7 +76,7 @@ cards:
                 - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
                 - font-size: 36px
                 - font-weight: 500
-                - color: "#E85D04"
+                - color: "var(--accent-color)"
                 - text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5)
                 - position: absolute
                 - top: 24px
@@ -89,7 +89,7 @@ cards:
             card_mod:
               style: |
                 ha-card {
-                  --chip-background: rgba(255,255,255,0.95);
+                  --chip-background: var(--card-background-color);
                   --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
                   --chip-border-radius: 24px;
                   --chip-padding: 0 12px;
@@ -456,8 +456,8 @@ cards:
                       card_name: System
                       card_icon: mdi:server
                       card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const load = states['sensor.system_monitor_load_1_min']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; })()}"
-                      info_template: "${(() => { const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; })()}"
+                      status_text: "[[[ const load = states['sensor.system_monitor_load_1_min']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; ]]]"
+                      info_text: "[[[ const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; ]]]"
 
                   # Car
                   - type: custom:button-card
@@ -470,8 +470,8 @@ cards:
                       card_name: Car
                       card_icon: mdi:car
                       card_image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state; return (door === 'unavailable' || door === 'unknown' || !door) ? 'Unavailable' : 'Doors: ' + door; })()}"
-                      info_template: "${(() => { const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state; return (fuel === 'unavailable' || fuel === 'unknown' || !fuel) ? '' : 'Fuel: ' + fuel + '%'; })()}"
+                      status_text: "[[[ const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state; return (door === 'unavailable' || door === 'unknown' || !door) ? 'Unavailable' : 'Doors: ' + door; ]]]"
+                      info_text: "[[[ const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state; return (fuel === 'unavailable' || fuel === 'unknown' || !fuel) ? '' : 'Fuel: ' + fuel + '%'; ]]]"
 
                   # Tank
                   - type: custom:button-card
@@ -484,8 +484,8 @@ cards:
                       card_name: Tank
                       card_icon: mdi:fishbowl
                       card_image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const temp = states['sensor.current_temperature']?.state; return (temp === 'unavailable' || temp === 'unknown' || !temp) ? 'Unavailable' : temp + '°C'; })()}"
-                      info_template: "${(() => { const ph = states['sensor.ph_value']?.state; return (ph === 'unavailable' || ph === 'unknown' || !ph) ? '' : 'pH: ' + ph; })()}"
+                      status_text: "[[[ const temp = states['sensor.current_temperature']?.state; return (temp === 'unavailable' || temp === 'unknown' || !temp) ? 'Unavailable' : temp + '°C'; ]]]"
+                      info_text: "[[[ const ph = states['sensor.ph_value']?.state; return (ph === 'unavailable' || ph === 'unknown' || !ph) ? '' : 'pH: ' + ph; ]]]"
 
                   # RoboVac
                   - type: custom:button-card
@@ -498,8 +498,8 @@ cards:
                       card_name: RoboVac
                       card_icon: mdi:robot-vacuum
                       card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
-                      status_template: "${(() => { const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); })()}"
-                      info_template: "${(() => { const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; })()}"
+                      status_text: "[[[ const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); ]]]"
+                      info_text: "[[[ const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; ]]]"
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml

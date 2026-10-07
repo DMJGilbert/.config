@@ -80,19 +80,8 @@ in [
       aiofiles
     ];
   })
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "libdyson-wg";
-    domain = "dyson_local";
-    version = "1.5.7";
-    src = pkgs.fetchFromGitHub {
-      owner = "libdyson-wg";
-      repo = "ha-dyson";
-      rev = "v${version}";
-      sha256 = "sha256-V5RCepikTDrjZwi6MfRislpV2F9jR1MqwWxTq0GPBp4=";
-    };
-  })
-  # Maintained successor to dyson_local above (libdyson-wg/ha-dyson, inactive
-  # since 2025-08). Both stay installed until the Dyson is set up here.
+  # Maintained successor to libdyson-wg/ha-dyson (dyson_local), which has been
+  # inactive since 2025-08 and uses constants HA removes in 2027.8.
   (pkgs.buildHomeAssistantComponent rec {
     owner = "cmgrayb";
     domain = "hass_dyson";

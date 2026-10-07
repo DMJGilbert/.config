@@ -1,6 +1,8 @@
 |
   [[[
     const calendars = ['calendar.family', 'calendar.events', 'calendar.calendar', 'calendar.home'];
+    // Event titles come from shared calendars and are rendered as HTML.
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
     let nextEvent = null;
     let nextTime = null;
 
@@ -9,7 +11,8 @@
       if (calEntity && calEntity.attributes.message) {
         const startStr = calEntity.attributes.start_time;
         if (startStr) {
-          const startTime = new Date(startStr);
+          // "YYYY-MM-DD HH:MM:SS" needs the ISO "T" separator for Safari.
+          const startTime = new Date(String(startStr).replace(' ', 'T'));
           if (!nextTime || startTime < nextTime) {
             nextTime = startTime;
             nextEvent = calEntity.attributes.message;
@@ -38,5 +41,5 @@
       timeStr = diffHours > 0 ? `${diffDays} days ${diffHours} hour${diffHours !== 1 ? 's' : ''}` : `${diffDays} days`;
     }
 
-    return `${icon}<b>${nextEvent}</b>: ${timeStr}`;
+    return `${icon}<b>${esc(nextEvent)}</b>: ${timeStr}`;
   ]]]

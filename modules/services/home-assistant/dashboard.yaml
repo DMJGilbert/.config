@@ -11,6 +11,18 @@ button_card_templates:
         - border: none
         - border-radius: 0
 
+  # Rounded card shared by the room, person, info, calendar, item and sensor
+  # cards. Theme variables keep it legible under light and dark themes.
+  pill_card:
+    card_mod:
+      style: |
+        ha-card {
+          background: var(--card-background-color) !important;
+          border-radius: 50px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+          border: none !important;
+        }
+
   # Page header title
   page_header:
     template: transparent
@@ -23,7 +35,7 @@ button_card_templates:
         - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
         - font-size: 30px
         - font-weight: 500
-        - color: "#E85D04"
+        - color: "var(--accent-color)"
         - justify-self: start
         - text-align: left
         - width: 100%
@@ -60,8 +72,8 @@ button_card_templates:
     styles:
       name:
         - font-weight: 500
-        - color: "#E85D04"
-        - border-bottom: "2px solid #E85D04"
+        - color: "var(--accent-color)"
+        - border-bottom: "2px solid var(--accent-color)"
         - padding-bottom: 6px
 
   # Inactive tab button
@@ -74,22 +86,10 @@ button_card_templates:
   # Room card template for rooms tab
   # Variables: room_name, room_icon, room_image, light_entity, motion_entity, media_entity, room_path
   room_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px 0 0
@@ -137,7 +137,7 @@ button_card_templates:
               width: 80px;
               height: 80px;
               border-radius: 50%;
-              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              background: var(--secondary-background-color);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -145,7 +145,7 @@ button_card_templates:
             ">
               <ha-icon icon="${icon}" style="
                 --mdc-icon-size: 36px;
-                color: #8a8178;
+                color: var(--secondary-text-color);
               "></ha-icon>
             </div>`;
           }
@@ -164,7 +164,7 @@ button_card_templates:
               statusText = 'Sensor unavailable';
             } else if (motionState.state === 'on') {
               statusText = 'Motion detected';
-              statusColor = '#4CAF50';
+              statusColor = 'var(--success-color)';
             } else {
               const lastChanged = new Date(motionState.last_changed);
               const now = new Date();
@@ -222,8 +222,8 @@ button_card_templates:
             mediaOn = mediaState === 'playing' || mediaState === 'on';
           }
 
-          const lightColor = lightOn ? '#1a1a1a' : '#d1d1d1';
-          const mediaColor = mediaOn ? '#1a1a1a' : '#d1d1d1';
+          const lightColor = lightOn ? 'var(--primary-text-color)' : 'var(--disabled-text-color)';
+          const mediaColor = mediaOn ? 'var(--primary-text-color)' : 'var(--disabled-text-color)';
 
           let icons = '';
 
@@ -252,22 +252,10 @@ button_card_templates:
   # Person card template for peoples tab
   # Variables: person_name, person_entity, battery_entity, steps_entity
   person_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px 0 0
@@ -319,7 +307,7 @@ button_card_templates:
               width: 80px;
               height: 80px;
               border-radius: 50%;
-              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              background: var(--secondary-background-color);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -327,7 +315,7 @@ button_card_templates:
             ">
               <ha-icon icon="mdi:account" style="
                 --mdc-icon-size: 36px;
-                color: #8a8178;
+                color: var(--secondary-text-color);
               "></ha-icon>
             </div>`;
           }
@@ -344,10 +332,10 @@ button_card_templates:
             const state = states[personEntity].state;
             if (state === 'unavailable' || state === 'unknown') {
               locationText = 'Unavailable';
-              locationColor = '#d1d1d1';
+              locationColor = 'var(--disabled-text-color)';
             } else if (state === 'home') {
               locationText = 'Home';
-              locationColor = '#4CAF50';
+              locationColor = 'var(--success-color)';
             } else if (state === 'not_home') {
               locationText = 'Away';
             } else {
@@ -391,7 +379,7 @@ button_card_templates:
               lines.push(`<span style="
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 font-size: 13px;
-                color: #d1d1d1;
+                color: var(--disabled-text-color);
               "><ha-icon icon="mdi:shoe-print" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${formatted}</span>`);
             }
           }
@@ -401,12 +389,12 @@ button_card_templates:
             const batteryLevel = states[batteryEntity].state;
             if (batteryLevel !== 'unavailable' && batteryLevel !== 'unknown') {
               const batteryNum = parseInt(batteryLevel);
-              let batteryColor = '#d1d1d1';
+              let batteryColor = 'var(--disabled-text-color)';
               if (!isNaN(batteryNum)) {
                 if (batteryNum <= 20) {
-                  batteryColor = '#f44336';
+                  batteryColor = 'var(--error-color)';
                 } else if (batteryNum <= 50) {
-                  batteryColor = '#ff9800';
+                  batteryColor = 'var(--warning-color)';
                 }
               }
               lines.push(`<span style="
@@ -428,24 +416,14 @@ button_card_templates:
       entity: "[[[ return variables.person_entity; ]]]"
 
   # Info card template for other tab (System, Car, Tank, etc.)
-  # Variables: card_name, card_icon, card_image, status_entity, status_template, info_entity, info_template
+  # Variables: card_name, card_icon, card_image, status_entity, status_text, info_entity, info_text
+  # status_text/info_text take precedence over the entity states; pass them as
+  # button-card [[[ ]]] templates, which button-card evaluates before use.
   info_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px 0 0
@@ -493,7 +471,7 @@ button_card_templates:
               width: 80px;
               height: 80px;
               border-radius: 50%;
-              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              background: var(--secondary-background-color);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -501,7 +479,7 @@ button_card_templates:
             ">
               <ha-icon icon="${icon}" style="
                 --mdc-icon-size: 36px;
-                color: #8a8178;
+                color: var(--secondary-text-color);
               "></ha-icon>
             </div>`;
           }
@@ -510,18 +488,12 @@ button_card_templates:
         [[[
           const cardName = variables.card_name || 'Info';
           const statusEntity = variables.status_entity;
-          const statusTemplate = variables.status_template;
 
           let statusText = '';
           let statusColor = 'var(--secondary-text-color)';
 
-          if (statusTemplate) {
-            // Use custom template
-            try {
-              statusText = eval('`' + statusTemplate + '`');
-            } catch (e) {
-              statusText = 'Error';
-            }
+          if (variables.status_text) {
+            statusText = variables.status_text;
           } else if (statusEntity && states[statusEntity]) {
             statusText = states[statusEntity].state;
             const unit = states[statusEntity].attributes.unit_of_measurement || '';
@@ -549,16 +521,11 @@ button_card_templates:
       extra_info: |
         [[[
           const infoEntity = variables.info_entity;
-          const infoTemplate = variables.info_template;
 
           let infoText = '';
 
-          if (infoTemplate) {
-            try {
-              infoText = eval('`' + infoTemplate + '`');
-            } catch (e) {
-              infoText = '';
-            }
+          if (variables.info_text) {
+            infoText = variables.info_text;
           } else if (infoEntity && states[infoEntity]) {
             infoText = states[infoEntity].state;
             const unit = states[infoEntity].attributes.unit_of_measurement || '';
@@ -570,7 +537,7 @@ button_card_templates:
           return `<span style="
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 13px;
-            color: #d1d1d1;
+            color: var(--disabled-text-color);
           ">${infoText}</span>`;
         ]]]
     tap_action:
@@ -580,22 +547,10 @@ button_card_templates:
   # Calendar card template for calendar tab
   # Variables: calendar_entity, calendar_name, calendar_icon, calendar_image
   calendar_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px 0 0
@@ -643,7 +598,7 @@ button_card_templates:
               width: 80px;
               height: 80px;
               border-radius: 50%;
-              background: linear-gradient(180deg, #e8e4e0 0%, #d4cfc9 100%);
+              background: var(--secondary-background-color);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -651,7 +606,7 @@ button_card_templates:
             ">
               <ha-icon icon="${icon}" style="
                 --mdc-icon-size: 36px;
-                color: #8a8178;
+                color: var(--secondary-text-color);
               "></ha-icon>
             </div>`;
           }
@@ -660,6 +615,8 @@ button_card_templates:
         [[[
           const calEntity = variables.calendar_entity;
           const calName = variables.calendar_name || 'Calendar';
+          // Event titles come from shared calendars and are rendered as HTML.
+          const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
           let eventName = 'No upcoming events';
           let eventColor = 'var(--secondary-text-color)';
@@ -668,7 +625,7 @@ button_card_templates:
             const calState = states[calEntity];
             if (calState.state === 'on' && calState.attributes.message) {
               eventName = calState.attributes.message;
-              eventColor = '#E85D04';
+              eventColor = 'var(--accent-color)';
             } else if (calState.attributes.message) {
               eventName = calState.attributes.message;
             }
@@ -693,7 +650,7 @@ button_card_templates:
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-            ">${eventName}</span>
+            ">${esc(eventName)}</span>
           </div>`;
         ]]]
       cal_date: |
@@ -716,7 +673,9 @@ button_card_templates:
             return '';
           }
 
-          const startDate = new Date(startTime);
+          // start_time is "YYYY-MM-DD HH:MM:SS", which Safari cannot parse
+          // until the space is replaced with the ISO "T" separator.
+          const startDate = new Date(String(startTime).replace(' ', 'T'));
           const now = new Date();
           const isToday = startDate.toDateString() === now.toDateString();
           const tomorrow = new Date(now);
@@ -750,7 +709,7 @@ button_card_templates:
             ${timeText ? `<span style="
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
               font-size: 12px;
-              color: #d1d1d1;
+              color: var(--disabled-text-color);
             ">${timeText}</span>` : ''}
           </div>`;
         ]]]
@@ -792,7 +751,7 @@ button_card_templates:
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 36px;
             font-weight: 500;
-            color: #E85D04;
+            color: var(--accent-color);
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             letter-spacing: -0.5px;
           ">${roomName}</span>`;
@@ -803,7 +762,7 @@ button_card_templates:
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.95);
+            background: var(--card-background-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -812,7 +771,7 @@ button_card_templates:
           ">
             <ha-icon icon="mdi:home" style="
               --mdc-icon-size: 24px;
-              color: #1a1a1a;
+              color: var(--primary-text-color);
             "></ha-icon>
           </div>`;
         ]]]
@@ -823,22 +782,10 @@ button_card_templates:
   # Room item card for simple entity display in tabs
   # Variables: item_name, item_icon, item_entity, show_toggle
   room_item_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px
@@ -868,20 +815,20 @@ button_card_templates:
           const itemEntity = variables.item_entity;
           let isOn = false;
           let isUnavailable = false;
-          let iconColor = '#8a8178';
+          let iconColor = 'var(--secondary-text-color)';
 
           if (itemEntity && states[itemEntity]) {
             const st = states[itemEntity].state;
             isUnavailable = st === 'unavailable' || st === 'unknown';
             isOn = st === 'on' || st === 'playing' || st === 'home';
-            iconColor = isUnavailable ? '#d1d1d1' : (isOn ? '#E85D04' : '#8a8178');
+            iconColor = isUnavailable ? 'var(--disabled-text-color)' : (isOn ? 'var(--accent-color)' : 'var(--secondary-text-color)');
           }
 
           return `<div style="
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: ${isOn ? 'rgba(232, 93, 4, 0.1)' : 'linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%)'};
+            background: ${isOn ? 'color-mix(in srgb, var(--accent-color) 10%, transparent)' : 'var(--secondary-background-color)'};
             display: flex;
             align-items: center;
             justify-content: center;
@@ -896,6 +843,8 @@ button_card_templates:
         [[[
           const itemEntity = variables.item_entity;
           const itemName = variables.item_name || (itemEntity && states[itemEntity]?.attributes?.friendly_name) || (itemEntity ? itemEntity.split('.')[1].replace(/_/g, ' ') : 'Item');
+          // Media titles come from whatever is playing and are rendered as HTML.
+          const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
           let stateText = 'Unknown';
           let stateColor = 'var(--secondary-text-color)';
@@ -908,10 +857,10 @@ button_card_templates:
             // Handle unavailable/unknown states first
             if (st === 'unavailable') {
               stateText = 'Unavailable';
-              stateColor = '#d1d1d1';
+              stateColor = 'var(--disabled-text-color)';
             } else if (st === 'unknown') {
               stateText = 'Unknown';
-              stateColor = '#d1d1d1';
+              stateColor = 'var(--disabled-text-color)';
             } else if (domain === 'light') {
               if (st === 'on') {
                 const brightness = entState.attributes.brightness;
@@ -920,7 +869,7 @@ button_card_templates:
                 } else {
                   stateText = 'On';
                 }
-                stateColor = '#4CAF50';
+                stateColor = 'var(--success-color)';
               } else if (st === 'off') {
                 stateText = 'Off';
               } else {
@@ -930,10 +879,10 @@ button_card_templates:
               if (st === 'playing') {
                 const title = entState.attributes.media_title || 'Playing';
                 stateText = title.length > 25 ? title.substring(0, 25) + '...' : title;
-                stateColor = '#4CAF50';
+                stateColor = 'var(--success-color)';
               } else if (st === 'paused') {
                 stateText = 'Paused';
-                stateColor = '#ff9800';
+                stateColor = 'var(--warning-color)';
               } else if (st === 'idle') {
                 stateText = 'Idle';
               } else {
@@ -949,12 +898,12 @@ button_card_templates:
                 } else {
                   stateText = st.charAt(0).toUpperCase() + st.slice(1);
                 }
-                stateColor = '#4CAF50';
+                stateColor = 'var(--success-color)';
               }
             } else if (domain === 'binary_sensor') {
               if (st === 'on') {
                 stateText = 'Detected';
-                stateColor = '#4CAF50';
+                stateColor = 'var(--success-color)';
               } else {
                 const lastChanged = new Date(entState.last_changed);
                 const now = new Date();
@@ -984,13 +933,13 @@ button_card_templates:
               font-weight: 600;
               color: var(--primary-text-color);
               line-height: 1.3;
-            ">${itemName}</span>
+            ">${esc(itemName)}</span>
             <span style="
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
               font-size: 13px;
               color: ${stateColor};
               line-height: 1.4;
-            ">${stateText}</span>
+            ">${esc(stateText)}</span>
           </div>`;
         ]]]
       item_control: |
@@ -1009,7 +958,7 @@ button_card_templates:
             width: 52px;
             height: 32px;
             border-radius: 16px;
-            background: ${isOn ? '#E85D04' : '#e0e0e0'};
+            background: ${isOn ? 'var(--accent-color)' : 'var(--divider-color)'};
             position: relative;
             cursor: pointer;
             transition: background 0.2s;
@@ -1037,22 +986,10 @@ button_card_templates:
   # Room sensor card for displaying sensor values
   # Variables: sensor_name, sensor_icon, sensor_entity, sensor_secondary_entity
   room_sensor_card:
+    template: pill_card
     show_icon: false
     show_name: false
     show_state: false
-    card_mod:
-      style: |
-        ha-card {
-          background: #ffffff !important;
-          border-radius: 50px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-          border: none !important;
-        }
-        :host-context(html.darkmode) ha-card,
-        :host-context(html[data-theme="dark"]) ha-card {
-          background: #1c1c1e !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-        }
     styles:
       card:
         - padding: 0 20px
@@ -1083,14 +1020,14 @@ button_card_templates:
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
+            background: var(--secondary-background-color);
             display: flex;
             align-items: center;
             justify-content: center;
           ">
             <ha-icon icon="${sensorIcon}" style="
               --mdc-icon-size: 28px;
-              color: #8a8178;
+              color: var(--secondary-text-color);
             "></ha-icon>
           </div>`;
         ]]]
@@ -1141,7 +1078,7 @@ button_card_templates:
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 18px;
             font-weight: 600;
-            color: ${isUnavailable ? '#d1d1d1' : 'var(--primary-text-color)'};
+            color: ${isUnavailable ? 'var(--disabled-text-color)' : 'var(--primary-text-color)'};
           ">${isUnavailable ? '—' : (st + (unit ? ' ' + unit : ''))}</span>`;
         ]]]
     tap_action:

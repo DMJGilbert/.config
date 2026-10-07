@@ -19,7 +19,9 @@
 
     if (!nextMatch) return icon + 'No upcoming fixtures';
 
-    const opponent = nextMatch.attributes.opponent_long_name || nextMatch.attributes.opponent_name || 'TBD';
+    // Team names come from the TeamTracker feed and are rendered as HTML.
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    const opponent = esc(nextMatch.attributes.opponent_long_name || nextMatch.attributes.opponent_name || 'TBD');
     const homeAway = nextMatch.attributes.team_homeaway;
 
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
