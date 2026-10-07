@@ -1,0 +1,22 @@
+Pin the OTA provider's secured port so the firewall can allow it.
+
+python-matter-server launches chip-ota-provider-app with
+`--secured-device-port 0`, which binds a random UDP port. During an update the
+target node opens a new session to that port (QueryImage, then the BDX
+transfer), so a host firewall that only allowlists ports drops it and the node
+falls back from Querying to Idle ("Target node did not process the update
+file"). The upstream Docker image runs without a host firewall, so it never
+hits this. Keep the port in sync with otaProviderPort in
+modules/services/matter-server.nix.
+
+--- a/matter_server/server/ota/provider.py
++++ b/matter_server/server/ota/provider.py
+@@ -178,7 +178,7 @@
+             "--discriminator",
+             str(ota_provider_discriminator),
+             "--secured-device-port",
+-            "0",
++            "5541",
+             "--KVS",
+             str(self._ota_provider_dir / f"chip_kvs_ota_provider_{timestamp}"),
+             "--filepath",

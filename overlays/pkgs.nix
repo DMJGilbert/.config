@@ -10,7 +10,12 @@ final: prev: {
   # log and skip the bad cert. Remove once fixed upstream (still broken on main
   # as of 8.1.2). See overlays/python-matter-server-skip-bad-paa.patch.
   python-matter-server = prev.python-matter-server.overridePythonAttrs (old: {
-    patches = (old.patches or []) ++ [./python-matter-server-skip-bad-paa.patch];
+    patches =
+      (old.patches or [])
+      ++ [
+        ./python-matter-server-skip-bad-paa.patch
+        ./python-matter-server-ota-provider-port.patch
+      ];
   });
 
   chip-ota-provider-app = final.callPackage ./chip-ota-provider-app.nix {};

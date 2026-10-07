@@ -6,6 +6,9 @@
   ...
 }: let
   cfg = config.local.services.matterServer;
+  # Fixed by overlays/python-matter-server-ota-provider-port.patch; upstream
+  # binds a random port that the firewall cannot allowlist.
+  otaProviderPort = 5541;
 in
   {
     options.local.services.matterServer = {
@@ -35,8 +38,9 @@ in
         };
       };
 
-      # Open mDNS port for device discovery
-      networking.firewall.allowedUDPPorts = [5353];
+      # mDNS for device discovery; the OTA provider port for devices pulling
+      # firmware during an update
+      networking.firewall.allowedUDPPorts = [5353 otaProviderPort];
 
       services.matter-server = {
         enable = true;
