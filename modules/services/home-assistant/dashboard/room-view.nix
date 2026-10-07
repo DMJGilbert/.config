@@ -223,10 +223,8 @@
       ha-card {
         margin: 0 16px 16px 16px;
         border: none;
-        border-radius: 24px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-        overflow: hidden;
-        background: var(--card-background-color, #fff);
+        background: transparent;
+        box-shadow: none;
       }
       @media (min-width: 768px) {
         ha-card { margin: 0 0 16px 0; }
@@ -274,7 +272,6 @@
             height: 200px !important;
             border-radius: 0;
             box-shadow: none;
-            margin-bottom: 8px;
             background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("${room.image}") !important;
             background-size: cover !important;
             background-position: center !important;
@@ -290,6 +287,8 @@
       {
         type = "custom:mushroom-chips-card";
         alignment = "center";
+        # The chip row overlays the photo's bottom edge and takes no height
+        # of its own (the margins cancel), so the header ends at the photo.
         card_mod.style = ''
           ha-card {
             --chip-background: var(--card-background-color);
@@ -298,7 +297,10 @@
             --chip-padding: 0 12px;
             --chip-height: 36px;
             background: transparent;
+            height: 0;
             margin-top: -50px;
+            margin-bottom: 50px;
+            overflow: visible;
             position: relative;
             z-index: 1;
           }

@@ -58,7 +58,6 @@ cards:
                     height: 200px !important;
                     border-radius: 0;
                     box-shadow: none;
-                    margin-bottom: 8px;
                     background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop") !important;
                     background-size: cover !important;
                     background-position: center !important;
@@ -84,7 +83,8 @@ cards:
                   - left: 24px
                   - letter-spacing: -0.5px
 
-            # Status Chips
+            # Status Chips: overlay the photo's bottom edge and take no height
+            # of their own (the margins cancel), so the header ends at the photo.
             - type: custom:mushroom-chips-card
               alignment: center
               card_mod:
@@ -96,7 +96,10 @@ cards:
                     --chip-padding: 0 12px;
                     --chip-height: 36px;
                     background: transparent;
+                    height: 0;
                     margin-top: -50px;
+                    margin-bottom: 50px;
+                    overflow: visible;
                     position: relative;
                     z-index: 1;
                   }
@@ -193,10 +196,8 @@ cards:
                 ha-card {
                   margin: 0 16px 16px 16px;
                   border: none;
-                  border-radius: 24px;
-                  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-                  overflow: hidden;
-                  background: var(--card-background-color, #fff);
+                  background: transparent;
+                  box-shadow: none;
                 }
                 @media (min-width: 768px) {
                   ha-card { margin: 0 0 16px 0; }

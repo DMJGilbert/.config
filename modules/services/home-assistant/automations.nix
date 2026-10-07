@@ -22,6 +22,9 @@
   # door opening counts as motion that has already cleared: it turns the lights
   # on and starts the countdown.
   #
+  # A sensor that stays unavailable for 10 minutes counts as the room
+  # clearing, so a dead battery cannot hold the lights on indefinitely.
+  #
   # A countdown that falls due while HA is down finishes during startup and
   # goes idle, releasing ownership with the lights still on. adopt_on_start
   # takes over any lights on at startup to cover that; leave it off where
@@ -48,6 +51,17 @@
       target.entity_id = timer;
     };
     restartTimer = [(timerAction "timer.cancel") (timerAction "timer.start")];
+    # Paths that start the countdown without a motion transition (a door
+    # opening, a restart) may find the room occupied; the timer must then
+    # hold rather than count down.
+    restartTimerUnlessOccupied =
+      restartTimer
+      ++ [
+        {
+          "if" = [(motionIs "on")];
+          "then" = [(timerAction "timer.pause")];
+        }
+      ];
     turnOn = {
       action = "light.turn_on";
       target.entity_id = lights;
@@ -84,10 +98,11 @@
     conditions = [ignoreEntityChurn];
     triggers =
       [
+        # No from = "off": a sensor that drops out and comes back reporting
+        # motion goes unavailable -> on.
         {
           trigger = "state";
           entity_id = motion;
-          from = "off";
           to = "on";
           id = "motion_on";
         }
@@ -97,6 +112,13 @@
           trigger = "state";
           entity_id = motion;
           to = "off";
+          id = "motion_off";
+        }
+        {
+          trigger = "state";
+          entity_id = motion;
+          to = "unavailable";
+          "for".minutes = 10;
           id = "motion_off";
         }
         {
@@ -140,11 +162,11 @@
           ++ lib.optional (door != null) (whenTriggeredBy "door_open" [
             {
               "if" = [(timerIs "active")];
-              "then" = [turnOnIfAllOff] ++ restartTimer;
+              "then" = [turnOnIfAllOff] ++ restartTimerUnlessOccupied;
               "else" = [
                 {
                   "if" = [(timerIs "idle")] ++ on_conditions;
-                  "then" = [turnOn] ++ restartTimer;
+                  "then" = [turnOn] ++ restartTimerUnlessOccupied;
                 }
               ];
             }
@@ -167,7 +189,9 @@
             (whenTriggeredBy "ha_start" (
               [
                 {
-                  "if" = [(timerIs "paused") (motionIs "off")];
+                  # unavailable too: the 10 minute unavailable trigger's
+                  # pending wait does not survive a restart.
+                  "if" = [(timerIs "paused") (motionIs ["off" "unavailable"])];
                   "then" = restartTimer;
                 }
                 {
@@ -183,7 +207,7 @@
                     value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
                   }
                 ];
-                "then" = restartTimer;
+                "then" = restartTimerUnlessOccupied;
               }
             ))
           ];
@@ -241,15 +265,16 @@
     ];
 
     # Restarts the full countdown once motion has cleared; while motion is on
-    # the timer stays cancelled. It does not check the lights are on: right
-    # after light.turn_on their state may not have updated yet, and a timer
-    # finishing on lights that are already off is harmless.
+    # the timer stays cancelled. An unavailable sensor counts as clear, so a
+    # dead battery cannot hold the lights on. It does not check the lights are
+    # on: right after light.turn_on their state may not have updated yet, and
+    # a timer finishing on lights that are already off is harmless.
     restartTimer = {
       "if" = [
         {
           condition = "state";
           entity_id = motion;
-          state = "off";
+          state = ["off" "unavailable"];
         }
       ];
       "then" = [
@@ -332,10 +357,10 @@ in [
       default_pct = "{{ 85 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
     };
     triggers = [
+      # No from = "off": see mkTimedLights.
       {
         trigger = "state";
         entity_id = bathroom.motion;
-        from = "off";
         to = "on";
         id = "motion_on";
       }
@@ -345,6 +370,13 @@ in [
         trigger = "state";
         entity_id = bathroom.motion;
         to = "off";
+        id = "motion_off";
+      }
+      {
+        trigger = "state";
+        entity_id = bathroom.motion;
+        to = "unavailable";
+        "for".minutes = 10;
         id = "motion_off";
       }
       # A timer.finished that falls due while HA is down fires during startup,
@@ -808,22 +840,14 @@ in [
     alias = "BILRESA Button 1 - Living Room Lights";
     description = "Control living room and dining room lights";
     mode = "single";
+    conditions = [ignoreEntityChurn];
+    # Guarded like the bathroom buttons: the event entity going unavailable
+    # and back (a Thread drop, matterjs-server restart) would otherwise
+    # replay as a press or a scroll.
     triggers = [
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_3";
-        id = "press";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_1";
-        id = "cw";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_2";
-        id = "ccw";
-      }
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_3" "press")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_1" "cw")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_2" "ccw")
     ];
     actions = [
       {
@@ -887,22 +911,11 @@ in [
     alias = "BILRESA Button 2 - Sofa Light";
     description = "Control sofa light";
     mode = "single";
+    conditions = [ignoreEntityChurn];
     triggers = [
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_6";
-        id = "press";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_4";
-        id = "cw";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_5";
-        id = "ccw";
-      }
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_6" "press")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_4" "cw")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_5" "ccw")
     ];
     actions = [
       {
@@ -968,22 +981,11 @@ in [
     alias = "BILRESA Button 3 - TV Control";
     description = "Control TV: play/pause, HDMI switch, power, volume";
     mode = "single";
+    conditions = [ignoreEntityChurn];
     triggers = [
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_9";
-        id = "press";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_7";
-        id = "cw";
-      }
-      {
-        trigger = "state";
-        entity_id = "event.bilresa_scroll_wheel_button_8";
-        id = "ccw";
-      }
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_9" "press")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_7" "cw")
+      (bathroom.buttonTrigger "event.bilresa_scroll_wheel_button_8" "ccw")
     ];
     actions = [
       {
