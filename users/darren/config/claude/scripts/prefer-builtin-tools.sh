@@ -11,7 +11,12 @@
 #
 # Only unambiguous single-command cases are denied; anything carrying a pipe,
 # redirect, substitution or chained command passes through untouched.
-# Set CLAUDE_ALLOW_BASH_FILE_TOOLS=1 to disable.
+#
+# The hook payload carries no list of the session's available tools, so the
+# redirect can name a tool the caller cannot actually invoke — Grep and Glob are
+# absent from some agent and session tool sets. Appending the `# no-builtin`
+# marker to the command is the way out of that, and every denial says so.
+# Set CLAUDE_ALLOW_BASH_FILE_TOOLS=1 to disable the hook entirely.
 #
 # Always exits 0 — exit 2 would block on a payload this script failed to parse.
 set -uo pipefail
@@ -23,8 +28,13 @@ payload=$(cat)
 cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
 [ -n "$cmd" ] || exit 0
 
+case "$cmd" in
+  *'# no-builtin'*) exit 0 ;;
+esac
+
 deny() {
-  jq -n --arg reason "$1" '{
+  local escape="If that tool is unavailable in this session, re-run the identical command with '# no-builtin' appended as a trailing comment and this hook will allow it."
+  jq -n --arg reason "$1 $escape" '{
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
       permissionDecision: "deny",

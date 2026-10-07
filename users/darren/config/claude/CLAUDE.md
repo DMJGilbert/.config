@@ -50,8 +50,11 @@ for no extra capability. Path-scoped `rules/` also only inject on `Read`/`Edit`,
 so `cat`/`sed -n` silently bypasses them, and `Edit` fails loudly where a
 `sed`/heredoc rewrite corrupts a file without saying anything. The
 `prefer-builtin-tools.sh` PreToolUse hook enforces this and names the tool to
-use; treat a denial from it as the instruction, not an obstacle. Bash stays the
-right tool for pipelines, git, builds, and anything with real shell logic.
+use; treat a denial from it as the instruction, not an obstacle. Where the named
+tool is genuinely absent from the session — `Grep` and `Glob` are missing from
+some agent tool sets, and the hook cannot see which tools you hold — append
+`# no-builtin` to the command and it is allowed. Bash stays the right tool for
+pipelines, git, builds, and anything with real shell logic.
 
 **Never rewrite a file wholesale to change part of it.** Use `Edit` for targeted
 changes. A heredoc rewrite silently destroys anything not retyped — invisible
