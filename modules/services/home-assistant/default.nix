@@ -101,6 +101,19 @@ in
         "L+ /var/lib/hass/popups - - - - ${popupsDir}"
       ];
 
+      # icloud3 refreshes its event log card and theme with shutil.copy, which
+      # carries the Nix store's read-only mode onto the copies, so every later
+      # overwrite fails with EACCES. Restoring owner write before each start
+      # lets the refresh succeed. Failure is tolerated: preStart failing would
+      # stop Home Assistant starting over a cosmetic icloud3 error.
+      systemd.services.home-assistant.preStart = lib.mkAfter ''
+        for dir in www/icloud3 themes/icloud3_theme; do
+          if [ -d "${config.services.home-assistant.configDir}/$dir" ]; then
+            chmod -R u+w "${config.services.home-assistant.configDir}/$dir" || true
+          fi
+        done
+      '';
+
       # Enable Matter server when configured (for Thread/Matter devices)
       local.services.matterServer.enable = cfg.matterServer.enable;
 
@@ -249,7 +262,16 @@ in
                     url = "/local/nixos-lovelace-modules/${m.js}";
                     type = "module";
                   })
-                  lovelaceModules;
+                  lovelaceModules
+                  # icloud3 copies its event log card into www/icloud3 itself.
+                  # It registers the card only when no resource has this URL,
+                  # and registering fails while resources are YAML-managed.
+                  ++ [
+                    {
+                      url = "/local/icloud3/icloud3-event-log-card.js";
+                      type = "module";
+                    }
+                  ];
               }
               // lib.optionalAttrs cfg.dashboard.enable {
                 dashboards = {

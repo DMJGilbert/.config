@@ -1,8 +1,8 @@
 # RIPER state
 
 - Task: Home Assistant review + fixes (2026-10-07)
-- Phase: EXECUTE — Batch 1 deployed + verified (0 errors). Batch 2 edits done, evals OK, code-review running
-- Batch 3 additions: delete orphan automation.hallway_lights then rename hallway_lights_2
+- Phase: EXECUTE — Batches 1–3 deployed + verified (startup errors 27 → 9; orphans 126 → 13 kept: Dyson + calendar.family). hallway_lights_2 renamed. Next: Batch 4 (dashboard) needs re-plan.
+- Follow-ups offered: icloud3 www/themes permissions, RoboVac IP, BILRESA replay guard + mode
 - Branch: wip (user choice)
 - Vault spec: write failed (Obsidian REST 127.0.0.1:27123 connection refused); plan held here
 - Decisions: AIM memory, context `config`, entity `HomeAssistant_Review_2026-10`
