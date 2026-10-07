@@ -1,6 +1,7 @@
 # RIPER state
 
 - Task: Home Assistant review + fixes (2026-10-07)
+- Native stacks: user confirmed A/B (native much faster); all rooms + home view switched, stack-in-card package/overlay/patch removed — awaiting review + deploy. Dyson done (Local, 192.168.68.100, ids renamed via Spook). Open: RoboVac re-add (UI), light/dark visual check.
 - Batch 4b (tasks 5+6) done + Dyson migration Nix side (dyson_local removed; expects device renamed to "Dyson" so ids = fan.dyson, climate.dyson, sensor.dyson_temperature/humidity/pm2_5) — awaiting UI steps + deploy. Native-stack swap = separate step, needs device test.
 - Phase (earlier): EXECUTE Batch 4a done (views generated, proven equal; Robynne → Girls' Room incl. group.girls_room_lights + light.girls_room renamed live via Spook) — awaiting deploy. 4b next.
 - Previously: PLAN (Batch 4) approved.

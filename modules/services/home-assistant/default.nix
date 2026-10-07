@@ -19,7 +19,6 @@
 
   roomView = import ./dashboard/room-view.nix {inherit lib;};
   rooms = import ./dashboard/rooms.nix {inherit (roomView) cards;};
-  kitchen = lib.findFirst (room: room.path == "kitchen") null rooms;
   # Room views are generated from rooms.nix; the home view is hand-written.
   # dashboard.yaml includes each by its file name.
   viewsDir = pkgs.linkFarm "hass-dashboard-views" (
@@ -32,7 +31,7 @@
     ++ map (view: {
       name = "${view.path}.yaml";
       path = (pkgs.formats.yaml {}).generate "${view.path}.yaml" view;
-    }) (map roomView.mkView rooms ++ [(roomView.mkNativeTestView kitchen)])
+    }) (map roomView.mkView rooms)
   );
   templatesDir = "${moduleDir}/templates";
   popupsDir = "${moduleDir}/popups";
@@ -69,10 +68,6 @@
     {
       pkg = pkgs.lovelace-layout-card;
       js = "layout-card.js";
-    }
-    {
-      pkg = pkgs.lovelace-stack-in-card;
-      js = "stack-in-card.js";
     }
     {
       pkg = pkgs.ha-floorplan;

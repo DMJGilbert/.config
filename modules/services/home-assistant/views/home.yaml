@@ -25,24 +25,20 @@ cards:
         }
     cards:
       # -------------------- Hero Card with Title Overlay --------------------
-      - type: custom:stack-in-card
-        mode: vertical
+      - type: vertical-stack
         card_mod:
-          style:
-            hui-vertical-stack-card $: |
-              #root { row-gap: 0px !important; }
-            .: |
-              :host { row-gap: 0px; }
-              ha-card {
-                border-radius: 24px;
-                margin: 16px 16px 16px 16px;
-                box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-                overflow: hidden;
-                background: var(--card-background-color, #fff);
-              }
-              @media (min-width: 768px) {
-                ha-card { margin: 16px 0 16px 0; }
-              }
+          style: |
+            #root {
+              gap: 0 !important;
+              border-radius: 24px;
+              margin: 16px 16px 16px 16px;
+              box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+              overflow: hidden;
+              background: var(--card-background-color, #fff);
+            }
+            @media (min-width: 768px) {
+              #root { margin: 16px 0 16px 0; }
+            }
         cards:
           # Hero Image with Dark Overlay and Title
           - type: custom:button-card
@@ -184,31 +180,29 @@ cards:
       - type: custom:state-switch
         entity: hash
         default: tab-rooms
-        card_mod:
-          style: |
-            ha-card {
-              margin: 0 16px 16px 16px;
-              border-radius: 24px;
-              box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-              overflow: hidden;
-              background: var(--card-background-color, #fff);
-            }
-            @media (min-width: 768px) {
-              ha-card { margin: 0 0 16px 0; }
-            }
         states:
           "tab-rooms":
-            type: custom:stack-in-card
-            mode: vertical
-            card_mod: &tab_container_style
+            type: vertical-stack
+            card_mod: &tab_panel_style
               style: |
-                ha-card {
-                  background: transparent !important;
-                  box-shadow: none !important;
+                #root {
+                  margin: 0 16px 16px 16px;
+                  border-radius: 24px;
+                  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+                  overflow: hidden;
+                  background: var(--card-background-color, #fff);
+                }
+                @media (min-width: 768px) {
+                  #root { margin: 0 0 16px 0; }
                 }
             cards:
               - type: horizontal-stack
-                card_mod: *tab_container_style
+                card_mod: &tab_container_style
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                    }
                 cards:
                   - type: custom:button-card
                     template: tab_button_active
@@ -235,15 +229,10 @@ cards:
                       action: navigate
                       navigation_path: "#tab-other"
               # Room cards container
-              - type: custom:stack-in-card
-                mode: vertical
+              - type: vertical-stack
                 card_mod: &tab_content_style
                   style: |
-                    ha-card {
-                      padding: 12px 16px 8px 16px;
-                      background: transparent;
-                      box-shadow: none;
-                    }
+                    #root { padding: 12px 16px 8px 16px; }
                 cards:
                   # Living Room
                   - type: custom:button-card
@@ -318,9 +307,8 @@ cards:
                       room_path: /lovelace-home/room-girls-room
 
           "tab-peoples":
-            type: custom:stack-in-card
-            mode: vertical
-            card_mod: *tab_container_style
+            type: vertical-stack
+            card_mod: *tab_panel_style
             cards:
               - type: horizontal-stack
                 card_mod: *tab_container_style
@@ -342,8 +330,7 @@ cards:
                     name: Other
                     tap_action: *tap_other
               # Person cards container
-              - type: custom:stack-in-card
-                mode: vertical
+              - type: vertical-stack
                 card_mod: *tab_content_style
                 cards:
                   # Darren
@@ -375,9 +362,8 @@ cards:
                       steps_entity: sensor.lorraines_iphone_steps
 
           "tab-calendar":
-            type: custom:stack-in-card
-            mode: vertical
-            card_mod: *tab_container_style
+            type: vertical-stack
+            card_mod: *tab_panel_style
             cards:
               - type: horizontal-stack
                 card_mod: *tab_container_style
@@ -399,8 +385,7 @@ cards:
                     name: Other
                     tap_action: *tap_other
               # Calendar cards container
-              - type: custom:stack-in-card
-                mode: vertical
+              - type: vertical-stack
                 card_mod: *tab_content_style
                 cards:
                   # Family Calendar
@@ -416,9 +401,8 @@ cards:
                       calendar_image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop"
 
           "tab-other":
-            type: custom:stack-in-card
-            mode: vertical
-            card_mod: *tab_container_style
+            type: vertical-stack
+            card_mod: *tab_panel_style
             cards:
               - type: horizontal-stack
                 card_mod: *tab_container_style
@@ -440,8 +424,7 @@ cards:
                     name: Other
                     tap_action: *tap_other
               # Other cards container
-              - type: custom:stack-in-card
-                mode: vertical
+              - type: vertical-stack
                 card_mod: *tab_content_style
                 cards:
                   # System

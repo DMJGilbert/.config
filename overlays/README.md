@@ -11,7 +11,6 @@ overlays/
 ├── ha-floorplan.nix            # Floorplan for HA
 ├── hass-catppuccin.nix         # Catppuccin theme for HA
 ├── lovelace-layout-card.nix    # Layout card
-├── lovelace-stack-in-card.nix  # Stack-in-card
 ├── lovelace-state-switch.nix   # State switch card
 └── README.md
 ```
@@ -20,14 +19,13 @@ overlays/
 
 ## Packages
 
-| Package                  | Description                                                                   |
-| ------------------------ | ----------------------------------------------------------------------------- |
-| `cross-seed`             | Cross-seeding bot, pinned to v6.13.7 (fixes qBittorrent HTTP 204 bypass-auth) |
-| `ha-floorplan`           | SVG floor plans for Home Assistant                                            |
-| `hass-catppuccin`        | Catppuccin theme for Home Assistant                                           |
-| `lovelace-layout-card`   | Custom grid layouts for dashboards                                            |
-| `lovelace-stack-in-card` | Group cards into one with no borders                                          |
-| `lovelace-state-switch`  | Dynamically replace cards depending on state                                  |
+| Package                 | Description                                                                   |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `cross-seed`            | Cross-seeding bot, pinned to v6.13.7 (fixes qBittorrent HTTP 204 bypass-auth) |
+| `ha-floorplan`          | SVG floor plans for Home Assistant                                            |
+| `hass-catppuccin`       | Catppuccin theme for Home Assistant                                           |
+| `lovelace-layout-card`  | Custom grid layouts for dashboards                                            |
+| `lovelace-state-switch` | Dynamically replace cards depending on state                                  |
 
 Packages available in nixpkgs (use `home-assistant-custom-lovelace-modules.*`):
 `bubble-card`, `auto-entities`, `mushroom`, `button-card`, `card-mod`

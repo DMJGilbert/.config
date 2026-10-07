@@ -1094,4 +1094,3 @@ views:
   - !include /var/lib/hass/views/room-bathroom.yaml
   - !include /var/lib/hass/views/room-hallway.yaml
   - !include /var/lib/hass/views/room-girls-room.yaml
-  - !include /var/lib/hass/views/room-kitchen-native.yaml

@@ -3,13 +3,18 @@
 # supplies its own Media, Climate and Other tab contents from the card
 # helpers below. The button-card templates referenced by name (room_hero,
 # room_item_card, …) live in dashboard.yaml.
+#
+# Stacks are HA's native vertical-stack, which builds its children in one
+# pass; wrappers that build them asynchronously (stack-in-card) leave tab
+# contents blank for seconds on first load. A vertical-stack has no ha-card,
+# so container styling targets its #root.
 {lib}: let
-  transparentCard = ''
-    ha-card {
-      background: transparent !important;
-      box-shadow: none !important;
+  stack = style: cards:
+    {
+      type = "vertical-stack";
+      inherit cards;
     }
-  '';
+    // lib.optionalAttrs (style != null) {card_mod.style = style;};
 
   # Card and filter-rule builders for room tab contents.
   cards = rec {
@@ -75,11 +80,7 @@
     }:
       {
         type = "custom:auto-entities";
-        card = {
-          type = "custom:stack-in-card";
-          mode = "vertical";
-          card_mod.style = transparentCard;
-        };
+        card.type = "vertical-stack";
         filter = {inherit include exclude;};
         sort.method = "friendly_name";
         show_empty = showEmpty;
@@ -212,174 +213,98 @@
     };
   };
 
-  # Native variant: HA's own vertical-stack in place of stack-in-card, which
-  # builds every child asynchronously and restyles them on a 500 ms timer.
-  # A vertical-stack has no ha-card, so container styling moves onto #root.
-  nativeStack = style: cards:
-    {type = "vertical-stack";}
-    // lib.optionalAttrs (cards != null) {inherit cards;}
-    // lib.optionalAttrs (style != null) {card_mod.style = style;};
-
-  # Swaps the transparent stack-in-card wrappers inside room tab contents,
-  # including the card auto-entities fills with its matches.
-  nativeContent = node:
-    if builtins.isList node
-    then map nativeContent node
-    else if builtins.isAttrs node
-    then
-      if (node.type or null) == "custom:stack-in-card" && (node.card_mod.style or null) == transparentCard
-      then
-        nativeStack null (
-          if node ? cards
-          then nativeContent node.cards
-          else null
-        )
-      else lib.mapAttrs (_: nativeContent) node
-    else node;
-
-  tabPanelStyle = ''
-    #root {
-      margin: 0 16px 16px 16px;
-      border-radius: 24px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-      overflow: hidden;
-      background: var(--card-background-color, #fff);
-    }
-    @media (min-width: 768px) {
-      #root { margin: 0 0 16px 0; }
-    }
-  '';
-
-  tabState = native: active: content: let
-    tabBar = {
-      type = "horizontal-stack";
-      card_mod.style = transparentCard;
-      cards = map (tabButton active) tabs;
-    };
-  in
-    if native
-    then
-      nativeStack tabPanelStyle [
-        tabBar
-        (nativeStack ''
-            #root { padding: 12px 16px 8px 16px; }
-          ''
-          (nativeContent content))
-      ]
-    else {
-      type = "custom:stack-in-card";
-      mode = "vertical";
-      card_mod.style = transparentCard;
-      cards = [
-        tabBar
-        {
-          type = "custom:stack-in-card";
-          mode = "vertical";
-          card_mod.style = ''
-            ha-card {
-              padding: 12px 16px 8px 16px;
-              background: transparent;
-              box-shadow: none;
-            }
-          '';
-          cards = content;
-        }
-      ];
-    };
-
-  hero = native: room: let
-    heroCards = heroContent room;
-  in
-    if native
-    then
-      nativeStack ''
-        #root {
-          gap: 0;
-          border-radius: 24px;
-          margin: 16px 16px 16px 16px;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-          overflow: hidden;
-          background: var(--card-background-color, #fff);
-        }
-        @media (min-width: 768px) {
-          #root { margin: 16px 0 16px 0; }
-        }
-      ''
-      heroCards
-    else {
-      type = "custom:stack-in-card";
-      mode = "vertical";
-      card_mod.style = {
-        "hui-vertical-stack-card $" = ''
-          #root { row-gap: 0px !important; }
-        '';
-        "." = ''
-          :host { row-gap: 0px; }
+  tabState = active: content:
+    stack ''
+      #root {
+        margin: 0 16px 16px 16px;
+        border-radius: 24px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        overflow: hidden;
+        background: var(--card-background-color, #fff);
+      }
+      @media (min-width: 768px) {
+        #root { margin: 0 0 16px 0; }
+      }
+    '' [
+      {
+        type = "horizontal-stack";
+        card_mod.style = ''
           ha-card {
-            border-radius: 24px;
-            margin: 16px 16px 16px 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-            overflow: hidden;
-            background: var(--card-background-color, #fff);
+            background: transparent !important;
+            box-shadow: none !important;
+          }
+        '';
+        cards = map (tabButton active) tabs;
+      }
+      (stack ''
+          #root { padding: 12px 16px 8px 16px; }
+        ''
+        content)
+    ];
+
+  hero = room:
+    stack ''
+      #root {
+        gap: 0 !important;
+        border-radius: 24px;
+        margin: 16px 16px 16px 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        overflow: hidden;
+        background: var(--card-background-color, #fff);
+      }
+      @media (min-width: 768px) {
+        #root { margin: 16px 0 16px 0; }
+      }
+    '' [
+      {
+        type = "custom:button-card";
+        template = "room_hero";
+        variables.room_name = room.name;
+        card_mod.style = ''
+          ha-card {
+            height: 200px !important;
+            border-radius: 0;
+            box-shadow: none;
+            margin-bottom: 8px;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("${room.image}") !important;
+            background-size: cover !important;
+            background-position: center !important;
           }
           @media (min-width: 768px) {
-            ha-card { margin: 16px 0 16px 0; }
+            ha-card { height: 240px !important; }
+          }
+          @media (min-width: 1200px) {
+            ha-card { height: 280px !important; }
           }
         '';
-      };
-      cards = heroCards;
-    };
-
-  heroContent = room: [
-    {
-      type = "custom:button-card";
-      template = "room_hero";
-      variables.room_name = room.name;
-      card_mod.style = ''
-        ha-card {
-          height: 200px !important;
-          border-radius: 0;
-          box-shadow: none;
-          margin-bottom: 8px;
-          background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("${room.image}") !important;
-          background-size: cover !important;
-          background-position: center !important;
-        }
-        @media (min-width: 768px) {
-          ha-card { height: 240px !important; }
-        }
-        @media (min-width: 1200px) {
-          ha-card { height: 280px !important; }
-        }
-      '';
-    }
-    {
-      type = "custom:mushroom-chips-card";
-      alignment = "center";
-      card_mod.style = ''
-        ha-card {
-          --chip-background: var(--card-background-color);
-          --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-          --chip-border-radius: 24px;
-          --chip-padding: 0 12px;
-          --chip-height: 36px;
-          background: transparent;
-          margin-top: -50px;
-          position: relative;
-          z-index: 1;
-        }
-      '';
-      chips = [
-        {
-          type = "template";
-          entity = room.lightGroup;
-          icon = "mdi:lightbulb";
-          icon_color = "{{ 'amber' if is_state('${room.lightGroup}', 'on') else 'grey' }}";
-          content = "{{ expand('${room.lightGroup}') | selectattr('state', 'eq', 'on') | list | count }}";
-        }
-      ];
-    }
-  ];
+      }
+      {
+        type = "custom:mushroom-chips-card";
+        alignment = "center";
+        card_mod.style = ''
+          ha-card {
+            --chip-background: var(--card-background-color);
+            --chip-box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            --chip-border-radius: 24px;
+            --chip-padding: 0 12px;
+            --chip-height: 36px;
+            background: transparent;
+            margin-top: -50px;
+            position: relative;
+            z-index: 1;
+          }
+        '';
+        chips = [
+          {
+            type = "template";
+            entity = room.lightGroup;
+            icon = "mdi:lightbulb";
+            icon_color = "{{ 'amber' if is_state('${room.lightGroup}', 'on') else 'grey' }}";
+            content = "{{ expand('${room.lightGroup}') | selectattr('state', 'eq', 'on') | list | count }}";
+          }
+        ];
+      }
+    ];
 
   lightsTab = room: [
     (cards.auto {
@@ -401,7 +326,7 @@
     })
   ];
 
-  mkViewWith = {native}: room: {
+  mkView = room: {
     title = room.name;
     path = "room-${room.path}";
     inherit (room) icon;
@@ -428,49 +353,22 @@
           }
         '';
         cards = [
-          (hero native room)
-          ({
-              type = "custom:state-switch";
-              entity = "hash";
-              default = "tab-lights";
-              states = {
-                tab-lights = tabState native "lights" (lightsTab room);
-                tab-media = tabState native "media" room.media;
-                tab-climate = tabState native "climate" room.climate;
-                tab-other = tabState native "other" room.other;
-              };
-            }
-            # The native panels carry this styling on their own #root.
-            // lib.optionalAttrs (!native) {
-              card_mod.style = ''
-                ha-card {
-                  margin: 0 16px 16px 16px;
-                  border-radius: 24px;
-                  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-                  overflow: hidden;
-                  background: var(--card-background-color, #fff);
-                }
-                @media (min-width: 768px) {
-                  ha-card { margin: 0 0 16px 0; }
-                }
-              '';
-            })
+          (hero room)
+          {
+            type = "custom:state-switch";
+            entity = "hash";
+            default = "tab-lights";
+            states = {
+              tab-lights = tabState "lights" (lightsTab room);
+              tab-media = tabState "media" room.media;
+              tab-climate = tabState "climate" room.climate;
+              tab-other = tabState "other" room.other;
+            };
+          }
         ];
       }
     ];
   };
-
-  mkView = mkViewWith {native = false;};
-
-  # A native-stack copy of a room as a hidden subview at room-<path>-native,
-  # for comparing load time against the stack-in-card view.
-  mkNativeTestView = room:
-    mkViewWith {native = true;} room
-    // {
-      path = "room-${room.path}-native";
-      title = "${room.name} (native)";
-      subview = true;
-    };
 in {
-  inherit cards mkView mkNativeTestView;
+  inherit cards mkView;
 }
