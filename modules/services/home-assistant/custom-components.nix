@@ -72,33 +72,6 @@ in [
       sha256 = "sha256-V5RCepikTDrjZwi6MfRislpV2F9jR1MqwWxTq0GPBp4=";
     };
   })
-  # UK Carbon Intensity - same developer as OctopusEnergy, pairs well with it
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "BottlecapDave";
-    domain = "carbon_intensity";
-    version = "4.0.0";
-    src = pkgs.fetchFromGitHub {
-      owner = "BottlecapDave";
-      repo = "HomeAssistant-CarbonIntensity";
-      rev = "v${version}";
-      sha256 = "sha256-n8BEdd94wUhvFe3TUJNhOSLFcHZroAs7JibgHQXQzE8=";
-    };
-  })
-  # National Rail UK - departure boards (needs free Darwin API key, configure via UI)
-  (pkgs.buildHomeAssistantComponent rec {
-    owner = "darrenparkinson";
-    domain = "nationalrailuk";
-    version = "1.0.2";
-    src = pkgs.fetchFromGitHub {
-      owner = "darrenparkinson";
-      repo = "homeassistant_nationalrail";
-      rev = "v${version}";
-      sha256 = "sha256-pqcl7cpszTJn5REEKc+mXrO20kIQQDAMpm35IQjnKlM=";
-    };
-    propagatedBuildInputs = with haPython; [
-      aiohttp
-    ];
-  })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "gcobb321";
     domain = "icloud3";

@@ -2,7 +2,8 @@
 
 - Task: Home Assistant review + fixes (2026-10-07)
 - Phase: EXECUTE Batch 4a done (views generated, proven equal; Robynne → Girls' Room incl. group.girls_room_lights + light.girls_room renamed live via Spook) — awaiting deploy. 4b next.
-- Previously: PLAN (Batch 4) approved. Batches 1–3 + icloud3 fix deployed + verified (startup errors 55 → 3).
+- Previously: PLAN (Batch 4) approved.
+- Abandoned-deps review (approved): (1) removed carbon_intensity + nationalrailuk — awaiting deploy + UI entry delete; (2) Dyson → cmgrayb/hass-dyson (package libdyson-rest) once device confirmed online; (3) stack-in-card → native vertical-stack + card-mod in 4b. stack-in-card first-load patch awaiting deploy verification. Batches 1–3 + icloud3 fix deployed + verified (startup errors 55 → 3).
 - Batch 4 decisions: approach A (Nix-generated room views from rooms.nix); accent → theme var(--accent-color)
 
 ## Batch 4 plan
