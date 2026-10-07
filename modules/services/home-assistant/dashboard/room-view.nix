@@ -6,15 +6,20 @@
 #
 # Stacks are HA's native vertical-stack, which builds its children in one
 # pass; wrappers that build them asynchronously (stack-in-card) leave tab
-# contents blank for seconds on first load. A vertical-stack has no ha-card,
-# so container styling targets its #root.
+# contents blank for seconds on first load.
 {lib}: let
-  stack = style: cards:
-    {
-      type = "vertical-stack";
-      inherit cards;
-    }
-    // lib.optionalAttrs (style != null) {card_mod.style = style;};
+  stack = cards: {
+    type = "vertical-stack";
+    inherit cards;
+  };
+
+  # card-mod only styles cards that render an ha-card, which a vertical-stack
+  # does not; card-mod's own mod-card supplies one around the wrapped card.
+  panel = style: card: {
+    type = "custom:mod-card";
+    card_mod.style = style;
+    inherit card;
+  };
 
   # Card and filter-rule builders for room tab contents.
   cards = rec {
@@ -214,48 +219,52 @@
   };
 
   tabState = active: content:
-    stack ''
-      #root {
+    panel ''
+      ha-card {
         margin: 0 16px 16px 16px;
+        border: none;
         border-radius: 24px;
         box-shadow: 0 4px 24px rgba(0,0,0,0.15);
         overflow: hidden;
         background: var(--card-background-color, #fff);
       }
       @media (min-width: 768px) {
-        #root { margin: 0 0 16px 0; }
+        ha-card { margin: 0 0 16px 0; }
       }
-    '' [
+    '' (stack [
       {
         type = "horizontal-stack";
-        card_mod.style = ''
-          ha-card {
-            background: transparent !important;
-            box-shadow: none !important;
-          }
-        '';
         cards = map (tabButton active) tabs;
       }
-      (stack ''
-          #root { padding: 12px 16px 8px 16px; }
-        ''
-        content)
-    ];
+      (panel ''
+        ha-card {
+          padding: 12px 16px 8px 16px;
+          border: none;
+          background: transparent;
+          box-shadow: none;
+        }
+      '' (stack content))
+    ]);
 
   hero = room:
-    stack ''
-      #root {
-        gap: 0 !important;
-        border-radius: 24px;
-        margin: 16px 16px 16px 16px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-        overflow: hidden;
-        background: var(--card-background-color, #fff);
-      }
-      @media (min-width: 768px) {
-        #root { margin: 16px 0 16px 0; }
-      }
-    '' [
+    panel {
+      "hui-vertical-stack-card $" = ''
+        #root { gap: 0 !important; }
+      '';
+      "." = ''
+        ha-card {
+          border: none;
+          border-radius: 24px;
+          margin: 16px 16px 16px 16px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+          overflow: hidden;
+          background: var(--card-background-color, #fff);
+        }
+        @media (min-width: 768px) {
+          ha-card { margin: 16px 0 16px 0; }
+        }
+      '';
+    } (stack [
       {
         type = "custom:button-card";
         template = "room_hero";
@@ -304,7 +313,7 @@
           }
         ];
       }
-    ];
+    ]);
 
   lightsTab = room: [
     (cards.auto {
