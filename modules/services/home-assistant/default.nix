@@ -276,9 +276,13 @@ in
             lovelace =
               {
                 resource_mode = "yaml";
+                # /local is served with a 31-day max-age and every store file
+                # has the same mtime, so browsers keep a stale module for a
+                # month. The store-path hash in the query string changes the
+                # URL exactly when the module changes.
                 resources =
                   map (m: {
-                    url = "/local/nixos-lovelace-modules/${m.js}";
+                    url = "/local/nixos-lovelace-modules/${m.js}?v=${builtins.substring 11 8 "${m.pkg}"}";
                     type = "module";
                   })
                   lovelaceModules
