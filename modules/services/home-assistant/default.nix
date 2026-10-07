@@ -435,6 +435,15 @@ in
                 icon = "mdi:string-lights";
               };
             };
+            # Counts down from the last motion or button press; the bathroom_lights
+            # automation turns the lights off when it finishes. restore keeps a
+            # running countdown across HA restarts so the lights are not left on.
+            timer.bathroom_lights = {
+              name = "Bathroom lights off";
+              icon = "mdi:timer-outline";
+              duration = "00:05:00";
+              restore = true;
+            };
             script = {
               robynnes_playlist = {
                 alias = "Robynnes Playlist";

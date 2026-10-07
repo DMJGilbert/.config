@@ -214,10 +214,10 @@ cards:
                   # Yoto Player
                   - type: custom:button-card
                     template: room_item_card
-                    entity: media_player.yoto_player
+                    entity: media_player.robynnes_yoto_player
                     variables:
                       item_icon: mdi:speaker
-                      item_entity: media_player.yoto_player
+                      item_entity: media_player.robynnes_yoto_player
                       show_toggle: false
 
           # ==================== CLIMATE TAB ====================
@@ -325,15 +325,6 @@ cards:
                     tap_action:
                       action: none
 
-                  # Yoto Temperature (doesn't follow room naming convention)
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.yoto_player_temperature
-                    variables:
-                      sensor_name: Robynne's Yoto Temperature
-                      sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.yoto_player_temperature
-
                   - type: custom:auto-entities
                     card:
                       type: custom:stack-in-card
@@ -435,20 +426,11 @@ cards:
                     tap_action:
                       action: none
 
-                  # Yoto Temperature
-                  - type: custom:button-card
-                    template: room_sensor_card
-                    entity: sensor.yoto_player_temperature
-                    variables:
-                      sensor_name: Yoto Temperature
-                      sensor_icon: mdi:thermometer
-                      sensor_entity: sensor.yoto_player_temperature
-
                   # Yoto Battery
                   - type: custom:button-card
                     template: room_sensor_card
-                    entity: sensor.yoto_player_battery_level
+                    entity: sensor.robynnes_yoto_player_battery
                     variables:
                       sensor_name: Yoto Battery
                       sensor_icon: mdi:battery
-                      sensor_entity: sensor.yoto_player_battery_level
+                      sensor_entity: sensor.robynnes_yoto_player_battery

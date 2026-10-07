@@ -314,7 +314,7 @@ cards:
                       room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
                       light_entity: group.robynne_lights
                       motion_entity: null
-                      media_entity: media_player.yoto_player
+                      media_entity: media_player.robynnes_yoto_player
                       room_path: /lovelace-home/room-robynne
 
           "tab-peoples":

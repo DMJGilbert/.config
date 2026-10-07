@@ -68,6 +68,91 @@
       }
     ];
   };
+
+  bathroom = rec {
+    lights = ["light.bath" "light.bathroom_sink" "light.toilet"];
+    motion = "binary_sensor.bathroom_motion_sensor_occupancy";
+    timer = "timer.bathroom_lights";
+    buttonUp = "event.bathroom_bathroom_dual_button_button_1";
+    buttonDown = "event.bathroom_bathroom_dual_button_button_2";
+    floorPct = 2;
+
+    # Jinja fragments over the `lights` automation variable. currentPct is the
+    # brightest bathroom light that is on, as a percentage, or 0 when all are off.
+    lightsOn = "(expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0)";
+    currentPct = "(((([0] + (expand(lights) | selectattr('state', 'eq', 'on') | map(attribute='attributes.brightness') | map('int', 0) | list)) | max) / 2.55) | round(0) | int)";
+
+    setPct = expr: {
+      action = "light.turn_on";
+      target.entity_id = lights;
+      data.brightness_pct = "{{ ${expr} }}";
+    };
+
+    turnOnDefault = setPct "default_pct";
+
+    # Restarts the full countdown once motion has cleared; while motion is on
+    # the timer stays cancelled. It does not check the lights are on: right
+    # after light.turn_on their state may not have updated yet, and a timer
+    # finishing on lights that are already off is harmless.
+    restartTimer = {
+      "if" = [
+        {
+          condition = "state";
+          entity_id = motion;
+          state = "off";
+        }
+      ];
+      "then" = [
+        {
+          action = "timer.start";
+          target.entity_id = timer;
+        }
+      ];
+    };
+
+    pressed = id: eventType: [
+      {
+        condition = "trigger";
+        inherit id;
+      }
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.attributes.event_type == '${eventType}' }}";
+      }
+    ];
+
+    # Holding a button ramps until long_release arrives as a new trigger, which
+    # restarts the automation (mode: restart) and so ends this loop. The index
+    # cap is a backstop in case the release event is lost.
+    ramp = up: {
+      repeat = {
+        "while" = [
+          {
+            condition = "template";
+            value_template =
+              if up
+              then "{{ repeat.index <= 30 and ${currentPct} < 100 }}"
+              else "{{ repeat.index <= 30 and ${currentPct} > ${toString floorPct} }}";
+          }
+        ];
+        sequence = [
+          (setPct (
+            if up
+            then "[${currentPct} + 10, 100] | min"
+            else "[${currentPct} - 10, ${toString floorPct}] | max"
+          ))
+          {delay.milliseconds = 300;}
+        ];
+      };
+    };
+
+    buttonTrigger = entity_id: id: {
+      platform = "state";
+      inherit entity_id id;
+      not_from = ["unavailable"];
+      not_to = ["unavailable"];
+    };
+  };
 in [
   # Front door entry light - turns on 100% when door opens, off 5 min after
   # the last open. mode=restart means reopening the door restarts the timer.
@@ -129,31 +214,221 @@ in [
     };
   })
 
-  (mkMotionLightAutomation {
-    id = "bathroom_lights_day";
-    alias = "Bathroom lights (day)";
-    motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
-    target.area_id = ["bathroom"];
-    brightness_pct = 85;
-    delay_seconds = 300;
-    time_condition = {
-      after = "07:30:00";
-      before = "20:00:00";
+  # Motion turns the lights on at the time-of-day default only when they are
+  # off, so a brightness set with the dual button holds until they next turn
+  # off. timer.bathroom_lights owns turning them off.
+  {
+    id = "bathroom_lights";
+    alias = "Bathroom lights";
+    description = "Motion lighting with time-of-day defaults; the dual button adjusts brightness until the lights turn off";
+    mode = "restart";
+    max_exceeded = "silent";
+    # An event entity being removed or re-added (integration reload, device
+    # re-interview) changes state from or to None and would replay its last
+    # event_type as if pressed. "unknown" stays allowed: that is the state
+    # before the first press after every restart.
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.platform != 'state' or (trigger.from_state is not none and trigger.to_state is not none) }}";
+      }
+    ];
+    variables = {
+      inherit (bathroom) lights;
+      default_pct = "{{ 85 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
     };
-  })
-
-  (mkMotionLightAutomation {
-    id = "bathroom_lights_night";
-    alias = "Bathroom lights (night)";
-    motion_sensor = "binary_sensor.bathroom_motion_sensor_occupancy";
-    target.area_id = ["bathroom"];
-    brightness_pct = 10;
-    delay_seconds = 300;
-    time_condition = {
-      before = "07:30:00";
-      after = "20:00:00";
-    };
-  })
+    trigger = [
+      {
+        platform = "state";
+        entity_id = bathroom.motion;
+        from = "off";
+        to = "on";
+        id = "motion_on";
+      }
+      # Not from = "on": motion going on -> unavailable -> off must still
+      # start the countdown.
+      {
+        platform = "state";
+        entity_id = bathroom.motion;
+        to = "off";
+        id = "motion_off";
+      }
+      # A timer.finished that falls due while HA is down fires during startup,
+      # before this automation listens for it.
+      {
+        platform = "homeassistant";
+        event = "start";
+        id = "ha_start";
+      }
+      {
+        platform = "event";
+        event_type = "timer.finished";
+        event_data.entity_id = bathroom.timer;
+        id = "timer_finished";
+      }
+      (bathroom.buttonTrigger bathroom.buttonUp "up")
+      (bathroom.buttonTrigger bathroom.buttonDown "down")
+    ];
+    action = [
+      {
+        choose = [
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "motion_on";
+              }
+            ];
+            sequence = [
+              {
+                action = "timer.cancel";
+                target.entity_id = bathroom.timer;
+              }
+              {
+                "if" = [
+                  {
+                    condition = "template";
+                    value_template = "{{ not ${bathroom.lightsOn} }}";
+                  }
+                ];
+                "then" = [bathroom.turnOnDefault];
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "motion_off";
+              }
+            ];
+            sequence = [bathroom.restartTimer];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "ha_start";
+              }
+            ];
+            sequence = [
+              {
+                "if" = [
+                  {
+                    condition = "template";
+                    value_template = "{{ ${bathroom.lightsOn} }}";
+                  }
+                  {
+                    condition = "state";
+                    entity_id = bathroom.timer;
+                    state = "idle";
+                  }
+                ];
+                "then" = [bathroom.restartTimer];
+              }
+            ];
+          }
+          {
+            conditions = [
+              {
+                condition = "trigger";
+                id = "timer_finished";
+              }
+            ];
+            sequence = [
+              {
+                action = "light.turn_off";
+                target.entity_id = bathroom.lights;
+              }
+            ];
+          }
+          {
+            conditions = bathroom.pressed "up" "multi_press_1";
+            sequence = [
+              {
+                "if" = [
+                  {
+                    condition = "template";
+                    value_template = "{{ ${bathroom.lightsOn} }}";
+                  }
+                ];
+                "then" = [(bathroom.setPct "[${bathroom.currentPct} + 15, 100] | min")];
+                "else" = [bathroom.turnOnDefault];
+              }
+              bathroom.restartTimer
+            ];
+          }
+          {
+            conditions =
+              bathroom.pressed "down" "multi_press_1"
+              ++ [
+                {
+                  condition = "template";
+                  value_template = "{{ ${bathroom.lightsOn} }}";
+                }
+              ];
+            sequence = [
+              (bathroom.setPct "[${bathroom.currentPct} - 15, ${toString bathroom.floorPct}] | max")
+              bathroom.restartTimer
+            ];
+          }
+          {
+            conditions = bathroom.pressed "up" "multi_press_2";
+            sequence = [
+              (bathroom.setPct "100")
+              bathroom.restartTimer
+            ];
+          }
+          {
+            conditions = bathroom.pressed "down" "multi_press_2";
+            sequence = [
+              {
+                action = "light.turn_off";
+                target.entity_id = bathroom.lights;
+              }
+              {
+                action = "timer.cancel";
+                target.entity_id = bathroom.timer;
+              }
+            ];
+          }
+          {
+            conditions = bathroom.pressed "up" "long_press";
+            sequence = [
+              bathroom.restartTimer
+              {
+                "if" = [
+                  {
+                    condition = "template";
+                    value_template = "{{ ${bathroom.lightsOn} }}";
+                  }
+                ];
+                "then" = [(bathroom.ramp true)];
+                "else" = [bathroom.turnOnDefault];
+              }
+            ];
+          }
+          {
+            conditions =
+              bathroom.pressed "down" "long_press"
+              ++ [
+                {
+                  condition = "template";
+                  value_template = "{{ ${bathroom.lightsOn} }}";
+                }
+              ];
+            sequence = [
+              bathroom.restartTimer
+              (bathroom.ramp false)
+            ];
+          }
+        ];
+        # long_release lands here (its trigger has already restarted the run,
+        # ending any ramp), as do down presses while the lights are off.
+        default = [bathroom.restartTimer];
+      }
+    ];
+  }
 
   (mkMotionLightAutomation {
     id = "living_room_lights_night";
@@ -233,6 +508,7 @@ in [
           "sensor.myggbett_door_window_sensor_battery"
           "sensor.vibration_sensor_battery"
           "sensor.bathroom_temp_sensor_battery"
+          "sensor.bathroom_bathroom_dual_button_battery"
         ];
         below = 20;
       }
