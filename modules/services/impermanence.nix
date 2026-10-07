@@ -48,6 +48,7 @@ in
           # Home automation
           "/var/lib/hass"
           "/var/lib/private/matter-server"
+          "/var/lib/private/matterjs-server"
           "/var/lib/zigbee2mqtt"
 
           # Media services

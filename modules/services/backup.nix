@@ -72,6 +72,7 @@ in
           "/var/lib/private/technitium-dns-server"
           "/var/lib/private/uptime-kuma"
           "/var/lib/private/matter-server"
+          "/var/lib/private/matterjs-server"
           "/var/lib/tailscale"
           "/var/lib/acme"
         ];
