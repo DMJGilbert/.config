@@ -73,8 +73,8 @@
     lights = ["light.bath" "light.bathroom_sink" "light.toilet"];
     motion = "binary_sensor.bathroom_motion_sensor_occupancy";
     timer = "timer.bathroom_lights";
-    buttonUp = "event.bathroom_bathroom_dual_button_button_1";
-    buttonDown = "event.bathroom_bathroom_dual_button_button_2";
+    buttonUp = "event.bathroom_buttons_button_1";
+    buttonDown = "event.bathroom_buttons_button_2";
     floorPct = 2;
 
     # Jinja fragments over the `lights` automation variable. currentPct is the
@@ -508,7 +508,7 @@ in [
           "sensor.myggbett_door_window_sensor_battery"
           "sensor.vibration_sensor_battery"
           "sensor.bathroom_temp_sensor_battery"
-          "sensor.bathroom_bathroom_dual_button_battery"
+          "sensor.bathroom_buttons_battery"
         ];
         below = 20;
       }
