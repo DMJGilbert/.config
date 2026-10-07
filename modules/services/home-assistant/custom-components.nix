@@ -2,6 +2,25 @@
 # Extracted from default.nix for maintainability
 {pkgs}: let
   haPython = pkgs.home-assistant.python3Packages;
+
+  # Dyson cloud and device-credential client used by hass-dyson; not in nixpkgs.
+  libdyson-rest = haPython.buildPythonPackage rec {
+    pname = "libdyson-rest";
+    version = "0.16.1";
+    pyproject = true;
+    src = pkgs.fetchPypi {
+      pname = "libdyson_rest";
+      inherit version;
+      hash = "sha256-1PxbfyL7U8gi11aciF0t7IQ1bf8H9NCRFpJkMiTcmVs=";
+    };
+    build-system = with haPython; [setuptools wheel];
+    dependencies = with haPython; [
+      cryptography
+      httpx
+      typing-extensions
+    ];
+    pythonImportsCheck = ["libdyson_rest"];
+  };
 in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya
@@ -71,6 +90,23 @@ in [
       rev = "v${version}";
       sha256 = "sha256-V5RCepikTDrjZwi6MfRislpV2F9jR1MqwWxTq0GPBp4=";
     };
+  })
+  # Maintained successor to dyson_local above (libdyson-wg/ha-dyson, inactive
+  # since 2025-08). Both stay installed until the Dyson is set up here.
+  (pkgs.buildHomeAssistantComponent rec {
+    owner = "cmgrayb";
+    domain = "hass_dyson";
+    version = "0.38.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "cmgrayb";
+      repo = "hass-dyson";
+      rev = "v${version}";
+      hash = "sha256-wnUBdWVlrJCwzQW1zAAEsYu5F3b4jX8l5FR7Qksb34g=";
+    };
+    propagatedBuildInputs = [
+      libdyson-rest
+      haPython.paho-mqtt
+    ];
   })
   (pkgs.buildHomeAssistantComponent rec {
     owner = "gcobb321";
