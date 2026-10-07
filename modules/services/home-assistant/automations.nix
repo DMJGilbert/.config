@@ -70,7 +70,8 @@
   };
 
   bathroom = rec {
-    lights = ["light.bath" "light.bathroom_sink" "light.toilet"];
+    nightLight = "light.bath";
+    lights = [nightLight "light.bathroom_sink" "light.toilet"];
     motion = "binary_sensor.bathroom_motion_sensor_occupancy";
     timer = "timer.bathroom_lights";
     buttonUp = "event.bathroom_buttons_button_1";
@@ -90,6 +91,32 @@
     };
 
     turnOnDefault = setPct "default_pct";
+
+    # Dimming to the floor leaves only nightLight on, at floorPct, with the
+    # rest off. Brightening goes through setPct, which turns them all back on.
+    dimTo = expr: [
+      {variables.target_pct = "{{ ${expr} }}";}
+      {
+        "if" = [
+          {
+            condition = "template";
+            value_template = "{{ target_pct | int <= ${toString floorPct} }}";
+          }
+        ];
+        "then" = [
+          {
+            action = "light.turn_on";
+            target.entity_id = nightLight;
+            data.brightness_pct = floorPct;
+          }
+          {
+            action = "light.turn_off";
+            target.entity_id = builtins.filter (l: l != nightLight) lights;
+          }
+        ];
+        "else" = [(setPct "target_pct")];
+      }
+    ];
 
     # Restarts the full countdown once motion has cleared; while motion is on
     # the timer stays cancelled. It does not check the lights are on: right
@@ -136,14 +163,13 @@
               else "{{ repeat.index <= 30 and ${currentPct} > ${toString floorPct} }}";
           }
         ];
-        sequence = [
-          (setPct (
+        sequence =
+          (
             if up
-            then "[${currentPct} + ${toString stepPct}, 100] | min"
-            else "[${currentPct} - ${toString stepPct}, ${toString floorPct}] | max"
-          ))
-          {delay.milliseconds = 300;}
-        ];
+            then [(setPct "[${currentPct} + ${toString stepPct}, 100] | min")]
+            else dimTo "[${currentPct} - ${toString stepPct}, ${toString floorPct}] | max"
+          )
+          ++ [{delay.milliseconds = 300;}];
       };
     };
 
@@ -368,10 +394,9 @@ in [
                   value_template = "{{ ${bathroom.lightsOn} }}";
                 }
               ];
-            sequence = [
-              (bathroom.setPct "[${bathroom.currentPct} - ${toString bathroom.stepPct}, ${toString bathroom.floorPct}] | max")
-              bathroom.restartTimer
-            ];
+            sequence =
+              bathroom.dimTo "[${bathroom.currentPct} - ${toString bathroom.stepPct}, ${toString bathroom.floorPct}] | max"
+              ++ [bathroom.restartTimer];
           }
           {
             conditions = bathroom.pressed "up" "multi_press_2";
