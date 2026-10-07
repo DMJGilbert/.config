@@ -1,28 +1,10 @@
 {
   config,
   lib,
-  pkgs,
   isLinux,
   ...
 }: let
   cfg = config.local.services.matterServer;
-
-  # Where python-matter-server kept its fabric. matterjs-server imports
-  # chip.json and <compressed-fabric-id>.json from its own storage path, so
-  # they are copied across once; this directory is never written to, which
-  # keeps it intact for rolling back to python-matter-server.
-  legacyStorage = "/var/lib/private/matter-server";
-  storage = "/var/lib/private/matterjs-server";
-
-  seedFromLegacy = pkgs.writeShellScript "matterjs-server-seed-legacy" ''
-    set -euo pipefail
-    if [ -e ${storage}/chip.json ] || [ ! -e ${legacyStorage}/chip.json ]; then
-      exit 0
-    fi
-    echo "Seeding ${storage} from ${legacyStorage}"
-    cp -p ${legacyStorage}/chip.json ${legacyStorage}/[0-9]*.json ${storage}/
-    chown --reference=${storage} ${storage}/*.json
-  '';
 in
   {
     options.local.services.matterServer = {
@@ -67,11 +49,12 @@ in
         ip6tables -A nixos-fw -s fc00::/7 -j nixos-fw-accept
       '';
 
-      # matter.js replaced python-matter-server in HA's own Matter add-on, and
-      # registers as an ICD Check-In client so Long Idle Time devices (IKEA
-      # BILRESA) keep delivering events. vendorid/fabricid must match the
-      # python-matter-server fabric (HA vendor 4939, fabric 1) or the legacy
-      # import finds no matching fabric and a new, empty one is created.
+      # matter.js replaced python-matter-server in HA's own Matter add-on and
+      # supports the ICD Check-In protocol that Long Idle Time devices (IKEA
+      # BILRESA) rely on. The fabric was imported from python-matter-server
+      # (HA vendor 4939, fabric 1) and is stored under server-1-134b; these
+      # flags must keep matching it, or matter.js opens a new, empty fabric
+      # and every paired device is orphaned.
       services.matterjs-server = {
         enable = true;
         inherit (cfg) port;
@@ -84,9 +67,6 @@ in
       systemd.services.matterjs-server = {
         before = ["home-assistant.service"];
         serviceConfig = {
-          # "+" runs the seed as root outside the DynamicUser sandbox, which
-          # cannot read the legacy state directory.
-          ExecStartPre = ["+${seedFromLegacy}"];
           Restart = "on-failure";
           RestartSec = "30s";
         };

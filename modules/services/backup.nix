@@ -163,14 +163,17 @@ in
 
         # Databases copied while being written can restore corrupt. Ask the
         # services to flush first; SQLite users are fine with a plain copy once
-        # quiescent, and this keeps the window short.
-        backupPrepareCommand = ''
-          ${config.systemd.package}/bin/systemctl is-active --quiet home-assistant \
-            && ${config.systemd.package}/bin/systemctl stop home-assistant || true
-        '';
-        backupCleanupCommand = ''
-          ${config.systemd.package}/bin/systemctl start home-assistant || true
-        '';
+        # quiescent, and this keeps the window short. matterjs-server holds the
+        # Matter fabric, whose many small files must be captured as one set.
+        # Stopped in list order (HA before the server it depends on) and
+        # started in reverse.
+        backupPrepareCommand = lib.concatMapStrings (unit: ''
+          ${config.systemd.package}/bin/systemctl is-active --quiet ${unit} \
+            && ${config.systemd.package}/bin/systemctl stop ${unit} || true
+        '') ["home-assistant" "matterjs-server"];
+        backupCleanupCommand = lib.concatMapStrings (unit: ''
+          ${config.systemd.package}/bin/systemctl start ${unit} || true
+        '') ["matterjs-server" "home-assistant"];
 
         pruneOpts = [
           "--keep-daily 7"

@@ -39,9 +39,10 @@ in
           # Infrastructure
           "/var/lib/acme"
           "/var/lib/tailscale"
-          # These four run with systemd DynamicUser=true, which puts real state
-          # in /var/lib/private/<name> and leaves /var/lib/<name> as a symlink.
-          # Listing the symlink persists nothing — the service comes back empty.
+          # Every /var/lib/private/<name> entry in this list is a systemd
+          # DynamicUser=true service, which keeps real state there and leaves
+          # /var/lib/<name> as a symlink. Listing the symlink persists nothing —
+          # the service comes back empty.
           "/var/lib/private/technitium-dns-server"
           "/var/lib/private/uptime-kuma"
 
