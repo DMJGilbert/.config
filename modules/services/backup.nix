@@ -82,6 +82,9 @@ in
       exclude = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
+          # Home Assistant's own backups are archives of this same state,
+          # already captured live by this job.
+          "/var/lib/hass/backups"
           # Regenerable caches and transcodes; large and pointless to store.
           "/var/lib/jellyfin/transcodes"
           "/var/lib/jellyfin/cache"

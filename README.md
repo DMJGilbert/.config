@@ -112,8 +112,7 @@ Notes:
 │   ├── cross-seed.nix        # Pinned cross-seed v6.13.7
 │   ├── hass-catppuccin.nix   # Catppuccin theme for HA
 │   ├── ha-floorplan.nix
-│   ├── lovelace-*.nix        # Custom Lovelace cards
-│   └── modern-circular-gauge.nix
+│   └── lovelace-*.nix        # Custom Lovelace cards
 ├── users/darren/             # User configuration (Home Manager + system user)
 │   ├── home-manager.nix      # Shared HM entry point
 │   ├── darwin-user.nix       # macOS system user (users.users.darren)

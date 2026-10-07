@@ -30,10 +30,6 @@
       js = "bubble-card.js";
     }
     {
-      pkg = pkgs.lovelace-tabbed-card;
-      js = "tabbed-card.js";
-    }
-    {
       pkg = pkgs.lovelace-state-switch;
       js = "state-switch.js";
     }
@@ -46,36 +42,12 @@
       js = "mushroom.js";
     }
     {
-      pkg = multiple-entity-row;
-      js = "multiple-entity-row.js";
-    }
-    {
-      pkg = decluttering-card;
-      js = "decluttering-card.js";
-    }
-    {
       pkg = button-card;
       js = "button-card.js";
     }
     {
-      pkg = light-entity-card;
-      js = "light-entity-card.js";
-    }
-    {
-      pkg = mini-graph-card;
-      js = "mini-graph-card-bundle.js";
-    }
-    {
-      pkg = lg-webos-remote-control;
-      js = "lg-remote-control.js";
-    }
-    {
       pkg = card-mod;
       js = "card-mod.js";
-    }
-    {
-      pkg = apexcharts-card;
-      js = "apexcharts-card.js";
     }
     {
       pkg = pkgs.lovelace-layout-card;
@@ -84,10 +56,6 @@
     {
       pkg = pkgs.lovelace-stack-in-card;
       js = "stack-in-card.js";
-    }
-    {
-      pkg = pkgs.modern-circular-gauge;
-      js = "modern-circular-gauge.js";
     }
     {
       pkg = pkgs.ha-floorplan;
@@ -182,7 +150,6 @@ in
             "onvif"
             "hue"
             "apple_tv"
-            "itunes"
             "weatherkit"
             "webostv"
             "homekit"
@@ -204,6 +171,10 @@ in
             "radarr"
             "qbittorrent"
             "yoto"
+            # Bluetooth discovery finds these devices nearby and loads their
+            # config flows; without the components every flow fails to import.
+            "oralb"
+            "thermopro"
           ];
 
           # Main Home Assistant configuration
@@ -218,7 +189,6 @@ in
               time_zone = "Europe/London";
               internal_url = "https://home.gilberts.one";
               external_url = "https://home.gilberts.one";
-              allowlist_external_dirs = ["/etc"];
             };
             # nginx on this host terminates TLS and forwards X-Forwarded-For;
             # without trusting it every client, including failed logins, is
@@ -228,6 +198,15 @@ in
               trusted_proxies = ["127.0.0.1" "::1"];
             };
             mobile_app = {};
+            # Automations notify this group rather than a device, so recipients
+            # change here alone.
+            notify = [
+              {
+                platform = "group";
+                name = "family";
+                services = [{service = "mobile_app_hatchling";}];
+              }
+            ];
             frontend.themes = "!include ${theme}/${theme.pname}.yaml";
 
             # Recorder was previously undeclared, so retention ran on HA's

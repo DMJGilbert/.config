@@ -13,8 +13,6 @@ overlays/
 ├── lovelace-layout-card.nix    # Layout card
 ├── lovelace-stack-in-card.nix  # Stack-in-card
 ├── lovelace-state-switch.nix   # State switch card
-├── lovelace-tabbed-card.nix    # Tabbed card
-├── modern-circular-gauge.nix   # Circular gauge card
 └── README.md
 ```
 
@@ -30,11 +28,9 @@ overlays/
 | `lovelace-layout-card`   | Custom grid layouts for dashboards                                            |
 | `lovelace-stack-in-card` | Group cards into one with no borders                                          |
 | `lovelace-state-switch`  | Dynamically replace cards depending on state                                  |
-| `lovelace-tabbed-card`   | Tabbed container card                                                         |
-| `modern-circular-gauge`  | Modern circular gauge card                                                    |
 
 Packages available in nixpkgs (use `home-assistant-custom-lovelace-modules.*`):
-`bubble-card`, `auto-entities`, `mushroom`, `multiple-entity-row`, `decluttering-card`, `button-card`, `lg-webos-remote-control`, `light-entity-card`, `mini-graph-card`, `card-mod`, `apexcharts-card`
+`bubble-card`, `auto-entities`, `mushroom`, `button-card`, `card-mod`
 
 ## Adding a New Package
 
@@ -90,8 +86,8 @@ nix build .#package-name
 
 ```bash
 # Build specific package
-nix build .#lovelace-tabbed-card
+nix build .#lovelace-layout-card
 
 # Check package exists in config
-nix eval .#nixosConfigurations.rubecula.pkgs.lovelace-tabbed-card
+nix eval .#nixosConfigurations.rubecula.pkgs.lovelace-layout-card
 ```

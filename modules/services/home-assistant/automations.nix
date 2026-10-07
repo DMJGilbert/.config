@@ -81,11 +81,11 @@
     mode = "queued";
     max_exceeded = "silent";
     variables = {inherit lights;};
-    condition = [ignoreEntityChurn];
-    trigger =
+    conditions = [ignoreEntityChurn];
+    triggers =
       [
         {
-          platform = "state";
+          trigger = "state";
           entity_id = motion;
           from = "off";
           to = "on";
@@ -94,13 +94,13 @@
         # Not from = "on": motion going on -> unavailable -> off must still
         # start the countdown.
         {
-          platform = "state";
+          trigger = "state";
           entity_id = motion;
           to = "off";
           id = "motion_off";
         }
         {
-          platform = "event";
+          trigger = "event";
           event_type = "timer.finished";
           event_data.entity_id = timer;
           id = "timer_finished";
@@ -108,19 +108,19 @@
         # A timer.finished that falls due while HA is down fires during
         # startup, before this automation listens for it.
         {
-          platform = "homeassistant";
+          trigger = "homeassistant";
           event = "start";
           id = "ha_start";
         }
       ]
       ++ lib.optional (door != null) {
-        platform = "state";
+        trigger = "state";
         entity_id = door;
         from = "off";
         to = "on";
         id = "door_open";
       };
-    action = [
+    actions = [
       {
         choose =
           [
@@ -296,7 +296,7 @@
     };
 
     buttonTrigger = entity_id: id: {
-      platform = "state";
+      trigger = "state";
       inherit entity_id id;
       not_from = ["unavailable"];
       not_to = ["unavailable"];
@@ -326,14 +326,14 @@ in [
     max_exceeded = "silent";
     # "unknown" stays allowed through buttonTrigger: that is the event
     # entities' state before the first press after every restart.
-    condition = [ignoreEntityChurn];
+    conditions = [ignoreEntityChurn];
     variables = {
       inherit (bathroom) lights;
       default_pct = "{{ 85 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
     };
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = bathroom.motion;
         from = "off";
         to = "on";
@@ -342,7 +342,7 @@ in [
       # Not from = "on": motion going on -> unavailable -> off must still
       # start the countdown.
       {
-        platform = "state";
+        trigger = "state";
         entity_id = bathroom.motion;
         to = "off";
         id = "motion_off";
@@ -350,12 +350,12 @@ in [
       # A timer.finished that falls due while HA is down fires during startup,
       # before this automation listens for it.
       {
-        platform = "homeassistant";
+        trigger = "homeassistant";
         event = "start";
         id = "ha_start";
       }
       {
-        platform = "event";
+        trigger = "event";
         event_type = "timer.finished";
         event_data.entity_id = bathroom.timer;
         id = "timer_finished";
@@ -363,7 +363,7 @@ in [
       (bathroom.buttonTrigger bathroom.buttonUp "up")
       (bathroom.buttonTrigger bathroom.buttonDown "down")
     ];
-    action = [
+    actions = [
       {
         choose = [
           {
@@ -550,15 +550,15 @@ in [
     id = "away_notifications";
     alias = "Away notifications";
     description = "";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = ["group.motion"];
         from = null;
         to = "on";
       }
     ];
-    condition = [
+    conditions = [
       {
         condition = "not";
         conditions = [
@@ -575,9 +575,9 @@ in [
         ];
       }
     ];
-    action = [
+    actions = [
       {
-        service = "notify.mobile_app_hatchling";
+        action = "notify.family";
         data = {
           title = "Motion detected";
           message = "Detected a motion: {{ ( expand('group.motion') | sort(reverse=true, attribute='last_changed') | map(attribute='name') | list )[0] }}";
@@ -595,9 +595,9 @@ in [
     id = "low_battery_notifications";
     alias = "Low battery notifications";
     description = "Alert on any device battery below 20% or unavailable, when it crosses and daily at 18:00";
-    trigger = [
+    triggers = [
       {
-        platform = "numeric_state";
+        trigger = "numeric_state";
         entity_id = [
           "sensor.hallway_motion_sensor_battery"
           "sensor.bathroom_motion_sensor_battery"
@@ -610,7 +610,7 @@ in [
         below = 20;
       }
       {
-        platform = "time";
+        trigger = "time";
         at = "18:00:00";
       }
     ];
@@ -629,15 +629,21 @@ in [
       {% endfor %}
       {{ ns.items }}
     '';
-    condition = [
+    conditions = [
+      # numeric_state treats unavailable -> low as crossing below, which every
+      # sensor coming back after a restart would do.
+      {
+        condition = "template";
+        value_template = "{{ trigger.platform != 'numeric_state' or trigger.from_state.state not in ['unavailable', 'unknown'] }}";
+      }
       {
         condition = "template";
         value_template = "{{ low | count > 0 }}";
       }
     ];
-    action = [
+    actions = [
       {
-        action = "notify.mobile_app_hatchling";
+        action = "notify.family";
         data = {
           title = "Low battery";
           message = "{{ low | join('\\n') }}";
@@ -653,16 +659,16 @@ in [
   {
     id = "ipad_low_battery";
     alias = "iPad low battery";
-    trigger = [
+    triggers = [
       {
-        platform = "numeric_state";
+        trigger = "numeric_state";
         entity_id = "sensor.lorraines_ipad_battery";
         below = 10;
       }
     ];
-    action = [
+    actions = [
       {
-        action = "notify.mobile_app_hatchling";
+        action = "notify.family";
         data = {
           title = "Please";
           message = "Change the iPad";
@@ -676,21 +682,21 @@ in [
   {
     id = "tv_backlight_on";
     alias = "TV Light - On";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "media_player.lg_webos_tv_49sj800v_zb";
         to = "on";
       }
     ];
-    condition = [
+    conditions = [
       {
         condition = "time";
         after = "17:00:00";
         before = "06:00:00";
       }
     ];
-    action = [
+    actions = [
       {
         action = "light.turn_on";
         target.entity_id = "light.backlight";
@@ -707,14 +713,14 @@ in [
   {
     id = "tv_backlight_off";
     alias = "TV Lights - Off";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "media_player.lg_webos_tv_49sj800v_zb";
         to = "off";
       }
     ];
-    action = [
+    actions = [
       {
         action = "light.turn_off";
         target.entity_id = "light.backlight";
@@ -728,19 +734,19 @@ in [
   {
     id = "washing_machine_complete";
     alias = "Washing machine complete";
-    trigger = [
+    triggers = [
       {
-        platform = "numeric_state";
+        trigger = "numeric_state";
         entity_id = "sensor.washing_machine_power";
         above = 50;
         for.minutes = 5;
       }
     ];
-    action = [
+    actions = [
       {
         wait_for_trigger = [
           {
-            platform = "numeric_state";
+            trigger = "numeric_state";
             entity_id = "sensor.washing_machine_power";
             below = 50;
             for.minutes = 5;
@@ -748,7 +754,7 @@ in [
         ];
       }
       {
-        action = "notify.notify";
+        action = "notify.family";
         data = {
           title = "Washing machine";
           message = "Washing machine should be finished!";
@@ -770,14 +776,14 @@ in [
   {
     id = "auto_turn_off_tv";
     alias = "Automatically turn off TV";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "remote.living_room";
         to = "off";
       }
     ];
-    condition = [
+    conditions = [
       {
         condition = "state";
         entity_id = "media_player.lg_webos_tv_49sj800v_zb";
@@ -785,7 +791,7 @@ in [
         state = "HDMI1";
       }
     ];
-    action = [
+    actions = [
       {
         action = "media_player.turn_off";
         target.entity_id = "media_player.lg_webos_tv_49sj800v_zb";
@@ -798,21 +804,21 @@ in [
   {
     id = "leave_home";
     alias = "Leave Home";
-    trigger = [
+    triggers = [
       {
-        platform = "zone";
+        trigger = "zone";
         entity_id = "person.darren";
         zone = "zone.home";
         event = "leave";
       }
       {
-        platform = "zone";
+        trigger = "zone";
         entity_id = "person.lorraine";
         zone = "zone.home";
         event = "leave";
       }
     ];
-    condition = [
+    conditions = [
       {
         condition = "not";
         conditions = [
@@ -829,7 +835,7 @@ in [
         ];
       }
     ];
-    action = [
+    actions = [
       {
         action = "light.turn_off";
         target.entity_id = [
@@ -868,24 +874,24 @@ in [
     alias = "BILRESA Button 1 - Living Room Lights";
     description = "Control living room and dining room lights";
     mode = "single";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_3";
         id = "press";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_1";
         id = "cw";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_2";
         id = "ccw";
       }
     ];
-    action = [
+    actions = [
       {
         choose = [
           {
@@ -947,24 +953,24 @@ in [
     alias = "BILRESA Button 2 - Sofa Light";
     description = "Control sofa light";
     mode = "single";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_6";
         id = "press";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_4";
         id = "cw";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_5";
         id = "ccw";
       }
     ];
-    action = [
+    actions = [
       {
         choose = [
           {
@@ -1028,24 +1034,24 @@ in [
     alias = "BILRESA Button 3 - TV Control";
     description = "Control TV: play/pause, HDMI switch, power, volume";
     mode = "single";
-    trigger = [
+    triggers = [
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_9";
         id = "press";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_7";
         id = "cw";
       }
       {
-        platform = "state";
+        trigger = "state";
         entity_id = "event.bilresa_scroll_wheel_button_8";
         id = "ccw";
       }
     ];
-    action = [
+    actions = [
       {
         choose = [
           {
@@ -1176,13 +1182,13 @@ in [
     id = "backup_overdue";
     alias = "HA Backup Overdue";
     description = "Alert if no successful HA backup in 2 days";
-    trigger = [
+    triggers = [
       {
-        platform = "time";
+        trigger = "time";
         at = "09:00:00";
       }
     ];
-    condition = [
+    conditions = [
       {
         condition = "template";
         value_template = ''
@@ -1192,9 +1198,9 @@ in [
         '';
       }
     ];
-    action = [
+    actions = [
       {
-        action = "notify.notify";
+        action = "notify.family";
         data = {
           title = "HA Backup Overdue";
           message = "No successful Home Assistant backup in 2+ days. Check Settings → Backup.";
@@ -1208,14 +1214,14 @@ in [
   {
     id = "humidity_extractor";
     alias = "Humidity Extractor";
-    trigger = [
+    triggers = [
       {
-        platform = "numeric_state";
+        trigger = "numeric_state";
         entity_id = "sensor.bathroom_temp_sensor_humidity";
         above = 70;
       }
     ];
-    action = [
+    actions = [
       {
         action = "switch.toggle";
         target.entity_id = "switch.fingerbot_extractor_switch";
