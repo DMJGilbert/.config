@@ -10,15 +10,22 @@
   };
 
   # Motion lighting switched off by a restore=true timer rather than a wait
-  # inside the run, so an HA restart or a sensor passing through "unavailable"
-  # cannot leave the lights on. The timer also records whether this automation
-  # owns the lights: paused while motion holds lights it turned on, active while
-  # counting down, idle otherwise. Lights switched on by hand are never owned,
-  # so they are never switched off here.
+  # inside the run, so a sensor passing through "unavailable" or an HA restart
+  # mid-countdown cannot leave the lights on. The timer also records whether
+  # this automation owns the lights: paused while motion holds them, active
+  # while counting down, idle otherwise. Motion with an idle timer takes the
+  # lights over unless on_conditions refuse it — require the lights to be off
+  # there to leave lights switched on by hand alone.
   #
-  # on_conditions gate only turning the lights on; once owned, the lights are
-  # held and released regardless of them. A door opening counts as motion that
-  # has already cleared: it turns the lights on and starts the countdown.
+  # on_conditions gate only taking the lights over; once owned, they are held
+  # and released regardless, and turned back on if switched off meanwhile. A
+  # door opening counts as motion that has already cleared: it turns the lights
+  # on and starts the countdown.
+  #
+  # A countdown that falls due while HA is down finishes during startup and
+  # goes idle, releasing ownership with the lights still on. adopt_on_start
+  # takes over any lights on at startup to cover that; leave it off where
+  # lights switched on by hand must survive a restart.
   mkTimedLights = {
     id,
     alias,
@@ -45,6 +52,20 @@
       action = "light.turn_on";
       target.entity_id = lights;
       data = {inherit brightness_pct;};
+    };
+    turnOnIfAllOff = {
+      "if" = [
+        {
+          condition = "template";
+          value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count == 0 }}";
+        }
+      ];
+      "then" = [turnOn];
+    };
+    motionIs = state: {
+      condition = "state";
+      entity_id = motion;
+      inherit state;
     };
     whenTriggeredBy = id: sequence: {
       conditions = [
@@ -105,7 +126,7 @@
           (whenTriggeredBy "motion_on" [
             {
               "if" = [(timerIs ["active" "paused"])];
-              "then" = [(timerAction "timer.pause")];
+              "then" = [turnOnIfAllOff (timerAction "timer.pause")];
               "else" = [
                 {
                   "if" = [(timerIs "idle")] ++ on_conditions;
@@ -117,7 +138,7 @@
           (whenTriggeredBy "door_open" [
             {
               "if" = [(timerIs "active")];
-              "then" = restartTimer;
+              "then" = [turnOnIfAllOff] ++ restartTimer;
               "else" = [
                 {
                   "if" = [(timerIs "idle")] ++ on_conditions;
@@ -138,22 +159,19 @@
               target.entity_id = lights;
             }
           ])
+          # Motion may have changed while HA was down without a transition
+          # to trigger on, so the restored timer is reconciled with it.
           (whenTriggeredBy "ha_start" (
             [
               {
-                "if" = [
-                  (timerIs "paused")
-                  {
-                    condition = "state";
-                    entity_id = motion;
-                    state = "off";
-                  }
-                ];
+                "if" = [(timerIs "paused") (motionIs "off")];
                 "then" = restartTimer;
               }
+              {
+                "if" = [(timerIs "active") (motionIs "on")];
+                "then" = [(timerAction "timer.pause")];
+              }
             ]
-            # A countdown that finished during startup has already gone idle,
-            # losing ownership; adopting lights that are on releases them.
             ++ lib.optional adopt_on_start {
               "if" = [
                 (timerIs "idle")
