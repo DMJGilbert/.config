@@ -220,6 +220,13 @@ in
               external_url = "https://home.gilberts.one";
               allowlist_external_dirs = ["/etc"];
             };
+            # nginx on this host terminates TLS and forwards X-Forwarded-For;
+            # without trusting it every client, including failed logins, is
+            # recorded as 127.0.0.1.
+            http = {
+              use_x_forwarded_for = true;
+              trusted_proxies = ["127.0.0.1" "::1"];
+            };
             mobile_app = {};
             frontend.themes = "!include ${theme}/${theme.pname}.yaml";
 
@@ -400,30 +407,6 @@ in
                 ];
               };
             };
-            adaptive_lighting = [
-              {
-                name = "Default";
-                lights = [
-                  "light.living_room"
-                  "light.dining_room"
-                  "light.kitchen"
-                  "light.kitchen_sink"
-                  "light.kitchen_2"
-                  "light.bedroom"
-                  "light.above_bed"
-                  "light.hallway"
-                  "light.door"
-                ];
-                min_brightness = 1;
-                max_brightness = 100;
-                min_color_temp = 2000;
-                max_color_temp = 5500;
-                sleep_brightness = 1;
-                sleep_color_temp = 1000;
-                take_over_control = true;
-                detect_non_ha_changes = false;
-              }
-            ];
             scene = {};
             input_boolean = {
               party_mode = {
@@ -435,14 +418,29 @@ in
                 icon = "mdi:string-lights";
               };
             };
-            # Counts down from the last motion or button press; the bathroom_lights
-            # automation turns the lights off when it finishes. restore keeps a
-            # running countdown across HA restarts so the lights are not left on.
-            timer.bathroom_lights = {
-              name = "Bathroom lights off";
-              icon = "mdi:timer-outline";
-              duration = "00:05:00";
-              restore = true;
+            # Each counts down from the last motion (or button press, door opening)
+            # in its room; the matching automation turns the lights off when it
+            # finishes. restore keeps a running or paused countdown across HA
+            # restarts so the lights are not left on.
+            timer = {
+              bathroom_lights = {
+                name = "Bathroom lights off";
+                icon = "mdi:timer-outline";
+                duration = "00:05:00";
+                restore = true;
+              };
+              hallway_lights = {
+                name = "Hallway lights off";
+                icon = "mdi:timer-outline";
+                duration = "00:01:00";
+                restore = true;
+              };
+              living_room_lights = {
+                name = "Living room lights off";
+                icon = "mdi:timer-outline";
+                duration = "00:05:00";
+                restore = true;
+              };
             };
             script = {
               robynnes_playlist = {

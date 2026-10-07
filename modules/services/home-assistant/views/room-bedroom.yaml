@@ -454,6 +454,7 @@ cards:
                     sort:
                       method: friendly_name
                     show_empty: false
+                    unique: true
                     card_param: cards
 
                   # Section: Sensors

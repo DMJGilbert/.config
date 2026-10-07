@@ -1,70 +1,171 @@
 # Home Assistant automations
 # Extracted from default.nix for maintainability
 {lib}: let
-  # Helper function to create motion-activated light automations
-  # This reduces duplication for the common pattern of:
-  # Motion detected -> Turn on light -> Wait for no motion -> Delay -> Turn off light
-  mkMotionLightAutomation = {
+  # An entity being removed or re-added (integration reload, device
+  # re-interview) changes state from or to None and would replay its last
+  # state as if it had just changed.
+  ignoreEntityChurn = {
+    condition = "template";
+    value_template = "{{ trigger.platform != 'state' or (trigger.from_state is not none and trigger.to_state is not none) }}";
+  };
+
+  # Motion lighting switched off by a restore=true timer rather than a wait
+  # inside the run, so an HA restart or a sensor passing through "unavailable"
+  # cannot leave the lights on. The timer also records whether this automation
+  # owns the lights: paused while motion holds lights it turned on, active while
+  # counting down, idle otherwise. Lights switched on by hand are never owned,
+  # so they are never switched off here.
+  #
+  # on_conditions gate only turning the lights on; once owned, the lights are
+  # held and released regardless of them. A door opening counts as motion that
+  # has already cleared: it turns the lights on and starts the countdown.
+  mkTimedLights = {
     id,
     alias,
-    motion_sensor,
-    target, # { area_id = [...] } or { entity_id = [...] }
-    brightness_pct ? null,
-    delay_seconds,
-    time_condition ? null, # { after = "HH:MM:SS"; before = "HH:MM:SS"; }
-    extra_conditions ? [],
-    service_type ? "light", # "light" or "switch"
+    description,
+    motion,
+    timer,
+    lights,
+    brightness_pct,
+    door ? null,
+    on_conditions ? [],
+    adopt_on_start ? false,
   }: let
-    turn_on_service =
-      if service_type == "switch"
-      then "switch.turn_on"
-      else "light.turn_on";
-    turn_off_service =
-      if service_type == "switch"
-      then "switch.turn_off"
-      else "light.turn_off";
-    turn_on_data =
-      if brightness_pct != null
-      then {inherit brightness_pct;}
-      else {};
-  in {
-    inherit id alias;
-    description = "";
-    mode = "restart";
-    max_exceeded = "silent";
-    trigger = {
-      platform = "state";
-      entity_id = motion_sensor;
-      from = "off";
-      to = "on";
+    timerIs = state: {
+      condition = "state";
+      entity_id = timer;
+      inherit state;
     };
-    condition =
-      (lib.optional (time_condition != null) ({condition = "time";} // time_condition))
-      ++ extra_conditions;
+    timerAction = action: {
+      inherit action;
+      target.entity_id = timer;
+    };
+    restartTimer = [(timerAction "timer.cancel") (timerAction "timer.start")];
+    turnOn = {
+      action = "light.turn_on";
+      target.entity_id = lights;
+      data = {inherit brightness_pct;};
+    };
+    whenTriggeredBy = id: sequence: {
+      conditions = [
+        {
+          condition = "trigger";
+          inherit id;
+        }
+      ];
+      inherit sequence;
+    };
+  in {
+    inherit id alias description;
+    mode = "queued";
+    max_exceeded = "silent";
+    variables = {inherit lights;};
+    condition = [ignoreEntityChurn];
+    trigger =
+      [
+        {
+          platform = "state";
+          entity_id = motion;
+          from = "off";
+          to = "on";
+          id = "motion_on";
+        }
+        # Not from = "on": motion going on -> unavailable -> off must still
+        # start the countdown.
+        {
+          platform = "state";
+          entity_id = motion;
+          to = "off";
+          id = "motion_off";
+        }
+        {
+          platform = "event";
+          event_type = "timer.finished";
+          event_data.entity_id = timer;
+          id = "timer_finished";
+        }
+        # A timer.finished that falls due while HA is down fires during
+        # startup, before this automation listens for it.
+        {
+          platform = "homeassistant";
+          event = "start";
+          id = "ha_start";
+        }
+      ]
+      ++ lib.optional (door != null) {
+        platform = "state";
+        entity_id = door;
+        from = "off";
+        to = "on";
+        id = "door_open";
+      };
     action = [
       {
-        alias = "Turn on the light";
-        service = turn_on_service;
-        inherit target;
-        data = turn_on_data;
-      }
-      {
-        alias = "Wait until there is no motion from sensor";
-        wait_for_trigger = {
-          platform = "state";
-          entity_id = motion_sensor;
-          from = "on";
-          to = "off";
-        };
-      }
-      {
-        alias = "Wait for ${toString (delay_seconds / 60)} minutes";
-        delay = delay_seconds;
-      }
-      {
-        alias = "Turn off the light";
-        service = turn_off_service;
-        inherit target;
+        choose = [
+          (whenTriggeredBy "motion_on" [
+            {
+              "if" = [(timerIs ["active" "paused"])];
+              "then" = [(timerAction "timer.pause")];
+              "else" = [
+                {
+                  "if" = [(timerIs "idle")] ++ on_conditions;
+                  "then" = [turnOn (timerAction "timer.start") (timerAction "timer.pause")];
+                }
+              ];
+            }
+          ])
+          (whenTriggeredBy "door_open" [
+            {
+              "if" = [(timerIs "active")];
+              "then" = restartTimer;
+              "else" = [
+                {
+                  "if" = [(timerIs "idle")] ++ on_conditions;
+                  "then" = [turnOn] ++ restartTimer;
+                }
+              ];
+            }
+          ])
+          (whenTriggeredBy "motion_off" [
+            {
+              "if" = [(timerIs "paused")];
+              "then" = restartTimer;
+            }
+          ])
+          (whenTriggeredBy "timer_finished" [
+            {
+              action = "light.turn_off";
+              target.entity_id = lights;
+            }
+          ])
+          (whenTriggeredBy "ha_start" (
+            [
+              {
+                "if" = [
+                  (timerIs "paused")
+                  {
+                    condition = "state";
+                    entity_id = motion;
+                    state = "off";
+                  }
+                ];
+                "then" = restartTimer;
+              }
+            ]
+            # A countdown that finished during startup has already gone idle,
+            # losing ownership; adopting lights that are on releases them.
+            ++ lib.optional adopt_on_start {
+              "if" = [
+                (timerIs "idle")
+                {
+                  condition = "template";
+                  value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
+                }
+              ];
+              "then" = restartTimer;
+            }
+          ))
+        ];
       }
     ];
   };
@@ -181,64 +282,16 @@
     };
   };
 in [
-  # Front door entry light - turns on 100% when door opens, off 5 min after
-  # the last open. mode=restart means reopening the door restarts the timer.
-  {
-    id = "front_door_hallway_lights";
-    alias = "Front door hallway lights";
-    description = "Turn hallway lights to 100% when front door opens, off 5 min after last open";
-    trigger = [
-      {
-        platform = "state";
-        entity_id = "binary_sensor.myggbett_door_window_sensor_door";
-        to = "on";
-      }
-    ];
-    action = [
-      {
-        action = "light.turn_on";
-        target.area_id = ["hallway"];
-        data = {
-          brightness_pct = "{{ 100 if today_at('07:30') <= now() < today_at('20:00') else 30 }}";
-        };
-      }
-      {
-        alias = "Wait 5 minutes";
-        delay = 300;
-      }
-      {
-        action = "light.turn_off";
-        target.area_id = ["hallway"];
-      }
-    ];
-    mode = "restart";
-  }
-
-  # Motion-activated lighting automations
-  (mkMotionLightAutomation {
-    id = "hallway_lights_day";
-    alias = "Hallway lights (day)";
-    motion_sensor = "binary_sensor.hallway_motion_sensor_occupancy";
-    target.area_id = ["hallway"];
-    brightness_pct = 85;
-    delay_seconds = 60;
-    time_condition = {
-      after = "07:30:00";
-      before = "20:00:00";
-    };
-  })
-
-  (mkMotionLightAutomation {
-    id = "hallway_lights_night";
-    alias = "Hallway lights (night)";
-    motion_sensor = "binary_sensor.hallway_motion_sensor_occupancy";
-    target.area_id = ["hallway"];
-    brightness_pct = 10;
-    delay_seconds = 60;
-    time_condition = {
-      before = "07:30:00";
-      after = "20:00:00";
-    };
+  (mkTimedLights {
+    id = "hallway_lights";
+    alias = "Hallway lights";
+    description = "Motion or the front door opening turns the hallway lights on at the time-of-day level; off 1 min after the hallway clears";
+    motion = "binary_sensor.hallway_motion_sensor_occupancy";
+    door = "binary_sensor.myggbett_door_window_sensor_door";
+    timer = "timer.hallway_lights";
+    lights = ["light.hallway" "light.door"];
+    brightness_pct = "{{ 85 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
+    adopt_on_start = true;
   })
 
   # Motion turns the lights on at the time-of-day default only when they are
@@ -250,16 +303,9 @@ in [
     description = "Motion lighting with time-of-day defaults; the dual button adjusts brightness until the lights turn off";
     mode = "restart";
     max_exceeded = "silent";
-    # An event entity being removed or re-added (integration reload, device
-    # re-interview) changes state from or to None and would replay its last
-    # event_type as if pressed. "unknown" stays allowed: that is the state
-    # before the first press after every restart.
-    condition = [
-      {
-        condition = "template";
-        value_template = "{{ trigger.platform != 'state' or (trigger.from_state is not none and trigger.to_state is not none) }}";
-      }
-    ];
+    # "unknown" stays allowed through buttonTrigger: that is the event
+    # entities' state before the first press after every restart.
+    condition = [ignoreEntityChurn];
     variables = {
       inherit (bathroom) lights;
       default_pct = "{{ 85 if today_at('07:30') <= now() < today_at('20:00') else 10 }}";
@@ -456,18 +502,20 @@ in [
     ];
   }
 
-  (mkMotionLightAutomation {
+  (mkTimedLights {
     id = "living_room_lights_night";
     alias = "Living room lights (night)";
-    motion_sensor = "binary_sensor.living_room_motion_sensor_occupancy";
-    target.entity_id = ["light.living_room"];
+    description = "Evening motion turns the living room light on at 20% if it is off; off 5 min after the room clears";
+    motion = "binary_sensor.living_room_motion_sensor_occupancy";
+    timer = "timer.living_room_lights";
+    lights = ["light.living_room"];
     brightness_pct = 20;
-    delay_seconds = 300;
-    time_condition = {
-      before = "01:00:00";
-      after = "20:00:00";
-    };
-    extra_conditions = [
+    on_conditions = [
+      {
+        condition = "time";
+        after = "20:00:00";
+        before = "01:00:00";
+      }
       {
         condition = "state";
         entity_id = "light.living_room";
@@ -519,11 +567,13 @@ in [
     max = 5;
   }
 
-  # Low battery alert notifications
+  # A crossing trigger alone misses a sensor that is already low, and one
+  # whose battery died outright (it goes unavailable instead). The daily sweep
+  # covers both; phones, tablets and watches report their own batteries.
   {
     id = "low_battery_notifications";
     alias = "Low battery notifications";
-    description = "Alert when device batteries are low";
+    description = "Alert on any device battery below 20% or unavailable, when it crosses and daily at 18:00";
     trigger = [
       {
         platform = "numeric_state";
@@ -538,21 +588,44 @@ in [
         ];
         below = 20;
       }
+      {
+        platform = "time";
+        at = "18:00:00";
+      }
+    ];
+    variables.low = ''
+      {% set personal = integration_entities('mobile_app') + integration_entities('icloud') + integration_entities('icloud3') %}
+      {% set ns = namespace(items=[]) %}
+      {% for s in states.sensor
+           | selectattr('attributes.device_class', 'defined')
+           | selectattr('attributes.device_class', 'eq', 'battery')
+           if s.entity_id not in personal %}
+        {% if s.state == 'unavailable' %}
+          {% set ns.items = ns.items + [s.name ~ ': unavailable'] %}
+        {% elif s.state | float(100) < 20 %}
+          {% set ns.items = ns.items + [s.name ~ ': ' ~ s.state ~ '%'] %}
+        {% endif %}
+      {% endfor %}
+      {{ ns.items }}
+    '';
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ low | count > 0 }}";
+      }
     ];
     action = [
       {
-        service = "notify.mobile_app_hatchling";
+        action = "notify.mobile_app_hatchling";
         data = {
-          title = "Low Battery Alert";
-          message = "{{ trigger.to_state.attributes.friendly_name }} battery is at {{ trigger.to_state.state }}%";
-          data = {
-            priority = "high";
-          };
+          title = "Low battery";
+          message = "{{ low | join('\\n') }}";
+          data.push.interruption-level = "time-sensitive";
         };
       }
     ];
-    mode = "queued";
-    max = 10;
+    mode = "single";
+    max_exceeded = "silent";
   }
 
   # iPad low battery notification
@@ -629,47 +702,8 @@ in [
     mode = "single";
   }
 
-  # Dishwasher complete notification
-  {
-    id = "dishwasher_complete";
-    alias = "Dishwasher complete";
-    trigger = [
-      {
-        platform = "state";
-        entity_id = "binary_sensor.vibration_sensor_vibration";
-        to = "on";
-      }
-    ];
-    action = [
-      {
-        wait_for_trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.vibration_sensor_vibration";
-            to = "off";
-            for.minutes = 5;
-          }
-        ];
-      }
-      {
-        action = "notify.notify";
-        data = {
-          title = "Dishwasher";
-          message = "Dishwasher should be finished!";
-        };
-      }
-      {
-        action = "notify.lg_webos_tv_49sj800v_zb";
-        data = {
-          title = "Dishwasher";
-          message = "Dishwasher";
-        };
-      }
-    ];
-    mode = "restart";
-  }
-
-  # Washing machine complete notification
+  # The 5 minute hold on the start trigger ignores brief power spikes, so only
+  # a real wash cycle produces a "finished" notification.
   {
     id = "washing_machine_complete";
     alias = "Washing machine complete";
@@ -678,6 +712,7 @@ in [
         platform = "numeric_state";
         entity_id = "sensor.washing_machine_power";
         above = 50;
+        for.minutes = 5;
       }
     ];
     action = [
@@ -709,7 +744,8 @@ in [
     mode = "restart";
   }
 
-  # Auto turn off LG TV when Apple TV turns off
+  # Only while the TV shows the Apple TV (HDMI1): its sleeping must not turn
+  # off whatever is playing on another input.
   {
     id = "auto_turn_off_tv";
     alias = "Automatically turn off TV";
@@ -718,6 +754,14 @@ in [
         platform = "state";
         entity_id = "remote.living_room";
         to = "off";
+      }
+    ];
+    condition = [
+      {
+        condition = "state";
+        entity_id = "media_player.lg_webos_tv_49sj800v_zb";
+        attribute = "source";
+        state = "HDMI1";
       }
     ];
     action = [
@@ -787,37 +831,6 @@ in [
       {
         action = "fan.turn_off";
         target.entity_id = "fan.dyson";
-      }
-      {
-        action = "switch.turn_off";
-        target.entity_id = "switch.security_camera_privacy_mode";
-      }
-    ];
-    mode = "single";
-  }
-
-  # Enter Home - enable camera privacy when someone arrives
-  {
-    id = "enter_home";
-    alias = "Enter Home";
-    trigger = [
-      {
-        platform = "zone";
-        entity_id = "person.darren";
-        zone = "zone.home";
-        event = "enter";
-      }
-      {
-        platform = "zone";
-        entity_id = "person.lorraine";
-        zone = "zone.home";
-        event = "enter";
-      }
-    ];
-    action = [
-      {
-        action = "switch.turn_on";
-        target.entity_id = "switch.security_camera_privacy_mode";
       }
     ];
     mode = "single";

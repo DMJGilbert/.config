@@ -5,7 +5,6 @@
 in [
   pkgs.home-assistant-custom-components.spook
   pkgs.home-assistant-custom-components.localtuya
-  pkgs.home-assistant-custom-components.adaptive_lighting
   pkgs.home-assistant-custom-components.octopus_energy
   pkgs.home-assistant-custom-components.waste_collection_schedule
   (pkgs.buildHomeAssistantComponent rec {
