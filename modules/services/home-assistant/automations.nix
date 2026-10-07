@@ -122,20 +122,22 @@
       };
     action = [
       {
-        choose = [
-          (whenTriggeredBy "motion_on" [
-            {
-              "if" = [(timerIs ["active" "paused"])];
-              "then" = [turnOnIfAllOff (timerAction "timer.pause")];
-              "else" = [
-                {
-                  "if" = [(timerIs "idle")] ++ on_conditions;
-                  "then" = [turnOn (timerAction "timer.start") (timerAction "timer.pause")];
-                }
-              ];
-            }
-          ])
-          (whenTriggeredBy "door_open" [
+        choose =
+          [
+            (whenTriggeredBy "motion_on" [
+              {
+                "if" = [(timerIs ["active" "paused"])];
+                "then" = [turnOnIfAllOff (timerAction "timer.pause")];
+                "else" = [
+                  {
+                    "if" = [(timerIs "idle")] ++ on_conditions;
+                    "then" = [turnOn (timerAction "timer.start") (timerAction "timer.pause")];
+                  }
+                ];
+              }
+            ])
+          ]
+          ++ lib.optional (door != null) (whenTriggeredBy "door_open" [
             {
               "if" = [(timerIs "active")];
               "then" = [turnOnIfAllOff] ++ restartTimer;
@@ -147,43 +149,44 @@
               ];
             }
           ])
-          (whenTriggeredBy "motion_off" [
-            {
-              "if" = [(timerIs "paused")];
-              "then" = restartTimer;
-            }
-          ])
-          (whenTriggeredBy "timer_finished" [
-            {
-              action = "light.turn_off";
-              target.entity_id = lights;
-            }
-          ])
-          # Motion may have changed while HA was down without a transition
-          # to trigger on, so the restored timer is reconciled with it.
-          (whenTriggeredBy "ha_start" (
-            [
+          ++ [
+            (whenTriggeredBy "motion_off" [
               {
-                "if" = [(timerIs "paused") (motionIs "off")];
+                "if" = [(timerIs "paused")];
                 "then" = restartTimer;
               }
+            ])
+            (whenTriggeredBy "timer_finished" [
               {
-                "if" = [(timerIs "active") (motionIs "on")];
-                "then" = [(timerAction "timer.pause")];
+                action = "light.turn_off";
+                target.entity_id = lights;
               }
-            ]
-            ++ lib.optional adopt_on_start {
-              "if" = [
-                (timerIs "idle")
+            ])
+            # Motion may have changed while HA was down without a transition
+            # to trigger on, so the restored timer is reconciled with it.
+            (whenTriggeredBy "ha_start" (
+              [
                 {
-                  condition = "template";
-                  value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
+                  "if" = [(timerIs "paused") (motionIs "off")];
+                  "then" = restartTimer;
                 }
-              ];
-              "then" = restartTimer;
-            }
-          ))
-        ];
+                {
+                  "if" = [(timerIs "active") (motionIs "on")];
+                  "then" = [(timerAction "timer.pause")];
+                }
+              ]
+              ++ lib.optional adopt_on_start {
+                "if" = [
+                  (timerIs "idle")
+                  {
+                    condition = "template";
+                    value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
+                  }
+                ];
+                "then" = restartTimer;
+              }
+            ))
+          ];
       }
     ];
   };
