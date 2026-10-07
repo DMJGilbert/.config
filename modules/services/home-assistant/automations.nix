@@ -104,12 +104,29 @@ in [
 
   # Motion-activated lighting automations
   (mkMotionLightAutomation {
-    id = "hallway_lights_motion";
-    alias = "Hallway lights";
+    id = "hallway_lights_day";
+    alias = "Hallway lights (day)";
+    motion_sensor = "binary_sensor.hallway_motion_sensor_occupancy";
+    target.area_id = ["hallway"];
+    brightness_pct = 85;
+    delay_seconds = 60;
+    time_condition = {
+      after = "07:30:00";
+      before = "20:00:00";
+    };
+  })
+
+  (mkMotionLightAutomation {
+    id = "hallway_lights_night";
+    alias = "Hallway lights (night)";
     motion_sensor = "binary_sensor.hallway_motion_sensor_occupancy";
     target.area_id = ["hallway"];
     brightness_pct = 10;
     delay_seconds = 60;
+    time_condition = {
+      before = "07:30:00";
+      after = "20:00:00";
+    };
   })
 
   (mkMotionLightAutomation {
@@ -136,26 +153,6 @@ in [
       before = "07:30:00";
       after = "20:00:00";
     };
-  })
-
-  (mkMotionLightAutomation {
-    id = "bedroom_lights_night";
-    alias = "Bedroom lights (night)";
-    motion_sensor = "binary_sensor.bedroom_motion_sensor_occupancy";
-    target.entity_id = ["light.bedroom"];
-    brightness_pct = 5;
-    delay_seconds = 300;
-    time_condition = {
-      before = "01:00:00";
-      after = "20:00:00";
-    };
-    extra_conditions = [
-      {
-        condition = "state";
-        entity_id = "light.bedroom";
-        state = "off";
-      }
-    ];
   })
 
   (mkMotionLightAutomation {
@@ -232,7 +229,6 @@ in [
         entity_id = [
           "sensor.hallway_motion_sensor_battery"
           "sensor.bathroom_motion_sensor_battery"
-          "sensor.bedroom_motion_sensor_battery"
           "sensor.living_room_motion_sensor_battery"
           "sensor.myggbett_door_window_sensor_battery"
           "sensor.vibration_sensor_battery"

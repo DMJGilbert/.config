@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   isLinux,
   ...
 }: let
@@ -46,6 +47,7 @@ in
       systemd.services.matter-server = {
         after = ["avahi-daemon.service"];
         requires = ["avahi-daemon.service"];
+        path = [pkgs.chip-ota-provider-app];
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = "30s";

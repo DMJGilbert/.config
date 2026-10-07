@@ -13,6 +13,7 @@ final: prev: {
     patches = (old.patches or []) ++ [./python-matter-server-skip-bad-paa.patch];
   });
 
+  chip-ota-provider-app = final.callPackage ./chip-ota-provider-app.nix {};
   cross-seed = final.callPackage ./cross-seed.nix {};
   hass-catppuccin = final.callPackage ./hass-catppuccin.nix {};
   lovelace-tabbed-card = final.callPackage ./lovelace-tabbed-card.nix {};

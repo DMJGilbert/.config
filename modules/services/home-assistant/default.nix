@@ -353,7 +353,6 @@ in
                 name = "Home motion";
                 entities = [
                   "binary_sensor.bathroom_motion_sensor_occupancy"
-                  "binary_sensor.bedroom_motion_sensor_occupancy"
                   "binary_sensor.hallway_motion_sensor_occupancy"
                   "binary_sensor.living_room_motion_sensor_occupancy"
                 ];

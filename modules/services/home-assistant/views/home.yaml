@@ -265,7 +265,7 @@ cards:
                       room_icon: mdi:bed
                       room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
                       light_entity: group.bedroom_lights
-                      motion_entity: binary_sensor.bedroom_motion_sensor_occupancy
+                      motion_entity: null
                       media_entity: media_player.bedroom_tv
                       room_path: /lovelace-home/room-bedroom
 
