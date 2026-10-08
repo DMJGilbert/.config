@@ -34,7 +34,7 @@
     if (diffMs <= 0) {
       timeStr = 'Now';
     } else if (diffDays === 0 && diffHours === 0) {
-      const diffMins = Math.ceil(diffMs / (1000 * 60));
+      const diffMins = Math.max(1, Math.floor(diffMs / (1000 * 60)));
       timeStr = `${diffMins} min`;
     } else if (diffDays === 0) {
       timeStr = `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;

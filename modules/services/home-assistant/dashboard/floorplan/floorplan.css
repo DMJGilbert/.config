@@ -1,0 +1,131 @@
+/*
+ * Floorplan colours come from the Home Assistant theme, so the drawing
+ * follows light and dark mode. Walls and furniture are filled with the card
+ * background: the drawing hides lines by painting nearer faces over farther
+ * ones, which only works while fills match what is behind them.
+ *
+ * ha-floorplan rules set data-on="1" on a room's floor, leader, anchor and
+ * strip while its lights are on, and on a tile while its entity is active.
+ */
+.fp-root {
+  --fp-bg: var(--ha-card-background, var(--card-background-color, #1e1e2e));
+  --fp-line: var(--primary-text-color, #cdd6f4);
+  --fp-dim: var(--secondary-text-color, #a6adc8);
+  --fp-accent: var(--accent-color, #fab387);
+  --fp-glow: color-mix(in srgb, var(--fp-accent) 24%, var(--fp-bg));
+  --fp-tile: color-mix(in srgb, var(--fp-line) 7%, var(--fp-bg));
+  --fp-font: var(--ha-font-family-body, Roboto, sans-serif);
+}
+
+.fp-bg {
+  fill: var(--fp-bg);
+}
+
+.fp-floor {
+  fill: var(--fp-bg);
+  transition: fill 0.4s ease;
+}
+.fp-outdoor {
+  fill: var(--fp-tile);
+}
+.fp-floor[data-on="1"] {
+  fill: var(--fp-glow);
+}
+.fp-floor-edge {
+  fill: none;
+  stroke: var(--fp-line);
+  stroke-width: 0.6;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.fp-wall,
+.fp-furniture {
+  fill: var(--fp-bg);
+  stroke: var(--fp-line);
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.fp-wall {
+  stroke-width: 1.4;
+}
+.fp-furniture {
+  stroke-width: 0.9;
+}
+.fp-window {
+  fill: none;
+  stroke: var(--fp-line);
+  stroke-width: 0.8;
+  pointer-events: none;
+}
+
+.fp-label {
+  fill: var(--fp-dim);
+  font: 500 22px var(--fp-font);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.fp-leader {
+  fill: none;
+  stroke: var(--fp-dim);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 4;
+  opacity: 0.5;
+  pointer-events: none;
+  transition:
+    stroke 0.4s ease,
+    opacity 0.4s ease;
+}
+.fp-leader[data-on="1"] {
+  stroke: var(--fp-accent);
+  stroke-width: 2;
+  stroke-dasharray: none;
+  opacity: 1;
+}
+.fp-anchor {
+  fill: var(--fp-dim);
+  opacity: 0.6;
+  pointer-events: none;
+}
+.fp-anchor[data-on="1"] {
+  fill: var(--fp-accent);
+  opacity: 1;
+}
+
+.fp-strip {
+  cursor: pointer;
+}
+.fp-strip-hit {
+  fill: transparent;
+}
+.fp-strip-title {
+  fill: var(--fp-line);
+  font-family: var(--fp-font);
+  font-weight: 600;
+}
+.fp-strip[data-on="1"] .fp-strip-title {
+  fill: var(--fp-accent);
+}
+.fp-tile-bg {
+  fill: var(--fp-tile);
+  stroke: color-mix(in srgb, var(--fp-line) 14%, transparent);
+  stroke-width: 1;
+  transition: fill 0.3s ease;
+}
+.fp-tile-icon {
+  fill: var(--fp-dim);
+}
+.fp-tile-text {
+  fill: var(--fp-dim);
+  font-family: var(--fp-font);
+  font-weight: 500;
+  text-anchor: middle;
+}
+.fp-tile[data-on="1"] .fp-tile-bg {
+  fill: var(--fp-accent);
+}
+.fp-tile[data-on="1"] .fp-tile-icon,
+.fp-tile[data-on="1"] .fp-tile-text {
+  fill: var(--fp-bg);
+}
