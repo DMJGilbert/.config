@@ -228,17 +228,40 @@ def depths_at(segs, u):
 class Item:
     """A paintable face: a vertical wall face or a horizontal top."""
 
-    def __init__(self, svg, segment=None, top=None):
+    def __init__(self, svg, segment=None, top=None, solid=None):
         self.svg = svg
         self.segment = segment  # vertical face: its plan segment
         self.top = top  # horizontal top: its plan outline segments
+        # For a top: (footprint, base z, top z) of the solid it closes.
+        self.solid = solid
 
     def segments(self):
         return [self.segment] if self.segment else self.top
 
 
+def stacked(a, b):
+    """+1 if a's solid rests on b's, -1 if b's rests on a's, else 0.
+
+    Depth alone puts a box on a shelf behind the shelf when the shelf
+    reaches further forward; whatever sits on top is painted last.
+    """
+    if not (a.solid and b.solid):
+        return 0
+    (pa, base_a, top_a), (pb, base_b, top_b) = a.solid, b.solid
+    if pa.intersection(pb).area <= EPS:
+        return 0
+    if base_a >= top_b - EPS:
+        return 1
+    if base_b >= top_a - EPS:
+        return -1
+    return 0
+
+
 def in_front(a, b):
     """+1 if a must be painted after b, -1 if before, 0 if unrelated."""
+    on_top = stacked(a, b)
+    if on_top:
+        return on_top
     sa, sb = a.segments(), b.segments()
     lo_a, hi_a = u_range(sa)
     lo_b, hi_b = u_range(sb)
@@ -358,6 +381,7 @@ def extrude(geom, height, cls, project, windows=(), base=0.0):
             Item(
                 f'<path class="{cls}" fill-rule="evenodd" d="{path(poly, project, height)}"/>',
                 top=outline,
+                solid=(poly, base, height),
             )
         )
     return faces, tops
@@ -476,6 +500,7 @@ def render_iso(
             Item(
                 f'<g id="device.{d["name"]}" class="fp-device-group">{svg}</g>',
                 top=list(ring_segments(poly)),
+                solid=(poly, d["base"], d["base"] + d["height"]),
             )
         )
 
