@@ -29,8 +29,8 @@ the same way. Full-height wall tops go last: everything else is lower, so
 nothing can sit in front of them on screen.
 
 Element ids are stable so ha-floorplan rules can target them:
-`<room>.floor`, `<room>.name`, `<room>.leader`, `<room>.anchor`,
-`<room>.strip`, `<room>.tile<k>` and `<room>.tile<k>.text`.
+`<room>.floor`, `<room>.leader`, `<room>.anchor`,
+`<room>.strip`, `<room>.title`, `<room>.tile<k>` and `<room>.tile<k>.text`.
 """
 
 import argparse
@@ -61,7 +61,7 @@ MITRE = 2  # shapely join_style
 FLAT = 2  # shapely cap_style
 
 # Strip proportions, in tile edges. Landscape tiles are a fraction of the
-# drawing's width, which keeps tile text near 11 px on a 1000 px card;
+# drawing's width, which keeps tile text near 12 px on a 1000 px card;
 # portrait tiles are as large as the drawing's width allows.
 LAYOUTS = {
     "landscape": {
@@ -82,6 +82,7 @@ LAYOUTS = {
         "text": 0.25,
     },
 }
+TITLE_FONT = 0.62  # room name size, as a fraction of the title band
 # MDI glyphs are drawn on a 512 unit em whose 24 px icon box spans
 # y = -64..448 (font units, y up).
 MDI_EM = 512
@@ -351,16 +352,21 @@ def polygon_centroid(points):
     return c.x, c.y
 
 
-def render_iso(
-    rooms, openings, furniture, project, wall_height, front_height, labelled
-):
-    """Drawing of the flat; rooms in `labelled` get their name on the floor."""
+def render_iso(rooms, openings, furniture, project, wall_height, front_height, linked):
+    """Drawing of the flat, unlabelled: the strips carry the room names.
+
+    Floors of `linked` rooms are marked as tap targets.
+    """
     tall, front = walls(rooms, openings)
     windows = [o for o in openings if o["type"] == "window"]
 
     out = []
     for r in rooms:
-        cls = "fp-floor fp-outdoor" if r.get("outdoor") else "fp-floor"
+        cls = "fp-floor"
+        if r.get("outdoor"):
+            cls += " fp-outdoor"
+        if r["id"] in linked:
+            cls += " fp-room"
         out.append(
             f'<polygon id="{r["id"]}.floor" class="{cls}" points="{fmt([project(x, y) for x, y in r["polygon"]])}"/>'
         )
@@ -403,13 +409,6 @@ def render_iso(
             )
             out.append(
                 f'<line class="fp-window" x1="{sx0:.1f}" y1="{sy0:.1f}" x2="{sx1:.1f}" y2="{sy1:.1f}"/>'
-            )
-
-    for r in rooms:
-        if r["id"] in labelled:
-            x, y = project(*polygon_centroid(r["polygon"]))
-            out.append(
-                f'<text id="{r["id"]}.name" class="fp-label" x="{x:.1f}" y="{y:.1f}">{escape(r["name"])}</text>'
             )
     return out
 
@@ -470,17 +469,23 @@ class Strip:
         self.tile = tile
         self.gap = self.layout["gap"] * tile
         self.title = self.layout["title"] * tile
-        self.w = self.columns * tile + (self.columns - 1) * self.gap
+        self.tiles_w = self.columns * tile + (self.columns - 1) * self.gap
+        # No font metrics at build time: 0.6 em per character is a generous
+        # average for the UI font's bold weight.
+        title_w = len(self.name) * 0.6 * self.title * TITLE_FONT
+        self.w = max(self.tiles_w, title_w)
         self.h = self.title + self.rows * tile + (self.rows - 1) * self.gap
 
     def svg(self, icon_paths):
         out = [
             f'<g id="{self.id}.strip" class="fp-strip">',
-            f'<rect class="fp-strip-hit" x="{self.x:.1f}" y="{self.y:.1f}" width="{self.w:.1f}" height="{self.h:.1f}"/>',
+            f'<g id="{self.id}.title" class="fp-strip-title">',
+            f'<rect class="fp-hit" x="{self.x:.1f}" y="{self.y:.1f}" width="{self.w:.1f}" height="{self.title:.1f}"/>',
             (
-                f'<text class="fp-strip-title" x="{self.x:.1f}" y="{self.y + self.title * 0.62:.1f}"'
-                f' style="font-size:{self.title * 0.62:.1f}px">{escape(self.name)}</text>'
+                f'<text x="{self.x:.1f}" y="{self.y + self.title * TITLE_FONT:.1f}"'
+                f' style="font-size:{self.title * TITLE_FONT:.1f}px">{escape(self.name)}</text>'
             ),
+            "</g>",
         ]
         size = self.tile * 0.4
         s = size / MDI_EM
@@ -550,7 +555,7 @@ def layout_landscape(strips, box, layout):
             row = top + s.title + s.tile / 2
             if side < 0:
                 s.x = x0 - 2 * reach - width
-                s.leader = [(s.x + s.w + reach * 0.15, row), (x0 - reach, row)]
+                s.leader = [(s.x + s.tiles_w + reach * 0.15, row), (x0 - reach, row)]
             else:
                 s.x = x1 + 2 * reach
                 s.leader = [(x1 + 2 * reach - reach * 0.15, row), (x1 + reach, row)]
@@ -589,7 +594,7 @@ def layout_portrait(strips, box, layout):
         for s in row:
             s.x = x
             x += s.w + gap
-            cx = s.x + s.w / 2
+            cx = s.x + s.tiles_w / 2
             if above:
                 s.y = y0 - 2 * reach - s.h
                 s.leader = [(cx, s.y + s.h + reach * 0.15), (cx, y0 - reach)]
@@ -699,9 +704,6 @@ def main():
             else {}
         )
 
-        # The balcony reads as one without a label, which the walls in front
-        # of it would cover anyway.
-        labelled = {r["id"] for r in rooms if not r.get("outdoor")} - set(tiles)
         body = render_iso(
             rooms,
             openings,
@@ -709,7 +711,7 @@ def main():
             project,
             args.wall_height,
             args.front_height,
-            labelled,
+            set(tiles),
         )
         for s in strips:
             body += s.leader_svg()

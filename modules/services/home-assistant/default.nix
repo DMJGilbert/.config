@@ -20,11 +20,12 @@
   rooms = import ./dashboard/rooms.nix {inherit (roomView) cards;};
   floorplan = import ./dashboard/floorplan {
     inherit lib pkgs;
+    inherit (roomView) cards;
     viewPaths = map (room: room.path) rooms;
   };
   # Room views are generated from rooms.nix; the home view is hand-written
-  # and includes the generated floorplan card. dashboard.yaml includes each
-  # view by its file name.
+  # and includes the generated floorplan card and its pop-ups. dashboard.yaml
+  # includes each view by its file name.
   viewsDir = pkgs.linkFarm "hass-dashboard-views" (
     [
       {
@@ -34,6 +35,10 @@
       {
         name = "floorplan-card.yaml";
         path = (pkgs.formats.yaml {}).generate "floorplan-card.yaml" floorplan.card;
+      }
+      {
+        name = "floorplan-popups.yaml";
+        path = (pkgs.formats.yaml {}).generate "floorplan-popups.yaml" floorplan.popups;
       }
     ]
     ++ map (view: {

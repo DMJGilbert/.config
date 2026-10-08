@@ -187,7 +187,7 @@ cards:
       # -------------------- Tabbed Section --------------------
       - type: custom:state-switch
         entity: hash
-        default: tab-rooms
+        default: tab-floorplan
         states:
           "tab-rooms":
             type: custom:mod-card
@@ -207,6 +207,15 @@ cards:
               cards:
                 - type: horizontal-stack
                   cards:
+                    - type: custom:button-card
+                      template:
+                        - tab_button_inactive
+                        - tab_icon
+                      name: Floorplan
+                      icon: mdi:floor-plan
+                      tap_action: &tap_floorplan
+                        action: navigate
+                        navigation_path: "#tab-floorplan"
                     - type: custom:button-card
                       template: tab_button_active
                       name: Rooms
@@ -231,12 +240,6 @@ cards:
                       tap_action: &tap_other
                         action: navigate
                         navigation_path: "#tab-other"
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Floorplan
-                      tap_action: &tap_floorplan
-                        action: navigate
-                        navigation_path: "#tab-floorplan"
                 # Room cards container
                 - type: custom:mod-card
                   card_mod: &tab_content_style
@@ -331,6 +334,13 @@ cards:
                 - type: horizontal-stack
                   cards:
                     - type: custom:button-card
+                      template:
+                        - tab_button_inactive
+                        - tab_icon
+                      name: Floorplan
+                      icon: mdi:floor-plan
+                      tap_action: *tap_floorplan
+                    - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
                       tap_action: *tap_rooms
@@ -346,10 +356,6 @@ cards:
                       template: tab_button_inactive
                       name: Other
                       tap_action: *tap_other
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Floorplan
-                      tap_action: *tap_floorplan
                 # Person cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -393,6 +399,13 @@ cards:
                 - type: horizontal-stack
                   cards:
                     - type: custom:button-card
+                      template:
+                        - tab_button_inactive
+                        - tab_icon
+                      name: Floorplan
+                      icon: mdi:floor-plan
+                      tap_action: *tap_floorplan
+                    - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
                       tap_action: *tap_rooms
@@ -408,10 +421,6 @@ cards:
                       template: tab_button_inactive
                       name: Other
                       tap_action: *tap_other
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Floorplan
-                      tap_action: *tap_floorplan
                 # Calendar cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -439,6 +448,13 @@ cards:
                 - type: horizontal-stack
                   cards:
                     - type: custom:button-card
+                      template:
+                        - tab_button_inactive
+                        - tab_icon
+                      name: Floorplan
+                      icon: mdi:floor-plan
+                      tap_action: *tap_floorplan
+                    - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
                       tap_action: *tap_rooms
@@ -454,10 +470,6 @@ cards:
                       template: tab_button_active
                       name: Other
                       tap_action: *tap_other
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Floorplan
-                      tap_action: *tap_floorplan
                 # Other cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -530,6 +542,13 @@ cards:
                 - type: horizontal-stack
                   cards:
                     - type: custom:button-card
+                      template:
+                        - tab_button_active
+                        - tab_icon
+                      name: Floorplan
+                      icon: mdi:floor-plan
+                      tap_action: *tap_floorplan
+                    - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
                       tap_action: *tap_rooms
@@ -545,10 +564,6 @@ cards:
                       template: tab_button_inactive
                       name: Other
                       tap_action: *tap_other
-                    - type: custom:button-card
-                      template: tab_button_active
-                      name: Floorplan
-                      tap_action: *tap_floorplan
                 # Generated from dashboard/floorplan by the Nix module.
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -558,3 +573,4 @@ cards:
       - !include /var/lib/hass/popups/lights.yaml
       - !include /var/lib/hass/popups/media.yaml
       - !include /var/lib/hass/popups/motion.yaml
+      - !include /var/lib/hass/views/floorplan-popups.yaml

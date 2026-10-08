@@ -2,11 +2,14 @@
 # geometry.nix and tiles.nix, and the ha-floorplan rules that animate them
 # are generated from the same tiles, so element ids cannot drift apart.
 #
-# `files` is served at `baseUrl`; `card` is the Lovelace card config.
-# `viewPaths` are the room views that exist, to catch a tile linking nowhere.
+# `files` is served at `baseUrl`; `card` is the Lovelace card config and
+# `popups` the pop-ups its tiles open. `viewPaths` are the room views that
+# exist, to catch a tile linking nowhere; `cards` are the room views' card
+# builders, so pop-ups list lights the way the room views do.
 {
   lib,
   pkgs,
+  cards,
   viewPaths,
   baseUrl ? "/local/floorplan",
 }: let
@@ -43,7 +46,6 @@
   # ha-floorplan evaluates these in a sandboxed interpreter, so they keep to
   # plain expressions.
   activeWhen = states: "\${${builtins.toJSON states}.includes(entity.state) ? \"1\" : \"0\"}";
-  valueText = tile: ''> const v = parseFloat(entity.state); return isNaN(v) ? "–" : v.toFixed(${toString tile.digits}) + "${tile.unit}";'';
   labelText = tile: ''> return ${builtins.toJSON tile.labels}[entity.state] || "–";'';
 
   markOn = elements: states: {
@@ -55,6 +57,70 @@
     };
   };
 
+  popupHash = id: kind: "#floorplan-${id}-${kind}";
+
+  # One bubble-card pop-up per room and kind of tile it has: the room's
+  # lights with their toggles, or controls for each of its media players.
+  popupContent = {
+    lights = room:
+      if lib.hasPrefix "group." room.lights
+      then [
+        (cards.auto {
+          include = [
+            {
+              group = room.lights;
+              options = cards.item {
+                entity = "this.entity_id";
+                icon = "mdi:lightbulb";
+                toggle = true;
+              };
+            }
+          ];
+          exclude = [
+            {entity_id = "*coordinator*";}
+            {state = "unavailable";}
+          ];
+          showEmpty = true;
+        })
+      ]
+      else [
+        (cards.item {
+          entity = room.lights;
+          icon = "mdi:lightbulb";
+          toggle = true;
+        })
+      ];
+    media = room:
+      map (tile: {
+        type = "media-control";
+        inherit (tile) entity;
+      }) (lib.filter (tile: tile.popup == "media") room.tiles);
+  };
+  popupTitle = {
+    lights = name: "${name} Lights";
+    media = name: "${name} Media";
+  };
+  popupIcon = {
+    lights = "mdi:lightbulb";
+    media = "mdi:television";
+  };
+  roomName = id: (lib.findFirst (r: r.id == id) null geometry.rooms).name;
+
+  roomPopups = id: room:
+    map (kind: {
+      type = "custom:bubble-card";
+      card_type = "pop-up";
+      hash = popupHash id kind;
+      name = popupTitle.${kind} (roomName id);
+      icon = popupIcon.${kind};
+      styles = ''
+        .bubble-pop-up-container {
+          background: var(--card-background-color);
+        }
+      '';
+      cards = popupContent.${kind} room;
+    }) (lib.unique (map (tile: tile.popup) room.tiles));
+
   roomRules = id: room: let
     navigate = {
       action = "navigate";
@@ -65,21 +131,20 @@
     in {
       inherit (tile) entity;
       inherit element;
-      # Taps on a tile reach the strip's rule, which covers its children.
-      state_action =
-        lib.optional (tile ? active) (markOn [element] tile.active)
-        ++ [
-          {
-            service = "floorplan.text_set";
-            service_data = {
-              element = "${element}.text";
-              text =
-                if tile ? labels
-                then labelText tile
-                else valueText tile;
-            };
-          }
-        ];
+      tap_action = {
+        action = "navigate";
+        navigation_path = popupHash id tile.popup;
+      };
+      state_action = [
+        (markOn [element] tile.active)
+        {
+          service = "floorplan.text_set";
+          service_data = {
+            element = "${element}.text";
+            text = labelText tile;
+          };
+        }
+      ];
     };
   in
     [
@@ -90,15 +155,30 @@
         state_action = markOn (map (part: "${id}.${part}") ["floor" "leader" "anchor" "strip"]) ["on"];
       }
       {
-        element = "${id}.strip";
+        element = "${id}.title";
         tap_action = navigate;
       }
     ]
     ++ lib.imap0 tileRule room.tiles;
 in {
   inherit files;
+  # The pop-ups open on top of whatever tab is showing, so they live with
+  # the home view's other pop-ups rather than inside the floorplan tab.
+  popups = {
+    type = "vertical-stack";
+    cards = lib.concatLists (lib.mapAttrsToList roomPopups checked);
+  };
   card = {
     type = "custom:floorplan-card";
+    # The drawing sits on the page; floorplan.css paints its hidden-line
+    # fills in the page background to match.
+    card_mod.style = ''
+      ha-card {
+        background: none;
+        border: none;
+        box-shadow: none;
+      }
+    '';
     config = {
       image.sizes = [
         {
