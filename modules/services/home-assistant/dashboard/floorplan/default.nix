@@ -52,14 +52,13 @@
     tiles;
 
   json = name: value: pkgs.writeText name (builtins.toJSON value);
-  python = pkgs.python3.withPackages (ps: [ps.shapely ps.fonttools]);
-  icons = "${pkgs.material-design-icons}/share/fonts/truetype/materialdesignicons-webfont.ttf";
+  python = pkgs.python3.withPackages (ps: [ps.shapely]);
 
   files = pkgs.runCommand "hass-floorplan" {nativeBuildInputs = [python];} ''
     mkdir $out
     for layout in landscape portrait; do
       python ${./render.py} ${json "geometry.json" geometry} "$out/$layout.svg" \
-        --tiles ${json "tiles.json" checked} --icons ${icons} --layout "$layout"
+        --tiles ${json "tiles.json" checked} --layout "$layout"
     done
     cp ${./floorplan.css} $out/floorplan.css
   '';

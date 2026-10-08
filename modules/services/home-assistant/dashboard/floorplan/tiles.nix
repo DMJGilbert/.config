@@ -22,7 +22,7 @@ let
 
   light = entity: {
     inherit entity;
-    icon = "lightbulb-group";
+    icon = "lamp";
     toggle = true;
     popup = "lights";
     active = ["on"];
@@ -50,7 +50,7 @@ in {
     motion = "binary_sensor.living_room_motion_sensor_occupancy";
     tiles = [
       (light "group.living_room_lights")
-      (media "television" "media_player.living_room_tv")
+      (media "tv" "media_player.living_room_tv")
     ];
   };
   # Dining shares the living room's view; its light is in that group too.
@@ -84,7 +84,7 @@ in {
     climate = climate "alpstuga_air_quality_monitor";
     tiles = [
       (light "group.bedroom_lights")
-      (media "television" "media_player.bedroom_tv")
+      (media "tv" "media_player.bedroom_tv")
     ];
   };
   girls_room = {

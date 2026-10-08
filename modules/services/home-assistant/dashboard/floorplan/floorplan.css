@@ -111,8 +111,12 @@
 .fp-pin-head {
   fill: var(--fp-accent);
 }
-.fp-pin-icon {
-  fill: var(--fp-bg);
+.fp-pin .fp-icon {
+  fill: var(--fp-accent);
+  stroke: var(--fp-bg);
+}
+.fp-pin .fp-icon-frame {
+  stroke: var(--fp-bg);
 }
 @keyframes fp-pin-drop {
   from {
@@ -159,19 +163,37 @@
     opacity: 0;
   }
 }
+/*
+ * Reduced motion keeps the rings in place and fades them in turn from the
+ * centre out, so motion still reads as live without anything moving.
+ */
 @media (prefers-reduced-motion: reduce) {
   .fp-ripple {
-    animation: none;
-    opacity: 0.6;
+    animation: fp-ripple-fade 2.4s ease-in-out infinite;
+  }
+  .fp-ripple:nth-child(1) {
+    transform: scale(0.3);
+    animation-delay: 0s;
   }
   .fp-ripple:nth-child(2) {
-    transform: scale(0.6);
+    transform: scale(0.65);
+    animation-delay: 0.4s;
   }
   .fp-ripple:nth-child(3) {
-    transform: scale(0.3);
+    transform: scale(1);
+    animation-delay: 0.8s;
   }
   .fp-door[data-on="1"] .fp-pin {
     animation: none;
+  }
+}
+@keyframes fp-ripple-fade {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  40% {
+    opacity: 0.85;
   }
 }
 
@@ -261,8 +283,26 @@
   stroke-width: 1;
   transition: fill 0.3s ease;
 }
-.fp-tile-icon {
-  fill: var(--fp-dim);
+/*
+ * Icons are small isometric models (render.py iso_icon), drawn in the
+ * floorplan's line style; the stroke width is set per model by the renderer.
+ */
+.fp-icon-model {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.fp-icon {
+  fill: var(--fp-tile);
+  stroke: var(--fp-dim);
+}
+.fp-icon-detail,
+.fp-icon-frame {
+  fill: none;
+  stroke: var(--fp-dim);
+}
+.fp-icon-ray {
+  display: none;
+  stroke: var(--fp-bg);
 }
 .fp-tile-text {
   fill: var(--fp-dim);
@@ -273,7 +313,18 @@
 .fp-tile[data-on="1"] .fp-tile-bg {
   fill: var(--fp-accent);
 }
-.fp-tile[data-on="1"] .fp-tile-icon,
 .fp-tile[data-on="1"] .fp-tile-text {
   fill: var(--fp-bg);
+}
+.fp-tile[data-on="1"] .fp-icon {
+  fill: var(--fp-accent);
+  stroke: var(--fp-bg);
+}
+/* A lit screen or a playing speaker fills in; a lamp that is on shines. */
+.fp-tile[data-on="1"] .fp-icon-detail {
+  fill: var(--fp-bg);
+  stroke: var(--fp-bg);
+}
+.fp-tile[data-on="1"] .fp-icon-ray {
+  display: inline;
 }

@@ -2,14 +2,15 @@
 
 usage: render.py GEOMETRY.json OUT.svg [--mode iso|plan]
                  [--wall-height CM] [--front-height CM]
-                 [--tiles TILES.json --icons MDI.ttf --layout landscape|portrait]
+                 [--tiles TILES.json --layout landscape|portrait]
                  [--style CSS]
 
 GEOMETRY.json is geometry.nix serialised: room polygons, wall openings,
 furniture boxes and device boxes (raised by a `base` height) in centimetres
 in the reference frame, plus a display rotation. TILES.json maps room ids
-to the MDI icon of each of their tiles; the strips are laid out around the
-drawing and joined to their room by a leader line. --style embeds a stylesheet, for previews outside Home
+to the icon of each of their tiles (an isometric model: lamp, tv, speaker);
+the strips are laid out around the drawing and joined to their room by a
+leader line. --style embeds a stylesheet, for previews outside Home
 Assistant, which supplies its own.
 
 Walls are derived, not drawn per room: the gaps between neighbouring rooms
@@ -43,8 +44,6 @@ from itertools import pairwise
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-from fontTools.pens.svgPathPen import SVGPathPen
-from fontTools.ttLib import TTFont
 from shapely.geometry import LineString, Point, Polygon
 from shapely.geometry.polygon import orient
 from shapely.ops import nearest_points, unary_union
@@ -93,10 +92,7 @@ LAYOUTS = {
 }
 TITLE_FONT = 0.62  # room name size, as a fraction of the title band
 CLIMATE_SAMPLE = "22.4° · 61%"  # widest readings text, for layout
-# MDI glyphs are drawn on a 512 unit em whose 24 px icon box spans
-# y = -64..448 (font units, y up).
-MDI_EM = 512
-MDI_TOP = 448
+ICON_LINE = 0.016  # icon stroke, as a fraction of the tile edge
 
 
 def rotate(point, degrees):
@@ -372,7 +368,7 @@ def polygon_centroid(points):
     return c.x, c.y
 
 
-def door_pin(door, rooms, project, size, icon_path):
+def door_pin(door, rooms, project, size):
     """Map pin over a door's threshold, on the outside of the wall.
 
     Inside, the door is hidden behind the walls nearest the viewer; outside
@@ -387,17 +383,16 @@ def door_pin(door, rooms, project, size, icon_path):
         nx, ny = -nx, -ny
     x, y = project(mx + nx * EXTERIOR_WALL, my + ny * EXTERIOR_WALL)
     r, rise = size * 0.3, size * 1.2
-    s = r * 1.15 / MDI_EM
+    # The door model fills a pin head about 0.38 of a tile across.
+    icon_tile = r / 0.38
+    model = "".join(iso_icon("door", x, y - rise, icon_tile))
     return [
         f'<g id="door.{door["name"]}" class="fp-door">',
         f'<ellipse class="fp-pin-shadow" cx="{x:.1f}" cy="{y:.1f}" rx="{r * 0.9:.1f}" ry="{r * 0.5:.1f}"/>',
         '<g class="fp-pin">',
         f'<line class="fp-pin-stem" x1="{x:.1f}" y1="{y:.1f}" x2="{x:.1f}" y2="{y - rise + r:.1f}"/>',
         f'<circle class="fp-pin-head" cx="{x:.1f}" cy="{y - rise:.1f}" r="{r:.1f}"/>',
-        (
-            f'<path class="fp-pin-icon" transform="translate({x - r * 0.575:.1f} {y - rise - r * 0.575 + MDI_TOP * s:.1f})'
-            f' scale({s:.4f} {-s:.4f})" d="{icon_path}"/>'
-        ),
+        f'<g class="fp-icon-model" stroke-width="{icon_tile * ICON_LINE:.2f}">{model}</g>',
         "</g>",
         "</g>",
     ]
@@ -512,17 +507,119 @@ def render_iso(
     return out
 
 
-def mdi_paths(font_path, names):
-    """SVG path data of MDI icons by name, in font units (y up)."""
-    glyphs = TTFont(font_path).getGlyphSet()
-    out = {}
-    for name in names:
-        if name not in glyphs:
-            raise SystemExit(f"unknown MDI icon: {name}")
-        pen = SVGPathPen(glyphs)
-        glyphs[name].draw(pen)
-        out[name] = pen.getCommands()
-    return out
+def iso_icon(kind, cx, cy, tile):
+    """A tiny model in the drawing's own projection, centred on (cx, cy).
+
+    Models are laid out for a 120 unit tile and scaled to `tile`. Classes
+    let floorplan.css colour them by state: `fp-icon` for solid parts,
+    `fp-icon-detail` for parts filled only while active (a lit screen, a
+    playing speaker cone), `fp-icon-ray` for light shown only while on and
+    `fp-icon-frame` for outlines that are never filled.
+    """
+    k = tile / 120
+
+    def at(scale, dx, dy):
+        def project(p):
+            x, y, z = p
+            return (
+                cx + dx * k + (x - y) * COS30 * scale * k,
+                cy + dy * k + ((x + y) * SIN30 - z) * scale * k,
+            )
+
+        return project
+
+    def face(points, cls="fp-icon"):
+        return f'<polygon class="{cls}" points="{fmt(points)}"/>'
+
+    def box(P, x0, y0, z0, x1, y1, z1):
+        # The faces turned to the viewer (+x, +y), then the top.
+        return [
+            face([P((x1, y0, z0)), P((x1, y1, z0)), P((x1, y1, z1)), P((x1, y0, z1))]),
+            face([P((x0, y1, z0)), P((x1, y1, z0)), P((x1, y1, z1)), P((x0, y1, z1))]),
+            face([P((x0, y0, z1)), P((x1, y0, z1)), P((x1, y1, z1)), P((x0, y1, z1))]),
+        ]
+
+    def ring(P, z, r, n=32):
+        return [
+            P((r * math.cos(t), r * math.sin(t), z))
+            for t in (2 * math.pi * i / n for i in range(n))
+        ]
+
+    def disc(P, y, z, r, cls, n=24):
+        # A circle upright in the x-z plane, on the +y face of a box.
+        return face(
+            [
+                P((r * math.cos(t), y, z + r * math.sin(t)))
+                for t in (2 * math.pi * i / n for i in range(n))
+            ],
+            cls,
+        )
+
+    if kind == "lamp":
+        P = at(5.4, 0, 1)
+        top, rim = ring(P, 4.4, 1.0), ring(P, 1.4, 3.6)
+        # Shade silhouette: the top ring's back edge, the sides, and the
+        # rim's front half; the rim's back half is behind the shade.
+        top_mid = sum(p[1] for p in top) / len(top)
+        rim_mid = sum(p[1] for p in rim) / len(rim)
+        back = sorted((p for p in top if p[1] <= top_mid), key=lambda p: p[0])
+        front = sorted((p for p in rim if p[1] >= rim_mid), key=lambda p: -p[0])
+        (x0, y0), (x1, y1) = P((0, 0, 8.5)), P((0, 0, 4.4))
+        bx, by = P((0, 0, 1.4))
+        return [
+            f'<line class="fp-icon" x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}"/>',
+            face([*back, max(rim), *front, min(rim)]),
+            face(top),
+            *(
+                f'<line class="fp-icon-ray" x1="{bx + a * 7 * k:.1f}" y1="{by + 3 * k:.1f}"'
+                f' x2="{bx + a * 13 * k:.1f}" y2="{by + 11 * k:.1f}"/>'
+                for a in (-1, 0, 1)
+            ),
+        ]
+    if kind == "tv":
+        P = at(5.2, -2, 7)
+        screen = [
+            P((-3.5, 0.3, 2.1)),
+            P((3.5, 0.3, 2.1)),
+            P((3.5, 0.3, 5.9)),
+            P((-3.5, 0.3, 5.9)),
+        ]
+        return [
+            *box(P, -1.4, -0.4, 0, 1.4, 0.4, 0.5),  # foot
+            *box(P, -0.25, -0.15, 0.5, 0.25, 0.15, 1.6),  # neck
+            *box(P, -4, -0.3, 1.6, 4, 0.3, 6.4),  # panel
+            face(screen, "fp-icon-detail"),
+        ]
+    if kind == "speaker":
+        P = at(5.4, 0, 8)
+        return [
+            *box(P, -2.4, -2.4, 0, 2.4, 2.4, 5.2),
+            disc(P, 2.4, 2.6, 1.5, "fp-icon-detail"),
+            disc(P, 2.4, 2.6, 0.5, "fp-icon"),
+        ]
+    if kind == "door":
+        P = at(5.0, 4, 12)
+        hinge, leaf, height = -2.2, 4.4, 7
+        swing = math.radians(70)
+        lx, ly = hinge + leaf * math.cos(swing), leaf * math.sin(swing)
+        frame = [
+            P((-2.2, 0, 0)),
+            P((-2.2, 0, height)),
+            P((2.2, 0, height)),
+            P((2.2, 0, 0)),
+        ]
+        return [
+            f'<polyline class="fp-icon-frame" points="{fmt(frame)}"/>',
+            face(
+                [
+                    P((hinge, 0, 0)),
+                    P((lx, ly, 0)),
+                    P((lx, ly, height)),
+                    P((hinge, 0, height)),
+                ]
+            ),
+        ]
+    raise SystemExit(f"unknown icon: {kind}")
 
 
 def anchor(room, furniture, project):
@@ -599,7 +696,7 @@ class Strip:
             f'<tspan id="{self.id}.humidity" class="fp-reading">–</tspan>'
         )
 
-    def svg(self, icon_paths):
+    def svg(self):
         name_size = self.title * TITLE_FONT
         inline = self.climate and not self.climate_h
         out = [
@@ -624,17 +721,17 @@ class Strip:
                 f' style="font-size:{self.climate_font:.1f}px">{self.readings()}</text>'
             )
         out.append("</g>")
-        size = self.tile * 0.4
-        s = size / MDI_EM
         top = self.y + self.title + self.climate_h
         for k, icon in enumerate(self.icons):
             tx = self.x + (k % self.columns) * (self.tile + self.gap)
             ty = top + (k // self.columns) * (self.tile + self.gap)
-            ix, iy = tx + (self.tile - size) / 2, ty + self.tile * 0.14
+            model = "".join(
+                iso_icon(icon, tx + self.tile / 2, ty + self.tile * 0.42, self.tile)
+            )
             out += [
                 f'<g id="{self.id}.tile{k}" class="fp-tile">',
                 f'<rect class="fp-tile-bg" x="{tx:.1f}" y="{ty:.1f}" width="{self.tile}" height="{self.tile}" rx="{self.tile * 0.16:.1f}"/>',
-                f'<path class="fp-tile-icon" transform="translate({ix:.1f} {iy + MDI_TOP * s:.1f}) scale({s:.4f} {-s:.4f})" d="{icon_paths[icon]}"/>',
+                f'<g class="fp-icon-model" stroke-width="{self.tile * ICON_LINE:.2f}">{model}</g>',
                 (
                     f'<text id="{self.id}.tile{k}.text" class="fp-tile-text" x="{tx + self.tile / 2:.1f}" y="{ty + self.tile * 0.84:.1f}"'
                     f' style="font-size:{self.tile * self.layout["text"]:.1f}px">–</text>'
@@ -786,12 +883,9 @@ def main():
     ap.add_argument("--front-height", type=float, default=25.0)
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--tiles")
-    ap.add_argument("--icons")
     ap.add_argument("--layout", choices=sorted(LAYOUTS), default="landscape")
     ap.add_argument("--style")
     args = ap.parse_args()
-    if args.tiles and not args.icons:
-        ap.error("--tiles needs --icons")
 
     rooms, openings, furniture, devices = load(args.geometry)
     pts = [p for r in rooms for p in r["polygon"]]
@@ -838,10 +932,6 @@ def main():
                 strips, (min(xs), min(ys), max(xs), max(ys)), layout
             )
         named_doors = [o for o in openings if o["type"] == "door" and o.get("name")]
-        icons_used = {i for s in strips for i in s.icons}
-        if named_doors:
-            icons_used.add("door-open")
-        icon_paths = mdi_paths(args.icons, icons_used) if icons_used else {}
 
         body = render_iso(
             rooms,
@@ -861,9 +951,9 @@ def main():
         # Pins are sized like tiles so they read at the same scale.
         pin_size = strips[0].tile if strips else 100
         for door in named_doors:
-            body += door_pin(door, rooms, project, pin_size, icon_paths["door-open"])
+            body += door_pin(door, rooms, project, pin_size)
         for s in strips:
-            body += s.svg(icon_paths)
+            body += s.svg()
             span += [(s.x, s.y), (s.x + s.w, s.y + s.h)]
     xs, ys = [p[0] for p in span], [p[1] for p in span]
     margin = 40
