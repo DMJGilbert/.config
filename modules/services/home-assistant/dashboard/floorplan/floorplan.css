@@ -46,7 +46,21 @@
   stroke: var(--fp-line);
   stroke-width: 0.6;
   opacity: 0.35;
-  pointer-events: none;
+}
+
+/*
+ * Only floors, room names and tiles take taps; everything drawn over the
+ * floors lets them through. ha-floorplan forces `pointer-events: all
+ * !important` on every SVG element (`:host svg *`), so this must be
+ * !important too and outrank that selector, which the extra class does.
+ */
+.fp-root .fp-floor-edge,
+.fp-root .fp-wall,
+.fp-root .fp-furniture,
+.fp-root .fp-window,
+.fp-root .fp-leader,
+.fp-root .fp-anchor {
+  pointer-events: none !important;
 }
 
 .fp-wall,
@@ -54,7 +68,6 @@
   fill: var(--fp-bg);
   stroke: var(--fp-line);
   stroke-linejoin: round;
-  pointer-events: none;
 }
 .fp-wall {
   stroke-width: 1.4;
@@ -66,7 +79,6 @@
   fill: none;
   stroke: var(--fp-line);
   stroke-width: 0.8;
-  pointer-events: none;
 }
 
 .fp-leader {
@@ -75,7 +87,6 @@
   stroke-width: 1.2;
   stroke-dasharray: 4 4;
   opacity: 0.5;
-  pointer-events: none;
   transition:
     stroke 0.4s ease,
     opacity 0.4s ease;
@@ -89,7 +100,6 @@
 .fp-anchor {
   fill: var(--fp-dim);
   opacity: 0.6;
-  pointer-events: none;
 }
 .fp-anchor[data-on="1"] {
   fill: var(--fp-accent);
