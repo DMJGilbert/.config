@@ -18,7 +18,8 @@
     lib.mapAttrs (
       id: room:
         assert lib.assertMsg (lib.elem id roomIds) "floorplan tiles: no room `${id}` in geometry.nix";
-        assert lib.assertMsg (lib.elem room.view viewPaths) "floorplan tiles: ${id} links to missing view `${room.view}`"; room
+        assert lib.assertMsg (lib.elem room.view viewPaths) "floorplan tiles: ${id} links to missing view `${room.view}`";
+        assert lib.assertMsg (room.tiles != []) "floorplan tiles: ${id} has no tiles; drop the room instead"; room
     )
     tiles;
 

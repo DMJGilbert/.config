@@ -46,22 +46,10 @@ let
       buffering = "Loading";
     };
   };
-  temperature = entity: {
-    inherit entity;
-    icon = "thermometer";
-    unit = "°";
-    digits = 1;
-  };
   humidity = entity: {
     inherit entity;
     icon = "water-percent";
     unit = "%";
-    digits = 0;
-  };
-  co2 = entity: {
-    inherit entity;
-    icon = "molecule-co2";
-    unit = "";
     digits = 0;
   };
 in {
@@ -70,7 +58,6 @@ in {
     lights = "group.living_room_lights";
     tiles = [
       (light "group.living_room_lights")
-      (temperature "sensor.dyson_temperature")
       (motion "binary_sensor.living_room_motion_sensor_occupancy")
       (media "television" "media_player.living_room_tv")
     ];
@@ -91,7 +78,6 @@ in {
     lights = "group.bathroom_lights";
     tiles = [
       (light "group.bathroom_lights")
-      (temperature "sensor.bathroom_temp_sensor_temperature")
       (humidity "sensor.bathroom_temp_sensor_humidity")
       (motion "binary_sensor.bathroom_motion_sensor_occupancy")
     ];
@@ -101,7 +87,6 @@ in {
     lights = "group.hallway_lights";
     tiles = [
       (light "group.hallway_lights")
-      (temperature "sensor.hallway_temp_sensor_temperature")
       (motion "binary_sensor.hallway_motion_sensor_occupancy")
       (door "binary_sensor.myggbett_door_window_sensor_door")
     ];
@@ -111,8 +96,6 @@ in {
     lights = "group.bedroom_lights";
     tiles = [
       (light "group.bedroom_lights")
-      (temperature "sensor.alpstuga_air_quality_monitor_temperature")
-      (co2 "sensor.alpstuga_air_quality_monitor_carbon_dioxide")
       (media "television" "media_player.bedroom_tv")
     ];
   };

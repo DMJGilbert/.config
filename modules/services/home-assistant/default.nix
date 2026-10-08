@@ -15,17 +15,25 @@
   # Dashboard file paths - these are relative to the module directory
   moduleDir = ./.;
   dashboardYaml = pkgs.writeText "home.yaml" (builtins.readFile "${moduleDir}/dashboard.yaml");
-  floorplanSvg = "${moduleDir}/floorplan.svg";
 
   roomView = import ./dashboard/room-view.nix {inherit lib;};
   rooms = import ./dashboard/rooms.nix {inherit (roomView) cards;};
-  # Room views are generated from rooms.nix; the home view is hand-written.
-  # dashboard.yaml includes each by its file name.
+  floorplan = import ./dashboard/floorplan {
+    inherit lib pkgs;
+    viewPaths = map (room: room.path) rooms;
+  };
+  # Room views are generated from rooms.nix; the home view is hand-written
+  # and includes the generated floorplan card. dashboard.yaml includes each
+  # view by its file name.
   viewsDir = pkgs.linkFarm "hass-dashboard-views" (
     [
       {
         name = "home.yaml";
         path = ./views/home.yaml;
+      }
+      {
+        name = "floorplan-card.yaml";
+        path = (pkgs.formats.yaml {}).generate "floorplan-card.yaml" floorplan.card;
       }
     ]
     ++ map (view: {
@@ -107,7 +115,7 @@ in
       # Dashboard file symlinks (conditional on dashboard.enable)
       systemd.tmpfiles.rules = lib.mkIf cfg.dashboard.enable [
         "L+ /var/lib/hass/home.yaml - - - - ${dashboardYaml}"
-        "L+ /var/lib/hass/floorplan.svg - - - - ${floorplanSvg}"
+        "L+ /var/lib/hass/www/floorplan - - - - ${floorplan.files}"
         "L+ /var/lib/hass/views - - - - ${viewsDir}"
         "L+ /var/lib/hass/templates - - - - ${templatesDir}"
         "L+ /var/lib/hass/popups - - - - ${popupsDir}"

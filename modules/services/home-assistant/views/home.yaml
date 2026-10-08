@@ -231,6 +231,12 @@ cards:
                       tap_action: &tap_other
                         action: navigate
                         navigation_path: "#tab-other"
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Floorplan
+                      tap_action: &tap_floorplan
+                        action: navigate
+                        navigation_path: "#tab-floorplan"
                 # Room cards container
                 - type: custom:mod-card
                   card_mod: &tab_content_style
@@ -340,6 +346,10 @@ cards:
                       template: tab_button_inactive
                       name: Other
                       tap_action: *tap_other
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Floorplan
+                      tap_action: *tap_floorplan
                 # Person cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -398,6 +408,10 @@ cards:
                       template: tab_button_inactive
                       name: Other
                       tap_action: *tap_other
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Floorplan
+                      tap_action: *tap_floorplan
                 # Calendar cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -440,6 +454,10 @@ cards:
                       template: tab_button_active
                       name: Other
                       tap_action: *tap_other
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Floorplan
+                      tap_action: *tap_floorplan
                 # Other cards container
                 - type: custom:mod-card
                   card_mod: *tab_content_style
@@ -502,6 +520,39 @@ cards:
                           card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
                           status_text: "[[[ const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); ]]]"
                           info_text: "[[[ const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; ]]]"
+
+          "tab-floorplan":
+            type: custom:mod-card
+            card_mod: *tab_panel_style
+            card:
+              type: vertical-stack
+              cards:
+                - type: horizontal-stack
+                  cards:
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Rooms
+                      tap_action: *tap_rooms
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Peoples
+                      tap_action: *tap_peoples
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Calendar
+                      tap_action: *tap_calendar
+                    - type: custom:button-card
+                      template: tab_button_inactive
+                      name: Other
+                      tap_action: *tap_other
+                    - type: custom:button-card
+                      template: tab_button_active
+                      name: Floorplan
+                      tap_action: *tap_floorplan
+                # Generated from dashboard/floorplan by the Nix module.
+                - type: custom:mod-card
+                  card_mod: *tab_content_style
+                  card: !include /var/lib/hass/views/floorplan-card.yaml
 
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml

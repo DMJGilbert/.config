@@ -60,25 +60,26 @@ SIN30 = 0.5
 MITRE = 2  # shapely join_style
 FLAT = 2  # shapely cap_style
 
-# Strip sizes in SVG user units; the drawing is ~1300 wide at scale 1.
-# Portrait is shown about a third as wide as landscape, so its tiles are
-# larger to stay legible on a phone.
+# Strip proportions, in tile edges. Landscape tiles are a fraction of the
+# drawing's width, which keeps tile text near 11 px on a 1000 px card;
+# portrait tiles are as large as the drawing's width allows.
 LAYOUTS = {
     "landscape": {
-        "tile": 100,
-        "gap": 12,
-        "title": 36,
-        "spacing": 32,
-        "reach": 70,
-        "columns": None,
+        "tile": 0.09,
+        "gap": 0.1,
+        "title": 0.36,
+        "spacing": 0.3,
+        "reach": 0.45,
+        "columns": None,  # one row
+        "text": 0.22,
     },
     "portrait": {
-        "tile": 150,
-        "gap": 16,
-        "title": 54,
-        "spacing": 70,
-        "reach": 70,
+        "gap": 0.1,
+        "title": 0.45,
+        "spacing": 0.35,
+        "reach": 0.45,
         "columns": 2,
+        "text": 0.25,
     },
 }
 # MDI glyphs are drawn on a 512 unit em whose 24 px icon box spans
@@ -457,13 +458,20 @@ class Strip:
             icons,
             anchor,
         )
-        self.tile, self.gap, self.title = layout["tile"], layout["gap"], layout["title"]
+        self.layout = layout
         self.columns = min(len(icons), layout["columns"] or len(icons))
-        rows = -(-len(icons) // self.columns)
-        self.w = self.columns * self.tile + (self.columns - 1) * self.gap
-        self.h = self.title + rows * self.tile + (rows - 1) * self.gap
+        self.rows = -(-len(icons) // self.columns)
         self.x = self.y = 0.0
         self.leader = []
+        self.size(1.0)
+
+    def size(self, tile):
+        """Set the dimensions for a tile edge of `tile` user units."""
+        self.tile = tile
+        self.gap = self.layout["gap"] * tile
+        self.title = self.layout["title"] * tile
+        self.w = self.columns * tile + (self.columns - 1) * self.gap
+        self.h = self.title + self.rows * tile + (self.rows - 1) * self.gap
 
     def svg(self, icon_paths):
         out = [
@@ -486,7 +494,7 @@ class Strip:
                 f'<path class="fp-tile-icon" transform="translate({ix:.1f} {iy + MDI_TOP * s:.1f}) scale({s:.4f} {-s:.4f})" d="{icon_paths[icon]}"/>',
                 (
                     f'<text id="{self.id}.tile{k}.text" class="fp-tile-text" x="{tx + self.tile / 2:.1f}" y="{ty + self.tile * 0.84:.1f}"'
-                    f' style="font-size:{self.tile * 0.2:.1f}px">–</text>'
+                    f' style="font-size:{self.tile * self.layout["text"]:.1f}px">–</text>'
                 ),
                 "</g>",
             ]
@@ -523,16 +531,19 @@ def stack(desired, sizes, lo, hi, spacing):
 
 
 def layout_landscape(strips, box, layout):
-    """Single-row strips in a column either side of the drawing."""
+    """Strips in a column either side of the drawing, sized from its width."""
     x0, y0, x1, y1 = box
-    mid, reach = (x0 + x1) / 2, layout["reach"]
+    tile = layout["tile"] * (x1 - x0)
+    for s in strips:
+        s.size(tile)
+    mid, reach = (x0 + x1) / 2, layout["reach"] * tile
     for side in (-1, 1):
         column = sorted(
             (s for s in strips if (s.anchor[0] < mid) == (side < 0)),
             key=lambda s: s.anchor[1],
         )
         desired = [s.anchor[1] - s.title - s.tile / 2 for s in column]
-        tops = stack(desired, [s.h for s in column], y0, y1, layout["spacing"])
+        tops = stack(desired, [s.h for s in column], y0, y1, layout["spacing"] * tile)
         width = max((s.w for s in column), default=0)
         for s, top in zip(column, tops):
             s.y = top
@@ -548,21 +559,26 @@ def layout_landscape(strips, box, layout):
 def layout_portrait(strips, box, layout):
     """Grid strips in one row above and one below the drawing.
 
-    Rooms split by anchor height so both rows fit the drawing's width as
-    evenly as possible; each row is ordered by anchor x so leaders do not
-    cross one another.
+    Rooms split by anchor height so the wider row is as narrow as possible,
+    and tiles grow until that row spans the drawing: on a phone the whole
+    image is only as wide as the screen. Each row is ordered by anchor x so
+    leaders do not cross one another.
     """
     x0, y0, x1, y1 = box
-    reach, spacing = layout["reach"], layout["spacing"]
     ordered = sorted(strips, key=lambda s: s.anchor[1])
 
     def row_width(row):
-        return sum(s.w for s in row) + spacing * (len(row) - 1)
+        """Width in tile edges, as every strip is sized for a tile of 1."""
+        return sum(s.w for s in row) + layout["spacing"] * (len(row) - 1)
 
     split = min(
         range(len(ordered) + 1),
         key=lambda k: max(row_width(ordered[:k]), row_width(ordered[k:])),
     )
+    tile = (x1 - x0) / max(row_width(ordered[:split]), row_width(ordered[split:]))
+    for s in strips:
+        s.size(tile)
+    reach, spacing = layout["reach"] * tile, layout["spacing"] * tile
     for row, above in ((ordered[:split], True), (ordered[split:], False)):
         row.sort(key=lambda s: s.anchor[0])
         if not row:
@@ -658,6 +674,9 @@ def main():
         unknown = set(tiles) - {r["id"] for r in rooms}
         if unknown:
             raise SystemExit(f"tiles for unknown rooms: {', '.join(sorted(unknown))}")
+        empty = sorted(room for room, spec in tiles.items() if not spec["tiles"])
+        if empty:
+            raise SystemExit(f"rooms with an empty tile list: {', '.join(empty)}")
         layout = LAYOUTS[args.layout]
         strips = [
             Strip(
