@@ -184,17 +184,17 @@ with cards; [
       })
       (heading "Sensors")
       (sensor {
-        entity = "sensor.bathroom_temp_sensor_temperature";
+        entity = "sensor.bathroom_bathroom_sensor_temperature";
         icon = "mdi:thermometer";
         name = "Temperature";
       })
       (sensor {
-        entity = "sensor.bathroom_temp_sensor_humidity";
+        entity = "sensor.bathroom_bathroom_sensor_humidity";
         icon = "mdi:water-percent";
         name = "Humidity";
       })
       (sensor {
-        entity = "sensor.bathroom_temp_sensor_battery";
+        entity = "sensor.bathroom_bathroom_sensor_battery";
         icon = "mdi:battery";
         name = "Sensor Battery";
       })
@@ -244,9 +244,9 @@ with cards; [
       })
     ];
     climate = [
-      (climateAuto {slugs = ["robynne" "nursery"];})
+      (climateAuto {slugs = ["girls_room"];})
       (heading "Sensors")
-      (climateSensorsAuto ["robynne" "nursery"])
+      (climateSensorsAuto ["girls_room"])
     ];
     other = [
       (firstHeading "Sensors")
@@ -254,6 +254,11 @@ with cards; [
         entity = "sensor.robynnes_yoto_player_battery";
         icon = "mdi:battery";
         name = "Yoto Battery";
+      })
+      (sensor {
+        entity = "sensor.girls_room_temp_sensor_battery";
+        icon = "mdi:battery";
+        name = "Sensor Battery";
       })
     ];
   }

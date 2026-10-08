@@ -124,6 +124,22 @@
   font-family: var(--fp-font);
   font-weight: 600;
 }
+/* Readings are grey while comfortable, coloured when cold, warm, dry or damp. */
+.fp-strip-title .fp-readings {
+  font-weight: 400;
+}
+.fp-strip-title .fp-readings,
+.fp-strip[data-on="1"] .fp-strip-title .fp-readings {
+  fill: var(--fp-dim);
+}
+.fp-reading[data-level="cold"],
+.fp-reading[data-level="damp"] {
+  fill: var(--blue-color, #2196f3);
+}
+.fp-reading[data-level="warm"],
+.fp-reading[data-level="dry"] {
+  fill: var(--orange-color, #ff9800);
+}
 .fp-strip[data-on="1"] .fp-strip-title text {
   fill: var(--fp-accent);
 }

@@ -48,6 +48,51 @@
   activeWhen = states: "\${${builtins.toJSON states}.includes(entity.state) ? \"1\" : \"0\"}";
   labelText = tile: ''> return ${builtins.toJSON tile.labels}[entity.state] || "–";'';
 
+  # Comfort bands for the readings by each room's name; outside them the
+  # reading is coloured (floorplan.css).
+  comfort = {
+    temperature = {
+      below = 18;
+      low = "cold";
+      above = 23;
+      high = "warm";
+      text = ''> const v = parseFloat(entity.state); return isNaN(v) ? "–" : v.toFixed(1) + "°";'';
+    };
+    humidity = {
+      below = 40;
+      low = "dry";
+      above = 60;
+      high = "damp";
+      text = ''> const v = parseFloat(entity.state); return isNaN(v) ? "–" : v.toFixed(0) + "%";'';
+    };
+  };
+
+  climateRules = id: room: let
+    reading = kind: element: let
+      band = comfort.${kind};
+    in {
+      entity = room.climate.${kind};
+      inherit element;
+      state_action = [
+        {
+          service = "floorplan.text_set";
+          service_data.text = band.text;
+        }
+        {
+          service = "floorplan.dataset_set";
+          service_data = {
+            key = "level";
+            value = "\${parseFloat(entity.state) < ${toString band.below} ? \"${band.low}\" : parseFloat(entity.state) > ${toString band.above} ? \"${band.high}\" : \"ok\"}";
+          };
+        }
+      ];
+    };
+  in
+    lib.optionals (room ? climate) [
+      (reading "temperature" "${id}.temp")
+      (reading "humidity" "${id}.humidity")
+    ];
+
   markOn = elements: states: {
     service = "floorplan.dataset_set";
     service_data = {
@@ -168,7 +213,8 @@
         tap_action = navigate;
       }
     ]
-    ++ lib.imap0 tileRule room.tiles;
+    ++ lib.imap0 tileRule room.tiles
+    ++ climateRules id room;
 in {
   inherit files;
   # The pop-ups open on top of whatever tab is showing, so they live with

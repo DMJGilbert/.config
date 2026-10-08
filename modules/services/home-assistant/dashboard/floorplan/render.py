@@ -30,7 +30,8 @@ nothing can sit in front of them on screen.
 
 Element ids are stable so ha-floorplan rules can target them:
 `<room>.floor`, `<room>.leader`, `<room>.anchor`,
-`<room>.strip`, `<room>.title`, `<room>.tile<k>` and `<room>.tile<k>.text`.
+`<room>.strip`, `<room>.title`, `<room>.temp`, `<room>.humidity`,
+`<room>.tile<k>` and `<room>.tile<k>.text`.
 """
 
 import argparse
@@ -72,6 +73,7 @@ LAYOUTS = {
         "reach": 0.45,
         "columns": None,  # one row
         "text": 0.22,
+        "climate_line": 0,  # readings follow the room name
     },
     "portrait": {
         "gap": 0.1,
@@ -80,9 +82,13 @@ LAYOUTS = {
         "reach": 0.45,
         "columns": 2,
         "text": 0.25,
+        # A line of its own: after the name, readings would run into the
+        # next strip in the phone's narrow rows.
+        "climate_line": 0.3,
     },
 }
 TITLE_FONT = 0.62  # room name size, as a fraction of the title band
+CLIMATE_SAMPLE = "22.4° · 61%"  # widest readings text, for layout
 # MDI glyphs are drawn on a 512 unit em whose 24 px icon box spans
 # y = -64..448 (font units, y up).
 MDI_EM = 512
@@ -450,7 +456,7 @@ def anchor(room, furniture, project):
 class Strip:
     """A room's tiles in a grid under its name, joined to the room by a leader."""
 
-    def __init__(self, room, icons, anchor, layout):
+    def __init__(self, room, icons, climate, anchor, layout):
         self.id, self.name, self.icons, self.anchor = (
             room["id"],
             room["name"],
@@ -458,6 +464,7 @@ class Strip:
             anchor,
         )
         self.layout = layout
+        self.climate = climate
         self.columns = min(len(icons), layout["columns"] or len(icons))
         self.rows = -(-len(icons) // self.columns)
         self.x = self.y = 0.0
@@ -469,29 +476,67 @@ class Strip:
         self.tile = tile
         self.gap = self.layout["gap"] * tile
         self.title = self.layout["title"] * tile
+        # Readings go on their own line under the name when the layout has
+        # one, otherwise after the name.
+        line = self.layout["climate_line"] if self.climate else 0
+        self.climate_h = line * tile
         self.tiles_w = self.columns * tile + (self.columns - 1) * self.gap
         # No font metrics at build time: 0.6 em per character is a generous
         # average for the UI font's bold weight.
-        title_w = len(self.name) * 0.6 * self.title * TITLE_FONT
-        self.w = max(self.tiles_w, title_w)
-        self.h = self.title + self.rows * tile + (self.rows - 1) * self.gap
+        name_w = len(self.name) * 0.6 * self.title * TITLE_FONT
+        readings_w = len(CLIMATE_SAMPLE) * 0.6 * self.climate_font
+        if self.climate and not line:
+            name_w += readings_w
+        self.w = max(self.tiles_w, name_w, readings_w if line else 0)
+        self.h = (
+            self.title + self.climate_h + self.rows * tile + (self.rows - 1) * self.gap
+        )
+
+    @property
+    def climate_font(self):
+        line = self.layout["climate_line"]
+        return line * self.tile * 0.78 if line else self.title * TITLE_FONT * 0.72
+
+    def readings(self):
+        """Temperature and humidity tspans, filled in by ha-floorplan rules."""
+        return (
+            f'<tspan id="{self.id}.temp" class="fp-reading">–</tspan>'
+            # No-break spaces: SVG text collapses plain ones at tspan edges.
+            '<tspan class="fp-reading-sep"> · </tspan>'
+            f'<tspan id="{self.id}.humidity" class="fp-reading">–</tspan>'
+        )
 
     def svg(self, icon_paths):
+        name_size = self.title * TITLE_FONT
+        inline = self.climate and not self.climate_h
         out = [
             f'<g id="{self.id}.strip" class="fp-strip">',
             f'<g id="{self.id}.title" class="fp-strip-title">',
-            f'<rect class="fp-hit" x="{self.x:.1f}" y="{self.y:.1f}" width="{self.w:.1f}" height="{self.title:.1f}"/>',
+            f'<rect class="fp-hit" x="{self.x:.1f}" y="{self.y:.1f}" width="{self.w:.1f}" height="{self.title + self.climate_h:.1f}"/>',
             (
-                f'<text x="{self.x:.1f}" y="{self.y + self.title * TITLE_FONT:.1f}"'
-                f' style="font-size:{self.title * TITLE_FONT:.1f}px">{escape(self.name)}</text>'
+                f'<text x="{self.x:.1f}" y="{self.y + name_size:.1f}"'
+                f' style="font-size:{name_size:.1f}px">{escape(self.name)}'
+                + (
+                    f'<tspan class="fp-readings" dx="{self.climate_font * 0.5:.1f}"'
+                    f' style="font-size:{self.climate_font:.1f}px">{self.readings()}</tspan>'
+                    if inline
+                    else ""
+                )
+                + "</text>"
             ),
-            "</g>",
         ]
+        if self.climate_h:
+            out.append(
+                f'<text class="fp-readings" x="{self.x:.1f}" y="{self.y + self.title + self.climate_h * 0.62:.1f}"'
+                f' style="font-size:{self.climate_font:.1f}px">{self.readings()}</text>'
+            )
+        out.append("</g>")
         size = self.tile * 0.4
         s = size / MDI_EM
+        top = self.y + self.title + self.climate_h
         for k, icon in enumerate(self.icons):
             tx = self.x + (k % self.columns) * (self.tile + self.gap)
-            ty = self.y + self.title + (k // self.columns) * (self.tile + self.gap)
+            ty = top + (k // self.columns) * (self.tile + self.gap)
             ix, iy = tx + (self.tile - size) / 2, ty + self.tile * 0.14
             out += [
                 f'<g id="{self.id}.tile{k}" class="fp-tile">',
@@ -552,7 +597,7 @@ def layout_landscape(strips, box, layout):
         width = max((s.w for s in column), default=0)
         for s, top in zip(column, tops):
             s.y = top
-            row = top + s.title + s.tile / 2
+            row = top + s.title + s.climate_h + s.tile / 2
             if side < 0:
                 s.x = x0 - 2 * reach - width
                 s.leader = [(s.x + s.tiles_w + reach * 0.15, row), (x0 - reach, row)]
@@ -687,6 +732,7 @@ def main():
             Strip(
                 r,
                 [t["icon"] for t in tiles[r["id"]]["tiles"]],
+                "climate" in tiles[r["id"]],
                 anchor(r, furniture, project),
                 layout,
             )

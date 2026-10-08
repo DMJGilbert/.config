@@ -6,8 +6,14 @@
 # player drawn as an icon with its state below. Holding it opens the room's
 # `popup` of that kind, listing the room's lights or controlling its media;
 # tapping it toggles the entity if `toggle` is set, otherwise also opens the
-# pop-up.
+# pop-up. Rooms with `climate` sensors show their temperature and humidity
+# next to their name.
 let
+  climate = prefix: {
+    temperature = "sensor.${prefix}_temperature";
+    humidity = "sensor.${prefix}_humidity";
+  };
+
   onOff = {
     on = "On";
     off = "Off";
@@ -39,6 +45,7 @@ in {
   living_room = {
     view = "living-room";
     lights = "group.living_room_lights";
+    climate = climate "dyson";
     tiles = [
       (light "group.living_room_lights")
       (media "television" "media_player.living_room_tv")
@@ -58,16 +65,19 @@ in {
   bathroom = {
     view = "bathroom";
     lights = "group.bathroom_lights";
+    climate = climate "bathroom_bathroom_sensor";
     tiles = [(light "group.bathroom_lights")];
   };
   hallway = {
     view = "hallway";
     lights = "group.hallway_lights";
+    climate = climate "hallway_temp_sensor";
     tiles = [(light "group.hallway_lights")];
   };
   bedroom = {
     view = "bedroom";
     lights = "group.bedroom_lights";
+    climate = climate "alpstuga_air_quality_monitor";
     tiles = [
       (light "group.bedroom_lights")
       (media "television" "media_player.bedroom_tv")
@@ -76,6 +86,7 @@ in {
   girls_room = {
     view = "girls-room";
     lights = "group.girls_room_lights";
+    climate = climate "girls_room_temp_sensor";
     tiles = [
       (light "group.girls_room_lights")
       (media "speaker" "media_player.robynnes_yoto_player")

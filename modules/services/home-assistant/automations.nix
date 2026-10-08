@@ -624,7 +624,8 @@ in [
           "sensor.living_room_motion_sensor_battery"
           "sensor.myggbett_door_window_sensor_battery"
           "sensor.vibration_sensor_battery"
-          "sensor.bathroom_temp_sensor_battery"
+          "sensor.girls_room_temp_sensor_battery"
+          "sensor.bathroom_bathroom_sensor_battery"
           "sensor.bathroom_buttons_battery"
         ];
         below = 20;
@@ -1181,7 +1182,7 @@ in [
     triggers = [
       {
         trigger = "numeric_state";
-        entity_id = "sensor.bathroom_temp_sensor_humidity";
+        entity_id = "sensor.bathroom_bathroom_sensor_humidity";
         above = 70;
       }
     ];
