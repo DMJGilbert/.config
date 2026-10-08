@@ -15,6 +15,31 @@
 }: let
   geometry = import ./geometry.nix;
   tiles = import ./tiles.nix;
+  fixtures = import ./fixtures.nix;
+
+  doorNames = map (o: o.name) (lib.filter (o: o.type == "door" && o ? name) geometry.openings);
+  doorRules =
+    lib.mapAttrsToList (
+      name: entity:
+        assert lib.assertMsg (lib.elem name doorNames) "floorplan fixtures: no door named `${name}` in geometry.nix"; {
+          inherit entity;
+          element = "door.${name}";
+          state_action = markOn ["door.${name}"] ["on"];
+        }
+    )
+    fixtures.doors;
+
+  deviceNames = map (d: d.name) geometry.devices;
+  deviceRules =
+    lib.mapAttrsToList (
+      name: device:
+        assert lib.assertMsg (lib.elem name deviceNames) "floorplan fixtures: no device named `${name}` in geometry.nix"; {
+          inherit (device) entity;
+          element = "device.${name}";
+          state_action = markOn ["device.${name}" "device.${name}.glow"] device.active;
+        }
+    )
+    fixtures.devices;
 
   roomIds = map (r: r.id) geometry.rooms;
   checked =
@@ -184,7 +209,10 @@
         if tile.toggle or false
         then {
           action = "call-service";
-          service = "homeassistant.toggle";
+          # homeassistant.toggle expands a group and toggles each member, so
+          # a room with some lights on would swap which ones are lit. Switch
+          # the whole group by its own state instead.
+          service = "\${entity.state === \"on\" ? \"homeassistant.turn_off\" : \"homeassistant.turn_on\"}";
           service_data.entity_id = tile.entity;
         }
         else openPopup;
@@ -214,7 +242,12 @@
       }
     ]
     ++ lib.imap0 tileRule room.tiles
-    ++ climateRules id room;
+    ++ climateRules id room
+    ++ lib.optional (room ? motion) {
+      entity = room.motion;
+      element = "${id}.motion";
+      state_action = markOn ["${id}.motion"] ["on"];
+    };
 in {
   inherit files;
   # The pop-ups open on top of whatever tab is showing, so they live with
@@ -248,7 +281,7 @@ in {
         }
       ];
       stylesheet = url "floorplan.css";
-      rules = lib.concatLists (lib.mapAttrsToList roomRules checked);
+      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules;
     };
   };
 }

@@ -7,7 +7,8 @@
 # `popup` of that kind, listing the room's lights or controlling its media;
 # tapping it toggles the entity if `toggle` is set, otherwise also opens the
 # pop-up. Rooms with `climate` sensors show their temperature and humidity
-# next to their name.
+# next to their name; rooms with a `motion` sensor ripple while it detects
+# someone.
 let
   climate = prefix: {
     temperature = "sensor.${prefix}_temperature";
@@ -46,6 +47,7 @@ in {
     view = "living-room";
     lights = "group.living_room_lights";
     climate = climate "dyson";
+    motion = "binary_sensor.living_room_motion_sensor_occupancy";
     tiles = [
       (light "group.living_room_lights")
       (media "television" "media_player.living_room_tv")
@@ -66,12 +68,14 @@ in {
     view = "bathroom";
     lights = "group.bathroom_lights";
     climate = climate "bathroom_bathroom_sensor";
+    motion = "binary_sensor.bathroom_motion_sensor_occupancy";
     tiles = [(light "group.bathroom_lights")];
   };
   hallway = {
     view = "hallway";
     lights = "group.hallway_lights";
     climate = climate "hallway_temp_sensor";
+    motion = "binary_sensor.hallway_motion_sensor_occupancy";
     tiles = [(light "group.hallway_lights")];
   };
   bedroom = {

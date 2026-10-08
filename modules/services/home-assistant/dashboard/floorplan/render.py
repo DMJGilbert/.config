@@ -5,11 +5,11 @@ usage: render.py GEOMETRY.json OUT.svg [--mode iso|plan]
                  [--tiles TILES.json --icons MDI.ttf --layout landscape|portrait]
                  [--style CSS]
 
-GEOMETRY.json is geometry.nix serialised: room polygons, wall openings and
-furniture boxes in centimetres in the reference frame, plus a display
-rotation. TILES.json maps room ids to the MDI icon of each of their tiles;
-the strips are laid out around the drawing and joined to their room by a
-leader line. --style embeds a stylesheet, for previews outside Home
+GEOMETRY.json is geometry.nix serialised: room polygons, wall openings,
+furniture boxes and device boxes (raised by a `base` height) in centimetres
+in the reference frame, plus a display rotation. TILES.json maps room ids
+to the MDI icon of each of their tiles; the strips are laid out around the
+drawing and joined to their room by a leader line. --style embeds a stylesheet, for previews outside Home
 Assistant, which supplies its own.
 
 Walls are derived, not drawn per room: the gaps between neighbouring rooms
@@ -31,7 +31,9 @@ nothing can sit in front of them on screen.
 Element ids are stable so ha-floorplan rules can target them:
 `<room>.floor`, `<room>.leader`, `<room>.anchor`,
 `<room>.strip`, `<room>.title`, `<room>.temp`, `<room>.humidity`,
-`<room>.tile<k>` and `<room>.tile<k>.text`.
+`<room>.tile<k>`, `<room>.tile<k>.text`, `<room>.motion` for rooms with a
+motion sensor, `door.<name>` for each named door opening, and
+`device.<name>` and `device.<name>.glow` for each device.
 """
 
 import argparse
@@ -43,7 +45,7 @@ from xml.sax.saxutils import escape
 
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
-from shapely.geometry import LineString, Polygon
+from shapely.geometry import LineString, Point, Polygon
 from shapely.geometry.polygon import orient
 from shapely.ops import nearest_points, unary_union
 
@@ -55,6 +57,8 @@ EXTERIOR_WALL = 30
 DOOR_REACH = 50  # door cuts reach this far either side of the opening line
 RAILING = 5
 ANCHOR_CLEARANCE = 15  # keeps a leader's end dot off furniture and wall edges
+RIPPLE_RADIUS = 80  # cm on the floor; the outermost motion ring
+DEVICE_GLOW_RADIUS = 110  # cm on the floor around an active device
 
 COS30 = math.cos(math.radians(30))
 SIN30 = 0.5
@@ -120,11 +124,16 @@ def load(path):
         )
         for o in geo["openings"]
     ]
-    furniture = []
-    for f in geo.get("furniture", []):
-        x0, y0, x1, y1 = f["rect"]
-        corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
-        furniture.append(dict(f, polygon=[rotate(c, degrees) for c in corners]))
+
+    def boxes(key):
+        out = []
+        for f in geo.get(key, []):
+            x0, y0, x1, y1 = f["rect"]
+            corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+            out.append(dict(f, polygon=[rotate(c, degrees) for c in corners]))
+        return out
+
+    furniture, devices = boxes("furniture"), boxes("devices")
 
     pts = [p for r in rooms for p in r["polygon"]]
     dx, dy = -min(x for x, _ in pts), -min(y for _, y in pts)
@@ -132,11 +141,11 @@ def load(path):
     def shift(p):
         return (p[0] + dx, p[1] + dy)
 
-    for item in rooms + furniture:
+    for item in rooms + furniture + devices:
         item["polygon"] = [shift(p) for p in item["polygon"]]
     for o in openings:
         o["from"], o["to"] = shift(o["from"]), shift(o["to"])
-    return rooms, openings, furniture
+    return rooms, openings, furniture, devices
 
 
 def polygons(geom):
@@ -321,14 +330,19 @@ def path(poly, project, z):
     )
 
 
-def extrude(geom, height, cls, project, windows=()):
-    """Visible side faces and the top of an extruded solid."""
+def extrude(geom, height, cls, project, windows=(), base=0.0):
+    """Visible side faces and the top of a solid from `base` up to `height`."""
     faces, tops = [], []
     for poly in polygons(geom):
         for a, b in ring_segments(poly):
             if not facing_viewer(a, b):
                 continue
-            quad = [project(*a), project(*b), project(*b, height), project(*a, height)]
+            quad = [
+                project(*a, base),
+                project(*b, base),
+                project(*b, height),
+                project(*a, height),
+            ]
             svg = f'<polygon class="{cls}" points="{fmt(quad)}"/>'
             seg = LineString([a, b])
             for w in windows:
@@ -358,7 +372,71 @@ def polygon_centroid(points):
     return c.x, c.y
 
 
-def render_iso(rooms, openings, furniture, project, wall_height, front_height, linked):
+def door_pin(door, rooms, project, size, icon_path):
+    """Map pin over a door's threshold, on the outside of the wall.
+
+    Inside, the door is hidden behind the walls nearest the viewer; outside
+    the flat nothing is drawn in front of it.
+    """
+    (ax, ay), (bx, by) = door["from"], door["to"]
+    width = math.hypot(bx - ax, by - ay)
+    nx, ny = -(by - ay) / width, (bx - ax) / width
+    indoor = unary_union([Polygon(r["polygon"]) for r in rooms if not r.get("outdoor")])
+    mx, my = (ax + bx) / 2, (ay + by) / 2
+    if indoor.contains(Point(mx + nx * EXTERIOR_WALL, my + ny * EXTERIOR_WALL)):
+        nx, ny = -nx, -ny
+    x, y = project(mx + nx * EXTERIOR_WALL, my + ny * EXTERIOR_WALL)
+    r, rise = size * 0.3, size * 1.2
+    s = r * 1.15 / MDI_EM
+    return [
+        f'<g id="door.{door["name"]}" class="fp-door">',
+        f'<ellipse class="fp-pin-shadow" cx="{x:.1f}" cy="{y:.1f}" rx="{r * 0.9:.1f}" ry="{r * 0.5:.1f}"/>',
+        '<g class="fp-pin">',
+        f'<line class="fp-pin-stem" x1="{x:.1f}" y1="{y:.1f}" x2="{x:.1f}" y2="{y - rise + r:.1f}"/>',
+        f'<circle class="fp-pin-head" cx="{x:.1f}" cy="{y - rise:.1f}" r="{r:.1f}"/>',
+        (
+            f'<path class="fp-pin-icon" transform="translate({x - r * 0.575:.1f} {y - rise - r * 0.575 + MDI_TOP * s:.1f})'
+            f' scale({s:.4f} {-s:.4f})" d="{icon_path}"/>'
+        ),
+        "</g>",
+        "</g>",
+    ]
+
+
+def ripple(room_id, centre, radius):
+    """Rings on the floor around a room's anchor; floorplan.css animates them
+    outwards while the room's motion sensor is on.
+
+    A floor circle of radius r projects to an axis-aligned ellipse with
+    semi-axes r·√2·cos30 and r·√2·sin30.
+    """
+    x, y = centre
+    rx, ry = radius * math.sqrt(2) * COS30, radius * math.sqrt(2) * SIN30
+    # Centred on the group's origin so scaling a ring needs no
+    # transform-origin, which SVG renderers support unevenly.
+    rings = "".join(
+        f'<ellipse class="fp-ripple" rx="{rx:.1f}" ry="{ry:.1f}"/>' for _ in range(3)
+    )
+    return (
+        f'<g id="{room_id}.motion" class="fp-motion"'
+        f' transform="translate({x:.1f} {y:.1f})">{rings}</g>'
+    )
+
+
+def device_glow(device, project):
+    """Pool of light on the floor around a device, shown while it is active."""
+    c = Polygon(device["polygon"]).centroid
+    (x, y), r = project(c.x, c.y), DEVICE_GLOW_RADIUS
+    rx, ry = r * math.sqrt(2) * COS30, r * math.sqrt(2) * SIN30
+    return (
+        f'<ellipse id="device.{device["name"]}.glow" class="fp-device-glow"'
+        f' cx="{x:.1f}" cy="{y:.1f}" rx="{rx:.1f}" ry="{ry:.1f}"/>'
+    )
+
+
+def render_iso(
+    rooms, openings, furniture, devices, project, wall_height, front_height, linked
+):
     """Drawing of the flat, unlabelled: the strips carry the room names.
 
     Floors of `linked` rooms are marked as tap targets.
@@ -379,7 +457,8 @@ def render_iso(rooms, openings, furniture, project, wall_height, front_height, l
         out.append(
             f'<polygon class="fp-floor-edge" points="{fmt([project(x, y) for x, y in r["polygon"]])}"/>'
         )
-
+    # On the floor, so the walls the device hangs on cover its far half.
+    out += [device_glow(d, project) for d in devices]
     tall_faces, tall_tops = extrude(tall, wall_height, "fp-wall", project, windows)
     front_faces, front_tops = extrude(front, front_height, "fp-wall", project)
     rail_faces, rail_tops = extrude(railings(rooms), front_height, "fp-wall", project)
@@ -390,6 +469,20 @@ def render_iso(rooms, openings, furniture, project, wall_height, front_height, l
         )
         furn_faces += faces
         furn_tops += tops
+    # A device is small enough to paint as one unit, ordered by its
+    # footprint like a furniture top; grouped, a rule can light it as one.
+    for d in devices:
+        poly = Polygon(d["polygon"])
+        faces, tops = extrude(
+            poly, d["base"] + d["height"], "fp-device", project, base=d["base"]
+        )
+        svg = "".join(i.svg for i in faces + tops)
+        furn_tops.append(
+            Item(
+                f'<g id="device.{d["name"]}" class="fp-device-group">{svg}</g>',
+                top=list(ring_segments(poly)),
+            )
+        )
 
     for item in paint_order(
         tall_faces
@@ -700,7 +793,7 @@ def main():
     if args.tiles and not args.icons:
         ap.error("--tiles needs --icons")
 
-    rooms, openings, furniture = load(args.geometry)
+    rooms, openings, furniture, devices = load(args.geometry)
     pts = [p for r in rooms for p in r["polygon"]]
     if args.mode == "plan":
         body = render_plan(rooms, openings, furniture, args.scale)
@@ -744,23 +837,31 @@ def main():
             LAYOUT_FUNCTIONS[args.layout](
                 strips, (min(xs), min(ys), max(xs), max(ys)), layout
             )
-        icon_paths = (
-            mdi_paths(args.icons, {i for s in strips for i in s.icons})
-            if strips
-            else {}
-        )
+        named_doors = [o for o in openings if o["type"] == "door" and o.get("name")]
+        icons_used = {i for s in strips for i in s.icons}
+        if named_doors:
+            icons_used.add("door-open")
+        icon_paths = mdi_paths(args.icons, icons_used) if icons_used else {}
 
         body = render_iso(
             rooms,
             openings,
             furniture,
+            devices,
             project,
             args.wall_height,
             args.front_height,
             set(tiles),
         )
         for s in strips:
+            if "motion" in tiles[s.id]:
+                body.append(ripple(s.id, s.anchor, RIPPLE_RADIUS))
+        for s in strips:
             body += s.leader_svg()
+        # Pins are sized like tiles so they read at the same scale.
+        pin_size = strips[0].tile if strips else 100
+        for door in named_doors:
+            body += door_pin(door, rooms, project, pin_size, icon_paths["door-open"])
         for s in strips:
             body += s.svg(icon_paths)
             span += [(s.x, s.y), (s.x + s.w, s.y + s.h)]
@@ -772,6 +873,13 @@ def main():
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" class="fp-root" viewBox="{x0:.1f} {y0:.1f} {w:.1f} {h:.1f}">',
         *style,
+        # Stop colours come from floorplan.css, so the glow follows the theme.
+        (
+            '<defs><radialGradient id="fp-glow">'
+            '<stop offset="0" class="fp-glow-stop" stop-opacity="0.6"/>'
+            '<stop offset="1" class="fp-glow-stop" stop-opacity="0"/>'
+            "</radialGradient></defs>"
+        ),
         f'<rect class="fp-bg" x="{x0:.1f}" y="{y0:.1f}" width="{w:.1f}" height="{h:.1f}"/>',
         *body,
         "</svg>",

@@ -48,7 +48,7 @@
     {
       id = "dining";
       name = "Dining";
-      polygon = [[663 430] [917 430] [917 679] [619 679] [619 474]];
+      polygon = [[663 430] [938 430] [938 679] [619 679] [619 474]];
     }
     {
       id = "kitchen";
@@ -58,7 +58,7 @@
     {
       id = "living_room";
       name = "Living Room";
-      polygon = [[689 679] [917 679] [917 631] [1079 631] [1079 979] [689 979]];
+      polygon = [[689 679] [938 679] [938 631] [1079 631] [1079 979] [689 979]];
     }
     # Reached through the bedroom's glazed door; no walls, only a railing.
     {
@@ -91,7 +91,7 @@
     }
     {
       name = "dining-table";
-      rect = [743 484 823 624];
+      rect = [760 484 840 624];
       height = 75;
     }
     {
@@ -119,6 +119,37 @@
       rect = [329 945 389 979];
       height = 85;
     }
+    # Beside the girls' bed; the Yoto sits on it.
+    {
+      name = "girls-cabinet";
+      rect = [110 245 180 315];
+      height = 45;
+    }
+  ];
+
+  # Media players drawn in the flat, boxes like furniture raised to `base`
+  # cm. Their entities are in fixtures.nix; they light up while playing.
+  devices = [
+    # On the window wall, facing the bed.
+    {
+      name = "bedroom_tv";
+      rect = [810 110 930 116];
+      base = 60;
+      height = 68;
+    }
+    # On the back wall of the living room's bay, facing the sofa.
+    {
+      name = "living_room_tv";
+      rect = [943 631 1063 637];
+      base = 55;
+      height = 68;
+    }
+    {
+      name = "yoto";
+      rect = [134 268 156 292];
+      base = 45;
+      height = 20;
+    }
   ];
 
   # Segments along room edges. `open` removes the wall (open-plan zones),
@@ -133,12 +164,12 @@
     {
       type = "open";
       from = [619 679];
-      to = [917 679];
+      to = [938 679];
     }
     {
       type = "open";
-      from = [917 631];
-      to = [917 679];
+      from = [938 631];
+      to = [938 679];
     }
 
     {
@@ -226,8 +257,8 @@
     }
     {
       type = "window";
-      from = [917 430];
-      to = [917 520];
+      from = [938 430];
+      to = [938 520];
     }
   ];
 }

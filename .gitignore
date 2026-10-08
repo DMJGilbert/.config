@@ -4,6 +4,10 @@ target-install
 .direnv
 .aim
 
+# RIPER working notes and review reports: session scratch, not config.
+.claude/riper-state.md
+review.md
+
 # Key material and decrypted secrets must never be committed.
 # Encrypted secrets/*.yaml ARE tracked — the pre-commit `sops-encrypted`
 # hook is what enforces they stay encrypted.
