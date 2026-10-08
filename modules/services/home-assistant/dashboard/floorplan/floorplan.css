@@ -100,6 +100,12 @@
 .fp-tile {
   cursor: pointer;
 }
+/* Holding a tile opens its pop-up; keep iOS from selecting the label. */
+.fp-tile {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 .fp-hit {
   fill: transparent;
 }

@@ -119,12 +119,24 @@ in
 
       # Dashboard file symlinks (conditional on dashboard.enable)
       systemd.tmpfiles.rules = lib.mkIf cfg.dashboard.enable [
-        "L+ /var/lib/hass/home.yaml - - - - ${dashboardYaml}"
         "L+ /var/lib/hass/www/floorplan - - - - ${floorplan.files}"
         "L+ /var/lib/hass/views - - - - ${viewsDir}"
         "L+ /var/lib/hass/templates - - - - ${templatesDir}"
         "L+ /var/lib/hass/popups - - - - ${popupsDir}"
       ];
+
+      # A YAML dashboard is re-read only when its file's mtime is newer than
+      # HA's cached copy, and every store path has an mtime of 1970, so a
+      # symlinked dashboard stays stale until HA restarts. A real copy takes
+      # its mtime from each activation; the views and templates it includes
+      # are re-read along with it.
+      system.activationScripts.hassDashboard = lib.mkIf cfg.dashboard.enable {
+        deps = ["users" "groups"];
+        text = ''
+          rm -f /var/lib/hass/home.yaml
+          install -D -m 0644 -o hass -g hass ${dashboardYaml} /var/lib/hass/home.yaml
+        '';
+      };
 
       # icloud3 refreshes its event log card and theme with shutil.copy, which
       # carries the Nix store's read-only mode onto the copies, so every later

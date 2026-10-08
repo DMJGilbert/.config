@@ -3,8 +3,10 @@
 # `lights` is the entity whose state lights the room: its floor glows and
 # the leader line from its strip lights up. `view` is the room view that a
 # tap on the floor or the room's name opens. Each tile is a light or media
-# player drawn as an icon with its state below; tapping it opens the room's
-# `popup` of that kind, listing the room's lights or controlling its media.
+# player drawn as an icon with its state below. Holding it opens the room's
+# `popup` of that kind, listing the room's lights or controlling its media;
+# tapping it toggles the entity if `toggle` is set, otherwise also opens the
+# pop-up.
 let
   onOff = {
     on = "On";
@@ -14,6 +16,7 @@ let
   light = entity: {
     inherit entity;
     icon = "lightbulb-group";
+    toggle = true;
     popup = "lights";
     active = ["on"];
     labels = onOff;

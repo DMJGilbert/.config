@@ -128,13 +128,22 @@
     };
     tileRule = k: tile: let
       element = "${id}.tile${toString k}";
-    in {
-      inherit (tile) entity;
-      inherit element;
-      tap_action = {
+      openPopup = {
         action = "navigate";
         navigation_path = popupHash id tile.popup;
       };
+    in {
+      inherit (tile) entity;
+      inherit element;
+      tap_action =
+        if tile.toggle or false
+        then {
+          action = "call-service";
+          service = "homeassistant.toggle";
+          service_data.entity_id = tile.entity;
+        }
+        else openPopup;
+      hold_action = openPopup;
       state_action = [
         (markOn [element] tile.active)
         {
