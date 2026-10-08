@@ -578,16 +578,18 @@ def iso_icon(kind, cx, cy, tile):
         ]
     if kind == "tv":
         P = at(5.2, -2, 7)
+        # Depths and the bezel are wide enough that parallel edges stay
+        # clearly apart at tile size instead of reading as one thick line.
         screen = [
-            P((-3.5, 0.3, 2.1)),
-            P((3.5, 0.3, 2.1)),
-            P((3.5, 0.3, 5.9)),
-            P((-3.5, 0.3, 5.9)),
+            P((-3.1, 0.6, 2.5)),
+            P((3.1, 0.6, 2.5)),
+            P((3.1, 0.6, 5.5)),
+            P((-3.1, 0.6, 5.5)),
         ]
         return [
-            *box(P, -1.4, -0.4, 0, 1.4, 0.4, 0.5),  # foot
-            *box(P, -0.25, -0.15, 0.5, 0.25, 0.15, 1.6),  # neck
-            *box(P, -4, -0.3, 1.6, 4, 0.3, 6.4),  # panel
+            *box(P, -1.8, -1.1, 0, 1.8, 1.1, 0.7),  # foot
+            *box(P, -0.35, -0.3, 0.7, 0.35, 0.3, 1.6),  # neck
+            *box(P, -4, -0.6, 1.6, 4, 0.6, 6.4),  # panel
             face(screen, "fp-icon-detail"),
         ]
     if kind == "speaker":
@@ -736,6 +738,10 @@ class Strip:
                     f'<text id="{self.id}.tile{k}.text" class="fp-tile-text" x="{tx + self.tile / 2:.1f}" y="{ty + self.tile * 0.84:.1f}"'
                     f' style="font-size:{self.tile * self.layout["text"]:.1f}px">–</text>'
                 ),
+                # ha-floorplan listens on a rule's element and every element
+                # inside it, and runs a hold once per element under the
+                # finger. The tile's rule binds to this rect alone, on top.
+                f'<rect id="{self.id}.tile{k}.hit" class="fp-hit" x="{tx:.1f}" y="{ty:.1f}" width="{self.tile}" height="{self.tile}"/>',
                 "</g>",
             ]
         out.append("</g>")

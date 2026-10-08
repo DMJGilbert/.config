@@ -78,10 +78,17 @@
       rect = [719 209 879 419];
       height = 50;
     }
-    # UK double with frame, headboard on the exterior wall between the windows.
+    # UK double with frame, headboard under the window and one side against
+    # the wall shared with the bedroom.
     {
       name = "girls-bed";
-      rect = [194 110 334 310];
+      rect = [329 110 469 310];
+      height = 50;
+    }
+    # Low unit at the foot of the bed, carrying the bedroom TV.
+    {
+      name = "tv-unit";
+      rect = [739 140 859 190];
       height = 50;
     }
     {
@@ -130,12 +137,12 @@
   # Media players drawn in the flat, boxes like furniture raised to `base`
   # cm. Their entities are in fixtures.nix; they light up while playing.
   devices = [
-    # On the window wall, facing the bed.
+    # Free-standing on the unit at the foot of the bed, facing it.
     {
       name = "bedroom_tv";
-      rect = [810 110 930 116];
-      base = 60;
-      height = 68;
+      rect = [744 168 854 174];
+      base = 50;
+      height = 64;
     }
     # On the back wall of the living room's bay, facing the sofa.
     {

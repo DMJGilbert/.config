@@ -203,7 +203,9 @@
       };
     in {
       inherit (tile) entity;
-      inherit element;
+      # Taps and holds bind to the tile's hit rect, which has no children, so
+      # each fires once; render.py explains why.
+      element = "${element}.hit";
       tap_action =
         if tile.toggle or false
         then {

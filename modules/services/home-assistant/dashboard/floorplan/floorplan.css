@@ -60,6 +60,7 @@
 .fp-root .fp-window,
 .fp-root .fp-leader,
 .fp-root .fp-anchor,
+.fp-root .fp-tile :not(.fp-hit),
 .fp-root .fp-door *,
 .fp-root .fp-motion *,
 .fp-root .fp-device,
