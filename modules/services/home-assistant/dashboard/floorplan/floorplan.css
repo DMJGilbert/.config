@@ -60,6 +60,8 @@
 .fp-root .fp-window,
 .fp-root .fp-leader,
 .fp-root .fp-anchor,
+.fp-root .fp-person *,
+.fp-root .fp-countdown,
 .fp-root .fp-tile :not(.fp-hit),
 .fp-root .fp-door *,
 .fp-root .fp-motion *,
@@ -89,6 +91,140 @@
 }
 .fp-device-glow[data-on="1"] {
   display: inline;
+}
+
+/*
+ * Who's home: each person has a badge on the sofa, in bed and outside the
+ * front door; one shows, from data-on (home) and data-bedtime.
+ */
+.fp-person > g {
+  display: none;
+}
+.fp-person:not([data-on="1"]) .fp-at-door,
+.fp-person[data-on="1"]:not([data-bedtime="1"]) .fp-at-sofa,
+.fp-person[data-on="1"][data-bedtime="1"] .fp-at-bed {
+  display: inline;
+}
+.fp-badge {
+  fill: var(--fp-accent);
+  stroke: var(--fp-bg);
+  stroke-width: 2;
+}
+.fp-badge-text {
+  fill: var(--fp-bg);
+  font-family: var(--fp-font);
+  font-weight: 700;
+  text-anchor: middle;
+}
+.fp-badge-shadow {
+  fill: var(--fp-accent);
+  opacity: 0.3;
+}
+.fp-at-door .fp-badge {
+  fill: var(--fp-bg);
+  stroke: var(--fp-dim);
+  stroke-dasharray: 5 4;
+}
+.fp-at-door .fp-badge-text {
+  fill: var(--fp-dim);
+}
+.fp-at-door .fp-badge-shadow {
+  display: none;
+}
+
+/*
+ * Lights-off countdown: the ring drains over the timer's length, started
+ * part way through by the seconds already gone. data-run alternates a/b on
+ * each (re)start, since only a new animation name restarts an animation.
+ */
+.fp-countdown {
+  display: none;
+  fill: none;
+  stroke: var(--fp-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+}
+.fp-countdown[data-run="a"],
+.fp-countdown[data-run="b"],
+.fp-countdown[data-run="paused"] {
+  display: inline;
+}
+.fp-countdown[data-run="a"] {
+  animation: fp-countdown-a calc(var(--fp-total) * 1s) linear
+    calc((var(--fp-left) - var(--fp-total)) * 1s) forwards;
+}
+.fp-countdown[data-run="b"] {
+  animation: fp-countdown-b calc(var(--fp-total) * 1s) linear
+    calc((var(--fp-left) - var(--fp-total)) * 1s) forwards;
+}
+.fp-countdown[data-run="paused"] {
+  stroke-dashoffset: calc(100 * (1 - var(--fp-left) / var(--fp-total)));
+}
+@keyframes fp-countdown-a {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+@keyframes fp-countdown-b {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+
+/*
+ * Running effects, shown only while the device is active. Dashes travel
+ * along the drawn shapes, so a drum turns and air rises without transforms.
+ */
+.fp-effect {
+  display: none;
+  fill: none;
+  stroke: var(--fp-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.fp-device-group[data-on="1"] .fp-effect {
+  display: inline;
+}
+.fp-spin {
+  stroke-dasharray: 10 8;
+  animation: fp-spin 1.2s linear infinite;
+}
+.fp-airflow {
+  stroke-dasharray: 8 14;
+  opacity: 0.8;
+  animation: fp-airflow 1.4s linear infinite;
+}
+.fp-airflow:nth-of-type(2n) {
+  animation-delay: -0.5s;
+}
+@keyframes fp-spin {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+@keyframes fp-airflow {
+  to {
+    stroke-dashoffset: 44;
+  }
+}
+.fp-device-glow.fp-pulse[data-on="1"] {
+  animation: fp-pulse 1.8s ease-in-out infinite;
+}
+@keyframes fp-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* An open door gets a pin, dropped onto its threshold. */
@@ -169,6 +305,10 @@
  * centre out, so motion still reads as live without anything moving.
  */
 @media (prefers-reduced-motion: reduce) {
+  .fp-spin,
+  .fp-airflow {
+    animation: none;
+  }
   .fp-ripple {
     animation: fp-ripple-fade 2.4s ease-in-out infinite;
   }

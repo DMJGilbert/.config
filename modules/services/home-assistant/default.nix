@@ -354,6 +354,15 @@ in
                   state_class = "measurement";
                 };
               }
+              # The floorplan moves people at home from the sofa to bed while
+              # this is on.
+              {
+                binary_sensor = {
+                  name = "Bedtime";
+                  unique_id = "bedtime";
+                  state = "{{ now().hour >= 22 or now().hour < 7 }}";
+                };
+              }
               {
                 sensor = {
                   name = "Total Media Players Playing Template";

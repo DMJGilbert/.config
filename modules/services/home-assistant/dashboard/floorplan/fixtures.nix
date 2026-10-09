@@ -3,11 +3,28 @@
 #
 # A door's pin drops onto its threshold while its contact sensor reads
 # open; a device glows, with a pool of light on the floor, while its state
-# is in `active`.
+# is in `active`, or for a numeric sensor while it reads `above` a value.
 let
   playing = ["on" "playing" "paused" "buffering"];
 in {
   doors.front = "binary_sensor.myggbett_door_window_sensor_door";
+
+  # Badges for who's home, in seat order (geometry.nix seats): on the sofa
+  # while home, in bed while `bedtime` is on, outside the front door while
+  # away.
+  people = [
+    {
+      name = "darren";
+      entity = "person.darren";
+      initial = "D";
+    }
+    {
+      name = "lorraine";
+      entity = "person.lorraine";
+      initial = "L";
+    }
+  ];
+  bedtime = "binary_sensor.bedtime";
 
   devices = {
     bedroom_tv = {
@@ -21,6 +38,24 @@ in {
     yoto = {
       entity = "media_player.robynnes_yoto_player";
       active = playing;
+    };
+    dyson = {
+      entity = "fan.dyson";
+      active = ["on"];
+    };
+    # Running while the plug draws more than standby power.
+    washing_machine = {
+      entity = "sensor.washing_machine_power";
+      above = 5;
+    };
+    # The Fingerbot presses the extractor's switch.
+    extractor = {
+      entity = "switch.fingerbot_extractor_switch";
+      active = ["on"];
+    };
+    robovac = {
+      entity = "vacuum.robovac";
+      active = ["cleaning" "returning"];
     };
   };
 }

@@ -134,8 +134,23 @@
     }
   ];
 
-  # Media players drawn in the flat, boxes like furniture raised to `base`
-  # cm. Their entities are in fixtures.nix; they light up while playing.
+  # Where people's badges sit, one spot per person in fixtures.nix order:
+  # on the sofa while home, in bed at bedtime. Away badges wait outside the
+  # front door.
+  seats = {
+    sofa = {
+      furniture = "sofa";
+      spots = [[889 925] [989 925]];
+    };
+    bed = {
+      furniture = "bed";
+      spots = [[759 380] [839 380]];
+    };
+  };
+
+  # Devices drawn in the flat: boxes like furniture raised to `base` cm,
+  # `round` for a cylinder. Their entities are in fixtures.nix; they light
+  # up while active and run their `effect` (airflow, spin or pulse).
   devices = [
     # Free-standing on the unit at the foot of the bed, facing it.
     {
@@ -156,6 +171,40 @@
       rect = [134 268 156 292];
       base = 45;
       height = 20;
+    }
+    # Tower purifier in the corner between the TV and the window.
+    {
+      name = "dyson";
+      rect = [1036 674 1064 702];
+      round = true;
+      base = 0;
+      height = 100;
+      effect = "airflow";
+    }
+    # In the storage cupboard, at the back.
+    {
+      name = "washing_machine";
+      rect = [105 495 165 555];
+      base = 0;
+      height = 85;
+      effect = "spin";
+    }
+    # Above the bath, on the wall shared with the hallway.
+    {
+      name = "extractor";
+      rect = [285 800 315 808];
+      base = 100;
+      height = 25;
+      effect = "airflow";
+    }
+    # Docked under the bedroom window.
+    {
+      name = "robovac";
+      rect = [652 116 688 152];
+      round = true;
+      base = 0;
+      height = 9;
+      effect = "pulse";
     }
   ];
 

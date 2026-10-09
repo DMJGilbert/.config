@@ -36,7 +36,13 @@
         assert lib.assertMsg (lib.elem name deviceNames) "floorplan fixtures: no device named `${name}` in geometry.nix"; {
           inherit (device) entity;
           element = "device.${name}";
-          state_action = markOn ["device.${name}" "device.${name}.glow"] device.active;
+          state_action =
+            markWhen ["device.${name}" "device.${name}.glow"]
+            (
+              if device ? above
+              then activeAbove device.above
+              else activeWhen device.active
+            );
         }
     )
     fixtures.devices;
@@ -58,7 +64,8 @@
     mkdir $out
     for layout in landscape portrait; do
       python ${./render.py} ${json "geometry.json" geometry} "$out/$layout.svg" \
-        --tiles ${json "tiles.json" checked} --layout "$layout"
+        --tiles ${json "tiles.json" checked} --layout "$layout" \
+        --people ${json "people.json" fixtures.people}
     done
     cp ${./floorplan.css} $out/floorplan.css
   '';
@@ -70,6 +77,7 @@
   # ha-floorplan evaluates these in a sandboxed interpreter, so they keep to
   # plain expressions.
   activeWhen = states: "\${${builtins.toJSON states}.includes(entity.state) ? \"1\" : \"0\"}";
+  activeAbove = limit: "\${parseFloat(entity.state) > ${toString limit} ? \"1\" : \"0\"}";
   labelText = tile: ''> return ${builtins.toJSON tile.labels}[entity.state] || "–";'';
 
   # Comfort bands for the readings by each room's name; outside them the
@@ -117,14 +125,12 @@
       (reading "humidity" "${id}.humidity")
     ];
 
-  markOn = elements: states: {
+  datasetSet = key: elements: value: {
     service = "floorplan.dataset_set";
-    service_data = {
-      inherit elements;
-      key = "on";
-      value = activeWhen states;
-    };
+    service_data = {inherit elements key value;};
   };
+  markWhen = datasetSet "on";
+  markOn = elements: states: markWhen elements (activeWhen states);
 
   popupHash = id: kind: "#floorplan-${id}-${kind}";
 
@@ -248,7 +254,49 @@
       entity = room.motion;
       element = "${id}.motion";
       state_action = markOn ["${id}.motion"] ["on"];
+    }
+    ++ lib.optional (room ? timer) {
+      entity = room.timer;
+      element = "${id}.countdown";
+      state_action = [
+        {
+          service = "floorplan.style_set";
+          service_data.style = countdownStyle;
+        }
+        (datasetSet "run" ["${id}.countdown"] countdownRun)
+      ];
     };
+
+  # A timer only reports when it starts, pauses, restarts or ends, so the
+  # ring drains by a CSS animation: these give it the timer's length and
+  # the seconds left (attributes duration, finishes_at, remaining).
+  countdownStyle = ''
+    > const hms = function (s) { const p = String(s || "0:0:0").split(":"); return p[0] * 3600 + p[1] * 60 + p[2] * 1; };
+    const a = entity.attributes || {};
+    const total = hms(a.duration) || 1;
+    let left = total;
+    if (entity.state === "active") { left = (Date.parse(a.finishes_at) - Date.now()) / 1000 || 0; }
+    if (entity.state === "paused") { left = hms(a.remaining); }
+    return "--fp-total: " + total + "; --fp-left: " + Math.max(0, Math.min(total, left));
+  '';
+  # A restarted timer must restart the animation, which only happens when
+  # the animation's name changes: alternate between two identical ones.
+  countdownRun = "\${entity.state === \"active\" ? (element.dataset.run === \"a\" ? \"b\" : \"a\") : entity.state === \"paused\" ? \"paused\" : \"off\"}";
+
+  personRules =
+    map (person: {
+      inherit (person) entity;
+      element = person.entity;
+      state_action = markOn [person.entity] ["home"];
+    })
+    fixtures.people
+    ++ [
+      {
+        entity = fixtures.bedtime;
+        element = (lib.head fixtures.people).entity;
+        state_action = datasetSet "bedtime" (map (p: p.entity) fixtures.people) (activeWhen ["on"]);
+      }
+    ];
 in {
   inherit files;
   # The pop-ups open on top of whatever tab is showing, so they live with
@@ -282,7 +330,7 @@ in {
         }
       ];
       stylesheet = url "floorplan.css";
-      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules;
+      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules ++ personRules;
     };
   };
 }

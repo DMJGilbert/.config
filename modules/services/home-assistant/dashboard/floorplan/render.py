@@ -3,6 +3,7 @@
 usage: render.py GEOMETRY.json OUT.svg [--mode iso|plan]
                  [--wall-height CM] [--front-height CM]
                  [--tiles TILES.json --layout landscape|portrait]
+                 [--people PEOPLE.json]
                  [--style CSS]
 
 GEOMETRY.json is geometry.nix serialised: room polygons, wall openings,
@@ -33,8 +34,9 @@ Element ids are stable so ha-floorplan rules can target them:
 `<room>.floor`, `<room>.leader`, `<room>.anchor`,
 `<room>.strip`, `<room>.title`, `<room>.temp`, `<room>.humidity`,
 `<room>.tile<k>`, `<room>.tile<k>.text`, `<room>.motion` for rooms with a
-motion sensor, `door.<name>` for each named door opening, and
-`device.<name>` and `device.<name>.glow` for each device.
+motion sensor, `<room>.countdown` for rooms with a lights-off timer,
+`door.<name>` for each named door opening, `device.<name>` and `device.<name>.glow` for each device, and each
+person's entity id for their badge.
 """
 
 import argparse
@@ -58,6 +60,10 @@ RAILING = 5
 ANCHOR_CLEARANCE = 15  # keeps a leader's end dot off furniture and wall edges
 RIPPLE_RADIUS = 80  # cm on the floor; the outermost motion ring
 DEVICE_GLOW_RADIUS = 110  # cm on the floor around an active device
+ROUND_SIDES = 20  # polygon sides for a `round` box
+AIRFLOW_RISE = 60  # cm of airflow drawn above a running fan's top
+COUNTDOWN_RADIUS = 35  # cm on the floor; the lights-off countdown ring
+AWAY_SPACING = 70  # cm between away badges outside the front door
 
 COS30 = math.cos(math.radians(30))
 SIN30 = 0.5
@@ -125,7 +131,20 @@ def load(path):
         out = []
         for f in geo.get(key, []):
             x0, y0, x1, y1 = f["rect"]
-            corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+            if f.get("round"):
+                # The ellipse inscribed in the rect, as a polygon.
+                cx, cy, rx, ry = (
+                    (x0 + x1) / 2,
+                    (y0 + y1) / 2,
+                    (x1 - x0) / 2,
+                    (y1 - y0) / 2,
+                )
+                corners = [
+                    (cx + rx * math.cos(t), cy + ry * math.sin(t))
+                    for t in (2 * math.pi * i / ROUND_SIDES for i in range(ROUND_SIDES))
+                ]
+            else:
+                corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
             out.append(dict(f, polygon=[rotate(c, degrees) for c in corners]))
         return out
 
@@ -141,7 +160,15 @@ def load(path):
         item["polygon"] = [shift(p) for p in item["polygon"]]
     for o in openings:
         o["from"], o["to"] = shift(o["from"]), shift(o["to"])
-    return rooms, openings, furniture, devices
+    heights = {f["name"]: f["height"] for f in furniture}
+    seats = {
+        name: [
+            (*shift(rotate(tuple(p), degrees)), heights[seat["furniture"]])
+            for p in seat["spots"]
+        ]
+        for name, seat in geo.get("seats", {}).items()
+    }
+    return rooms, openings, furniture, devices, seats
 
 
 def polygons(geom):
@@ -422,6 +449,62 @@ def door_pin(door, rooms, project, size):
     ]
 
 
+def countdown(room_id, centre):
+    """Ring around a room's anchor that drains while its lights-off timer runs.
+
+    pathLength makes the dash pattern 100 long whatever the ellipse's real
+    perimeter, so floorplan.css can drain it from 0 to 100.
+    """
+    x, y = centre
+    r = COUNTDOWN_RADIUS
+    return (
+        f'<ellipse id="{room_id}.countdown" class="fp-countdown" pathLength="100"'
+        f' cx="{x:.1f}" cy="{y:.1f}" rx="{r * math.sqrt(2) * COS30:.1f}" ry="{r * math.sqrt(2) * SIN30:.1f}"/>'
+    )
+
+
+def person_badges(person, places, r):
+    """A person's badge at each place it can show (sofa, bed, door).
+
+    floorplan.css shows one at a time from the group's data-on (home) and
+    data-bedtime attributes.
+    """
+    out = [f'<g id="{person["entity"]}" class="fp-person">']
+    for place, (x, y) in places.items():
+        out += [
+            f'<g class="fp-at-{place}">',
+            f'<ellipse class="fp-badge-shadow" cx="{x:.1f}" cy="{y:.1f}" rx="{r * 0.8:.1f}" ry="{r * 0.4:.1f}"/>',
+            f'<circle class="fp-badge" cx="{x:.1f}" cy="{y - r:.1f}" r="{r:.1f}"/>',
+            (
+                f'<text class="fp-badge-text" x="{x:.1f}" y="{y - r * 0.62:.1f}"'
+                f' style="font-size:{r * 1.05:.1f}px">{escape(person["initial"])}</text>'
+            ),
+            "</g>",
+        ]
+    out.append("</g>")
+    return out
+
+
+def door_spots(door, rooms, project, count, spacing):
+    """Screen points along the outside of a door, for away badges."""
+    (ax, ay), (bx, by) = door["from"], door["to"]
+    width = math.hypot(bx - ax, by - ay)
+    ux, uy = (bx - ax) / width, (by - ay) / width
+    nx, ny = -uy, ux
+    indoor = unary_union([Polygon(r["polygon"]) for r in rooms if not r.get("outdoor")])
+    mx, my = (ax + bx) / 2, (ay + by) / 2
+    if indoor.contains(Point(mx + nx * EXTERIOR_WALL, my + ny * EXTERIOR_WALL)):
+        nx, ny = -nx, -ny
+    out = EXTERIOR_WALL + spacing
+    return [
+        project(
+            mx + nx * out + ux * spacing * (i - (count - 1) / 2),
+            my + ny * out + uy * spacing * (i - (count - 1) / 2),
+        )
+        for i in range(count)
+    ]
+
+
 def ripple(room_id, centre, radius):
     """Rings on the floor around a room's anchor; floorplan.css animates them
     outwards while the room's motion sensor is on.
@@ -447,14 +530,52 @@ def device_glow(device, project):
     c = Polygon(device["polygon"]).centroid
     (x, y), r = project(c.x, c.y), DEVICE_GLOW_RADIUS
     rx, ry = r * math.sqrt(2) * COS30, r * math.sqrt(2) * SIN30
+    cls = "fp-device-glow" + (" fp-pulse" if device.get("effect") == "pulse" else "")
     return (
-        f'<ellipse id="device.{device["name"]}.glow" class="fp-device-glow"'
+        f'<ellipse id="device.{device["name"]}.glow" class="{cls}"'
         f' cx="{x:.1f}" cy="{y:.1f}" rx="{rx:.1f}" ry="{ry:.1f}"/>'
     )
 
 
+def device_effect(device, project):
+    """Marks on a device's top that floorplan.css animates while it runs.
+
+    `spin` is a dashed ring on the top (a washing machine's drum); `airflow`
+    is dashed lines rising from it (a fan or extractor). Dash offsets move,
+    so nothing needs a transform origin. `pulse` lives on the floor glow.
+    """
+    poly = Polygon(device["polygon"])
+    c = poly.centroid
+    x0, y0, x1, y1 = poly.bounds
+    r = min(x1 - x0, y1 - y0) / 2
+    top = device["base"] + device["height"]
+    x, y = project(c.x, c.y, top)
+    effect = device.get("effect")
+    if effect == "spin":
+        ring = r * 0.65
+        return (
+            f'<ellipse class="fp-effect fp-spin" cx="{x:.1f}" cy="{y:.1f}"'
+            f' rx="{ring * math.sqrt(2) * COS30:.1f}" ry="{ring * math.sqrt(2) * SIN30:.1f}"/>'
+        )
+    if effect == "airflow":
+        spread = r * math.sqrt(2) * COS30 * 0.5
+        return "".join(
+            f'<line class="fp-effect fp-airflow" x1="{x + dx:.1f}" y1="{y:.1f}"'
+            f' x2="{x + dx:.1f}" y2="{y - AIRFLOW_RISE:.1f}"/>'
+            for dx in (-spread, 0, spread)
+        )
+    return ""
+
+
 def render_iso(
-    rooms, openings, furniture, devices, project, wall_height, front_height, linked
+    rooms,
+    openings,
+    furniture,
+    devices,
+    project,
+    wall_height,
+    front_height,
+    linked,
 ):
     """Drawing of the flat, unlabelled: the strips carry the room names.
 
@@ -492,10 +613,30 @@ def render_iso(
     # footprint like a furniture top; grouped, a rule can light it as one.
     for d in devices:
         poly = Polygon(d["polygon"])
-        faces, tops = extrude(
-            poly, d["base"] + d["height"], "fp-device", project, base=d["base"]
-        )
-        svg = "".join(i.svg for i in faces + tops)
+        top = d["base"] + d["height"]
+        faces, tops = extrude(poly, top, "fp-device", project, base=d["base"])
+        if d.get("round"):
+            # A cylinder's side is one surface: fill its facets without
+            # their seams and outline the whole side once.
+            side = unary_union(
+                [
+                    Polygon(
+                        [
+                            project(*a, d["base"]),
+                            project(*b, d["base"]),
+                            project(*b, top),
+                            project(*a, top),
+                        ]
+                    ).buffer(0.01)
+                    for a, b in ring_segments(poly)
+                    if facing_viewer(a, b)
+                ]
+            )
+            side_svg = f'<polygon class="fp-device fp-device-side" points="{fmt(side.exterior.coords)}"/>'
+            svg = side_svg + "".join(i.svg for i in tops)
+        else:
+            svg = "".join(i.svg for i in faces + tops)
+        svg += device_effect(d, project)
         furn_tops.append(
             Item(
                 f'<g id="device.{d["name"]}" class="fp-device-group">{svg}</g>',
@@ -914,11 +1055,12 @@ def main():
     ap.add_argument("--front-height", type=float, default=25.0)
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--tiles")
+    ap.add_argument("--people")
     ap.add_argument("--layout", choices=sorted(LAYOUTS), default="landscape")
     ap.add_argument("--style")
     args = ap.parse_args()
 
-    rooms, openings, furniture, devices = load(args.geometry)
+    rooms, openings, furniture, devices, seats = load(args.geometry)
     pts = [p for r in rooms for p in r["polygon"]]
     if args.mode == "plan":
         body = render_plan(rooms, openings, furniture, args.scale)
@@ -977,12 +1119,22 @@ def main():
         for s in strips:
             if "motion" in tiles[s.id]:
                 body.append(ripple(s.id, s.anchor, RIPPLE_RADIUS))
+            if "timer" in tiles[s.id]:
+                body.append(countdown(s.id, s.anchor))
         for s in strips:
             body += s.leader_svg()
-        # Pins are sized like tiles so they read at the same scale.
+        # Pins and badges are sized like tiles so they read at the same scale.
         pin_size = strips[0].tile if strips else 100
         for door in named_doors:
             body += door_pin(door, rooms, project, pin_size)
+        people = json.loads(Path(args.people).read_text()) if args.people else []
+        front = next((d for d in named_doors if d["name"] == "front"), None)
+        if people and front:
+            away = door_spots(front, rooms, project, len(people), AWAY_SPACING)
+            for i, person in enumerate(people):
+                places = {name: project(*spots[i]) for name, spots in seats.items()}
+                places["door"] = away[i]
+                body += person_badges(person, places, pin_size * 0.2)
         for s in strips:
             body += s.svg()
             span += [(s.x, s.y), (s.x + s.w, s.y + s.h)]
