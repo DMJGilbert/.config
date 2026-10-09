@@ -1,6 +1,7 @@
 {pkgs, ...}: let
   username = "darren";
   userHome = "/Users/${username}";
+  hmApps = "${userHome}/Applications/Home Manager Apps";
 in {
   imports = [./shared.nix];
 
@@ -84,11 +85,13 @@ in {
           "/System/Applications/Apps.app"
           {spacer = {small = false;};}
           "/System/Cryptexes/App/System/Applications/Safari.app"
-          "${pkgs.wezterm}/Applications/WezTerm.app"
+          # Home Manager's app copies keep one path across upgrades; a store
+          # path would register a new bundle with LaunchServices each version.
+          "${hmApps}/WezTerm.app"
           "/System/Applications/Mail.app"
           "/Applications/Microsoft Teams.app"
-          "${pkgs.slack}/Applications/Slack.app"
-          "${pkgs.obsidian}/Applications/Obsidian.app"
+          "${hmApps}/Slack.app"
+          "${hmApps}/Obsidian.app"
           "/Applications/Home Assistant.app"
           "/System/Applications/Music.app"
           {spacer = {small = false;};}

@@ -1,12 +1,14 @@
 /*
  * Floorplan colours come from the Home Assistant theme, so the drawing
- * follows light and dark mode. The card is transparent, and walls and
- * furniture are filled with the page background: the drawing hides lines by
- * painting nearer faces over farther ones, which only works while fills
- * match what is behind them.
+ * follows light and dark mode. Walls and furniture are filled with the page
+ * background, and the card takes that background too: the drawing hides
+ * lines by painting nearer faces over farther ones, which only works while
+ * fills match what is behind them.
  *
- * ha-floorplan rules set data-on="1" on a room's floor, leader, anchor and
- * strip while its lights are on, and on a tile while its entity is active.
+ * ha-floorplan rules set data-on="1" on a room's floor and countdown while
+ * its lights are on, and on a device, door, motion ring or marker while its
+ * entity is active. The tile and strip styles serve render.py's landscape
+ * and portrait layouts.
  */
 .fp-root {
   --fp-bg: var(--primary-background-color, #1e1e2e);
@@ -71,8 +73,90 @@
 .fp-root .fp-door *,
 .fp-root .fp-motion *,
 .fp-root .fp-device,
-.fp-root .fp-device-glow {
+.fp-root .fp-device-glow,
+.fp-root .fp-focus-fade,
+.fp-root .fp-marker :not(.fp-hit) {
   pointer-events: none !important;
+}
+
+/*
+ * Room view headers: the rest of the flat fades behind a veil, and markers
+ * stand where the room's lights, switches and media players are. ha-floorplan
+ * rules set data-on="1" on a marker while its entity is on or playing.
+ */
+.fp-focus-fade {
+  fill: var(--fp-bg);
+  opacity: 0.86;
+}
+.fp-marker {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fp-marker-glow {
+  display: none;
+  fill: url(#fp-glow);
+}
+.fp-marker[data-on="1"] .fp-marker-glow {
+  display: inline;
+}
+.fp-marker-body {
+  fill: var(--fp-bg);
+  stroke: var(--fp-dim);
+  stroke-width: 2.4;
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+.fp-marker-glyph {
+  fill: none;
+  stroke: var(--fp-dim);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.fp-marker-mark,
+.fp-marker-knob {
+  fill: var(--fp-dim);
+}
+.fp-knob-on,
+.fp-marker[data-on="1"] .fp-knob-off {
+  display: none;
+}
+.fp-marker[data-on="1"] .fp-knob-on {
+  display: inline;
+}
+.fp-marker[data-on="1"] .fp-marker-body {
+  fill: var(--fp-accent);
+  stroke: var(--fp-accent);
+}
+.fp-marker[data-on="1"] .fp-marker-glyph {
+  stroke: var(--fp-bg);
+}
+.fp-marker[data-on="1"] .fp-marker-mark,
+.fp-marker[data-on="1"] .fp-marker-knob {
+  fill: var(--fp-bg);
+}
+/* Labels are outlined in the background colour so they read over lines. */
+.fp-marker-name,
+.fp-marker-state {
+  font-family: var(--fp-font);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--fp-bg);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  fill: var(--fp-dim);
+}
+.fp-marker-name {
+  font-weight: 600;
+}
+.fp-marker[data-on="1"] .fp-marker-name {
+  fill: var(--fp-line);
+}
+.fp-marker[data-on="1"] .fp-marker-state {
+  fill: var(--fp-accent);
 }
 
 /* Media devices: boxes like furniture that light up while playing. */

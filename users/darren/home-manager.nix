@@ -8,6 +8,7 @@ in {
     ./zsh.nix
     ./git.nix
     ./claude-code.nix
+    ./launchservices.nix
   ];
 
   home = {

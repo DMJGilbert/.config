@@ -24,7 +24,7 @@ cards:
           :host { max-width: 1200px !important; }
         }
     cards:
-      # -------------------- Hero Card with Title Overlay --------------------
+      # -------------------- Hero Card: live floorplan --------------------
       - type: custom:mod-card
         card_mod:
           style:
@@ -45,46 +45,13 @@ cards:
         card:
           type: vertical-stack
           cards:
-            # Hero Image with Dark Overlay and Title
-            - type: custom:button-card
-              name: Fleming Place
-              show_icon: false
-              show_state: false
-              tap_action:
-                action: none
-              card_mod:
-                style: |
-                  ha-card {
-                    height: 110px !important;
-                    border-radius: 0;
-                    box-shadow: none;
-                    background-image: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 100%), url("https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop") !important;
-                    background-size: cover !important;
-                    background-position: center !important;
-                  }
-                  @media (min-width: 768px) {
-                    ha-card { height: 240px !important; }
-                  }
-                  @media (min-width: 1200px) {
-                    ha-card { height: 280px !important; }
-                  }
-              styles:
-                card:
-                  - height: 100%
-                  - border-radius: 0
-                name:
-                  - font-family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  - font-size: 36px
-                  - font-weight: 500
-                  - color: "var(--accent-color)"
-                  - text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5)
-                  - position: absolute
-                  - top: 16px
-                  - left: 24px
-                  - letter-spacing: -0.5px
+            # The whole flat, live; tapping a room opens its view. Generated
+            # from dashboard/floorplan by the Nix module.
+            - !include /var/lib/hass/views/floorplan-card.yaml
 
-            # Status Chips: overlay the photo's bottom edge and take no height
-            # of their own (the margins cancel), so the header ends at the photo.
+            # Status Chips: overlay the floorplan's bottom edge and take no
+            # height of their own (the margins cancel), so the header ends
+            # at the floorplan.
             - type: custom:mushroom-chips-card
               alignment: center
               card_mod:
@@ -187,7 +154,7 @@ cards:
       # -------------------- Tabbed Section --------------------
       - type: custom:state-switch
         entity: hash
-        default: tab-floorplan
+        default: tab-rooms
         states:
           "tab-rooms":
             type: custom:mod-card
@@ -207,15 +174,6 @@ cards:
               cards:
                 - type: horizontal-stack
                   cards:
-                    - type: custom:button-card
-                      template:
-                        - tab_button_inactive
-                        - tab_icon
-                      name: Floorplan
-                      icon: fp:floor-plan
-                      tap_action: &tap_floorplan
-                        action: navigate
-                        navigation_path: "#tab-floorplan"
                     - type: custom:button-card
                       template: tab_button_active
                       name: Rooms
@@ -259,7 +217,7 @@ cards:
                         variables:
                           room_name: Living Room
                           room_icon: fp:sofa
-                          room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-living_room.yaml
                           light_entity: group.living_room_lights
                           motion_entity: binary_sensor.living_room_motion_sensor_occupancy
                           media_entity: media_player.living_room_tv
@@ -271,7 +229,7 @@ cards:
                         variables:
                           room_name: Bedroom
                           room_icon: fp:bed
-                          room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-bedroom.yaml
                           light_entity: group.bedroom_lights
                           motion_entity: null
                           media_entity: media_player.bedroom_tv
@@ -283,7 +241,7 @@ cards:
                         variables:
                           room_name: Kitchen
                           room_icon: fp:dining
-                          room_image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-kitchen.yaml
                           light_entity: group.kitchen_lights
                           motion_entity: null
                           media_entity: null
@@ -295,7 +253,7 @@ cards:
                         variables:
                           room_name: Bathroom
                           room_icon: fp:shower
-                          room_image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-bathroom.yaml
                           light_entity: group.bathroom_lights
                           motion_entity: binary_sensor.bathroom_motion_sensor_occupancy
                           media_entity: null
@@ -307,7 +265,7 @@ cards:
                         variables:
                           room_name: Hallway
                           room_icon: fp:door
-                          room_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-hallway.yaml
                           light_entity: group.hallway_lights
                           motion_entity: binary_sensor.hallway_motion_sensor_occupancy
                           media_entity: null
@@ -319,7 +277,7 @@ cards:
                         variables:
                           room_name: Girls' Room
                           room_icon: fp:teddy-bear
-                          room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
+                          room_image: !include /var/lib/hass/views/thumb-girls_room.yaml
                           light_entity: group.girls_room_lights
                           motion_entity: null
                           media_entity: media_player.robynnes_yoto_player
@@ -333,13 +291,6 @@ cards:
               cards:
                 - type: horizontal-stack
                   cards:
-                    - type: custom:button-card
-                      template:
-                        - tab_button_inactive
-                        - tab_icon
-                      name: Floorplan
-                      icon: fp:floor-plan
-                      tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
@@ -399,13 +350,6 @@ cards:
                 - type: horizontal-stack
                   cards:
                     - type: custom:button-card
-                      template:
-                        - tab_button_inactive
-                        - tab_icon
-                      name: Floorplan
-                      icon: fp:floor-plan
-                      tap_action: *tap_floorplan
-                    - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
                       tap_action: *tap_rooms
@@ -447,13 +391,6 @@ cards:
               cards:
                 - type: horizontal-stack
                   cards:
-                    - type: custom:button-card
-                      template:
-                        - tab_button_inactive
-                        - tab_icon
-                      name: Floorplan
-                      icon: fp:floor-plan
-                      tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive
                       name: Rooms
@@ -533,44 +470,7 @@ cards:
                           status_text: "[[[ const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); ]]]"
                           info_text: "[[[ const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; ]]]"
 
-          "tab-floorplan":
-            type: custom:mod-card
-            card_mod: *tab_panel_style
-            card:
-              type: vertical-stack
-              cards:
-                - type: horizontal-stack
-                  cards:
-                    - type: custom:button-card
-                      template:
-                        - tab_button_active
-                        - tab_icon
-                      name: Floorplan
-                      icon: fp:floor-plan
-                      tap_action: *tap_floorplan
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Rooms
-                      tap_action: *tap_rooms
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Peoples
-                      tap_action: *tap_peoples
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Calendar
-                      tap_action: *tap_calendar
-                    - type: custom:button-card
-                      template: tab_button_inactive
-                      name: Other
-                      tap_action: *tap_other
-                # Generated from dashboard/floorplan by the Nix module.
-                - type: custom:mod-card
-                  card_mod: *tab_content_style
-                  card: !include /var/lib/hass/views/floorplan-card.yaml
-
       # -------------------- Popups --------------------
       - !include /var/lib/hass/popups/lights.yaml
       - !include /var/lib/hass/popups/media.yaml
       - !include /var/lib/hass/popups/motion.yaml
-      - !include /var/lib/hass/views/floorplan-popups.yaml

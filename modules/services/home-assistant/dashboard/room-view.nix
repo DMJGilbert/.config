@@ -1,5 +1,6 @@
 # Builds the room views of the YAML-mode dashboard. Every room shares the
-# frame built here (hero image, light chip, tab bar, Lights tab); each room
+# frame built here (a floorplan header with reading tiles where the room has
+# one, else a hero image and light chip; tab bar; Lights tab); each room
 # supplies its own Media, Climate and Other tab contents from the card
 # helpers below. The button-card templates referenced by name (room_hero,
 # room_item_card, …) live in dashboard.yaml.
@@ -244,7 +245,7 @@
       '' (stack content))
     ]);
 
-  hero = room:
+  heroFrame = contents:
     panel {
       "hui-vertical-stack-card $" = ''
         #root { gap: 0 !important; }
@@ -262,7 +263,125 @@
           ha-card { margin: 16px 0 16px 0; }
         }
       '';
-    } (stack [
+    } (stack contents);
+
+  # Readings outside these bands are coloured: cold or damp in blue, warm or
+  # dry in orange.
+  comfort = {
+    temperature = {
+      label = "Temperature";
+      icon = "fp:thermometer";
+      text = "v.toFixed(1) + '°'";
+      below = 18;
+      low = "blue";
+      above = 23;
+      high = "orange";
+    };
+    humidity = {
+      label = "Humidity";
+      icon = "fp:water";
+      text = "v.toFixed(0) + '%'";
+      below = 40;
+      low = "orange";
+      above = 60;
+      high = "blue";
+    };
+  };
+
+  # A reading laid over a floorplan header: icon, value, and what it is.
+  headerTile = {
+    entity,
+    icon,
+    label,
+    value,
+    colour ? "var(--primary-text-color)",
+  }: {
+    type = "custom:button-card";
+    inherit entity icon label;
+    show_name = false;
+    show_label = true;
+    show_state = true;
+    state_display = "[[[ ${value} ]]]";
+    tap_action.action = "more-info";
+    styles = {
+      card = [
+        {padding = "8px 10px";}
+        {border-radius = "14px";}
+        {background = "var(--card-background-color)";}
+        {box-shadow = "0 2px 8px rgba(0,0,0,0.15)";}
+      ];
+      grid = [
+        {grid-template-areas = "\"i s\" \"i l\"";}
+        {grid-template-columns = "24px 1fr";}
+        {column-gap = "8px";}
+      ];
+      icon = [
+        {width = "20px";}
+        {color = "var(--secondary-text-color)";}
+      ];
+      state = [
+        {justify-self = "start";}
+        {font-size = "15px";}
+        {font-weight = 600;}
+        {color = colour;}
+      ];
+      label = [
+        {justify-self = "start";}
+        {font-size = "11px";}
+        {color = "var(--secondary-text-color)";}
+      ];
+    };
+  };
+
+  readingTile = kind: entity: let
+    band = comfort.${kind};
+  in
+    headerTile {
+      inherit entity;
+      inherit (band) icon label;
+      value = "const v = parseFloat(entity.state); return isNaN(v) ? '–' : ${band.text};";
+      colour = "[[[ const v = parseFloat(entity.state); return v < ${toString band.below} ? 'var(--${band.low}-color)' : v > ${toString band.above} ? 'var(--${band.high}-color)' : 'var(--primary-text-color)'; ]]]";
+    };
+
+  # "Now" while the sensor detects someone, else when it last did: the time
+  # today, with the weekday before that. An offline sensor's last change is
+  # when it dropped out, not motion, so it reads as unavailable.
+  motionTile = entity:
+    headerTile {
+      inherit entity;
+      icon = "fp:motion";
+      label = "Last motion";
+      value = "if (entity.state === 'on') return 'Now'; if (entity.state !== 'off') return 'Unavailable'; const t = new Date(entity.last_changed); const time = t.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); return t.toDateString() === new Date().toDateString() ? time : t.toLocaleDateString([], {weekday: 'short'}) + ' ' + time;";
+    };
+
+  # A room with a floorplan header (dashboard/floorplan) shows it in place
+  # of the photo, with its readings as tiles under it on the drawing's
+  # background. Under, not over: the drawing scales with the card's width,
+  # so no fixed overlap is sure to stay clear of its markers.
+  floorplanHero = header: let
+    tiles =
+      lib.optionals (header ? climate) [
+        (readingTile "temperature" header.climate.temperature)
+        (readingTile "humidity" header.climate.humidity)
+      ]
+      ++ lib.optional (header ? motion) (motionTile header.motion);
+  in
+    heroFrame ([header.card]
+      ++ lib.optional (tiles != []) (panel ''
+          ha-card {
+            background: var(--primary-background-color);
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0 12px 12px 12px;
+          }
+        '' {
+          type = "horizontal-stack";
+          cards = tiles;
+        }));
+
+  hero = room:
+    heroFrame [
       {
         type = "custom:button-card";
         template = "room_hero";
@@ -315,7 +434,7 @@
           }
         ];
       }
-    ]);
+    ];
 
   lightsTab = room: [
     (cards.auto {
@@ -337,10 +456,15 @@
     })
   ];
 
-  mkView = room: {
+  # `headers` are the floorplan headers by view path (dashboard/floorplan
+  # roomHeaders). Room views are subviews, reached from the home view: they
+  # stay out of the top bar, which shows a back arrow home instead of tabs.
+  mkView = headers: room: {
     title = room.name;
     path = "room-${room.path}";
     inherit (room) icon;
+    subview = true;
+    back_path = "/lovelace-home/home";
     panel = true;
     cards = [
       {
@@ -364,7 +488,11 @@
           }
         '';
         cards = [
-          (hero room)
+          (
+            if headers ? ${room.path}
+            then floorplanHero headers.${room.path}
+            else hero room
+          )
           {
             type = "custom:state-switch";
             entity = "hash";

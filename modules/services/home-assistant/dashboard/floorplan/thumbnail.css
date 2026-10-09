@@ -1,0 +1,17 @@
+/*
+ * Room thumbnails are shown as plain images, outside Home Assistant's theme,
+ * so its colour variables are unset and floorplan.css falls back to its dark
+ * defaults. Thumbnails paint their own background and follow the device's
+ * light or dark mode instead.
+ */
+.fp-bg {
+  fill: var(--fp-bg);
+}
+@media (prefers-color-scheme: light) {
+  .fp-root {
+    --fp-bg: #eff1f5;
+    --fp-line: #4c4f69;
+    --fp-dim: #6c6f85;
+    --fp-accent: #fe640b;
+  }
+}

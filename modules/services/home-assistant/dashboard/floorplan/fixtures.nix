@@ -70,4 +70,57 @@ in {
       active = ["cleaning" "returning"];
     };
   };
+
+  # Room view headers: the floorplan zooms to `rooms` (the room and any zones
+  # open to it) and fades the rest of the flat. Markers stand where things
+  # are, `at` [x y height] cm in geometry.nix's reference frame. Lights are
+  # marked on the floor or furniture under them: drawn at ceiling height,
+  # they would rise up the screen into the markers behind. Tapping a light
+  # toggles it; a switch or media player opens its details instead, so a
+  # stray tap cannot turn it off. A marker lights up while its entity's
+  # state is in `markerActive` for its kind.
+  markerActive = {
+    light = ["on"];
+    switch = ["on"];
+    media = playing;
+  };
+  focus.living_room = {
+    rooms = ["living_room" "dining"];
+    markers = [
+      # Floor lamp at the window end of the sofa.
+      {
+        kind = "light";
+        name = "Sofa";
+        entity = "light.kajplats_e27_ws_g95_clear_806lm";
+        at = [1055 870 0];
+      }
+      {
+        kind = "light";
+        name = "Ceiling";
+        entity = "light.living_room";
+        at = [884 805 0];
+      }
+      # Hangs over the dining table; marked on its top.
+      {
+        kind = "light";
+        name = "Dining";
+        entity = "light.dining_room";
+        at = [800 554 75];
+      }
+      # Above the screen, clear of the plug's marker under it.
+      {
+        kind = "media";
+        name = "TV";
+        entity = "media_player.living_room_tv";
+        at = [1003 634 175];
+      }
+      # The plug under the TV that powers the media setup.
+      {
+        kind = "switch";
+        name = "Media";
+        entity = "switch.media_switch_socket_1";
+        at = [1003 650 15];
+      }
+    ];
+  };
 }

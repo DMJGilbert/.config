@@ -2,8 +2,9 @@
 
 usage: render.py GEOMETRY.json OUT.svg [--mode iso|plan]
                  [--wall-height CM] [--front-height CM]
-                 [--tiles TILES.json --layout landscape|portrait]
+                 [--tiles TILES.json --layout landscape|portrait|scene]
                  [--people PEOPLE.json]
+                 [--focus FOCUS.json | --thumb ROOM] [--aspect W/H]
                  [--style CSS]
 
 GEOMETRY.json is geometry.nix serialised: room polygons, wall openings,
@@ -11,8 +12,16 @@ furniture boxes and device boxes (raised by a `base` height) in centimetres
 in the reference frame, plus a display rotation. TILES.json maps room ids
 to the icon of each of their tiles (an isometric model: lamp, tv, speaker);
 the strips are laid out around the drawing and joined to their room by a
-leader line. --style embeds a stylesheet, for previews outside Home
-Assistant, which supplies its own.
+leader line. The `scene` layout draws the flat alone, with no strips.
+--style embeds a stylesheet, for previews outside Home Assistant, which
+supplies its own.
+
+--focus crops a scene to some rooms for a room view's header, at --aspect.
+The rest of the flat is faded, and markers stand where the room's lights,
+switches and media players are. FOCUS.json is {"rooms": [ids], "markers":
+[{"kind": "light"|"switch"|"media", "name", "entity", "at": [x, y, z]}]},
+`at` in the reference frame like the geometry. --thumb crops a scene to one
+room, faded around it the same way, for a thumbnail.
 
 Walls are derived, not drawn per room: the gaps between neighbouring rooms
 are closed (internal walls), an exterior wall is grown around the result,
@@ -37,8 +46,9 @@ Element ids are stable so ha-floorplan rules can target them:
 motion sensor, `<room>.countdown` for rooms with a lights-off timer,
 `door.<name>` for each named door opening, `device.<name>` and
 `device.<name>.glow` for each device, each person's entity id for their
-badge, `<room>.rain` for outdoor rooms, and `fp-scene` around the whole
-drawing for scene-wide state (daylight).
+badge, `<room>.rain` for outdoor rooms, `marker.<entity>`,
+`marker.<entity>.state` and `marker.<entity>.hit` for each marker, and
+`fp-scene` around the whole drawing for scene-wide state (daylight).
 """
 
 import argparse
@@ -50,6 +60,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 from shapely.geometry import LineString, Point, Polygon
+from shapely.geometry import box as rect
 from shapely.geometry.polygon import orient
 from shapely.ops import nearest_points, unary_union
 
@@ -70,6 +81,13 @@ AWAY_SPACING = 70  # cm between away badges outside the front door
 RAIN_DROPS = 70  # drops over an outdoor room
 RAIN_HEIGHT = 160  # cm the rain falls from
 WINDOW_GLOW_BLUR = 8  # spread of daylight round a window, in drawing units
+MARKER_RADIUS = 30  # drawing units; a marker's disc
+MARKER_GLOW = 2.6  # a lit light's glow, in marker radii
+MARKER_FONT = 0.9  # a marker's name, in marker radii; its state is smaller
+MARKER_STATE_FONT = 0.85  # a marker's state, as a fraction of its name
+WIDEST_MARKER_STATE = "Unavailable"
+FOCUS_PAD = 0.04  # margin round focused rooms, as a fraction of their size
+FADE_CLEARANCE = 14  # drawing units the fade keeps clear of focused walls
 
 COS30 = math.cos(math.radians(30))
 SIN30 = 0.5
@@ -174,7 +192,12 @@ def load(path):
         ]
         for name, seat in geo.get("seats", {}).items()
     }
-    return rooms, openings, furniture, devices, seats
+
+    def place(point):
+        """A reference-frame point in the drawing's frame, like the geometry."""
+        return shift(rotate(tuple(point), degrees))
+
+    return rooms, openings, furniture, devices, seats, place
 
 
 def polygons(geom):
@@ -541,6 +564,148 @@ def ripple(room_id, centre, radius):
         f'<g id="{room_id}.motion" class="fp-motion"'
         f' transform="translate({x:.1f} {y:.1f})">{rings}</g>'
     )
+
+
+def envelope(rooms, project, height):
+    """Screen area of rooms with their walls, swept from floor to wall top."""
+    shapes = []
+    for r in rooms:
+        ring = list(
+            Polygon(r["polygon"])
+            .buffer(EXTERIOR_WALL, join_style=MITRE)
+            .exterior.coords
+        )
+        shapes += [Polygon([project(x, y, z) for x, y in ring]) for z in (0.0, height)]
+        shapes += [
+            Polygon(
+                [project(*a), project(*b), project(*b, height), project(*a, height)]
+            ).buffer(0)
+            for a, b in pairwise(ring)
+        ]
+    return unary_union(shapes)
+
+
+def crop(area, aspect):
+    """viewBox (x, y, w, h) at `aspect`, centred on `area` with a margin."""
+    x0, y0, x1, y1 = area.bounds
+    w = (x1 - x0) * (1 + 2 * FOCUS_PAD)
+    h = (y1 - y0) * (1 + 2 * FOCUS_PAD)
+    if w / h < aspect:
+        w = h * aspect
+    else:
+        h = w / aspect
+    return (x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - h / 2, w, h
+
+
+def fade(area, box):
+    """Veil over everything in `box` outside `area`; floorplan.css sets its
+    opacity. Taps pass through to the floors under it."""
+    x, y, w, h = box
+    holes = [
+        fmt(p.exterior.coords)
+        for p in polygons(area.buffer(FADE_CLEARANCE, join_style=MITRE))
+    ]
+    d = f"M{x:.1f},{y:.1f} h{w:.1f} v{h:.1f} h{-w:.1f}Z" + "".join(
+        f" M{ring}Z" for ring in holes
+    )
+    return f'<path class="fp-focus-fade" fill-rule="evenodd" d="{d}"/>'
+
+
+def marker_point(spec, place, project):
+    return project(*place(spec["at"][:2]), spec["at"][2])
+
+
+def marker_extent(spec, place, project):
+    """Screen box a marker covers: its glow, and the name and state centred
+    under it, at 0.6 em a character like Strip's estimates."""
+    x, y = marker_point(spec, place, project)
+    r = MARKER_RADIUS
+    font = r * MARKER_FONT
+    half = max(
+        MARKER_GLOW * r,
+        len(spec["name"]) * 0.3 * font,
+        len(WIDEST_MARKER_STATE) * 0.3 * font * MARKER_STATE_FONT,
+    )
+    return rect(
+        x - half,
+        y - MARKER_GLOW * r,
+        x + half,
+        max(y + MARKER_GLOW * r, y + r + font * 2.5),
+    )
+
+
+def marker(spec, place, project):
+    """A light, switch or media player where it stands, named, with its state.
+
+    Lights are discs with a lamp shade that glow while on; switches are
+    rounded squares with a toggle, media players discs with a play mark.
+    """
+    x, y = marker_point(spec, place, project)
+    r = MARKER_RADIUS
+    eid = f"marker.{spec['entity']}"
+    kind = spec["kind"]
+    if kind not in ("light", "switch", "media"):
+        raise SystemExit(f"marker {spec['entity']}: unknown kind {kind!r}")
+    out = [f'<g id="{eid}" class="fp-marker fp-marker-{kind}">']
+    if kind == "light":
+        out.append(
+            f'<circle class="fp-marker-glow" cx="{x:.1f}" cy="{y:.1f}" r="{r * MARKER_GLOW:.1f}"/>'
+        )
+    if kind == "switch":
+        out.append(
+            f'<rect class="fp-marker-body" x="{x - r:.1f}" y="{y - r:.1f}"'
+            f' width="{2 * r}" height="{2 * r}" rx="{r * 0.45:.1f}"/>'
+        )
+    else:
+        out.append(
+            f'<circle class="fp-marker-body" cx="{x:.1f}" cy="{y:.1f}" r="{r}"/>'
+        )
+    if kind == "light":
+        shade = [
+            (x - 0.48 * r, y + 0.28 * r),
+            (x - 0.2 * r, y - 0.3 * r),
+            (x + 0.2 * r, y - 0.3 * r),
+            (x + 0.48 * r, y + 0.28 * r),
+        ]
+        out += [
+            f'<polygon class="fp-marker-glyph" points="{fmt(shade)}"/>',
+            (
+                f'<line class="fp-marker-glyph" x1="{x:.1f}" y1="{y - 0.3 * r:.1f}"'
+                f' x2="{x:.1f}" y2="{y - 0.62 * r:.1f}"/>'
+            ),
+        ]
+    elif kind == "switch":
+        out += [
+            (
+                f'<rect class="fp-marker-glyph" x="{x - 0.5 * r:.1f}" y="{y - 0.26 * r:.1f}"'
+                f' width="{r:.1f}" height="{0.52 * r:.1f}" rx="{0.26 * r:.1f}"/>'
+            ),
+            # One knob per position; floorplan.css shows the one that applies.
+            f'<circle class="fp-marker-knob fp-knob-off" cx="{x - 0.24 * r:.1f}" cy="{y:.1f}" r="{0.14 * r:.1f}"/>',
+            f'<circle class="fp-marker-knob fp-knob-on" cx="{x + 0.24 * r:.1f}" cy="{y:.1f}" r="{0.14 * r:.1f}"/>',
+        ]
+    else:
+        play = [
+            (x - 0.28 * r, y - 0.42 * r),
+            (x + 0.46 * r, y),
+            (x - 0.28 * r, y + 0.42 * r),
+        ]
+        out.append(f'<polygon class="fp-marker-mark" points="{fmt(play)}"/>')
+    font = r * MARKER_FONT
+    out += [
+        (
+            f'<text class="fp-marker-name" x="{x:.1f}" y="{y + r + font * 1.1:.1f}"'
+            f' style="font-size:{font:.1f}px">{escape(spec["name"])}</text>'
+        ),
+        (
+            f'<text id="{eid}.state" class="fp-marker-state" x="{x:.1f}" y="{y + r + font * 2.2:.1f}"'
+            f' style="font-size:{font * MARKER_STATE_FONT:.1f}px">–</text>'
+        ),
+        # The rule binds to this disc alone; see Strip.svg.
+        f'<circle id="{eid}.hit" class="fp-hit" cx="{x:.1f}" cy="{y:.1f}" r="{r * 1.5:.1f}"/>',
+        "</g>",
+    ]
+    return out
 
 
 def device_glow(device, project):
@@ -1104,11 +1269,22 @@ def main():
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--tiles")
     ap.add_argument("--people")
-    ap.add_argument("--layout", choices=sorted(LAYOUTS), default="landscape")
+    ap.add_argument(
+        "--layout", choices=[*sorted(LAYOUTS), "scene"], default="landscape"
+    )
+    crops = ap.add_mutually_exclusive_group()
+    crops.add_argument("--focus")
+    crops.add_argument("--thumb", metavar="ROOM")
+    ap.add_argument("--aspect", type=float, default=1.0)
     ap.add_argument("--style")
     args = ap.parse_args()
+    if (args.focus or args.thumb) and (args.mode != "iso" or args.layout != "scene"):
+        raise SystemExit("--focus and --thumb crop a scene: use --layout scene")
+    if args.aspect <= 0:
+        raise SystemExit("--aspect must be positive")
 
-    rooms, openings, furniture, devices, seats = load(args.geometry)
+    rooms, openings, furniture, devices, seats, place = load(args.geometry)
+    view = None
     pts = [p for r in rooms for p in r["polygon"]]
     if args.mode == "plan":
         body = render_plan(rooms, openings, furniture, args.scale)
@@ -1135,23 +1311,29 @@ def main():
         empty = sorted(room for room, spec in tiles.items() if not spec["tiles"])
         if empty:
             raise SystemExit(f"rooms with an empty tile list: {', '.join(empty)}")
-        layout = LAYOUTS[args.layout]
-        strips = [
-            Strip(
-                r,
-                [t["icon"] for t in tiles[r["id"]]["tiles"]],
-                "climate" in tiles[r["id"]],
-                anchor(r, furniture, project),
-                layout,
-            )
-            for r in rooms
-            if r["id"] in tiles
-        ]
+        anchors = {
+            r["id"]: anchor(r, furniture, project) for r in rooms if r["id"] in tiles
+        }
+        xs, ys = [p[0] for p in span], [p[1] for p in span]
+        drawing = (min(xs), min(ys), max(xs), max(ys))
+        layout = LAYOUTS.get(args.layout)
+        strips = (
+            [
+                Strip(
+                    r,
+                    [t["icon"] for t in tiles[r["id"]]["tiles"]],
+                    "climate" in tiles[r["id"]],
+                    anchors[r["id"]],
+                    layout,
+                )
+                for r in rooms
+                if r["id"] in tiles
+            ]
+            if layout
+            else []
+        )
         if strips:
-            xs, ys = [p[0] for p in span], [p[1] for p in span]
-            LAYOUT_FUNCTIONS[args.layout](
-                strips, (min(xs), min(ys), max(xs), max(ys)), layout
-            )
+            LAYOUT_FUNCTIONS[args.layout](strips, drawing, layout)
         named_doors = [o for o in openings if o["type"] == "door" and o.get("name")]
 
         body = render_iso(
@@ -1164,15 +1346,20 @@ def main():
             args.front_height,
             set(tiles),
         )
-        for s in strips:
-            if "motion" in tiles[s.id]:
-                body.append(ripple(s.id, s.anchor, RIPPLE_RADIUS))
-            if "timer" in tiles[s.id]:
-                body.append(countdown(s.id, s.anchor))
+        for room_id, centre in anchors.items():
+            if "motion" in tiles[room_id]:
+                body.append(ripple(room_id, centre, RIPPLE_RADIUS))
+            if "timer" in tiles[room_id]:
+                body.append(countdown(room_id, centre))
         for s in strips:
             body += s.leader_svg()
-        # Pins and badges are sized like tiles so they read at the same scale.
-        pin_size = strips[0].tile if strips else 100
+        # Pins and badges are sized like tiles so they read at the same scale;
+        # a scene sizes them as its landscape drawing would.
+        pin_size = (
+            strips[0].tile
+            if strips
+            else LAYOUTS["landscape"]["tile"] * (drawing[2] - drawing[0])
+        )
         for door in named_doors:
             body += door_pin(door, rooms, project, pin_size)
         people = json.loads(Path(args.people).read_text()) if args.people else []
@@ -1186,10 +1373,41 @@ def main():
         for s in strips:
             body += s.svg()
             span += [(s.x, s.y), (s.x + s.w, s.y + s.h)]
-    xs, ys = [p[0] for p in span], [p[1] for p in span]
-    margin = 40
-    x0, y0 = min(xs) - margin, min(ys) - margin
-    w, h = max(xs) - min(xs) + 2 * margin, max(ys) - min(ys) + 2 * margin
+
+        if args.focus or args.thumb:
+            spec = (
+                json.loads(Path(args.focus).read_text())
+                if args.focus
+                else {"rooms": [args.thumb], "markers": []}
+            )
+            if not spec["rooms"]:
+                raise SystemExit("focus on no rooms: list at least one")
+            missing = set(spec["rooms"]) - {r["id"] for r in rooms}
+            if missing:
+                raise SystemExit(
+                    f"focus on unknown rooms: {', '.join(sorted(missing))}"
+                )
+            area = envelope(
+                [r for r in rooms if r["id"] in spec["rooms"]],
+                project,
+                args.wall_height,
+            )
+            # Framed to show every marker and its labels whole, even one
+            # standing above the walls; faded round the rooms alone.
+            framed = unary_union(
+                [area] + [marker_extent(m, place, project) for m in spec["markers"]]
+            )
+            view = crop(framed, args.aspect)
+            body.append(fade(area, view))
+            for m in spec["markers"]:
+                body += marker(m, place, project)
+    if view:
+        x0, y0, w, h = view
+    else:
+        xs, ys = [p[0] for p in span], [p[1] for p in span]
+        margin = 40
+        x0, y0 = min(xs) - margin, min(ys) - margin
+        w, h = max(xs) - min(xs) + 2 * margin, max(ys) - min(ys) + 2 * margin
     style = [f"<style>{Path(args.style).read_text()}</style>"] if args.style else []
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" class="fp-root" viewBox="{x0:.1f} {y0:.1f} {w:.1f} {h:.1f}">',

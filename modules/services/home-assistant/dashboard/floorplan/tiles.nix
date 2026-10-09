@@ -1,15 +1,15 @@
-# Tile strips of the floorplan, keyed by the room ids in geometry.nix.
+# The floorplan's rooms, keyed by the room ids in geometry.nix.
 #
-# `lights` is the entity whose state lights the room: its floor glows and
-# the leader line from its strip lights up. `view` is the room view that a
-# tap on the floor or the room's name opens. Each tile is a light or media
-# player drawn as an icon with its state below. Holding it opens the room's
-# `popup` of that kind, listing the room's lights or controlling its media;
-# tapping it toggles the entity if `toggle` is set, otherwise also opens the
-# pop-up. Rooms with `climate` sensors show their temperature and humidity
-# next to their name; rooms with a `motion` sensor ripple while it detects
-# someone; a `timer` (the lights-off countdown) drains a ring around the
-# room's dot while it runs.
+# `lights` is the entity whose state lights the room: its floor glows. `view`
+# is the room view that a tap on the floor opens. Rooms with a `motion`
+# sensor ripple while it detects someone; a `timer` (the lights-off
+# countdown) drains a ring on the floor while it runs. A room view with a
+# floorplan header shows the room's `climate` readings and last motion as
+# tiles over it.
+#
+# `tiles` feed render.py's landscape and portrait layouts, which draw a strip
+# of tiles beside each room; the dashboard draws the scene alone, so they
+# only need to be well formed.
 let
   climate = prefix: {
     temperature = "sensor.${prefix}_temperature";

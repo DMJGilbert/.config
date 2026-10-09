@@ -1,15 +1,17 @@
-# Isometric floorplan card: the drawings and stylesheet are built from
-# geometry.nix and tiles.nix, and the ha-floorplan rules that animate them
-# are generated from the same tiles, so element ids cannot drift apart.
+# Isometric floorplan cards: the drawings and stylesheet are built from
+# geometry.nix, tiles.nix and fixtures.nix, and the ha-floorplan rules that
+# animate them are generated from the same data, so element ids cannot drift
+# apart.
 #
-# `files` is served at `baseUrl`; `card` is the Lovelace card config and
-# `popups` the pop-ups its tiles open. `viewPaths` are the room views that
-# exist, to catch a tile linking nowhere; `cards` are the room views' card
-# builders, so pop-ups list lights the way the room views do.
+# `files` is served at `baseUrl`. `homeCard` is the whole flat, for the home
+# view's header. `roomHeaders.<view path>` is the header of each room view
+# with a `focus` in fixtures.nix: its `card`, and the room's `climate` and
+# `motion` entities where tiles.nix has them, for the tiles laid over it.
+# `thumbnails.<room>` is the URL of each room's thumbnail. `viewPaths` are
+# the room views that exist, to catch a room linking nowhere.
 {
   lib,
   pkgs,
-  cards,
   viewPaths,
   baseUrl ? "/local/floorplan",
 }: let
@@ -67,16 +69,47 @@
     )
     tiles;
 
+  markerKinds = lib.attrNames fixtures.markerActive;
+  # Headers are keyed by view, and rooms can share one (dining opens the
+  # living room's), so two foci on one view would leave only one header.
+  focusViews = map (id: checked.${id}.view or id) (lib.attrNames fixtures.focus);
+  focus = assert lib.assertMsg (lib.allUnique focusViews) "floorplan focus: two rooms with a focus open the same view; give the view one focus listing both rooms";
+    lib.mapAttrs (
+      id: spec:
+        assert lib.assertMsg (checked ? ${id}) "floorplan focus: ${id} has no room view in tiles.nix";
+        assert lib.assertMsg (lib.all (m: lib.elem m.kind markerKinds) spec.markers) "floorplan focus: ${id} has a marker kind not in markerActive"; spec
+    )
+    fixtures.focus;
+
   json = name: value: pkgs.writeText name (builtins.toJSON value);
   python = pkgs.python3.withPackages (ps: [ps.shapely]);
 
+  # Room headers are cropped taller on phones than on wider screens, whose
+  # cards are wide and short.
+  headerAspects = {
+    portrait = 1.1;
+    landscape = 2.4;
+  };
+
   files = pkgs.runCommand "hass-floorplan" {nativeBuildInputs = [python];} ''
     mkdir $out
-    for layout in landscape portrait; do
-      python ${./render.py} ${json "geometry.json" geometry} "$out/$layout.svg" \
-        --tiles ${json "tiles.json" checked} --layout "$layout" \
+    render() {
+      python ${./render.py} ${json "geometry.json" geometry} "$@" --layout scene \
+        --tiles ${json "tiles.json" checked} \
         --people ${json "people.json" fixtures.people}
-    done
+    }
+    render $out/scene.svg
+    ${lib.concatStrings (lib.mapAttrsToList (id: spec:
+      lib.concatStrings (lib.mapAttrsToList (layout: aspect: ''
+          render $out/focus-${id}-${layout}.svg --focus ${json "focus-${id}.json" spec} --aspect ${toString aspect}
+        '')
+        headerAspects))
+    focus)}
+    # Thumbnails are shown as images, so they carry their stylesheet.
+    cat ${./floorplan.css} ${./thumbnail.css} > thumbnail-style.css
+    ${lib.concatMapStrings (id: ''
+      render $out/thumb-${id}.svg --thumb ${id} --style thumbnail-style.css
+    '') (lib.attrNames checked)}
     cp ${./floorplan.css} $out/floorplan.css
   '';
 
@@ -88,52 +121,6 @@
   # plain expressions.
   activeWhen = states: "\${${builtins.toJSON states}.includes(entity.state) ? \"1\" : \"0\"}";
   activeAbove = limit: "\${parseFloat(entity.state) > ${toString limit} ? \"1\" : \"0\"}";
-  labelText = tile: ''> return ${builtins.toJSON tile.labels}[entity.state] || "–";'';
-
-  # Comfort bands for the readings by each room's name; outside them the
-  # reading is coloured (floorplan.css).
-  comfort = {
-    temperature = {
-      below = 18;
-      low = "cold";
-      above = 23;
-      high = "warm";
-      text = ''> const v = parseFloat(entity.state); return isNaN(v) ? "–" : v.toFixed(1) + "°";'';
-    };
-    humidity = {
-      below = 40;
-      low = "dry";
-      above = 60;
-      high = "damp";
-      text = ''> const v = parseFloat(entity.state); return isNaN(v) ? "–" : v.toFixed(0) + "%";'';
-    };
-  };
-
-  climateRules = id: room: let
-    reading = kind: element: let
-      band = comfort.${kind};
-    in {
-      entity = room.climate.${kind};
-      inherit element;
-      state_action = [
-        {
-          service = "floorplan.text_set";
-          service_data.text = band.text;
-        }
-        {
-          service = "floorplan.dataset_set";
-          service_data = {
-            key = "level";
-            value = "\${parseFloat(entity.state) < ${toString band.below} ? \"${band.low}\" : parseFloat(entity.state) > ${toString band.above} ? \"${band.high}\" : \"ok\"}";
-          };
-        }
-      ];
-    };
-  in
-    lib.optionals (room ? climate) [
-      (reading "temperature" "${id}.temp")
-      (reading "humidity" "${id}.humidity")
-    ];
 
   datasetSet = key: elements: value: {
     service = "floorplan.dataset_set";
@@ -142,129 +129,23 @@
   markWhen = datasetSet "on";
   markOn = elements: states: markWhen elements (activeWhen states);
 
-  popupHash = id: kind: "#floorplan-${id}-${kind}";
-
-  # One bubble-card pop-up per room and kind of tile it has: the room's
-  # lights with their toggles, or controls for each of its media players.
-  popupContent = {
-    lights = room:
-      if lib.hasPrefix "group." room.lights
-      then [
-        (cards.auto {
-          include = [
-            {
-              group = room.lights;
-              options = cards.item {
-                entity = "this.entity_id";
-                icon = "fp:lamp";
-                toggle = true;
-              };
-            }
-          ];
-          exclude = [
-            {entity_id = "*coordinator*";}
-            {state = "unavailable";}
-          ];
-          showEmpty = true;
-        })
-      ]
-      else [
-        (cards.item {
-          entity = room.lights;
-          icon = "fp:lamp";
-          toggle = true;
-        })
-      ];
-    media = room:
-      map (tile: {
-        type = "media-control";
-        inherit (tile) entity;
-      }) (lib.filter (tile: tile.popup == "media") room.tiles);
-  };
-  popupTitle = {
-    lights = name: "${name} Lights";
-    media = name: "${name} Media";
-  };
-  popupIcon = {
-    lights = "fp:lamp";
-    media = "fp:tv";
-  };
-  roomName = id: (lib.findFirst (r: r.id == id) null geometry.rooms).name;
-
-  roomPopups = id: room:
-    map (kind: {
-      type = "custom:bubble-card";
-      card_type = "pop-up";
-      hash = popupHash id kind;
-      name = popupTitle.${kind} (roomName id);
-      icon = popupIcon.${kind};
-      styles = ''
-        .bubble-pop-up-container {
-          background: var(--card-background-color);
-        }
-      '';
-      cards = popupContent.${kind} room;
-    }) (lib.unique (map (tile: tile.popup) room.tiles));
-
-  roomRules = id: room: let
-    navigate = {
-      action = "navigate";
-      navigation_path = "/lovelace-home/room-${room.view}";
-    };
-    tileRule = k: tile: let
-      element = "${id}.tile${toString k}";
-      openPopup = {
-        action = "navigate";
-        navigation_path = popupHash id tile.popup;
-      };
-    in {
-      inherit (tile) entity;
-      # Taps and holds bind to the tile's hit rect, which has no children, so
-      # each fires once; render.py explains why.
-      element = "${element}.hit";
-      tap_action =
-        if tile.toggle or false
-        then {
-          action = "call-service";
-          # homeassistant.toggle expands a group and toggles each member, so
-          # a room with some lights on would swap which ones are lit. Switch
-          # the whole group by its own state instead.
-          service = "\${entity.state === \"on\" ? \"homeassistant.turn_off\" : \"homeassistant.turn_on\"}";
-          service_data.entity_id = tile.entity;
-        }
-        else openPopup;
-      hold_action = openPopup;
-      state_action = [
-        (markOn [element] tile.active)
-        {
-          service = "floorplan.text_set";
-          service_data = {
-            element = "${element}.text";
-            text = labelText tile;
-          };
-        }
-      ];
-    };
-  in
+  roomRules = id: room:
     [
       {
         entity = room.lights;
         element = "${id}.floor";
-        tap_action = navigate;
+        tap_action = {
+          action = "navigate";
+          navigation_path = "/lovelace-home/room-${room.view}";
+        };
         # The countdown ring shows only while lit: the timer also runs after
         # the lights have been switched off by hand.
         state_action =
           markOn
-          (map (part: "${id}.${part}") (["floor" "leader" "anchor" "strip"] ++ lib.optional (room ? timer) "countdown"))
+          (map (part: "${id}.${part}") (["floor"] ++ lib.optional (room ? timer) "countdown"))
           ["on"];
       }
-      {
-        element = "${id}.title";
-        tap_action = navigate;
-      }
     ]
-    ++ lib.imap0 tileRule room.tiles
-    ++ climateRules id room
     ++ lib.optional (room ? motion) {
       entity = room.motion;
       element = "${id}.motion";
@@ -281,6 +162,39 @@
         (datasetSet "run" ["${id}.countdown"] countdownRun)
       ];
     };
+
+  # A marker's state line: a light's brightness, otherwise the state itself.
+  markerText = {
+    light = ''> if (entity.state !== "on") return entity.state === "off" ? "Off" : "Unavailable"; const b = (entity.attributes || {}).brightness; return b ? Math.round(b / 2.55) + "%" : "On";'';
+    switch = ''> return { on: "On", off: "Off" }[entity.state] || "Unavailable";'';
+    media = ''> const s = String(entity.state); return s.charAt(0).toUpperCase() + s.slice(1);'';
+  };
+  markerRule = marker: let
+    element = "marker.${marker.entity}";
+  in {
+    inherit (marker) entity;
+    # Bound to the marker's hit disc, which has no children, so a tap fires
+    # once; render.py explains why.
+    element = "${element}.hit";
+    tap_action =
+      if marker.kind == "light"
+      then {
+        action = "call-service";
+        service = "homeassistant.toggle";
+        service_data.entity_id = marker.entity;
+      }
+      else {action = "more-info";};
+    state_action = [
+      (markOn [element] fixtures.markerActive.${marker.kind})
+      {
+        service = "floorplan.text_set";
+        service_data = {
+          element = "${element}.state";
+          text = markerText.${marker.kind};
+        };
+      }
+    ];
+  };
 
   # A timer only reports when it starts, pauses, restarts or ends, so the
   # ring drains by a CSS animation: these give it the timer's length and
@@ -328,40 +242,62 @@
         state_action = datasetSet "bedtime" (map (p: p.entity) fixtures.people) (activeWhen ["on"]);
       }
     ];
-in {
-  inherit files;
-  # The pop-ups open on top of whatever tab is showing, so they live with
-  # the home view's other pop-ups rather than inside the floorplan tab.
-  popups = {
-    type = "vertical-stack";
-    cards = lib.concatLists (lib.mapAttrsToList roomPopups checked);
-  };
-  card = {
+  # Every drawing shows the whole flat, so every card takes the same rules;
+  # a room's header adds its markers.
+  flatRules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules ++ personRules ++ sceneRules;
+
+  floorplanCard = {
+    image,
+    rules,
+    style ? "",
+  }: {
     type = "custom:floorplan-card";
-    # The drawing sits on the page; floorplan.css paints its hidden-line
-    # fills in the page background to match.
+    # floorplan.css paints the drawing's hidden-line fills in the page
+    # background, so the card takes that background too, inside whatever
+    # card holds it.
     card_mod.style = ''
       ha-card {
-        background: none;
+        background: var(--primary-background-color);
         border: none;
+        border-radius: 0;
         box-shadow: none;
+        ${style}
       }
     '';
     config = {
-      image.sizes = [
-        {
-          min_width = 0;
-          location = url "portrait.svg";
-          cache = true;
-        }
-        {
-          min_width = 768;
-          location = url "landscape.svg";
-          cache = true;
-        }
-      ];
+      inherit image rules;
       stylesheet = url "floorplan.css";
-      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules ++ personRules ++ sceneRules;
     };
   };
+in {
+  inherit files;
+  # Room for the chips laid over its foot.
+  homeCard = floorplanCard {
+    image = url "scene.svg";
+    rules = flatRules;
+    style = "padding-bottom: 28px;";
+  };
+  roomHeaders = lib.mapAttrs' (id: spec:
+    lib.nameValuePair checked.${id}.view (
+      {
+        card = floorplanCard {
+          image.sizes = [
+            {
+              min_width = 0;
+              location = url "focus-${id}-portrait.svg";
+              cache = true;
+            }
+            {
+              min_width = 768;
+              location = url "focus-${id}-landscape.svg";
+              cache = true;
+            }
+          ];
+          rules = flatRules ++ map markerRule spec.markers;
+        };
+      }
+      // lib.getAttrs (lib.filter (key: checked.${id} ? ${key}) ["climate" "motion"]) checked.${id}
+    ))
+  focus;
+  thumbnails = lib.mapAttrs (id: _: url "thumb-${id}.svg") checked;
 }
