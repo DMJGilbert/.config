@@ -128,7 +128,7 @@ button_card_templates:
       room_image: |
         [[[
           const image = variables.room_image || '';
-          const icon = variables.room_icon || 'mdi:home';
+          const icon = variables.room_icon || 'fp:home';
 
           if (image) {
             return `<div style="
@@ -240,7 +240,7 @@ button_card_templates:
           let icons = '';
 
           if (hasMedia) {
-            icons += `<ha-icon icon="mdi:television" style="
+            icons += `<ha-icon icon="fp:tv" style="
               --mdc-icon-size: 28px;
               color: ${mediaColor};
               margin-right: 16px;
@@ -248,7 +248,7 @@ button_card_templates:
           }
 
           if (hasLight) {
-            icons += `<ha-icon icon="mdi:lightbulb" style="
+            icons += `<ha-icon icon="fp:lamp" style="
               --mdc-icon-size: 28px;
               color: ${lightColor};
             "></ha-icon>`;
@@ -325,7 +325,7 @@ button_card_templates:
               justify-content: center;
               overflow: hidden;
             ">
-              <ha-icon icon="mdi:account" style="
+              <ha-icon icon="fp:account" style="
                 --mdc-icon-size: 36px;
                 color: var(--secondary-text-color);
               "></ha-icon>
@@ -392,7 +392,7 @@ button_card_templates:
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 font-size: 13px;
                 color: var(--disabled-text-color);
-              "><ha-icon icon="mdi:shoe-print" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${formatted}</span>`);
+              "><ha-icon icon="fp:steps" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${formatted}</span>`);
             }
           }
 
@@ -413,7 +413,7 @@ button_card_templates:
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 font-size: 13px;
                 color: ${batteryColor};
-              "><ha-icon icon="mdi:battery" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${batteryLevel}%</span>`);
+              "><ha-icon icon="fp:battery" style="--mdc-icon-size: 14px; vertical-align: middle; margin-right: 2px;"></ha-icon>${batteryLevel}%</span>`);
             }
           }
 
@@ -462,7 +462,7 @@ button_card_templates:
       card_image: |
         [[[
           const image = variables.card_image || '';
-          const icon = variables.card_icon || 'mdi:information';
+          const icon = variables.card_icon || 'fp:info';
 
           if (image) {
             return `<div style="
@@ -589,7 +589,7 @@ button_card_templates:
       cal_image: |
         [[[
           const image = variables.calendar_image || '';
-          const icon = variables.calendar_icon || 'mdi:calendar';
+          const icon = variables.calendar_icon || 'fp:calendar';
 
           if (image) {
             return `<div style="
@@ -781,7 +781,7 @@ button_card_templates:
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             cursor: pointer;
           ">
-            <ha-icon icon="mdi:home" style="
+            <ha-icon icon="fp:home" style="
               --mdc-icon-size: 24px;
               color: var(--primary-text-color);
             "></ha-icon>
@@ -823,7 +823,7 @@ button_card_templates:
     custom_fields:
       item_icon: |
         [[[
-          const itemIcon = variables.item_icon || 'mdi:help-circle';
+          const itemIcon = variables.item_icon || 'fp:help';
           const itemEntity = variables.item_entity;
           let isOn = false;
           let isUnavailable = false;
@@ -1027,7 +1027,7 @@ button_card_templates:
     custom_fields:
       sensor_icon: |
         [[[
-          const sensorIcon = variables.sensor_icon || 'mdi:eye';
+          const sensorIcon = variables.sensor_icon || 'fp:eye';
           return `<div style="
             width: 56px;
             height: 56px;

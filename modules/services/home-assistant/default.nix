@@ -46,6 +46,7 @@
       path = (pkgs.formats.yaml {}).generate "${view.path}.yaml" view;
     }) (map roomView.mkView rooms)
   );
+  icons = import ./dashboard/icons {inherit pkgs;};
   templatesDir = "${moduleDir}/templates";
   popupsDir = "${moduleDir}/popups";
 
@@ -120,6 +121,7 @@ in
       # Dashboard file symlinks (conditional on dashboard.enable)
       systemd.tmpfiles.rules = lib.mkIf cfg.dashboard.enable [
         "L+ /var/lib/hass/www/floorplan - - - - ${floorplan.files}"
+        "L+ /var/lib/hass/www/fp-icons - - - - ${icons}"
         "L+ /var/lib/hass/views - - - - ${viewsDir}"
         "L+ /var/lib/hass/templates - - - - ${templatesDir}"
         "L+ /var/lib/hass/popups - - - - ${popupsDir}"
@@ -257,7 +259,16 @@ in
                 services = [{service = "mobile_app_hatchling";}];
               }
             ];
-            frontend.themes = "!include ${theme}/${theme.pname}.yaml";
+            frontend =
+              {
+                themes = "!include ${theme}/${theme.pname}.yaml";
+              }
+              # Dashboard resources load in parallel, unawaited, so an icon
+              # drawn before its set registers stays blank. Extra modules
+              # load at frontend startup, before any dashboard renders.
+              // lib.optionalAttrs cfg.dashboard.enable {
+                extra_module_url = ["/local/fp-icons/fp-icons.js?v=${builtins.substring 11 8 "${icons}"}"];
+              };
 
             # Recorder was previously undeclared, so retention ran on HA's
             # defaults and /var/lib/hass reached 3.9GB — 76% of everything worth

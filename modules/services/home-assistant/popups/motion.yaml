@@ -3,7 +3,7 @@ type: custom:bubble-card
 card_type: pop-up
 hash: "#motion-popup"
 name: Active Motion
-icon: mdi:run
+icon: fp:motion
 styles: |
   .bubble-pop-up-container {
     background: var(--card-background-color);
@@ -19,9 +19,13 @@ cards:
           attributes:
             device_class: motion
           state: "on"
+          options:
+            icon: fp:motion
         - domain: binary_sensor
           attributes:
             device_class: occupancy
           state: "on"
+          options:
+            icon: fp:motion
     sort:
       method: friendly_name

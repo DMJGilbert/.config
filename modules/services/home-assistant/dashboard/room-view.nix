@@ -118,7 +118,7 @@
     # identify the room's devices.
     mediaAuto = {
       slugs,
-      icon ? "mdi:speaker",
+      icon ? "fp:speaker",
       showEmpty ? true,
     }:
       auto {
@@ -142,14 +142,14 @@
             itemRule {
               domain = "climate";
               match = "*${slug}*";
-              icon = "mdi:thermostat";
+              icon = "fp:thermostat";
             })
           slugs
           ++ map (slug:
             itemRule {
               domain = "fan";
               match = "*${slug}*";
-              icon = "mdi:fan";
+              icon = "fp:fan";
               toggle = true;
             })
           slugs;
@@ -162,11 +162,11 @@
           lib.concatMap (slug: [
             (sensorRule {
               match = "*${slug}*temperature*";
-              icon = "mdi:thermometer";
+              icon = "fp:thermometer";
             })
             (sensorRule {
               match = "*${slug}*humidity*";
-              icon = "mdi:water-percent";
+              icon = "fp:water";
             })
           ])
           slugs;
@@ -182,12 +182,12 @@
             domain = "binary_sensor";
             match = "*${slug}*motion*";
             attributes = motionAttributes;
-            icon = "mdi:motion-sensor";
+            icon = "fp:motion";
           })
           (itemRule {
             domain = "binary_sensor";
             match = "*${slug}*occupancy*";
-            icon = "mdi:motion-sensor";
+            icon = "fp:motion";
           })
         ];
         unique = true;
@@ -309,7 +309,7 @@
           {
             type = "template";
             entity = room.lightGroup;
-            icon = "mdi:lightbulb";
+            icon = "fp:lamp";
             icon_color = "{{ 'amber' if is_state('${room.lightGroup}', 'on') else 'grey' }}";
             content = "{{ expand('${room.lightGroup}') | selectattr('state', 'eq', 'on') | list | count }}";
           }
@@ -324,7 +324,7 @@
           group = room.lightGroup;
           options = cards.item {
             entity = "this.entity_id";
-            icon = "mdi:lightbulb";
+            icon = "fp:lamp";
             toggle = true;
           };
         }

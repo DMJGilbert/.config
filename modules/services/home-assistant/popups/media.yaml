@@ -3,7 +3,7 @@ type: custom:bubble-card
 card_type: pop-up
 hash: "#media-popup"
 name: Active Media
-icon: mdi:television
+icon: fp:tv
 styles: |
   .bubble-pop-up-container {
     background: var(--card-background-color);
@@ -17,5 +17,16 @@ cards:
       include:
         - domain: media_player
           state: playing
+          attributes:
+            device_class: tv
+          options:
+            icon: fp:tv
+        - domain: media_player
+          state: playing
+          options:
+            icon: fp:speaker
+    # A TV matches both rules. Sorting is stable, so its first match, the
+    # TV rule, is the one kept.
+    unique: entity
     sort:
       method: friendly_name

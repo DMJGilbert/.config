@@ -156,7 +156,7 @@
               group = room.lights;
               options = cards.item {
                 entity = "this.entity_id";
-                icon = "mdi:lightbulb";
+                icon = "fp:lamp";
                 toggle = true;
               };
             }
@@ -171,7 +171,7 @@
       else [
         (cards.item {
           entity = room.lights;
-          icon = "mdi:lightbulb";
+          icon = "fp:lamp";
           toggle = true;
         })
       ];
@@ -186,8 +186,8 @@
     media = name: "${name} Media";
   };
   popupIcon = {
-    lights = "mdi:lightbulb";
-    media = "mdi:television";
+    lights = "fp:lamp";
+    media = "fp:tv";
   };
   roomName = id: (lib.findFirst (r: r.id == id) null geometry.rooms).name;
 

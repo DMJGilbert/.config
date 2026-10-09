@@ -1,7 +1,7 @@
 # ==================== HOME VIEW ====================
 title: Home
 path: home
-icon: mdi:home
+icon: fp:home
 panel: true
 
 cards:
@@ -111,7 +111,7 @@ cards:
                   chip:
                     type: template
                     entity: sensor.total_turned_on_lights_count_template
-                    icon: mdi:lightbulb
+                    icon: fp:lamp
                     icon_color: amber
                     content: "{{ states('sensor.total_turned_on_lights_count_template') }}"
                     tap_action:
@@ -125,7 +125,7 @@ cards:
                   chip:
                     type: template
                     entity: sensor.total_media_players_playing_template
-                    icon: mdi:television
+                    icon: fp:tv
                     icon_color: blue
                     content: "{{ states('sensor.total_media_players_playing_template') }}"
                     tap_action:
@@ -139,7 +139,7 @@ cards:
                   chip:
                     type: template
                     entity: sensor.total_active_motion_sensors_count_template
-                    icon: mdi:run
+                    icon: fp:motion
                     icon_color: green
                     content: "{{ states('sensor.total_active_motion_sensors_count_template') }}"
                     tap_action:
@@ -212,7 +212,7 @@ cards:
                         - tab_button_inactive
                         - tab_icon
                       name: Floorplan
-                      icon: mdi:floor-plan
+                      icon: fp:floor-plan
                       tap_action: &tap_floorplan
                         action: navigate
                         navigation_path: "#tab-floorplan"
@@ -258,7 +258,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Living Room
-                          room_icon: mdi:sofa
+                          room_icon: fp:sofa
                           room_image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop"
                           light_entity: group.living_room_lights
                           motion_entity: binary_sensor.living_room_motion_sensor_occupancy
@@ -270,7 +270,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Bedroom
-                          room_icon: mdi:bed
+                          room_icon: fp:bed
                           room_image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=200&fit=crop"
                           light_entity: group.bedroom_lights
                           motion_entity: null
@@ -282,7 +282,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Kitchen
-                          room_icon: mdi:silverware-fork-knife
+                          room_icon: fp:dining
                           room_image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop"
                           light_entity: group.kitchen_lights
                           motion_entity: null
@@ -294,7 +294,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Bathroom
-                          room_icon: mdi:shower
+                          room_icon: fp:shower
                           room_image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=200&h=200&fit=crop"
                           light_entity: group.bathroom_lights
                           motion_entity: binary_sensor.bathroom_motion_sensor_occupancy
@@ -306,7 +306,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Hallway
-                          room_icon: mdi:door
+                          room_icon: fp:door
                           room_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
                           light_entity: group.hallway_lights
                           motion_entity: binary_sensor.hallway_motion_sensor_occupancy
@@ -318,7 +318,7 @@ cards:
                         template: room_card
                         variables:
                           room_name: Girls' Room
-                          room_icon: mdi:teddy-bear
+                          room_icon: fp:teddy-bear
                           room_image: "https://images.unsplash.com/photo-1617331721458-bd3bd3f9c7f8?w=200&h=200&fit=crop"
                           light_entity: group.girls_room_lights
                           motion_entity: null
@@ -338,7 +338,7 @@ cards:
                         - tab_button_inactive
                         - tab_icon
                       name: Floorplan
-                      icon: mdi:floor-plan
+                      icon: fp:floor-plan
                       tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive
@@ -403,7 +403,7 @@ cards:
                         - tab_button_inactive
                         - tab_icon
                       name: Floorplan
-                      icon: mdi:floor-plan
+                      icon: fp:floor-plan
                       tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive
@@ -436,7 +436,7 @@ cards:
                         variables:
                           calendar_entity: calendar.family
                           calendar_name: Family
-                          calendar_icon: mdi:account-group
+                          calendar_icon: fp:account-group
                           calendar_image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&h=200&fit=crop"
 
           "tab-other":
@@ -452,7 +452,7 @@ cards:
                         - tab_button_inactive
                         - tab_icon
                       name: Floorplan
-                      icon: mdi:floor-plan
+                      icon: fp:floor-plan
                       tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive
@@ -486,7 +486,7 @@ cards:
                           - sensor.system_monitor_last_boot
                         variables:
                           card_name: System
-                          card_icon: mdi:server
+                          card_icon: fp:server
                           card_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop"
                           status_text: "[[[ const load = states['sensor.system_monitor_load_1_min']?.state; return (load === 'unavailable' || load === 'unknown' || !load) ? 'Unavailable' : 'Load: ' + load; ]]]"
                           info_text: "[[[ const disk = states['sensor.system_monitor_disk_free']?.state; return (disk === 'unavailable' || disk === 'unknown' || !disk) ? '' : Math.round(parseFloat(disk)) + ' GiB free'; ]]]"
@@ -500,7 +500,7 @@ cards:
                           - sensor.fordpass_wf02xxerk2la80437_doorstatus
                         variables:
                           card_name: Car
-                          card_icon: mdi:car
+                          card_icon: fp:car
                           card_image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200&h=200&fit=crop"
                           status_text: "[[[ const door = states['sensor.fordpass_wf02xxerk2la80437_doorstatus']?.state; return (door === 'unavailable' || door === 'unknown' || !door) ? 'Unavailable' : 'Doors: ' + door; ]]]"
                           info_text: "[[[ const fuel = states['sensor.fordpass_wf02xxerk2la80437_fuel']?.state; return (fuel === 'unavailable' || fuel === 'unknown' || !fuel) ? '' : 'Fuel: ' + fuel + '%'; ]]]"
@@ -514,7 +514,7 @@ cards:
                           - sensor.ph_value
                         variables:
                           card_name: Tank
-                          card_icon: mdi:fishbowl
+                          card_icon: fp:fishbowl
                           card_image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop"
                           status_text: "[[[ const temp = states['sensor.current_temperature']?.state; return (temp === 'unavailable' || temp === 'unknown' || !temp) ? 'Unavailable' : temp + '°C'; ]]]"
                           info_text: "[[[ const ph = states['sensor.ph_value']?.state; return (ph === 'unavailable' || ph === 'unknown' || !ph) ? '' : 'pH: ' + ph; ]]]"
@@ -528,7 +528,7 @@ cards:
                           - sensor.robovac_battery
                         variables:
                           card_name: RoboVac
-                          card_icon: mdi:robot-vacuum
+                          card_icon: fp:robot-vacuum
                           card_image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop"
                           status_text: "[[[ const state = states['vacuum.robovac']?.state; return (state === 'unavailable' || state === 'unknown' || !state) ? 'Unavailable' : state.charAt(0).toUpperCase() + state.slice(1); ]]]"
                           info_text: "[[[ const battery = states['sensor.robovac_battery']?.state; return (battery === 'unavailable' || battery === 'unknown' || !battery) ? '' : 'Battery: ' + battery + '%'; ]]]"
@@ -546,7 +546,7 @@ cards:
                         - tab_button_active
                         - tab_icon
                       name: Floorplan
-                      icon: mdi:floor-plan
+                      icon: fp:floor-plan
                       tap_action: *tap_floorplan
                     - type: custom:button-card
                       template: tab_button_inactive

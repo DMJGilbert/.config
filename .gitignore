@@ -4,6 +4,11 @@ target-install
 .direnv
 .aim
 
+# Python tooling output, e.g. from running the dashboard generators locally.
+__pycache__/
+*.pyc
+.ruff_cache/
+
 # RIPER working notes and review reports: session scratch, not config.
 .claude/riper-state.md
 review.md

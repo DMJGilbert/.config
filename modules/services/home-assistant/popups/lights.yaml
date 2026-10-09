@@ -3,7 +3,7 @@ type: custom:bubble-card
 card_type: pop-up
 hash: "#lights-popup"
 name: Active Lights
-icon: mdi:lightbulb
+icon: fp:lamp
 styles: |
   .bubble-pop-up-container {
     background: var(--card-background-color);
@@ -17,5 +17,7 @@ cards:
       include:
         - domain: light
           state: "on"
+          options:
+            icon: fp:lamp
     sort:
       method: friendly_name

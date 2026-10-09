@@ -415,6 +415,278 @@ def calendar():
     return Icon([outline(*box_faces(*page)), *corner(*page), header, *rings])
 
 
+@icon("motion")
+def motion():
+    centre = iso((0, 0, 0))
+    front = rect(-99, centre[1] - 0.5, 99, 99)
+    rings = [ring((0, 0, 0), r).exterior.intersection(front) for r in (3.6, 7.2)]
+    return Icon([*rings, *person(centre[0], centre[1] - 4.2, 0.6)])
+
+
+# Symbols: flat outlines, drawn directly in the 24 unit box --------------------
+
+
+def arc(cx, cy, r, a0, a1, n=24):
+    """An arc swept from a0 to a1 degrees, anticlockwise on screen."""
+    angles = [math.radians(a0 + (a1 - a0) * i / n) for i in range(n + 1)]
+    return LineString([(cx + r * math.cos(a), cy - r * math.sin(a)) for a in angles])
+
+
+def cloud(dy=0.0):
+    return unary_union(
+        [
+            Point(8, 14 + dy).buffer(3.6),
+            Point(12.5, 10.5 + dy).buffer(4.8),
+            Point(17, 14 + dy).buffer(3.4),
+            rect(8, 14 + dy, 17, 17.4 + dy),
+        ]
+    )
+
+
+def sun(cx, cy, r, rays=8, gap=2.0, length=2.4):
+    lines = [Point(cx, cy).buffer(r).exterior]
+    for i in range(rays):
+        a = 2 * math.pi * i / rays
+        d0, d1 = r + gap, r + gap + length
+        lines.append(
+            LineString(
+                [
+                    (cx + d0 * math.cos(a), cy + d0 * math.sin(a)),
+                    (cx + d1 * math.cos(a), cy + d1 * math.sin(a)),
+                ]
+            )
+        )
+    return lines
+
+
+BOLT = Polygon(
+    [(13, 11), (9, 17), (12, 17), (10.5, 22), (15.5, 15), (12.5, 15), (14.5, 11)]
+)
+
+
+def precipitation(cover, *marks):
+    """A raised cloud with marks falling below it, kept clear of its outline."""
+    shape = cloud(-3)
+    clear = shape.buffer(1.6)
+    return Icon([shape.exterior, *(m.difference(clear) for m in marks)], cover)
+
+
+def drops(xs, top=16.5, length=3.2):
+    return [LineString([(x, top), (x - 1.2, top + length)]) for x in xs]
+
+
+def dots(points):
+    return [Point(x, y) for x, y in points]
+
+
+@icon("weather-sunny")
+def weather_sunny():
+    return Icon(sun(12, 12, 4.2))
+
+
+@icon("weather-night")
+def weather_night():
+    moon = Point(12, 12).buffer(8).difference(Point(16.5, 8).buffer(6.5))
+    return Icon([moon.exterior])
+
+
+@icon("weather-cloudy")
+def weather_cloudy():
+    return Icon([cloud().exterior])
+
+
+@icon("weather-partly-cloudy")
+def weather_partly_cloudy():
+    shape = cloud(2)
+    behind = shape.buffer(1.8)
+    rays = [g.difference(behind) for g in sun(15.5, 8, 3.2, gap=1.6, length=1.8)]
+    return Icon([shape.exterior, *rays])
+
+
+@icon("weather-rainy")
+def weather_rainy():
+    return precipitation(None, *drops((9, 14.5), length=2.6))
+
+
+@icon("weather-pouring")
+def weather_pouring():
+    return precipitation(None, *drops((8, 12, 16), length=5))
+
+
+@icon("weather-snowy")
+def weather_snowy():
+    return precipitation(
+        None, *dots([(8, 17.5), (12, 17.5), (16, 17.5), (10, 21), (14, 21)])
+    )
+
+
+@icon("weather-snowy-rainy")
+def weather_snowy_rainy():
+    return precipitation(None, *drops((9, 17), length=4), *dots([(13, 17.5), (15, 21)]))
+
+
+@icon("weather-hail")
+def weather_hail():
+    stones = [
+        Point(x, y).buffer(1.2).exterior
+        for x, y in ((7.5, 19.5), (12.5, 21), (17.5, 19.5))
+    ]
+    return precipitation(None, *stones)
+
+
+@icon("weather-lightning")
+def weather_lightning():
+    return precipitation(None, BOLT.exterior)
+
+
+@icon("weather-lightning-rainy")
+def weather_lightning_rainy():
+    return precipitation(None, BOLT.exterior, *drops((7.5, 18.5), length=3.4))
+
+
+@icon("weather-fog")
+def weather_fog():
+    shape = cloud(-3)
+    bars = [
+        LineString([(4, 18), (20, 18)]),
+        LineString([(6, 21.5), (18, 21.5)]),
+    ]
+    return Icon([shape.exterior, *bars])
+
+
+def gust(y, length, up=True):
+    """A wind line ending in a curl."""
+    end = 3 + length
+    curl = arc(end, y - 2.6, 2.6, -90, 180) if up else arc(end, y + 2.6, 2.6, 90, -180)
+    return LineString([(3, y), (end, y), *curl.coords[1:]])
+
+
+@icon("weather-windy")
+def weather_windy():
+    return Icon(
+        [gust(9, 12), LineString([(3, 13.5), (20, 13.5)]), gust(18, 9, up=False)]
+    )
+
+
+@icon("weather-windy-variant")
+def weather_windy_variant():
+    shape = cloud(-3)
+    return Icon(
+        [
+            shape.exterior,
+            LineString([(4, 18.5), (15, 18.5)]),
+            gust(21.5, 8, up=False).intersection(rect(0, 18, 24, 26)),
+        ]
+    )
+
+
+@icon("water")
+def water():
+    drop = unary_union(
+        [Point(12, 15).buffer(6), Polygon([(12, 2.5), (6.4, 13), (17.6, 13)])]
+    )
+    return Icon([drop.exterior, arc(12, 15, 3.4, 190, 260)])
+
+
+@icon("steps")
+def steps():
+    def sole(cx, cy):
+        return [
+            scale(Point(cx, cy).buffer(2.4), 0.8, 1.2).exterior,
+            scale(Point(cx, cy + 5.4).buffer(1.6), 0.9, 0.9).exterior,
+        ]
+
+    return Icon([*sole(8, 6), *sole(16, 11)])
+
+
+@icon("eye")
+def eye():
+    almond = Point(12, 21).buffer(14).intersection(Point(12, 3).buffer(14))
+    return Icon([almond.exterior, Point(12, 12).buffer(3).exterior])
+
+
+@icon("flash")
+def flash():
+    bolt = Polygon(
+        [(14, 2), (5, 14), (11, 14), (9.5, 22), (19, 9.5), (13, 9.5), (15, 2)]
+    )
+    return Icon([bolt.exterior])
+
+
+@icon("brightness")
+def brightness():
+    disc = Point(12, 12).buffer(4.6)
+    return Icon(
+        sun(12, 12, 4.6, gap=2.0, length=2.2), disc.intersection(rect(12, 0, 24, 24))
+    )
+
+
+@icon("air")
+def air():
+    specks = [
+        (6, 7, 1.6),
+        (13, 5.5, 1.0),
+        (18, 9, 1.8),
+        (9, 13, 1.1),
+        (15.5, 15, 1.4),
+        (7, 19, 1.4),
+        (17, 20, 0.9),
+    ]
+    return Icon([Point(x, y).buffer(r).exterior for x, y, r in specks])
+
+
+def badge(*marks):
+    return Icon([Point(12, 12).buffer(9.5).exterior, *marks])
+
+
+@icon("info")
+def info():
+    return badge(LineString([(12, 11), (12, 16.5)]), Point(12, 7.6))
+
+
+@icon("alert")
+def alert():
+    return badge(LineString([(12, 6.8), (12, 12.6)]), Point(12, 16.4))
+
+
+@icon("help")
+def help_():
+    hook = arc(12, 9, 3, 160, -60)
+    return badge(LineString([*hook.coords, (12, 13.4)]), Point(12, 16.8))
+
+
+def person(cx, cy, s=1.0):
+    head = Point(cx, cy - 4 * s).buffer(3.2 * s)
+    body = arc(cx, cy + 8.5 * s, 6.5 * s, 10, 170)
+    return [head.exterior, body]
+
+
+@icon("account")
+def account():
+    return Icon(person(12, 10))
+
+
+@icon("account-group")
+def account_group():
+    side = [g for x in (3.5, 20.5) for g in person(x, 10.5, 0.7)]
+    front = person(12, 12.5)
+    clear = unary_union([Point(12, 8.5).buffer(5.4), Point(12, 22).buffer(8.6)])
+    return Icon([*front, *(g.difference(clear) for g in side)])
+
+
+@icon("football")
+def football():
+    def vertex(r, i):
+        a = math.radians(90 + 72 * i)
+        return (12 + r * math.cos(a), 12 - r * math.sin(a))
+
+    pentagon = Polygon([vertex(3.4, i) for i in range(5)])
+    spokes = [LineString([vertex(3.4, i), vertex(9.5, i)]) for i in range(5)]
+    ball = badge(pentagon.exterior, *spokes)
+    ball.shade = pentagon
+    return ball
+
+
 # Output -------------------------------------------------------------------------
 
 

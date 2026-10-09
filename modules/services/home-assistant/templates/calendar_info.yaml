@@ -21,7 +21,7 @@
       }
     }
 
-    const icon = '<ha-icon icon="mdi:calendar" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon>';
+    const icon = '<ha-icon icon="fp:calendar" style="--mdc-icon-size: 18px; margin-right: 8px; vertical-align: middle;"></ha-icon>';
 
     if (!nextEvent) return icon + 'No upcoming events';
 
