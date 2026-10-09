@@ -241,7 +241,12 @@
         entity = room.lights;
         element = "${id}.floor";
         tap_action = navigate;
-        state_action = markOn (map (part: "${id}.${part}") ["floor" "leader" "anchor" "strip"]) ["on"];
+        # The countdown ring shows only while lit: the timer also runs after
+        # the lights have been switched off by hand.
+        state_action =
+          markOn
+          (map (part: "${id}.${part}") (["floor" "leader" "anchor" "strip"] ++ lib.optional (room ? timer) "countdown"))
+          ["on"];
       }
       {
         element = "${id}.title";

@@ -135,7 +135,8 @@
 /*
  * Lights-off countdown: the ring drains over the timer's length, started
  * part way through by the seconds already gone. data-run alternates a/b on
- * each (re)start, since only a new animation name restarts an animation.
+ * each (re)start, since only a new animation name restarts an animation;
+ * data-on (the room's lights) hides it while the lights are already off.
  */
 .fp-countdown {
   display: none;
@@ -145,9 +146,9 @@
   stroke-linecap: round;
   stroke-dasharray: 100;
 }
-.fp-countdown[data-run="a"],
-.fp-countdown[data-run="b"],
-.fp-countdown[data-run="paused"] {
+.fp-countdown[data-on="1"][data-run="a"],
+.fp-countdown[data-on="1"][data-run="b"],
+.fp-countdown[data-on="1"][data-run="paused"] {
   display: inline;
 }
 .fp-countdown[data-run="a"] {
