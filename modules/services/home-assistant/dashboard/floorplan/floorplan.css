@@ -407,10 +407,11 @@
 }
 [data-daylight="1"] .fp-window-glow {
   display: inline;
-  opacity: 0.7;
+  opacity: 0.3;
 }
 [data-daylight="1"] .fp-window {
   fill: var(--fp-daylight);
+  fill-opacity: 0.45;
   stroke: var(--fp-daylight);
 }
 [data-daylight="1"] line.fp-window {
