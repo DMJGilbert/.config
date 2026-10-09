@@ -452,10 +452,6 @@ in
             };
             scene = {};
             input_boolean = {
-              party_mode = {
-                name = "Party Mode";
-                icon = "mdi:party-popper";
-              };
               outdoor_lights = {
                 name = "Outdoor Lights";
                 icon = "mdi:string-lights";

@@ -91,6 +91,10 @@
       entity_id = motion;
       inherit state;
     };
+    lightsAreOn = {
+      condition = "template";
+      value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
+    };
     whenTriggeredBy = id: sequence: {
       conditions = [
         {
@@ -185,7 +189,15 @@
             (whenTriggeredBy "motion_off" [
               {
                 "if" = [(timerIs "paused")];
-                "then" = restartTimer;
+                # Lights switched off by hand need no countdown; cancelling
+                # leaves the timer idle, so the next motion starts afresh.
+                "then" = [
+                  {
+                    "if" = [lightsAreOn];
+                    "then" = restartTimer;
+                    "else" = [(timerAction "timer.cancel")];
+                  }
+                ];
               }
             ])
             (whenTriggeredBy "timer_finished" [
@@ -210,13 +222,7 @@
                 }
               ]
               ++ lib.optional adopt_on_start {
-                "if" = [
-                  (timerIs "idle")
-                  {
-                    condition = "template";
-                    value_template = "{{ expand(lights) | selectattr('state', 'eq', 'on') | list | count > 0 }}";
-                  }
-                ];
+                "if" = [(timerIs "idle") lightsAreOn];
                 "then" = restartTimerUnlessOccupied;
               }
             ))
@@ -277,8 +283,8 @@
     # Restarts the full countdown once motion has cleared; while motion is on
     # the timer stays cancelled. An unavailable sensor counts as clear, so a
     # dead battery cannot hold the lights on. It does not check the lights are
-    # on: right after light.turn_on their state may not have updated yet, and
-    # a timer finishing on lights that are already off is harmless. The cancel
+    # on: right after light.turn_on their state may not have updated yet. The
+    # motion-cleared path, where it has, checks before calling it. The cancel
     # matters: a bare timer.start on a timer restored after a restart resumes
     # its remaining time rather than the full duration.
     restartTimer = {
@@ -437,7 +443,26 @@ in [
                 id = "motion_off";
               }
             ];
-            sequence = [bathroom.restartTimer];
+            # By the time motion clears the lights' state has settled, so a
+            # room left dark by hand gets no countdown; cancelling leaves the
+            # timer idle for the next motion.
+            sequence = [
+              {
+                "if" = [
+                  {
+                    condition = "template";
+                    value_template = "{{ ${bathroom.lightsOn} }}";
+                  }
+                ];
+                "then" = [bathroom.restartTimer];
+                "else" = [
+                  {
+                    action = "timer.cancel";
+                    target.entity_id = bathroom.timer;
+                  }
+                ];
+              }
+            ];
           }
           {
             conditions = [

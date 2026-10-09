@@ -26,6 +26,16 @@ in {
   ];
   bedtime = "binary_sensor.bedtime";
 
+  # Windows glow with daylight while the sun is up.
+  daylight = "sun.sun";
+
+  # Rain falls over the outdoor room `area` while the forecast reports it.
+  rain = {
+    entity = "weather.forecast_home";
+    area = "balcony";
+    states = ["rainy" "pouring" "lightning-rainy"];
+  };
+
   devices = {
     bedroom_tv = {
       entity = "media_player.bedroom_tv";
@@ -39,9 +49,11 @@ in {
       entity = "media_player.robynnes_yoto_player";
       active = playing;
     };
+    # Glows warm while heating, cool otherwise, from its climate entity.
     dyson = {
       entity = "fan.dyson";
       active = ["on"];
+      mode = "climate.dyson";
     };
     # Running while the plug draws more than standby power.
     washing_machine = {

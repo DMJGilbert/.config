@@ -35,13 +35,16 @@ Element ids are stable so ha-floorplan rules can target them:
 `<room>.strip`, `<room>.title`, `<room>.temp`, `<room>.humidity`,
 `<room>.tile<k>`, `<room>.tile<k>.text`, `<room>.motion` for rooms with a
 motion sensor, `<room>.countdown` for rooms with a lights-off timer,
-`door.<name>` for each named door opening, `device.<name>` and `device.<name>.glow` for each device, and each
-person's entity id for their badge.
+`door.<name>` for each named door opening, `device.<name>` and
+`device.<name>.glow` for each device, each person's entity id for their
+badge, `<room>.rain` for outdoor rooms, and `fp-scene` around the whole
+drawing for scene-wide state (daylight).
 """
 
 import argparse
 import json
 import math
+import random
 from itertools import pairwise
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -64,6 +67,9 @@ ROUND_SIDES = 20  # polygon sides for a `round` box
 AIRFLOW_RISE = 60  # cm of airflow drawn above a running fan's top
 COUNTDOWN_RADIUS = 35  # cm on the floor; the lights-off countdown ring
 AWAY_SPACING = 70  # cm between away badges outside the front door
+RAIN_DROPS = 70  # drops over an outdoor room
+RAIN_HEIGHT = 160  # cm the rain falls from
+WINDOW_GLOW_BLUR = 8  # spread of daylight round a window, in drawing units
 
 COS30 = math.cos(math.radians(30))
 SIN30 = 0.5
@@ -401,7 +407,12 @@ def extrude(geom, height, cls, project, windows=(), base=0.0):
                         project(wx1, wy1, height - 6),
                         project(wx0, wy0, height - 6),
                     ]
-                    svg += f'<polygon class="fp-window" points="{fmt(pane)}"/>'
+                    # The blurred copy beneath is daylight bleeding round the
+                    # frame; floorplan.css shows it only while the sun is up.
+                    svg += (
+                        f'<polygon class="fp-window-glow" filter="url(#fp-blur)" points="{fmt(pane)}"/>'
+                        f'<polygon class="fp-window" points="{fmt(pane)}"/>'
+                    )
             faces.append(Item(svg, segment=(a, b)))
         outline = list(ring_segments(poly))
         tops.append(
@@ -450,16 +461,23 @@ def door_pin(door, rooms, project, size):
 
 
 def countdown(room_id, centre):
-    """Ring around a room's anchor that drains while its lights-off timer runs.
+    """Dial around a room's anchor that drains while its lights-off timer runs.
 
-    pathLength makes the dash pattern 100 long whatever the ellipse's real
-    perimeter, so floorplan.css can drain it from 0 to 100.
+    A faint full track sits under the arc. The arc is a path starting at the
+    top of the ellipse and running clockwise, like a clock face; pathLength
+    makes its dash pattern 100 long whatever its real perimeter, so
+    floorplan.css can drain it from 0 to 100.
     """
     x, y = centre
     r = COUNTDOWN_RADIUS
+    rx, ry = r * math.sqrt(2) * COS30, r * math.sqrt(2) * SIN30
+    top, bottom = f"{x:.1f},{y - ry:.1f}", f"{x:.1f},{y + ry:.1f}"
+    arc = f"M {top} A {rx:.1f} {ry:.1f} 0 1 1 {bottom} A {rx:.1f} {ry:.1f} 0 1 1 {top}"
     return (
-        f'<ellipse id="{room_id}.countdown" class="fp-countdown" pathLength="100"'
-        f' cx="{x:.1f}" cy="{y:.1f}" rx="{r * math.sqrt(2) * COS30:.1f}" ry="{r * math.sqrt(2) * SIN30:.1f}"/>'
+        f'<g id="{room_id}.countdown" class="fp-countdown">'
+        f'<ellipse class="fp-countdown-track" cx="{x:.1f}" cy="{y:.1f}" rx="{rx:.1f}" ry="{ry:.1f}"/>'
+        f'<path class="fp-countdown-arc" pathLength="100" d="{arc}"/>'
+        "</g>"
     )
 
 
@@ -537,6 +555,33 @@ def device_glow(device, project):
     )
 
 
+def rain(room, project):
+    """Falling rain over an outdoor room, shown while the forecast says so.
+
+    Each drop is a line from RAIN_HEIGHT to the floor whose dashes floorplan.css
+    moves down it; delays vary so drops do not fall in step. A fixed seed per
+    room keeps the build reproducible.
+    """
+    rng = random.Random(room["id"])
+    floor = Polygon(room["polygon"])
+    x0, y0, x1, y1 = floor.bounds
+    drops = []
+    while len(drops) < RAIN_DROPS:
+        x, y = rng.uniform(x0, x1), rng.uniform(y0, y1)
+        if not floor.contains(Point(x, y)):
+            continue
+        (sx, sy), (ex, ey) = project(x, y, RAIN_HEIGHT), project(x, y)
+        drops.append(
+            f'<line x1="{sx:.1f}" y1="{sy:.1f}" x2="{ex:.1f}" y2="{ey:.1f}"'
+            f' style="animation-delay:{-rng.uniform(0, 1):.2f}s"/>'
+        )
+    wet = fmt([project(x, y) for x, y in room["polygon"]])
+    return (
+        f'<g id="{room["id"]}.rain" class="fp-rain">'
+        f'<polygon class="fp-rain-wet" points="{wet}"/>{"".join(drops)}</g>'
+    )
+
+
 def device_effect(device, project):
     """Marks on a device's top that floorplan.css animates while it runs.
 
@@ -599,6 +644,9 @@ def render_iso(
         )
     # On the floor, so the walls the device hangs on cover its far half.
     out += [device_glow(d, project) for d in devices]
+    # Rain at floor level, so the walls in front of an outdoor room cover it
+    # as they would the room itself.
+    out += [rain(r, project) for r in rooms if r.get("outdoor")]
     tall_faces, tall_tops = extrude(tall, wall_height, "fp-wall", project, windows)
     front_faces, front_tops = extrude(front, front_height, "fp-wall", project)
     rail_faces, rail_tops = extrude(railings(rooms), front_height, "fp-wall", project)
@@ -1147,14 +1195,27 @@ def main():
         f'<svg xmlns="http://www.w3.org/2000/svg" class="fp-root" viewBox="{x0:.1f} {y0:.1f} {w:.1f} {h:.1f}">',
         *style,
         # Stop colours come from floorplan.css, so the glow follows the theme.
-        (
-            '<defs><radialGradient id="fp-glow">'
-            '<stop offset="0" class="fp-glow-stop" stop-opacity="0.6"/>'
-            '<stop offset="1" class="fp-glow-stop" stop-opacity="0"/>'
-            "</radialGradient></defs>"
-        ),
+        "<defs>"
+        + "".join(
+            f'<radialGradient id="{gid}">'
+            f'<stop offset="0" class="{cls}" stop-opacity="0.6"/>'
+            f'<stop offset="1" class="{cls}" stop-opacity="0"/>'
+            "</radialGradient>"
+            for gid, cls in (
+                ("fp-glow", "fp-glow-stop"),
+                ("fp-glow-heat", "fp-glow-stop fp-heat-stop"),
+                ("fp-glow-cool", "fp-glow-stop fp-cool-stop"),
+            )
+        )
+        + '<filter id="fp-blur" x="-1" y="-1" width="3" height="3">'
+        + f'<feGaussianBlur stdDeviation="{WINDOW_GLOW_BLUR}"/></filter>'
+        + "</defs>",
         f'<rect class="fp-bg" x="{x0:.1f}" y="{y0:.1f}" width="{w:.1f}" height="{h:.1f}"/>',
+        # One element over the whole drawing carries scene-wide state, such
+        # as whether it is daylight.
+        '<g id="fp-scene">',
         *body,
+        "</g>",
         "</svg>",
     ]
     with open(args.out, "w") as f:

@@ -13,6 +13,9 @@
   --fp-line: var(--primary-text-color, #cdd6f4);
   --fp-dim: var(--secondary-text-color, #a6adc8);
   --fp-accent: var(--accent-color, #fab387);
+  --fp-heat: var(--red-color, #f38ba8);
+  --fp-cool: var(--blue-color, #89b4fa);
+  --fp-daylight: color-mix(in srgb, var(--amber-color, #f9e2af) 40%, white);
   --fp-glow: color-mix(in srgb, var(--fp-accent) 24%, var(--fp-bg));
   --fp-tile: color-mix(in srgb, var(--fp-line) 7%, var(--fp-bg));
   --fp-font: var(--ha-font-family-body, Roboto, sans-serif);
@@ -61,7 +64,9 @@
 .fp-root .fp-leader,
 .fp-root .fp-anchor,
 .fp-root .fp-person *,
-.fp-root .fp-countdown,
+.fp-root .fp-countdown *,
+.fp-root .fp-window-glow,
+.fp-root .fp-rain *,
 .fp-root .fp-tile :not(.fp-hit),
 .fp-root .fp-door *,
 .fp-root .fp-motion *,
@@ -84,6 +89,34 @@
 }
 .fp-glow-stop {
   stop-color: var(--fp-accent);
+}
+
+/* A device with a climate mode (the Dyson) runs warm or cool. */
+.fp-heat-stop {
+  stop-color: var(--fp-heat);
+}
+.fp-cool-stop {
+  stop-color: var(--fp-cool);
+}
+.fp-device-glow[data-mode="heat"] {
+  fill: url(#fp-glow-heat);
+}
+.fp-device-glow[data-mode="cool"] {
+  fill: url(#fp-glow-cool);
+}
+.fp-device-group[data-on="1"][data-mode="heat"] .fp-device {
+  fill: color-mix(in srgb, var(--fp-heat) 70%, var(--fp-bg));
+  stroke: var(--fp-heat);
+}
+.fp-device-group[data-on="1"][data-mode="cool"] .fp-device {
+  fill: color-mix(in srgb, var(--fp-cool) 70%, var(--fp-bg));
+  stroke: var(--fp-cool);
+}
+.fp-device-group[data-mode="heat"] .fp-effect {
+  stroke: var(--fp-heat);
+}
+.fp-device-group[data-mode="cool"] .fp-effect {
+  stroke: var(--fp-cool);
 }
 .fp-device-glow {
   fill: url(#fp-glow);
@@ -141,25 +174,31 @@
 .fp-countdown {
   display: none;
   fill: none;
-  stroke: var(--fp-accent);
   stroke-width: 3;
   stroke-linecap: round;
-  stroke-dasharray: 100;
 }
 .fp-countdown[data-on="1"][data-run="a"],
 .fp-countdown[data-on="1"][data-run="b"],
 .fp-countdown[data-on="1"][data-run="paused"] {
   display: inline;
 }
-.fp-countdown[data-run="a"] {
+.fp-countdown-track {
+  stroke: var(--fp-dim);
+  opacity: 0.25;
+}
+.fp-countdown-arc {
+  stroke: var(--fp-accent);
+  stroke-dasharray: 100;
+}
+.fp-countdown[data-run="a"] .fp-countdown-arc {
   animation: fp-countdown-a calc(var(--fp-total) * 1s) linear
     calc((var(--fp-left) - var(--fp-total)) * 1s) forwards;
 }
-.fp-countdown[data-run="b"] {
+.fp-countdown[data-run="b"] .fp-countdown-arc {
   animation: fp-countdown-b calc(var(--fp-total) * 1s) linear
     calc((var(--fp-left) - var(--fp-total)) * 1s) forwards;
 }
-.fp-countdown[data-run="paused"] {
+.fp-countdown[data-run="paused"] .fp-countdown-arc {
   stroke-dashoffset: calc(100 * (1 - var(--fp-left) / var(--fp-total)));
 }
 @keyframes fp-countdown-a {
@@ -307,7 +346,8 @@
  */
 @media (prefers-reduced-motion: reduce) {
   .fp-spin,
-  .fp-airflow {
+  .fp-airflow,
+  .fp-rain line {
     animation: none;
   }
   .fp-ripple {
@@ -355,6 +395,54 @@
   fill: none;
   stroke: var(--fp-line);
   stroke-width: 0.8;
+  transition:
+    fill 1s ease,
+    stroke 1s ease;
+}
+
+/* Windows glow with daylight while the sun is up and go dark after. */
+.fp-window-glow {
+  display: none;
+  fill: var(--fp-daylight);
+}
+[data-daylight="1"] .fp-window-glow {
+  display: inline;
+  opacity: 0.7;
+}
+[data-daylight="1"] .fp-window {
+  fill: var(--fp-daylight);
+  stroke: var(--fp-daylight);
+}
+[data-daylight="1"] line.fp-window {
+  stroke-width: 2.5;
+}
+[data-daylight="0"] .fp-window {
+  fill: color-mix(in srgb, var(--fp-dim) 12%, var(--fp-bg));
+}
+
+/* Rain over the balcony: dashes run down each drop line, on a wet floor. */
+.fp-rain {
+  display: none;
+}
+.fp-rain[data-on="1"] {
+  display: inline;
+}
+.fp-rain-wet {
+  fill: var(--fp-cool);
+  opacity: 0.15;
+}
+.fp-rain line {
+  stroke: var(--fp-cool);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 14 60;
+  opacity: 0.75;
+  animation: fp-rain 0.7s linear infinite;
+}
+@keyframes fp-rain {
+  to {
+    stroke-dashoffset: -74;
+  }
 }
 
 .fp-leader {

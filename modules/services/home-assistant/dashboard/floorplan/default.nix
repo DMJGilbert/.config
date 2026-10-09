@@ -30,22 +30,32 @@
     fixtures.doors;
 
   deviceNames = map (d: d.name) geometry.devices;
-  deviceRules =
-    lib.mapAttrsToList (
-      name: device:
-        assert lib.assertMsg (lib.elem name deviceNames) "floorplan fixtures: no device named `${name}` in geometry.nix"; {
-          inherit (device) entity;
-          element = "device.${name}";
-          state_action =
-            markWhen ["device.${name}" "device.${name}.glow"]
-            (
-              if device ? above
-              then activeAbove device.above
-              else activeWhen device.active
-            );
-        }
+  deviceRules = lib.concatLists (lib.mapAttrsToList (
+      name: device: let
+        parts = ["device.${name}" "device.${name}.glow"];
+      in
+        assert lib.assertMsg (lib.elem name deviceNames) "floorplan fixtures: no device named `${name}` in geometry.nix";
+          [
+            {
+              inherit (device) entity;
+              element = "device.${name}";
+              state_action =
+                markWhen parts
+                (
+                  if device ? above
+                  then activeAbove device.above
+                  else activeWhen device.active
+                );
+            }
+          ]
+          # A climate entity's mode colours the device: data-mode heat or cool.
+          ++ lib.optional (device ? mode) {
+            entity = device.mode;
+            element = "device.${name}.glow";
+            state_action = datasetSet "mode" parts "\${entity.state === \"heat\" ? \"heat\" : \"cool\"}";
+          }
     )
-    fixtures.devices;
+    fixtures.devices);
 
   roomIds = map (r: r.id) geometry.rooms;
   checked =
@@ -288,6 +298,22 @@
   # the animation's name changes: alternate between two identical ones.
   countdownRun = "\${entity.state === \"active\" ? (element.dataset.run === \"a\" ? \"b\" : \"a\") : entity.state === \"paused\" ? \"paused\" : \"off\"}";
 
+  outdoorIds = map (r: r.id) (lib.filter (r: r.outdoor or false) geometry.rooms);
+  sceneRules = [
+    {
+      entity = fixtures.daylight;
+      element = "fp-scene";
+      state_action = datasetSet "daylight" ["fp-scene"] (activeWhen ["above_horizon"]);
+    }
+    (
+      assert lib.assertMsg (lib.elem fixtures.rain.area outdoorIds) "floorplan fixtures: rain area `${fixtures.rain.area}` is not an outdoor room"; {
+        inherit (fixtures.rain) entity;
+        element = "${fixtures.rain.area}.rain";
+        state_action = markOn ["${fixtures.rain.area}.rain"] fixtures.rain.states;
+      }
+    )
+  ];
+
   personRules =
     map (person: {
       inherit (person) entity;
@@ -335,7 +361,7 @@ in {
         }
       ];
       stylesheet = url "floorplan.css";
-      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules ++ personRules;
+      rules = lib.concatLists (lib.mapAttrsToList roomRules checked) ++ doorRules ++ deviceRules ++ personRules ++ sceneRules;
     };
   };
 }
